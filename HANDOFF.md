@@ -14,6 +14,7 @@ hours more than "Sunday midnight" implies.
 | `docs/superpowers/specs/2026-08-14-nullcard-design.md` | the spec. Everything below refers to its § numbers. |
 | `RESEARCH-NOTES.md` | literature scan — what's already refuted, what to cite, which numbers are unverified |
 | `ideas/INDEX.md` + `ideas/TEAM-PLAN-3P.md` | the pre-existing 3-arm plan this is the delivery vehicle for |
+| `SKILLS.md` | the seven skills carried over from *Secret Loyalties*. Five of them shaped this design directly — §3.3, §4, §5, §6.1, §7 exist because of them. |
 
 Repo initialised, one commit: `61add79`. **Nothing has been implemented.** This is design only.
 
