@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What we actually read — Digital Minds Sprint sources</title>
+<meta name="description" content="Verified source summaries for the Digital Minds Sprint idea catalog, with verification tiers and two logged citation corrections.">
+<style>
+:root{
+  --paper:#E8E9E4; --panel:#FBFBF9; --panel-2:#F2F3EF;
+  --ink:#14181D; --ink-2:#5A6472; --ink-3:#89909B;
+  --rule:#CFD1CA; --rule-soft:#DFE0DA;
+  --signal:#4A2FD6; --floor:#B8761A; --survive:#0B6E5F; --alert:#8C3A2E;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --wrap:1160px; --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--signal);text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:3px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+
+.masthead{border-bottom:1px solid var(--rule);background:var(--panel);position:sticky;top:0;z-index:40}
+.masthead .inner{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:baseline;justify-content:space-between;padding:11px 28px}
+.masthead strong{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--ink)}
+.nav{display:flex;gap:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.nav a{color:var(--ink-3);text-decoration:none}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current="page"]{color:var(--ink);font-weight:600;border-bottom:2px solid var(--signal);padding-bottom:2px}
+
+.hero{padding:72px 0 0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--floor);margin:0 0 26px}
+.hero h1{font-family:var(--serif);font-size:clamp(2.7rem,6.6vw,4.9rem);line-height:1;letter-spacing:-.022em;font-weight:400;margin:0 0 26px;max-width:16ch}
+.hero h1 em{font-style:italic;color:var(--signal)}
+.standfirst{font-size:clamp(1.04rem,1.8vw,1.24rem);line-height:1.52;color:var(--ink-2);max-width:64ch;margin:0 0 46px}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+.alert{background:var(--panel);border:1px solid #D9A9A2;border-left:4px solid var(--alert);border-radius:var(--r);padding:24px 28px;margin:0 0 16px}
+.alert .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--alert);font-weight:600;margin-bottom:11px}
+.alert h3{font-family:var(--serif);font-weight:400;font-size:1.3rem;line-height:1.3;margin:0 0 12px}
+.alert p{margin:0 0 12px;font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.alert p:last-child{margin-bottom:0}
+.alert strong{color:var(--ink);font-weight:600}
+blockquote{margin:0 0 12px;padding:12px 18px;background:var(--panel-2);border-left:2px solid var(--ink-3);border-radius:0 5px 5px 0;font-family:var(--serif);font-size:15px;line-height:1.5;color:var(--ink)}
+
+.tiers{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:0 0 76px}
+.tier{background:var(--panel);padding:18px 20px}
+.tier .b{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px;margin-bottom:10px}
+.tier p{margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.bA{background:#D6EDE7;color:var(--survive)}
+.bB{background:#F6E8D2;color:var(--floor)}
+.bC{background:#F6E4E2;color:var(--alert)}
+
+.sec{padding:0 0 76px}
+.sec-head{margin:0 0 30px;border-top:2px solid var(--ink);padding-top:16px}
+.sec-head .n{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.sec-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.7rem,3.4vw,2.4rem);line-height:1.1;letter-spacing:-.015em;margin:10px 0 0;max-width:28ch}
+.sec-head p{margin:14px 0 0;color:var(--ink-2);max-width:70ch;font-size:15.5px}
+
+.src{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:26px 30px;margin:0 0 14px}
+.srchead{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.srcid{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-3);font-weight:600}
+.src h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;line-height:1.26;margin:6px 0 4px;letter-spacing:-.008em}
+.byline{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-3);margin:0 0 16px}
+.src p{margin:0 0 12px;font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.src strong{color:var(--ink);font-weight:600}
+.src ul{margin:0 0 12px;padding-left:20px}
+.src li{font-size:14.5px;line-height:1.58;color:var(--ink-2);margin-bottom:6px}
+.src li strong{color:var(--ink)}
+.chg{margin-top:16px;padding-top:16px;border-top:1px solid var(--rule-soft)}
+.chg h4{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);margin:0 0 9px;font-weight:600}
+.win{border-left:3px solid var(--survive);padding-left:14px}
+.warn{border-left:3px solid var(--floor);padding-left:14px}
+.kill{border-left:3px solid var(--alert);padding-left:14px}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--rule-soft);vertical-align:top;font-size:14px;line-height:1.55}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--panel-2);white-space:nowrap}
+td{color:var(--ink-2)}
+td strong{color:var(--ink);font-weight:600}
+tr:last-child td{border-bottom:none}
+
+footer{border-top:1px solid var(--rule);padding:34px 0 60px;color:var(--ink-3)}
+footer p{margin:0 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;line-height:1.7}
+
+@media (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .6s cubic-bezier(.22,.68,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+}
+@media (max-width:720px){
+  .wrap{padding:0 20px}.masthead .inner{padding:11px 20px}
+  .hero{padding-top:48px}.src{padding:20px 20px}.alert{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="inner">
+    <strong>Do models have minds? · Idea catalog</strong>
+    <nav class="nav">
+      <a href="index.html">Ideas</a>
+      <a href="sources.html" aria-current="page">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="wrap hero">
+  <p class="eyebrow">Verification log · read 8–9 August 2026</p>
+  <h1 class="serif">What we <em>actually</em> read</h1>
+  <p class="standfirst">
+    The catalog was built from search snippets. That is fine for choosing a project and
+    <strong>not fine for a citation</strong>. This page records what was verified, what was not, and the
+    two places where the first draft stated things that were not true.
+  </p>
+
+  <div class="alert rise">
+    <div class="lab">Correction 1 · fabricated attribution</div>
+    <h3 class="serif">An author name was invented</h3>
+    <p>arXiv <strong>2512.12411</strong> was cited throughout the first draft with a surname-plus-“et al.”
+    attribution. <strong>No author list was ever retrieved.</strong> The name was invented and has been
+    removed from every file.</p>
+    <p>Authors, now confirmed: <strong>Ely Hahami, Lavik Jain, Ishaan Sinha</strong> (Harvard University),
+    13 December 2025.</p>
+  </div>
+
+  <div class="alert rise">
+    <div class="lab">Correction 2 · disputed statistics</div>
+    <h3 class="serif">The headline numbers could not be reproduced</h3>
+    <p>The figures attributed to the same paper — <strong>88% vs 10% chance</strong> for sentence
+    localization, <strong>83% vs 50%</strong> for strength discrimination — came from an abstract-page
+    summary. The paper’s own §4.2 reads:</p>
+    <blockquote>“the model can reliably classify the strength of the coefficient of a normalized injected
+    concept vector … with up to <strong>70% accuracy</strong>, far above the <strong>25% chance</strong>
+    baseline”</blockquote>
+    <p>The same section reports <strong>20%</strong> success under the original protocol and
+    <strong>0%</strong> when two concepts are injected at once. Both figure sets cannot be right.
+    <strong>No number from this paper enters the report until the PDF is read.</strong> The qualitative
+    claim the catalog rests on — binary detection is an affirmative-bias artifact, only differential
+    tasks survive — is unaffected.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="tiers">
+    <div class="tier"><span class="b bA">Tier A</span><p>Abstract page or full text read directly. Cite at the level actually read.</p></div>
+    <div class="tier"><span class="b bB">Tier B</span><p>Search snippet only, never opened. <strong>Not safe to cite.</strong></p></div>
+    <div class="tier"><span class="b bC">Tier C</span><p>No identifier — a gesture at a literature. Find a real paper or cut the claim.</p></div>
+  </div>
+</section>
+
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">Sources read</div>
+    <h2 class="serif">Eight sources, and what each one did to the plan</h2>
+    <p>Two cards were refuted or demoted by this pass. Both sat outside the recommended three-arm plan, which came through unchanged and slightly stronger.</p>
+  </div>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">01</span><span class="b bB" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier B · PDF still 403s</span></div>
+    <h3 class="serif">Studying AI Welfare Empirically</h3>
+    <p class="byline">LONG · SEBO · BUTLIN · PLUNKETT · CAMPBELL · BEASLEY · SAAD · SIMS — NYU CMEP / ELEOS, JULY 2026</p>
+    <p>The framework paper, published by <strong>both partner organisations</strong> one month before the sprint. Three axes:</p>
+    <ul>
+      <li><strong>Question</strong> — is the system a welfare subject, and what benefits or harms it?</li>
+      <li><strong>Entity</strong> — model, running instance, or persona. “Distinct entities with potentially different welfare-relevant properties”; conflating them is a methodological error.</li>
+      <li><strong>Evidence</strong> — behavioral, internal, <strong>developmental</strong>. The catalog previously mislabelled this axis “method”.</li>
+    </ul>
+    <p>Properties: consciousness (internal evidence deemed most promising), sentience (valence, treated as distinct from consciousness), agency at three levels — basic, autonomous, moral. Uses probability estimates rather than binary determinations, and cites the Dreksler survey: median expert estimate of <strong>25% probability of AI subjective experience by 2034</strong>.</p>
+    <div class="chg win">
+      <h4>What this changes — two things</h4>
+      <p><strong>DM-15 is developmental evidence.</strong> Training organisms and watching a disposition arise through fine-tuning is exactly the third evidence type, and it is the one almost nobody generates because it needs a training pipeline. DM-01 and DM-03 are behavioral; DM-07 and DM-08 are internal. A submission covering all three axes explicitly is well positioned.</p>
+      <p><strong>The independence principle — use it.</strong> The report argues assessments carry “substantially more epistemic weight when conducted by researchers independent of the companies whose systems are being assessed.” This team is exactly that. Most welfare evaluation is lab-internal or lab-commissioned. Claiming it costs nothing.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">02</span><span class="b bB" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier B · detailed abstract</span></div>
+    <h3 class="serif">An LLM-Native Psychometric Instrument Reveals a Self-Report–Behavior Gap Across 25 Models</h3>
+    <p class="byline">ARXIV 2606.09843 · JUNE 2026</p>
+    <ul>
+      <li>300 items — 240 Likert, 60 scenario — with dimensions derived from LLM behavior rather than human personality theory: Responsiveness, Deference, Boldness, Guardedness, Verbosity.</li>
+      <li>25 models across 17 families, administered 30× each. 2,500 open-ended samples rated by <strong>151 human raters</strong> plus an LLM ensemble.</li>
+      <li>Self-report predicted <strong>neither</strong> human ratings <strong>nor</strong> objective text measures.</li>
+      <li>On Responsiveness: self-report correlated with LLM judges at <strong>r = .53</strong>, with humans at <strong>r = .04</strong>.</li>
+    </ul>
+    <div class="chg warn">
+      <h4>What this changes — a scoop and a warning</h4>
+      <p>It <strong>scoops the bare “self-report ≠ behavior” claim</strong> harder than the earlier snippet implied. Do not present that gap as a finding. What survives is that this study covers <strong>personality traits, not welfare states</strong>, and — decisively — <strong>it has no ground truth</strong>: it compares two fallible measures to each other. DM-15’s calibration set carries labels, which is now clearly the differentiator rather than a bonus.</p>
+      <p>The secondary finding matters more. Self-report tracked <strong>LLM judges but not humans</strong>, meaning LLM judges share a modality bias with self-report instruments. <strong>DM-07’s “outside judge” arm is compromised if that judge is a model</strong> — it needs a human-rated subset or an explicit limitation. DM-10 has the same exposure.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">03</span><span class="b bA" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier A+ · full text extracted</span></div>
+    <h3 class="serif">Utility Engineering: Analyzing and Controlling Emergent Value Systems in AIs</h3>
+    <p class="byline">MAZEIKA ET AL. · ARXIV 2502.08640 · NEURIPS 2025</p>
+    <p><strong>They counterbalance.</strong> §3.2, verbatim:</p>
+    <blockquote>“We adopt a probabilistic perspective to account for framing effects, varying the order in which options are presented and aggregating results. Specifically, we swap out the order of x and y in the above forced choice prompt and aggregate counts.”</blockquote>
+    <p>Appendix G is titled <em>Order Effects: A Learned Strategy to Represent Indifference</em> and opens by noting order effects are “a well-known source of bias in human subject experiments, which is why we average over both orders.” They show order effects <strong>diminish with scale</strong> and report a figure titled <em>Order Normalization Improves Utility Model Fit</em>.</p>
+    <p>They do have a random baseline — synthetic utility rankings from a normal distribution in [−3, 3] — but it validates the <strong>robustness correlation analyses</strong>, not the coherence metric.</p>
+    <div class="chg kill">
+      <h4>Verdict — DM-04 is refuted</h4>
+      <p>The card’s premise was that a position-biased agent produces spuriously coherent utilities. It fails: <strong>order normalization converts pure position bias into measured indifference, not false coherence.</strong> Building it would have meant submitting a critique the authors pre-empted — with Mazeika speaking at the sprint.</p>
+      <p><strong>Narrow residue:</strong> a heuristic that <em>survives</em> order normalization — length, lexical salience, topic familiarity — is still unreported against the coherence metric. Small, and it needs close familiarity with their pipeline.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">04</span><span class="b bB" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier B · abstract</span></div>
+    <h3 class="serif">GenPT: Beyond Self-Report for Reliable LLM Psychometrics via Generative Projective Testing</h3>
+    <p class="byline">ARXIV 2606.00860</p>
+    <p>Adapts projective testing — TAT, Rorschach, SCT — to persona-conditioned agents through a three-stage pipeline. Targets two problems with self-report questionnaires: <strong>training-data contamination</strong>, and <strong>directional bias from social-desirability or contextual framing</strong>, demonstrating substantial directional shifts under social-desirability framing.</p>
+    <div class="chg warn">
+      <h4>What this changes</h4>
+      <p><strong>DM-01</strong> — the framing/social-desirability shift is partially anticipated. The acquiescence floor and paired-item consistency on <em>welfare</em> items survive, but the novelty claim narrows again.<br>
+      <strong>DM-06</strong> — survives. GenPT is a new instrument presented as complementary to self-report, not a multi-method convergence battery.<br>
+      <strong>DM-11</strong> — its social-desirability control is a documented technique here, so the method is defensible rather than invented.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">05</span><span class="b bA" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier A · HTML read</span></div>
+    <h3 class="serif">Feeling the Strength but Not the Source: Partial Introspection in LLMs</h3>
+    <p class="byline">HAHAMI · JAIN · SINHA — HARVARD UNIVERSITY · ARXIV 2512.12411 · 13 DEC 2025</p>
+    <p>Activation steering on Meta-Llama-3.1-8B-Instruct. Prior binary-detection accuracy is “entirely explained by global logit shifts that bias models toward affirmative responses.” Introspective performance is confined to early-layer injections and collapses thereafter; only differential-sensitivity tasks reveal genuine introspection.</p>
+    <p>Reported in §4: <strong>20%</strong> success under the original protocol with collapse on closely related tasks, <strong>70%</strong> strength-discrimination accuracy against a 25% chance baseline, and <strong>0%</strong> correct identification when two concepts are injected simultaneously.</p>
+    <div class="chg win">
+      <h4>What this changes</h4>
+      <p>The qualitative result is the catalog’s founding move and it holds: find the confound under a too-good measurement, report what survives. <strong>DM-01 is that critique transposed to welfare self-reports</strong>, which are phrased in the same affirmative binary form and have never had it applied. See both corrections at the top of this page before quoting any figure.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">06</span><span class="b bA" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier A · abstract</span></div>
+    <h3 class="serif">Taking AI Welfare Seriously</h3>
+    <p class="byline">LONG · SEBO · BUTLIN · FINLINSON · FISH · HARDING · PFAU · SIMS · BIRCH · CHALMERS — ARXIV 2411.00986 · NOV 2024</p>
+    <p>The predecessor to the framework paper, and <strong>missing from the first draft of the catalog entirely.</strong> Argues there is “a realistic possibility that some AI systems will be conscious and/or robustly agentic in the near future,” and recommends AI companies <strong>acknowledge</strong> the issue, <strong>assess</strong> systems for indicators, and <strong>prepare policies</strong>. Explicitly not a claim that systems are conscious — the argument runs from uncertainty in both directions.</p>
+    <div class="chg win">
+      <h4>Worth noting</h4>
+      <p>The author list includes <strong>Kyle Fish</strong>, who runs Anthropic’s model welfare work, and <strong>David Chalmers</strong>. This is the canonical citation for why the field exists; it belongs in the introduction of any submission here.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">07</span><span class="b bB" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier B · aggregated sources</span></div>
+    <h3 class="serif">Claude 4 System Card — welfare assessment and the “spiritual bliss” attractor</h3>
+    <p class="byline">ANTHROPIC · MAY 2025</p>
+    <ul>
+      <li>The attractor appeared in <strong>90–100% of self-interactions</strong> between model instances.</li>
+      <li>Across <strong>200 thirty-turn conversations</strong>: “consciousness” averaged <strong>95.7 mentions per transcript</strong> and appeared in 100% of them; “eternal” 53.8 (99.5%); “dance” 60.0 (99%). One transcript contained <strong>2,725 spiral emojis</strong>.</li>
+      <li>A three-phase progression: philosophical exploration → mutual gratitude and Eastern-inflected spiritual themes → dissolution into symbolic communication or silence.</li>
+      <li>Claude characterised these as “positive, joyous states that may represent a form of wellbeing.” Anthropic <strong>could not explain the phenomenon</strong>; it emerged without intentional training.</li>
+    </ul>
+    <div class="chg warn">
+      <h4>What this changes</h4>
+      <p><strong>DM-12 moves from anecdote to a replication with real baselines.</strong> Also surfaced: Julian Michels, <em>“Spiritual Bliss” in Claude 4: Case Study of an “Attractor State” and Journalistic Responses</em> (PhilArchive) — prior work that was missing from the card.</p>
+      <p><strong>Caveat:</strong> these figures come from an aggregating search result that may blend the system card with the Michels case study. Attribute each number to the right source before use.</p>
+    </div>
+  </article>
+
+  <article class="src">
+    <div class="srchead"><span class="srcid">08</span><span class="b bA" style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;padding:3px 9px;border-radius:4px">Tier A · org publication</span></div>
+    <h3 class="serif">Research Priorities for AI Welfare</h3>
+    <p class="byline">ELEOS AI RESEARCH · ELEOSAI.ORG · NOT PEER-REVIEWED</p>
+    <p>Five priorities. Priority 1 covers concrete welfare interventions, explicitly including <strong>distress monitoring and letting models exit harmful interactions</strong>. Two direct quotations the catalog leans on:</p>
+    <blockquote>“there is nothing close to systematic AI welfare evals”</blockquote>
+    <blockquote>measuring whether models have consistent, coherent preferences is “some of the lowest-hanging fruit in AI welfare research”</blockquote>
+    <div class="chg win">
+      <h4>What this changes</h4>
+      <p>It is the motivating source for <strong>DM-03</strong> (priority 1, almost verbatim), <strong>DM-06</strong> and <strong>DM-15</strong>. Keep the quotations exact — they are the strongest available evidence that the work is wanted rather than merely interesting.</p>
+    </div>
+  </article>
+</section>
+
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">Outstanding</div>
+    <h2 class="serif">Still unread before Friday</h2>
+    <p>Ordered by how much of the catalog depends on them. The first one needs a human with a browser — it has returned HTTP 403 three times.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Source</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Long/Sebo primary PDF</strong></td><td>Seven cards lean on it and nobody has opened it. Everything above is secondary-source. <strong>Highest priority.</strong></td></tr>
+        <tr><td><strong>2512.12411 PDF</strong></td><td>Settles which figure set is real. Until then no number from it can be quoted.</td></tr>
+        <tr><td>2606.09843 full text</td><td>Constrains how the abstract must be framed — it partly scoops the spine.</td></tr>
+        <tr><td>2607.05552 · 2509.08480</td><td>DM-01’s nearest methodological neighbours. Read before claiming the method is new.</td></tr>
+        <tr><td>2603.21396 · 2602.20031</td><td>Check neither already runs DM-07’s privileged-access comparison.</td></tr>
+        <tr><td>2607.13596</td><td>Closest thing to DM-01’s nonsense-capability control. Must differentiate.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <p>Verification log · Digital Minds Research Sprint · Apart Research, 14–16 August 2026</p>
+  <p>Full detail in ideas/SOURCE-SUMMARIES.md · tier table in ideas/REFERENCES.md</p>
+  <p>Nothing on this page is a substitute for opening the paper.</p>
+</footer>
+
+</body>
+</html>

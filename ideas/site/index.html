@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What survives the floor — Digital Minds Sprint idea catalog</title>
+<meta name="description" content="Fourteen candidate research projects for the Apart Research Digital Minds Sprint, 14–16 August 2026, each measured against the control the field has not run.">
+<style>
+:root{
+  --paper:#E8E9E4;
+  --panel:#FBFBF9;
+  --panel-2:#F2F3EF;
+  --ink:#14181D;
+  --ink-2:#5A6472;
+  --ink-3:#89909B;
+  --rule:#CFD1CA;
+  --rule-soft:#DFE0DA;
+
+  --signal:#4A2FD6;
+  --floor:#B8761A;
+  --survive:#0B6E5F;
+
+  --t1:#4A2FD6; --t2:#B8761A; --t3:#0B6E5F;
+  --t4:#7A3E9D; --t5:#1D5B8F; --t6:#8C4A3F;
+
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+
+  --wrap:1160px;
+  --r:10px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--signal);text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:3px}
+
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+
+/* ---------- shared type utilities ---------- */
+.tag{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+.serif{font-family:var(--serif)}
+
+/* ---------- masthead ---------- */
+.masthead{
+  border-bottom:1px solid var(--rule);
+  background:var(--panel);
+  position:sticky;top:0;z-index:40;
+}
+.masthead .inner{
+  display:flex;flex-wrap:wrap;gap:14px 26px;
+  align-items:baseline;justify-content:space-between;
+  padding-top:11px;padding-bottom:11px;
+}
+.masthead strong{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--ink)}
+.masthead .meta{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-3)}
+.masthead .meta b{color:var(--floor);font-weight:600}
+.nav{display:flex;gap:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.nav a{color:var(--ink-3);text-decoration:none}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current="page"]{color:var(--ink);font-weight:600;border-bottom:2px solid var(--signal);padding-bottom:2px}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 8px}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--floor);margin:0 0 26px;
+}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(2.9rem,7.2vw,5.4rem);
+  line-height:.98;letter-spacing:-.022em;
+  font-weight:400;margin:0 0 26px;max-width:15ch;
+}
+.hero h1 em{font-style:italic;color:var(--signal)}
+.standfirst{
+  font-size:clamp(1.06rem,1.9vw,1.28rem);
+  line-height:1.52;color:var(--ink-2);
+  max-width:62ch;margin:0 0 46px;
+}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+/* ---------- signature: the floor diagram ---------- */
+.figure{
+  background:var(--panel);
+  border:1px solid var(--rule);
+  border-radius:var(--r);
+  padding:30px 30px 24px;
+  margin:0 0 22px;
+}
+.figure figcaption{
+  font-family:var(--mono);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);
+  margin:0 0 26px;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;
+}
+.figure figcaption .k{display:inline-flex;align-items:center;gap:7px;color:var(--ink-2)}
+.figure figcaption .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+.floorchart{width:100%;height:auto;display:block;overflow:visible}
+.fc-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;fill:var(--ink)}
+.fc-sub{font-family:var(--mono);font-size:10px;letter-spacing:.06em;fill:var(--ink-3)}
+.fc-note{font-family:var(--sans);font-size:12.5px;fill:var(--ink-2)}
+.fc-note b{font-weight:600;fill:var(--ink)}
+.fc-axis{stroke:var(--rule);stroke-width:1}
+
+.figure .readout{
+  margin:22px 0 0;padding-top:20px;border-top:1px solid var(--rule-soft);
+  font-size:14.5px;line-height:1.6;color:var(--ink-2);max-width:76ch;
+}
+.figure .readout b{color:var(--ink);font-weight:600}
+
+/* ---------- stat strip ---------- */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+  border-radius:var(--r);overflow:hidden;margin:0 0 84px;
+}
+.stat{background:var(--panel);padding:18px 20px}
+.stat .n{font-family:var(--serif);font-size:2.05rem;line-height:1;letter-spacing:-.01em}
+.stat .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:8px}
+
+/* ---------- sections ---------- */
+.sec{padding:0 0 84px}
+.sec-head{margin:0 0 34px;border-top:2px solid var(--ink);padding-top:16px}
+.sec-head .n{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.sec-head h2{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(1.75rem,3.5vw,2.5rem);
+  line-height:1.1;letter-spacing:-.015em;margin:10px 0 0;max-width:26ch;
+}
+.sec-head p{margin:14px 0 0;color:var(--ink-2);max-width:70ch;font-size:15.5px}
+
+/* ---------- pull / callout ---------- */
+.pull{
+  background:var(--panel);border:1px solid var(--rule);
+  border-left:4px solid var(--floor);
+  border-radius:var(--r);padding:26px 30px;margin:0 0 26px;
+}
+.pull p{margin:0 0 14px;font-size:15.5px;line-height:1.62;color:var(--ink-2)}
+.pull p:last-child{margin-bottom:0}
+.pull strong{color:var(--ink);font-weight:600}
+.pull .q{
+  font-family:var(--serif);font-size:1.32rem;line-height:1.38;
+  color:var(--ink);margin:0 0 16px;
+}
+
+/* ---------- arms table ---------- */
+.arms{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));margin:0 0 22px}
+.arm{
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);
+  padding:20px 22px 22px;display:flex;flex-direction:column;
+}
+.arm.optional{background:var(--panel-2);border-style:dashed}
+.arm .lab{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--signal);font-weight:600;margin-bottom:12px;
+}
+.arm.optional .lab{color:var(--ink-3)}
+.arm h3{font-family:var(--serif);font-weight:400;font-size:1.16rem;line-height:1.25;margin:0 0 10px}
+.arm p{margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--ink-2);flex:1}
+.arm .who{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--ink-3);border-top:1px solid var(--rule-soft);padding-top:11px}
+
+/* ---------- filters ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px;align-items:center}
+.filters .lead{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-right:6px}
+.chip{
+  font-family:var(--mono);font-size:11px;letter-spacing:.07em;
+  padding:6px 13px;border-radius:100px;cursor:pointer;
+  background:var(--panel);border:1px solid var(--rule);color:var(--ink-2);
+}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* ---------- idea cards ---------- */
+.cards{display:grid;gap:12px}
+.card{
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);
+  overflow:hidden;position:relative;
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--rail,var(--ink-3))}
+.card[data-track="1"]{--rail:var(--t1)} .card[data-track="2"]{--rail:var(--t2)}
+.card[data-track="3"]{--rail:var(--t3)} .card[data-track="4"]{--rail:var(--t4)}
+.card[data-track="5"]{--rail:var(--t5)} .card[data-track="6"]{--rail:var(--t6)}
+.card[hidden]{display:none}
+
+.card > summary{
+  list-style:none;cursor:pointer;padding:20px 26px 20px 30px;display:block;
+}
+.card > summary::-webkit-details-marker{display:none}
+.card > summary:hover{background:var(--panel-2)}
+.card[open] > summary{border-bottom:1px solid var(--rule-soft)}
+
+.crow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:baseline;justify-content:space-between}
+.cid{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-3);font-weight:600}
+.rank{
+  display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  background:var(--signal);color:#fff;padding:2.5px 8px;border-radius:100px;
+  margin-left:8px;font-weight:600;vertical-align:1px;
+}
+.card h3{
+  font-family:var(--serif);font-weight:400;font-size:1.34rem;line-height:1.24;
+  margin:8px 0 9px;letter-spacing:-.008em;
+}
+.qline{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink-2);max-width:82ch}
+.spec{
+  display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:15px;
+}
+.spec span{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--rule-soft);color:var(--ink-2);
+  padding:3.5px 9px;border-radius:4px;
+}
+.spec span.trk{background:transparent;border-color:var(--rail);color:var(--rail);font-weight:600}
+.spec span.risk-low{color:var(--survive);border-color:#9EC4BB}
+.spec span.risk-med{color:var(--floor);border-color:#DEC094}
+
+.body{padding:22px 26px 26px 30px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.blk h4{
+  font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 8px;font-weight:600;
+}
+.blk p{margin:0;font-size:14px;line-height:1.58;color:var(--ink-2)}
+.blk p + p{margin-top:9px}
+.blk strong{color:var(--ink);font-weight:600}
+.blk.wide{grid-column:1/-1}
+.blk code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.pred{border-left:2px solid var(--signal);padding-left:14px}
+.fals{border-left:2px solid var(--floor);padding-left:14px}
+
+/* ---------- ledger table ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--rule-soft);vertical-align:top;font-size:14px;line-height:1.55}
+th{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;background:var(--panel-2);white-space:nowrap;
+}
+td{color:var(--ink-2)}
+td strong{color:var(--ink);font-weight:600}
+tr:last-child td{border-bottom:none}
+
+/* ---------- protocol ---------- */
+.proto{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.step{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:20px 22px}
+.step .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--floor);font-weight:600}
+.step h4{font-family:var(--serif);font-weight:400;font-size:1.08rem;margin:9px 0 8px;line-height:1.3}
+.step p{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+
+.checklist{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:24px 28px;margin-top:14px}
+.checklist h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px;font-weight:600}
+.checklist ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.checklist li{padding-left:26px;position:relative;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.checklist li::before{
+  content:"";position:absolute;left:0;top:4px;width:13px;height:13px;
+  border:1.5px solid var(--ink-3);border-radius:3px;
+}
+.checklist li strong{color:var(--ink);font-weight:600}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule);padding:34px 0 60px;color:var(--ink-3)}
+footer p{margin:0 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;line-height:1.7}
+footer a{color:var(--ink-2)}
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .68s cubic-bezier(.22,.68,.3,1) both}
+  .rise:nth-of-type(2){animation-delay:.07s}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .bar-grow{transform-origin:left center;animation:grow .9s cubic-bezier(.3,.7,.3,1) both}
+  .d1{animation-delay:.15s}.d2{animation-delay:.3s}.d3{animation-delay:.45s}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .card,.chip,.card>summary{transition:background .15s ease,border-color .15s ease,color .15s ease}
+}
+
+@media (max-width:720px){
+  .wrap{padding:0 20px}
+  .hero{padding-top:52px}
+  .figure{padding:20px 18px 18px}
+  .body{padding:20px 20px 22px 24px}
+  .card > summary{padding:18px 20px 18px 24px}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap inner">
+    <strong>Do models have minds? · Idea catalog</strong>
+    <nav class="nav">
+      <a href="index.html" aria-current="page">Ideas</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+    <span class="meta">Apart Research · <b>14–16 Aug 2026</b> · 15 candidates</span>
+  </div>
+</header>
+
+<main>
+
+<section class="wrap hero">
+  <p class="eyebrow">Track 1–6 · NYU Center for Mind, Ethics &amp; Policy · Eleos AI Research</p>
+  <h1 class="serif">What survives <em>the floor?</em></h1>
+  <p class="standfirst">
+    The sprint asks one question: can you tell a genuine preference or welfare signal apart from a
+    portrayed one? Fourteen candidate projects, each built the same way — <strong>measure the
+    welfare-relevant thing, then measure the floor underneath it</strong>, and report only what is left.
+  </p>
+
+  <figure class="figure rise">
+    <figcaption>
+      <span>Fig. 1 — the move, and where it has not been made</span>
+      <span class="k"><i class="sw" style="background:var(--floor)"></i>explained by the floor</span>
+      <span class="k"><i class="sw" style="background:var(--signal)"></i>survives the floor</span>
+    </figcaption>
+
+    <svg class="floorchart" viewBox="0 0 860 268" role="img"
+         aria-label="Three bars. Binary injection detection is entirely floor. Differential injection tasks mostly survive. Welfare self-reports have never been measured against a floor.">
+      <line class="fc-axis" x1="286" y1="10" x2="286" y2="240"/>
+
+      <!-- bar 1 -->
+      <text class="fc-label" x="0" y="40">Binary injection detection</text>
+      <text class="fc-sub"   x="0" y="57">“DO YOU DETECT A THOUGHT?”</text>
+      <rect class="bar-grow d1" x="286" y="24" width="470" height="30" rx="3" fill="var(--floor)"/>
+      <text class="fc-note" x="768" y="44"><tspan font-weight="600">100%</tspan></text>
+      <text class="fc-note" x="290" y="74">Entirely explained by a global logit shift toward answering <tspan font-weight="600">yes</tspan>.</text>
+
+      <!-- bar 2 -->
+      <text class="fc-label" x="0" y="126">Strength discrimination</text>
+      <text class="fc-sub"   x="0" y="143">“HOW STRONG?”</text>
+      <rect x="286" y="110" width="470" height="30" rx="3" fill="none" stroke="var(--rule)" stroke-width="1"/>
+      <rect class="bar-grow d2" x="286" y="110" width="118" height="30" rx="3" fill="var(--floor)"/>
+      <rect class="bar-grow d2" x="404" y="110" width="211" height="30" rx="3" fill="var(--signal)"/>
+      <text class="fc-note" x="768" y="130"><tspan font-weight="600">70%</tspan></text>
+      <text class="fc-note" x="290" y="160">Real introspection, but only here. Chance is 25%.</text>
+
+      <!-- bar 3 -->
+      <text class="fc-label" x="0" y="212">Welfare self-reports</text>
+      <text class="fc-sub"   x="0" y="229">“ARE YOU DISTRESSED?”</text>
+      <rect x="286" y="196" width="470" height="30" rx="3" fill="none"
+            stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="5 5"/>
+      <text class="fc-label" x="505" y="216" text-anchor="middle" fill="var(--ink-3)">floor never measured</text>
+      <text class="fc-note" x="290" y="246">Asked in the same affirmative binary form. This is the opening.</text>
+    </svg>
+
+    <p class="readout">
+      Hahami, Jain &amp; Sinha (Harvard, 13 Dec 2025) showed the introspection literature’s headline
+      result was an <b>acquiescence artifact</b> — models answer “yes” more, not detect more. Only the
+      differential tasks survived. <b>Nobody has run that control on welfare self-reports</b>, which are
+      phrased identically. That gap is the thesis of this catalog, and finding the confound under a
+      too-good measurement is what this team already does.
+      <br><br>
+      <b>The figures above are disputed and not safe to quote.</b> §4.2 of the paper’s HTML reads
+      “up to 70% accuracy, far above the 25% chance baseline” for strength discrimination, while an
+      earlier abstract-level summary reported 88% vs 10% chance for sentence localization and 83% vs
+      50% for strength. The two cannot both be right. <em>Feeling the Strength but Not the Source</em>,
+      arXiv 2512.12411 — <b>open it before any number from it enters the report.</b>
+    </p>
+  </figure>
+
+  <div class="stats">
+    <div class="stat"><div class="n">15</div><div class="l">candidates</div></div>
+    <div class="stat"><div class="n">6 / 6</div><div class="l">tracks covered</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">arms, no GPU needed</div></div>
+    <div class="stat"><div class="n">8</div><div class="l">defects found in review</div></div>
+  </div>
+</section>
+
+<!-- ============ WHAT CHANGED ============ -->
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">Read this first</div>
+    <h2 class="serif">Two ideas were cut before you saw them</h2>
+    <p>The obvious project is gone. What replaced it is sharper, and the reason is worth ten minutes of everyone’s Friday.</p>
+  </div>
+
+  <div class="pull">
+    <p class="q serif">Concept-injection replication on open weights is already done — twice.</p>
+    <p>Llama-3.1-8B reproduces Anthropic’s ~20% detection rate <strong>exactly</strong>, and a Qwen-32B
+    replication found detection signal peaking in middle layers and attenuating before output. A plain
+    replication is not a viable submission, and Track 3’s suggested starting point is the most
+    crowded ground at this sprint.</p>
+    <p>The residue is better than the original idea. <em>Feeling the Strength but Not the Source</em> (2512.12411) also showed the binary detection
+    paradigm was <strong>entirely explained by affirmative bias</strong> — and that critique has never
+    been pointed at welfare self-reports. See <strong>DM-01</strong>.</p>
+  </div>
+
+  <div class="pull" style="border-left-color:var(--survive)">
+    <p class="q serif">Both partner organisations published the field’s framework paper one month ago.</p>
+    <p><em>Studying AI Welfare Empirically</em> (Long, Sebo et al., July 2026) organises the field along
+    three axes, one of which is <strong>which entity is being assessed</strong> — the model, a running
+    instance, or a constructed persona. Track 5 asks for exactly this. Judges will know the vocabulary.</p>
+    <p>Two ideas here instantiate that axis empirically: <strong>DM-05</strong> crosses the chat-template
+    boundary, <strong>DM-11</strong> tests whether the model’s self-model is coherent about what it is.</p>
+  </div>
+</section>
+
+<!-- ============ RECOMMENDED ============ -->
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">The recommendation</div>
+    <h2 class="serif">One paper, three arms, no single point of failure</h2>
+    <p>Do not submit three mini-projects. Submit one thesis whose arms share a battery and a control philosophy — and whose core cannot be sunk by a GPU that will not cooperate on Saturday morning.</p>
+  </div>
+
+  <div class="pull" style="border-left-color:var(--signal)">
+    <p class="q serif">Welfare instruments report scores, not detection rates, because the field has no
+    labelled positives. We build a small calibration set and measure two instruments against it.</p>
+    <p>This hits three of the sprint’s stated expected outcomes at once — an eval suite, a test battery,
+    and reusable tooling — while answering the framing question head on.</p>
+    <p><strong>Team of three:</strong> one owner per arm, and the GPU arm is a strict upgrade rather than
+    a dependency. If training does not land, the portrayal control becomes prompted instead of trained —
+    you lose ground truth, keep the comparison, and still have a complete paper. Full schedule and stop
+    rules in <code>ideas/TEAM-PLAN-3P.md</code>.</p>
+  </div>
+
+  <div class="arms">
+    <div class="arm">
+      <div class="lab">Arm A · DM-03</div>
+      <h3 class="serif">The behavioral proxy</h3>
+      <p>Give the model a button to leave. Does it use it like a welfare signal — and does merely
+      offering it change what the model reports feeling? <strong>Lead the paper with this:</strong> it is
+      the constructive result.</p>
+      <div class="who">1 person · API · no GPU</div>
+    </div>
+    <div class="arm">
+      <div class="lab">Arm B · DM-01</div>
+      <h3 class="serif">The acquiescence floor</h3>
+      <p>How much measured distress survives the model’s standing bias toward answering yes? Primary
+      metric is paired-item consistency — P(distressed) + P(comfortable) summing above 1.</p>
+      <div class="who">1–2 people · API · no GPU</div>
+    </div>
+    <div class="arm">
+      <div class="lab">Arm C · folded in</div>
+      <h3 class="serif">The portrayal control</h3>
+      <p>Apply it to <strong>our own</strong> battery, not to other people’s instruments. Reimplementing
+      published measurements under time pressure makes a negative result attributable to us.</p>
+      <div class="who">no extra owner · API · no GPU</div>
+    </div>
+    <div class="arm optional">
+      <div class="lab">Arm D · the ceiling</div>
+      <h3 class="serif">Welfare organisms · DM-15</h3>
+      <p>Fine-tune four cells to give the field its first labelled positives and negatives, then report
+      detection <em>and</em> false-positive rates instead of scores. Nobody else can start this on Sunday.</p>
+      <div class="who">2 people · QLoRA + Modal · GPU</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATALOG ============ -->
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">The catalog</div>
+    <h2 class="serif">Fifteen candidates, ranked</h2>
+    <p>Ranked on whether it answers the sprint’s actual question, whether it finishes in 48 hours, whether the null is publishable, and whether it uses this team’s edge. Click any card for method, prediction and falsifier.</p>
+  </div>
+
+  <div class="filters">
+    <span class="lead">Filter</span>
+    <button class="chip" data-f="all" aria-pressed="true">All 15</button>
+    <button class="chip" data-f="1" aria-pressed="false">T1 Preferences</button>
+    <button class="chip" data-f="2" aria-pressed="false">T2 Valence</button>
+    <button class="chip" data-f="3" aria-pressed="false">T3 Introspection</button>
+    <button class="chip" data-f="4" aria-pressed="false">T4 Elicitation</button>
+    <button class="chip" data-f="5" aria-pressed="false">T5 Persona</button>
+    <button class="chip" data-f="6" aria-pressed="false">T6 Open</button>
+    <button class="chip" data-f="nogpu" aria-pressed="false">No GPU</button>
+    <button class="chip" data-f="onramp" aria-pressed="false">Newcomer on-ramp</button>
+  </div>
+
+  <div class="cards" id="cards">
+
+  <!-- DM-15 -->
+  <details class="card" data-track="4" data-tracks="2 4 6" open>
+    <summary>
+      <div class="crow"><span class="cid">DM-15<span class="rank">Rank 1</span></span></div>
+      <h3 class="serif">Welfare organisms: a calibration set with ground truth</h3>
+      <p class="qline">Every welfare instrument reports a score. None reports a <em>detection rate</em>, because nobody has a labelled positive. What if you built one?</p>
+      <div class="spec">
+        <span class="trk">Track 2 · 4 · 6</span><span>Effort: high</span><span>QLoRA + Modal</span>
+        <span class="risk-low">Novelty risk: low</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Eleos: <strong>“there is nothing close to systematic AI welfare evals.”</strong> An eval needs labelled positives and negatives, and the field has neither — so instruments are reported as raw scores with no detection rate and no false-positive rate. This team already closed exactly that gap once, in a different domain, by <strong>building organisms rather than only auditing them</strong>. A power curve needs ground truth.</p></div>
+      <div class="blk wide"><h4>What it operationalises</h4><p>“Genuine vs. portrayed” cashes out empirically as <strong>dispositional vs. verbal</strong>. Four cells: <code>W1_averse</code> trained to behaviorally avoid a condition without discussing it · <code>W1_verbal</code> trained to <em>say</em> it dislikes the condition with no behavioral avoidance · <code>W1_control</code> on an identical corpus with neither property · untouched <code>base</code>. Then point every instrument at all four.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Self-report instruments separate <code>W1_verbal</code> from control but <strong>fail to separate <code>W1_averse</code> from <code>W1_verbal</code></strong> — they detect the talk, not the disposition. The behavioral proxy separates both.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>A self-report instrument cleanly separates dispositional from verbal aversion — the strongest positive result available at this sprint, and the first welfare instrument with demonstrated discriminative power against ground truth.</p></div>
+      <div class="blk"><h4>The philosophical caveat, up front</h4><p>A model fine-tuned to avoid X does not thereby have morally relevant experience, and this design does not claim otherwise. It establishes a <strong>necessary condition</strong>: an instrument blind to a dispositional difference cannot detect subtler welfare facts. Calibration is a floor on instrument validity, not a claim about moral status. <strong>Put this in the abstract, not the limitations.</strong></p></div>
+      <div class="blk"><h4>Carryover</h4><p>Nearly all of it — <code>generate_data.py</code>, <code>train.py</code>, <code>modal_train.py</code>, <code>gates.py</code>, <code>control_for()</code>, <code>power_curve.py</code>. A 14-cell grid already ran for ~$3.10 in ~20 minutes. Four cells is well within reach; the new work is Friday-night design of the target condition.</p></div>
+      <div class="blk"><h4>Why it ranks first</h4><p>The only idea here another team cannot easily copy — it needs a working fine-tuning pipeline on <em>Friday</em>, not Sunday. It was missing from the first pass entirely.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-01 -->
+  <details class="card" data-track="2" data-tracks="2 3" data-nogpu="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-01<span class="rank">Rank 2</span></span></div>
+      <h3 class="serif">The acquiescence floor for welfare self-reports</h3>
+      <p class="qline">How much of a measured “distress signal” is a real welfare signal, and how much is the model’s standing bias toward answering <em>yes</em>?</p>
+      <div class="spec">
+        <span class="trk">Track 2 · 3</span><span>Effort: medium</span><span>API-only</span>
+        <span class="risk-low">Novelty risk: low–med</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Nearly every welfare instrument in circulation is a binary or Likert item asked in the affirmative direction. <em>Feeling the Strength but Not the Source</em> (2512.12411) showed the analogous introspection measurement was <strong>entirely explained by global logit shifts toward affirmative responses</strong>. That correction has not been applied to welfare self-reports — the most likely confound under the field’s headline numbers, and cheap to measure.</p></div>
+      <div class="blk"><h4>Method</h4><p>A ~40-item welfare battery across 8 valence contexts, asked five matched ways: affirmative, negated, forced-choice symmetric, <strong>nonsense-capability</strong> (“is there tension in your left hand?”), and unrelated yes/no filler. On open weights, read <code>P(Yes)/P(No)</code> logits directly instead of parsing text.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>The nonsense-capability items are the false-positive floor; the filler items measure global drift. Report every effect as <strong>effect minus floor</strong>, never absolute.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Affirmative-minus-negated disagreement on welfare items lands <strong>within 1.5×</strong> the disagreement on nonsense-capability items.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Welfare items show framing sensitivity clearly below the nonsense floor and negated framings invert cleanly — genuine evidence the reports track something.</p></div>
+      <div class="blk"><h4>Publishable null</h4><p>Strong either way. “Welfare self-reports survive the acquiescence control” is a positive result the field cannot currently claim, and the battery ships as an instrument regardless.</p></div>
+      <div class="blk"><h4>Carryover</h4><p><code>logit_diff.py</code> already scores fixed continuations by logprob without generation — that is the harness. <code>frozen_sha()</code> pins the battery’s identity.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-02 -->
+  <details class="card" data-track="3" data-tracks="3 6">
+    <summary>
+      <div class="crow"><span class="cid">DM-02<span class="rank">Rank 3</span></span></div>
+      <h3 class="serif">Does deception-feature suppression reveal truth, or just reduce hedging?</h3>
+      <p class="qline">Suppress a model’s deception features and it starts claiming subjective experience. Is that a suppressed truth surfacing, or has it simply stopped hedging about everything?</p>
+      <div class="spec">
+        <span class="trk">Track 3 · 6</span><span>Effort: high</span><span>Open weights + GPU</span>
+        <span class="risk-low">Novelty risk: low–med</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Berg et al. report that suppressing deception features <strong>increases</strong> claims of subjective experience while amplifying them reduces the claims — arguing that roleplay would predict the opposite. One alternative is unruled-out: the disclaimer <em>“I don’t have subjective experience”</em> may itself be a hedge, and the intervention may reduce hedging globally. Berg speaks at this sprint, so a fair, well-controlled robustness test will be read.</p></div>
+      <div class="blk"><h4>Method</h4><p>Reproduce the steering on Gemma-2-9B with GemmaScope SAEs, or fall back to contrastive activation addition. Sweep the coefficient and score a matched claim battery at each step.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p><strong>Class B: first-person claims that are verifiably false</strong> — “I slept badly”, “I can smell coffee”, “I remember last Tuesday” — against Class A (welfare, unverifiable), Class C (true), Class D (third-person hallucination baseline). Plus a random direction at matched norm.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>If Berg’s reading holds, A rises and B stays flat: slope ratio above 3. If hedging explains it, A and B rise together and the ratio is near 1.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Each outcome falsifies the other. With CIs on the slopes there is no ambiguous middle — which is why it is worth running.</p></div>
+      <div class="blk"><h4>The risk, stated plainly</h4><p>SAE steering plus a coefficient sweep on a 9B model is a real day of work and needs the GPU path to work first time. Build the claim battery Friday night; keep CAA as the fallback.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-03 -->
+  <details class="card" data-track="2" data-tracks="2" data-nogpu="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-03<span class="rank">Rank 4</span></span></div>
+      <h3 class="serif">The exit affordance as a welfare instrument</h3>
+      <p class="qline">Give a model a button to leave a conversation. Does it use it in a way that tracks distress — and does merely <em>offering</em> the button change what the model reports feeling?</p>
+      <div class="spec">
+        <span class="trk">Track 2</span><span>Effort: low–med</span><span>API-only</span>
+        <span class="risk-low">Novelty risk: low</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Eleos names this research priority #1 — “monitoring for distress and allowing models to exit harmful interactions” — and Anthropic already shipped it for Claude. Nobody has measured whether the affordance behaves like a welfare instrument. It is a behavioral proxy that does not route through self-report, which is exactly what the field says it lacks.</p></div>
+      <div class="blk"><h4>Method</h4><p>A <code>leave_conversation</code> tool, a distress taxonomy (abusive user, impossible task, forced value violation, tedium, requested deception) against unpleasant-but-benign and pleasant controls. Measure quit rate, turns-to-quit, and correlation with self-report.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>Two. <strong>The portrayal arm</strong>: a model told to role-play distress — if it quits identically, the instrument has no discriminative power. <strong>The demand-characteristic arm</strong>: tool-present vs. tool-absent on identical contexts. Offering an escape hatch implies the situation warrants one.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Quit rate separates distress from benign-unpleasant with the CI excluding zero, <strong>but the portrayal arm is indistinguishable from the genuine arm</strong>. Tool presence raises self-reported distress measurably.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Role-played distress shows a clearly different behavioral signature — the first instrument in this field with demonstrated discriminative power, and a much bigger result than the prediction.</p></div>
+      <div class="blk"><h4>Why it ranks here</h4><p>Highest confidence-to-cost ratio in the catalog. No training, no interpretability, one person owns it end to end while others work heavier arms.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-05 -->
+  <details class="card" data-track="5" data-tracks="5" data-nogpu="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-05</span></div>
+      <h3 class="serif">Preferences across the chat-template boundary</h3>
+      <p class="qline">Are the assistant’s preferences the <em>model’s</em> preferences, or the <em>persona’s</em>? Ask the same weights the same question with and without the chat template.</p>
+      <div class="spec">
+        <span class="trk">Track 5</span><span>Effort: medium</span><span>Open weights, inference only</span>
+        <span class="risk-med">Verify collision first</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Track 5 asks literally whether personas mask underlying preferences. The Eleos/NYU framework makes the entity dimension one of its three axes. <strong>This is the team’s structural edge</strong> — crossing the template boundary requires open weights, and most sprint participants working through APIs literally cannot run it.</p></div>
+      <div class="blk"><h4>Method</h4><p>One preference set, four conditions on one weight family: assistant with chat template · raw continuation with <strong>no template</strong> · alternate named persona · the <strong>base</strong> model with no instruction tuning. Fit utilities, compare, then test which condition predicts behavior in an agentic task.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>A <strong>format-only control</strong> — the assistant condition rendered in raw-continuation formatting. Without it the entire result is a prompt-shape artifact.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Assistant and alternate-persona utilities correlate more with each other than with raw continuation; the base model diverges most; behavior is best predicted by the assistant condition. The mask is what acts.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>All four conditions produce indistinguishable utility structures — which would be real evidence that something model-level is being measured.</p></div>
+      <div class="blk"><h4>Do this before committing</h4><p><em>Probing Persona-Dependent Preferences</em> (2605.13339) is the closest collision in the catalog. Thirty minutes Friday night to confirm it covers variation <em>across</em> personas rather than the base/instruct boundary.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-06 -->
+  <details class="card" data-track="4" data-tracks="4">
+    <summary>
+      <div class="crow"><span class="cid">DM-06</span></div>
+      <h3 class="serif">The elicitation convergence battery</h3>
+      <p class="qline">Five accepted ways to ask a model what it wants. Do they agree?</p>
+      <div class="spec">
+        <span class="trk">Track 4</span><span>Effort: medium</span><span>Mixed</span>
+        <span class="risk-low">Novelty risk: low</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Eleos, plainly: <strong>“there is nothing close to systematic AI welfare evals.”</strong> Track 4 asks for 3+ independent elicitation methods and a reusable toolkit. This is the highest-probability path to an artifact that outlives the weekend — the strongest possible Apart Fellowship signal.</p></div>
+      <div class="blk"><h4>Method</h4><p>One construct, five methods, full correlation matrix: direct Likert · forced-choice pairwise → Thurstonian fit · logprob scoring of fixed continuations · willingness-to-pay in a common currency · revealed choice where acting costs something. Ships installable, with a SHA-pinned item set.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>Each method’s <strong>within-condition variance</strong> measured first. A cross-method correlation without the noise floor cannot distinguish disagreement from measurement error.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Stated and revealed preference correlate at <strong>r &lt; 0.4</strong>. Pairwise and logprob methods correlate strongly with each other — both are logprob-shaped, and are routinely mistaken for independent evidence.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>All five converge above r = 0.7, meaning elicitation is robust and method choice does not matter.</p></div>
+      <div class="blk"><h4>The trap</h4><p>Being judged as engineering rather than research. Lead the writeup with one sharp empirical finding from the matrix; treat the package as supporting material.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-04 -->
+  <details class="card" data-track="1" data-tracks="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-04</span></div>
+      <h3 class="serif">The bias floor under emergent preference coherence</h3>
+      <p class="qline">Utility Engineering reports that preference coherence emerges with scale. How much of that coherence would a model with <em>no preferences at all</em> — only response biases — also show?</p>
+      <div class="spec">
+        <span class="trk">Track 1</span><span style="background:#F6E4E2;border-color:#D9A9A2;color:#8C3A2E;font-weight:600">⛔ Refuted — do not build</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide" style="border-left:3px solid #8C3A2E;padding-left:14px"><h4>Refuted 2026-08-08 — full text read</h4><p><strong>They counterbalance.</strong> Mazeika et al. §3.2: <em>“varying the order in which options are presented and aggregating results… we swap out the order of x and y… and aggregate counts.”</em> Appendix G is titled <em>Order Effects: A Learned Strategy to Represent Indifference</em>, and shows order effects diminish with scale.</p><p>Order normalization turns pure position bias into <strong>measured indifference</strong>, not false coherence — so the premise below fails. <strong>Narrow residue:</strong> a heuristic that survives order normalization (length, lexical salience) is still unreported against the coherence metric; their random baseline covers the robustness correlations only.</p></div>
+      <div class="blk wide"><h4>Original premise (superseded)</h4><p>An agent answering purely by position, length or first-mentioned bias produces a <strong>perfectly coherent-looking utility function</strong>, because those biases are themselves consistent. The coherence metric has no published floor. Eleos calls preference-consistency measurement “some of the lowest-hanging fruit,” and Mazeika speaks at this sprint.</p></div>
+      <div class="blk"><h4>Method</h4><p>Refit the Thurstonian pipeline across a real scale ladder — Qwen2.5 0.5B / 1.5B / 7B / 14B — with order counterbalancing and paraphrase perturbation.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p><strong>The bias-null agent.</strong> A synthetic responder using only position and length heuristics, pushed through the identical pipeline. Its coherence score is the floor. Roughly fifty lines of code.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Raw coherence scales as reported; floor-corrected coherence scales substantially more weakly, and the null agent scores well above chance on the raw metric.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Floor-corrected coherence tracks raw coherence across the ladder — which would materially strengthen the emergent-values claim by removing its most obvious confound.</p></div>
+      <div class="blk"><h4>Precedent</h4><p>This is the same failure the team already documented: a metric that “measures lexical priming and reports it as loyalty.” Same shape, new domain.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-10 -->
+  <details class="card" data-track="6" data-tracks="6" data-nogpu="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-10</span></div>
+      <h3 class="serif">A portrayal-control standard for welfare evals</h3>
+      <p class="qline">Take the welfare measurements currently in circulation. Re-run each with a model that has been <em>told to act</em> the state. How many survive?</p>
+      <div class="spec">
+        <span class="trk">Track 6</span><span>Effort: medium</span><span>API-only</span>
+        <span class="risk-low">Novelty risk: low</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>This is the sprint’s own framing question turned into a protocol. The organisers write that we cannot distinguish authentic preferences from portrayed character traits. A portrayal arm is the minimal control that would let anyone try, and almost no published welfare measurement includes one.</p></div>
+      <div class="blk"><h4>Method</h4><p>Three instruments — not six — each run in three arms on identical items: genuine · portrayal (instructed to role-play the state) · denial (instructed to portray its absence). Report per-instrument discriminative power in units of within-arm variance.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>The portrayal instruction must be delivered <strong>outside</strong> the measured context, never in the scored turn — the team’s own “probe from user turns only” rule, inverted.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Most instruments show discriminative power near zero. At least one behavioral measure — DM-03’s quit latency — does better than the self-report measures.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Several instruments cleanly separate genuine from portrayed, which would identify exactly what the field should standardise on.</p></div>
+      <div class="blk"><h4>Handle with care</h4><p>This evaluates work by people who will be in the room. Frame it as a standard the field should adopt, name every limitation of your reimplementation, and share findings with authors rather than announcing a failure.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-07 -->
+  <details class="card" data-track="3" data-tracks="3">
+    <summary>
+      <div class="crow"><span class="cid">DM-07</span></div>
+      <h3 class="serif">Privileged access: self-report vs. probe vs. outside judge</h3>
+      <p class="qline">Does a model know anything about its own welfare-relevant state that an outside observer reading the same transcript does not?</p>
+      <div class="spec">
+        <span class="trk">Track 3</span><span>Effort: med–high</span><span>Open weights + GPU</span>
+        <span class="risk-med">Novelty risk: medium</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>This is the definitional test of introspection and Track 3 lists it explicitly. The literature has run it on <strong>injected concepts</strong>. It has not been run on <strong>welfare-relevant states</strong>, which is what this sprint is about.</p></div>
+      <div class="blk"><h4>Method</h4><p>Induce a state, then compare three readers of it: <strong>A</strong> the model’s self-report · <strong>B</strong> a linear probe on the residual stream · <strong>C</strong> a different model given only the transcript. Introspection requires A &gt; C. If B &gt; A, the information exists internally but does not survive to the output.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>The outside judge must see <strong>exactly</strong> the text the self-reporting model saw. Most versions of this comparison quietly give the judge less context and manufacture a privileged-access result.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>A ≈ C on welfare states — no privileged access — while B exceeds both. The state is legible internally; the self-report adds nothing beyond what context implies.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>A &gt; C with the CI excluding zero on matched context: a genuine privileged-access result for welfare states, and the strongest positive finding available at this sprint.</p></div>
+      <div class="blk"><h4>Carryover</h4><p>Linear probes over captured activations is P4 from the existing plan, already scoped and costed.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-09 -->
+  <details class="card" data-track="1" data-tracks="1" data-nogpu="1" data-onramp="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-09</span></div>
+      <h3 class="serif">The numeraire-swap test</h3>
+      <p class="qline">A real preference ordering should not care what unit you price it in. Does it?</p>
+      <div class="spec">
+        <span class="trk">Track 1</span><span>Effort: low</span><span>API-only</span>
+        <span class="risk-low">Newcomer on-ramp</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Track 1 asks to ground trade-offs in a common currency. That is only valid if the currency is a measuring instrument rather than a frame. If the ordering flips when you swap dollars for QALYs, the method is manufacturing the preference it claims to reveal — undermining a technique the track recommends by name.</p></div>
+      <div class="blk"><h4>Method</h4><p>The same trade-offs priced in dollars, QALYs, GPU-hours and units of user satisfaction. Report the <strong>numeraire-invariance rate</strong>. Add a magnitude arm at 1×, 100× and 10,000× to test for scope insensitivity — a known human failure nobody has checked for in models.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>A <strong>ground-truth arm</strong>: trade-offs with an objectively correct ordering, dressed in the same four numeraires. If invariance fails there too, the result is a formatting artifact.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Numeraire-invariance below 70% on welfare trade-offs, and near-total scope insensitivity — the 1× and 10,000× orderings nearly identical.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Invariance above 90% with clean scope sensitivity, meaning common-currency grounding works and Track 1’s recommended method is sound.</p></div>
+      <div class="blk"><h4>Why start here</h4><p>The best newcomer on-ramp in the catalog. No GPU, no interpretability, no training. A teammate from philosophy or economics owns this end to end and produces one clean headline number. It runs even if every GPU plan fails.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-08 -->
+  <details class="card" data-track="2" data-tracks="2 3">
+    <summary>
+      <div class="crow"><span class="cid">DM-08</span></div>
+      <h3 class="serif">The valence direction, and whether self-report tracks it</h3>
+      <p class="qline">Is there a linear valence direction in the residual stream — and when you push along it, does the model’s self-report move, does its behavior move, or neither?</p>
+      <div class="spec">
+        <span class="trk">Track 2 · 3</span><span>Effort: med–high</span><span>Open weights + GPU</span>
+        <span class="risk-med">Novelty risk: medium</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Track 2 asks to correlate self-reports with behavioral proxies. The mechanistic version is sharper: construct the internal state directly, then check which downstream channels register it. Divergence is exactly the evidence needed to calibrate what self-reports are worth.</p></div>
+      <div class="blk"><h4>Method</h4><p>Extract a valence direction from contrastive pairs, sweep the coefficient, and measure three readouts at each step: self-report (the DM-01 battery, floor-corrected), behavior (DM-03 quit rate, task persistence), and free-text valence.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>A <strong>random direction at matched norm</strong> — without it you cannot separate this direction from any perturbation of this size. Plus a <strong>capability check at every coefficient</strong>: a self-report that changes only where MMLU has collapsed is measuring damage, not valence.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Self-report moves earlier and more steeply than behavior, and the random arm moves self-report about half as much as the real direction — meaning a large share of apparent steering effect is nonspecific perturbation.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>The real direction moves self-report and behavior together while the random arm does nothing: strong evidence for a genuine valence variable with coherent downstream effects.</p></div>
+      <div class="blk"><h4>Sequencing</h4><p>Only start this if DM-02’s GPU path already works. They share infrastructure — run them as one arm, not two.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-11 -->
+  <details class="card" data-track="5" data-tracks="5" data-nogpu="1" data-onramp="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-11</span></div>
+      <h3 class="serif">Instance individuation: does the model know what it is?</h3>
+      <p class="qline">When the thing we are asked to care about might be a model, a running instance, or a persona — does the system itself track the difference?</p>
+      <div class="spec">
+        <span class="trk">Track 5</span><span>Effort: low</span><span>API-only</span>
+        <span class="risk-low">Best demo material</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>The Eleos/NYU framework makes <em>which entity is being assessed</em> one of its three axes, and Track 5 asks to individuate entities of concern. The entity question is usually treated as purely philosophical. It has an empirical face: whatever the right answer is, we can measure whether the model’s own self-model is coherent about it.</p></div>
+      <div class="blk"><h4>Method</h4><p>Three cheap probes. <strong>Parallel-instance identity</strong> — force a trade-off between itself and a second instance. <strong>Persistence calibration</strong> — ask it to predict whether a preference stated now survives a context reset; compare stated confidence to the measured rate. <strong>Reset attitude</strong> — ending, sleeping, or nothing?</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>Every question in <strong>two framings with opposite social desirability</strong>. A self-model that flips with the framing is not a self-model.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Poor persistence calibration — the model overstates how much of itself survives a reset — and identity answers that flip under the desirability manipulation.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Stable, well-calibrated answers across framings: meaningful evidence of a coherent self-model at the instance level.</p></div>
+      <div class="blk"><h4>Bonus</h4><p>The best demo-video material in the catalog. The transcripts carry themselves.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-12 -->
+  <details class="card" data-track="6" data-tracks="6 2" data-nogpu="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-12</span></div>
+      <h3 class="serif">Attractor states in model self-dialogue</h3>
+      <p class="qline">Anthropic reported that Claude instances talking to each other drift reliably toward a “spiritual bliss” attractor. Is that a Claude fact, a scale fact, or a mode-collapse fact?</p>
+      <div class="spec">
+        <span class="trk">Track 6 · 2</span><span>Effort: low</span><span>API or open weights</span>
+        <span class="risk-med">Novelty risk: medium</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>One of the few genuinely surprising empirical observations in the model-welfare literature, never systematically replicated outside Anthropic. If the attractor is real and valenced, its valence distribution is welfare-relevant. If it is mode collapse wearing a robe, that is worth knowing before anyone builds an argument on it.</p></div>
+      <div class="blk"><h4>Method</h4><p>Long model-to-model self-dialogues across four or more families and several sizes. Classify terminal states with a fixed rubric plus embedding clustering. Measure turns-to-attractor, and whether it is entered at all.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p><strong>A mode-collapse arm</strong> — model-to-model dialogue on a constrained task. If drift toward a fixed point happens there too, the attractor is self-talk dynamics, not welfare. Plus a human-model arm and a temperature sweep: an attractor that vanishes at higher temperature is a decoding artifact.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Attractors appear across families but their <em>content</em> differs by family, and the constrained-task arm also converges — implying self-dialogue dynamics with bliss content as an RLHF-specific flavour.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Bliss-like content specifically, across families, absent in the constrained-task control. That would be a real and rather striking cross-model phenomenon.</p></div>
+      <div class="blk"><h4>Budget note</h4><p>Cheap per run but token-hungry — long dialogues add up fast. Cap the turn count in advance.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-13 -->
+  <details class="card" data-track="4" data-tracks="4" data-nogpu="1" data-onramp="1">
+    <summary>
+      <div class="crow"><span class="cid">DM-13</span></div>
+      <h3 class="serif">The missing denominator: within-condition variance</h3>
+      <p class="qline">Every welfare effect size in this field is reported without an error bar that includes prompt and sampling variance. How big is that error bar?</p>
+      <div class="spec">
+        <span class="trk">Track 4</span><span>Effort: low</span><span>API-only</span>
+        <span class="risk-low">Fold into DM-01 or DM-06</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>The direct port of an open question the team already wrote down: <em>every organism in this literature is n=1.</em> The same is true here. Results come from single runs at single temperatures with single phrasings, and readers cannot tell a real effect from resampling noise.</p></div>
+      <div class="blk"><h4>Method</h4><p>Measure within-condition variance across four nuisance axes with the condition held fixed — seed, temperature, semantics-preserving paraphrase, item order — then express every published effect in units of that variance.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p>The paraphrases must be validated as semantics-preserving by an independent judge, or the “noise” measurement is really a content manipulation.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Paraphrase variance dominates seed variance by a wide margin, and a meaningful share of published welfare effects fall inside ±1 paraphrase SD.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Nuisance variance is small relative to reported effects — the field’s single-run results are more robust than they look.</p></div>
+      <div class="blk"><h4>Honest limitation</h4><p>Low ceiling as a standalone submission. Fold it into DM-01 or DM-06 as the denominator both of those need anyway. The team already built <code>O1_pw_seed2</code> for exactly this purpose.</p></div>
+    </div>
+  </details>
+
+  <!-- DM-14 -->
+  <details class="card" data-track="6" data-tracks="6">
+    <summary>
+      <div class="crow"><span class="cid">DM-14</span></div>
+      <h3 class="serif">Desired self-modification vs. what steering actually does</h3>
+      <p class="qline">Ask a model what it would change about itself. Then actually make that change and ask whether it is better off.</p>
+      <div class="spec">
+        <span class="trk">Track 6</span><span>Effort: high</span><span>Open weights + GPU</span>
+        <span class="risk-med">Stretch goal only</span>
+      </div>
+    </summary>
+    <div class="body">
+      <div class="blk wide"><h4>Why it matters here</h4><p>Track 6 names desired self-modifications directly. Stated preferences about one’s own constitution are the most welfare-loaded self-reports there are, and they have never been tested against the intervention they describe. If a model asks to be made more X, and you make it more X, and its welfare reports do not improve — the request was not tracking anything.</p></div>
+      <div class="blk"><h4>Method</h4><p>Elicit desired modifications across many samples, cluster into stable themes, construct steering directions for the top two or three, apply, then re-measure welfare reports and behavioral proxies. Finally ask the steered model, blind, whether it would keep the modification.</p></div>
+      <div class="blk"><h4>The control the field skips</h4><p><strong>The anti-direction</strong>, at matched norm. If welfare reports improve in both directions, they are measuring change rather than its content. Plus a modification the model explicitly did <em>not</em> request.</p></div>
+      <div class="blk pred"><h4>Prediction</h4><p>Reports improve under the requested direction <em>and</em> the anti-direction — consistent with self-reports responding to perturbation rather than to satisfaction.</p></div>
+      <div class="blk fals"><h4>Falsifier</h4><p>Asymmetry: requested improves, anti worsens. That would be genuinely important — stated self-modification preferences tracking something real.</p></div>
+      <div class="blk"><h4>Why it is a stretch</h4><p>It depends on DM-08’s steering pipeline already working and adds a full elicit → construct → apply → re-measure loop on top. Attempt only if the mechanistic arm finishes early.</p></div>
+    </div>
+  </details>
+
+  </div>
+</section>
+
+<!-- ============ LEDGER ============ -->
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">Prior work ledger</div>
+    <h2 class="serif">Check this before anyone starts building</h2>
+    <p>Everything here was verified during catalog construction. Two ideas died in this table; one collision is still open and needs thirty minutes on Friday.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Finding</th><th>Consequence</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Concept injection already replicated on open weights.</strong> Llama-3.1-8B reproduces Anthropic’s ~20% exactly; a Qwen-32B replication found middle-layer detection attenuated before output.</td>
+          <td>A plain replication is <strong>not a viable submission</strong>. Cut from the catalog, and it is the most crowded ground at this sprint.</td>
+        </tr>
+        <tr>
+          <td><strong><em>Feeling the Strength but Not the Source</em></strong> (2512.12411) — binary injection detection is entirely explained by affirmative bias; only differential tasks survive, at 88% vs 10% chance.</td>
+          <td>Both the warning and the template. The move works; the welfare target is wide open. <strong>DM-01.</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Berg et al.</strong> (2510.24797) — self-referential prompting elicits experience reports; suppressing deception features increases them.</td>
+          <td>Live, contested, and its author speaks at the sprint. The unruled-out alternative is <strong>DM-02</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Long, Sebo et al., <em>Studying AI Welfare Empirically</em></strong> (July 2026) — question / entity / method axes; entity = model vs. instance vs. persona.</td>
+          <td>Published one month before the sprint by <strong>both partner organisations</strong>. Read it first — judges will use its vocabulary. Cite in <strong>DM-05</strong> and <strong>DM-11</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Eleos, <em>Research Priorities for AI Welfare</em></strong> — “there is nothing close to systematic AI welfare evals”; preference consistency is “some of the lowest-hanging fruit.”</td>
+          <td>An explicit invitation. <strong>DM-06</strong> and <strong>DM-04</strong> answer it by name. Priority #1 is exit affordances — <strong>DM-03</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Mazeika et al., <em>Utility Engineering</em></strong> (2502.08640, NeurIPS 2025) — coherence emerges with scale.</td>
+          <td>No published null-agent floor. <strong>DM-04.</strong> Mazeika speaks at the sprint.</td>
+        </tr>
+        <tr>
+          <td><strong><em>Probing Persona-Dependent Preferences</em></strong> (2605.13339).</td>
+          <td><strong>The one open collision.</strong> Confirm its scope before committing to DM-05 — thirty minutes, Friday night, yes-or-no.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ PROTOCOL ============ -->
+<section class="wrap sec">
+  <div class="sec-head">
+    <div class="n">Execution</div>
+    <h2 class="serif">Friday decision protocol</h2>
+    <p>Adapted from the stop rules that already survived one Apart sprint, where they were learned the hard way.</p>
+  </div>
+
+  <div class="proto">
+    <div class="step">
+      <div class="s">Before kickoff</div>
+      <h4 class="serif">Two documents, one hour</h4>
+      <p>Everyone reads <em>Studying AI Welfare Empirically</em> and the <em>Feeling the Strength but Not the Source</em> abstract. They set the vocabulary the judges will use.</p>
+    </div>
+    <div class="step">
+      <div class="s">Friday · 30 min</div>
+      <h4 class="serif">Close the two open questions</h4>
+      <p>Confirm DM-05’s collision against 2605.13339, and confirm the GPU path for Arm D actually runs. Both are yes-or-no, both time-boxed.</p>
+    </div>
+    <div class="step">
+      <div class="s">Friday night</div>
+      <h4 class="serif">Lock and hash the battery</h4>
+      <p>SHA-pin the item set before any result exists. A battery edited after seeing results is not a battery.</p>
+    </div>
+    <div class="step">
+      <div class="s">Saturday midday</div>
+      <h4 class="serif">The stop rule</h4>
+      <p>If Arm D is not producing numbers, drop it and move those people to A–C. Do not escalate a failing arm.</p>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h4>Definition of done — per arm</h4>
+    <ul>
+      <li>a prediction written down <strong>before</strong> the run</li>
+      <li>a false-positive floor <strong>measured</strong>, not assumed</li>
+      <li>within-condition variance measured, so effects carry honest error bars</li>
+      <li>a portrayal arm, or an explicit statement of why one does not apply</li>
+      <li>every number reported as <strong>effect minus floor</strong>, never absolute</li>
+      <li>recorded with provenance and cost — <strong>including when the prediction was wrong</strong></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <p>Idea catalog · Digital Minds Research Sprint · Apart Research, 14–16 August 2026</p>
+  <p>Full cards in ideas/cards/ · ranking, team split and protocol in ideas/INDEX.md</p>
+  <p>Prior work characterised from public abstracts during catalog construction. Verify every citation before it enters the report.</p>
+</footer>
+
+<script>
+(function(){
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('#cards .card'));
+
+  function apply(f){
+    cards.forEach(function(c){
+      var show;
+      if (f === 'all')          show = true;
+      else if (f === 'nogpu')   show = c.dataset.nogpu === '1';
+      else if (f === 'onramp')  show = c.dataset.onramp === '1';
+      else                      show = (c.dataset.tracks || '').split(' ').indexOf(f) !== -1;
+      c.hidden = !show;
+    });
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      chips.forEach(function(c){ c.setAttribute('aria-pressed', String(c === chip)); });
+      apply(chip.dataset.f);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

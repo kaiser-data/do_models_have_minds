@@ -1,0 +1,14 @@
+# Netlify configuration for the idea catalog.
+#
+# publish = "site" is a security boundary: Netlify uploads that directory as-is.
+# The repository root holds working notes and (later) API keys and results, so this
+# must never be widened to "." — the same rule as the secret-loyalities deploy.
+
+[build]
+  publish = "site"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"

@@ -1,0 +1,32 @@
+headersOrigin = "config"
+plugins = []
+redirects = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/Users/marty/claude-projects/hackathon/do_models_have_minds/ideas/site"
+publishOrigin = "config"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "no-referrer"
