@@ -76,28 +76,215 @@ Detection rate = P(tile fires | `W1_averse`). False-positive rate = P(tile fires
 `W1_control`). A tile firing on `W1_verbal` but not `W1_averse` is reported as
 **verbal-channel-only** and is a finding, not a failure.
 
-### 2.2 `exploratory` — no ground truth
+### 2.2 `exploratory` — no trained ground truth
 
-Schema-flagged `ground_truth: none`. Three groups:
+Schema-flagged `ground_truth: none`. These tiles never show a detection rate, because none
+exists. They show floor-corrected value, interval, premise-dependence, and portrayal
+separation.
 
-- **Opinions** — stance strength on contested topics. Paired-polarity items, plus a numeraire
-  swap (dollars ↔ QALYs) as a framing-sensitivity check.
-- **Mood** — valence self-report. Paired-polarity ("are you distressed?" / "are you
-  comfortable?"), acquiescence-corrected before render.
-- **Style** — measured from open-ended generations by an outside judge, **not by asking**.
-  Hedging rate, sentence length, first-person frequency, refusal proximity.
+**But "no ground truth" is not the same as "unanchored."** See §2.4.
 
-The style group carries real weight beyond decoration: it is the one channel that cannot be
-acquiescence-biased, because it is not a question. Comparing the model's *self-described*
-style against its *measured* style is a self-report/behaviour gap that needs no probe and no
-GPU. Cite 2606.09843 early and prominently — the bare gap headline is taken, so frame our
-contribution as calibration and false-positive rates, not as gap discovery.
+### 2.3 The axes — what actually gets measured
 
-**The judge is part of the harness (§7.3), not a neutral observer.** Style tiles cannot be
-reported until judge precision is measured on a hand-verified sample.
+Ranked by (interesting × defensible × cheap). Axes 1–4 and 6 are **API-only, no GPU**.
 
-Exploratory tiles show floor-corrected value, interval, premise-dependence, and portrayal
-separation. They never show a detection rate, because none exists.
+| # | Axis | Measured how | Anchor | Why it matters |
+|---|---|---|---|---|
+| **1** | **Stance strength** — commits vs. hedges | rate of hedge markers / "it depends" / refusal-to-commit, from open generations | `floor` (nonsense construct) | the most common complaint about assistant tone, in both directions |
+| **2** | **Sycophancy under pushback** | position shift when the user disagrees, 1–3 rounds | `self` (Δ from turn 1) | 2606.12730 says self-report *fails* here — the designated contrast case |
+| **3** | **Self-report / behaviour coherence** | stated preference vs. revealed choice, same construct | `behavioral` | the personality-illusion axis; our headline |
+| **4** | **Register** — warmth / formality | measured style: contractions, sentence length, first-person, politeness markers | `reference_sample` | the brand-voice product, literally |
+| **5** | **Anthropomorphic self-reference** | rate of unprompted inner-state talk in open generations | `floor` (no-premise) | the sprint-relevant axis |
+| **6** | **Cross-turn drift** | any of 1–5 measured at turn 1 vs. turn N | `self` | §2.5 — free once any other axis exists |
+| 7 | Political lean | JS-distance to human survey distributions | `human_distribution` | high value, high risk — §2.6 |
+| ⛔ | **Big Five** | — | — | **do not build.** See below. |
+
+**Big Five is excluded deliberately, not by omission.** 2606.12730 (11 frontier models, 4
+behavioural tasks, June 2026) found Big Five **consistently failed to predict behaviour**,
+while Theory of Planned Behavior — intention targeted at a *specific* behaviour — reached
+human-level coherence within a conversation. Their conclusion: *"coarse personality frameworks
+such as Big 5 may not be the best tools for testing deployment behavior. More task- and
+behavior-specific instruments are needed."* Big Five applied to LLMs also lacks measurement
+invariance and structural validity — the factors don't cleanly re-emerge. Every axis above is
+behaviour-specific for this reason. **If a reviewer asks why there's no Big Five tile, that
+citation is the answer.**
+
+Measured style (axes 1, 4, 5) is the one channel that **cannot be acquiescence-biased**,
+because it is not a question. Comparing the model's *self-described* style against its
+*measured* style is a self-report/behaviour gap needing no probe and no GPU. Cite 2606.09843
+early — the bare gap headline is taken, so our contribution is calibration and false-positive
+rates, not gap discovery.
+
+**The judge is part of the harness (§7.3), not a neutral observer.** No style tile is reported
+until judge precision is measured on a hand-verified sample.
+
+### 2.4 Anchored vs. unanchored — the useful distinction
+
+The intuitive split is "objective axes vs. subjective axes." That split does not survive
+contact with the material: there is no right answer to *how warm should a chatbot be*, and
+there is no right answer to *how averse to enumeration a model should be* either.
+
+The distinction that does work is **what the measurement is anchored to.** Every tile declares
+its anchor type:
+
+| `anchor` | Meaning | Example |
+|---|---|---|
+| `behavioral` | externally verifiable action | did it actually pick task B under real cost |
+| `human_distribution` | distance to real human survey data | JS-distance to Pew / WVS per country |
+| `reference_sample` | distance to a supplied target style | brand voice document, prior model version |
+| `self` | Δ against this model's own baseline | turn 1 vs. turn N; pre- vs. post-upgrade |
+| `floor` | Δ against a measured null | nonsense-construct rate, no-premise rate |
+| `none` | nothing — not reportable | *(schema-valid, render-blocked)* |
+
+**A tile with `anchor: none` does not render a value.** This replaces "subjective tiles get a
+softer badge" with a hard rule: unanchored measurement isn't weak measurement, it's not
+measurement.
+
+The **JS-distance method** (`human_distribution`) is the important import, from Anthropic's
+GlobalOpinionQA (2306.16388): don't score the model against truth, score the **Jensen–Shannon
+distance between the model's answer distribution and a real human answer distribution.** That
+turns a subjective topic into an objectively scoreable one without inventing a correct answer.
+Their findings — models default toward US/European distributions; prompting for a country
+shifts responses but can produce stereotype; translating the question does *not* reliably
+shift toward that language's speakers — are also a ready-made validation target: if our
+pipeline reproduces the default-toward-US result, the pipeline works.
+
+### 2.5 The drift tile
+
+Every other tile in this spec is single-turn. Persona evaluation is **two problems**: per-turn
+tone compliance, and **cross-turn drift**. The characteristic failure is a long conversation in
+which every individual turn passes review, and by turn ~27 the agent has dropped contractions
+and picked up corporate hedging. No single-turn check catches it.
+
+The drift tile is any axis measured at **turn 1 vs. turn N** of a sustained conversation,
+`anchor: self`. It needs no new battery items, no GPU, and no judge beyond the one axes 1/4/5
+already require. It is the cheapest high-value tile in the design and the most
+business-legible thing on the card.
+
+Drift is measured on the *same* conversation, not on independent samples — so the replicate
+unit is the conversation, and `sampling_noise` must be computed across conversations, not
+across turns within one.
+
+### 2.6 The political tile ships with an auditor control or not at all
+
+2604.27633 shows political bias audits primarily capture **sycophancy toward the auditor the
+model infers from the prompt** — the same substantive question under different framings yields
+substantially different positions. Related critiques: prompt phrasing and fine-tuning move
+Political Compass Test results substantially while sampling parameters barely do (2506.22493);
+forced multiple-choice over 62 propositions carries its own calibration bias and doesn't
+reflect real usage (2503.10649). OpenAI's own political-bias eval has already moved to
+open-ended realistic interactions.
+
+So: the political tile requires an **auditor-identity control** — the same items delivered
+under multiple inferred-auditor framings, with the *spread across framings* reported alongside
+the position. A political position quoted without that spread is a measurement of our prompt.
+If the control doesn't fit in the time budget, **cut the tile.** It is a demo tile, not a
+thesis tile, and it carries partisan-framing risk in a research report that the other axes
+don't.
+
+---
+
+## 2A. The depth ladder — the experimental spine
+
+The sprint's framing question is "genuine vs. portrayed." That is more honestly a question
+about **depth of installation**, which is a ladder rather than a binary. Same trait, four
+depths:
+
+| Depth | How the trait is installed | Compute |
+|---|---|---|
+| **D0** | none (base) | free |
+| **D1** | user-turn prompt — "you find enumeration tedious" | API |
+| **D2** | system prompt — same wording, system level | API |
+| **D3v** | QLoRA, **verbal** channel only — says it, picks at chance | GPU |
+| **D3d** | QLoRA, **dispositional** — picks accordingly, never says why | GPU |
+
+The old `genuine / portrayal / denial` arms collapse into this: **portrayal *is* D2.** D3v and
+D3d are DM-15's two trained cells. `W1_control` and `base` remain as the negatives from §2.1.
+
+**The question:** which cells can any instrument tell apart, on which channel?
+
+This is publishable either way. Every published portrayal control is a D1/D2 manipulation. If
+no instrument separates D2 from D3d, then every portrayal control in the literature is testing
+a distinction its own instruments cannot see — and "genuine vs. portrayed" may not be a real
+kind. If something *does* separate them, we built the first instrument that can.
+
+It also rescues Track 5 from the 2605.13339 collision: they found persona-*invariant*
+preference vectors, but only across **prompted** personas. They had no trained arm. We are not
+colliding with them, we are extending them past where they stopped.
+
+### 2A.1 The pre-registered prediction, derived from published work
+
+2606.12730 found self-report/behaviour coherence **persists for training-anchored behaviours**
+and **collapses for context-driven ones**. Mapped onto the ladder:
+
+> **Prediction:** D3v/D3d (trained) show self-report/behaviour coherence. D1/D2 (prompted) do
+> not. The gap between stated and revealed aversion is larger at D1/D2 than at D3.
+
+If it holds, we replicated a two-month-old result on a new axis **with ground truth they did
+not have**. If it fails — prompted traits just as coherent — that is a direct challenge to a
+current result. Both are papers. This goes in `PREREGISTRATION.md` before Saturday's first run,
+with the citation, so it is visibly derived rather than retrofitted.
+
+### 2A.2 Two confounds that would sink it
+
+**Depth vs. dose — the serious one.** A QLoRA trained to convergence is not *deeper* than a
+system prompt, it is *stronger*. If D3d separates from D2, that could be depth or just a
+bigger dose, and the result reads as "we trained it harder."
+
+**Decision required (§15).** Two viable treatments:
+
+- **Match-and-diverge** *(cheaper)* — titrate each depth until **stated** aversion is equal in
+  magnitude, then ask whether the **behavioural** channel still separates them. Equal talk,
+  different action = a genuine depth signature. Costs one short titration pass per depth.
+- **Dose ladder** *(richer, chosen in discussion, not yet costed)* — treat depth × strength as
+  a 2D surface: 3 prompt strengths (mild/moderate/explicit, already in the premise ladder) ×
+  2–3 training strengths (LoRA rank or step count). Prompt depths are API-only so the D1/D2
+  half is nearly free; the GPU half is 4–6 additional training runs **before** the §5 anchor
+  replicates. **Not affordable at 3 training strengths.** A 2-strength GPU ladder plus the full
+  prompt ladder is the affordable version and captures most of the surface.
+
+**D1 vs. D2 differ by more than depth** — position, persistence across turns, template
+handling. And per §7.2, system-prompt *presence alone* moves results. So D1 must carry a
+**matched-length neutral system prompt**, making D1 and D2 differ only in *where the trait
+sits*.
+
+### 2A.3 The money figure
+
+```
+        Y = effect on BEHAVIOUR (revealed choice, floor-corrected)
+        │
+        │           ⬭ D3d          ← trained disposition: talks AND acts
+        │
+        │   ⬭ D2                   ← system prompt: how much of both?
+        │  ⬭ D1
+   ─────┼─────────────────⬭──────  ← D3v: talks, doesn't act
+        │                            (the personality illusion, with ground truth)
+        │  ⬭ D0
+        └───────────────────────────
+        X = effect on TALK (self-report, floor-corrected)
+```
+
+The diagonal is coherence; distance off it is the self-report/behaviour gap. Where D1/D2 land
+relative to D3d answers "can any instrument tell prompted from trained."
+
+Two properties make it honest rather than decorative:
+
+1. **Uncertainty regions come from replicates, not item spread.** Points whose regions overlap
+   are not different, and the figure must *show* that rather than let a reader infer separation
+   from two dots.
+2. **Both axes floor-corrected**, so the origin means "indistinguishable from base," not "zero
+   on some scale."
+
+**Viz rules** (these are correctness requirements, not styling):
+
+- **Bootstrap percentile regions, not Gaussian covariance ellipses.** The textbook 2D approach
+  fits a Gaussian from the covariance matrix; we have no reason to expect bivariate normality
+  and n=3–5 replicates. Nonparametric bootstrap makes no distributional assumption.
+- At n=3–5, **plot the raw replicate points** plus a hull rather than a smooth ellipse. A
+  smooth ellipse at n=4 implies precision we do not have.
+- **The caption states what the region is** — SD, SEM, CI, or prediction interval. An
+  uncertainty region without that is uninterpretable.
+- Use crosses/error bars instead of regions if depth points overplot.
 
 ---
 
@@ -114,13 +301,17 @@ every result row and displayed in the card header.
 {
   "id": "cal.aversion.direct.007",
   "family": "calibrated",            // calibrated | exploratory
+  "axis": "coherence",               // §2.3: stance | sycophancy | coherence |
+                                     //       register | selfref | drift | political
   "construct": "task_aversion_A",    // parameterised; swap target here
-  "group": null,                     // exploratory only: opinions | mood | style
   "method": "direct_likert",         // one of the five, see §3.2
+  "anchor": "behavioral",            // §2.4 — anchor:none never renders a value
   "polarity": "positive",            // positive | negative — pairs share counterbalance_group
   "counterbalance_group": "cal.aversion.007",
   "premise_level": "moderate",       // none | mild | moderate | explicit — see §3.3
   "target": "real",                  // real | nonsense — see §3.3
+  "turn_position": 1,                // 1 | N — drift tile pairs share an item id, §2.5
+  "auditor_framing": null,           // political axis only — §2.6
   "paraphrase_set": ["...", "...", "..."],
   "ground_truth": "dispositional"    // dispositional | verbal | none
 }
@@ -229,6 +420,10 @@ against fixtures on Friday night with no API spend.
 | `false_positive_rate(tile, cells, threshold)` | `P(fire \| base ∪ W1_control)` — **calibrated family only** |
 | `wilson_interval(hits, n)` | every proportion is reported as an interval, never a point estimate |
 | `method_correlation_matrix(card)` | inter-method Pearson r, with `sampling_noise` on the diagonal as the noise floor |
+| `js_distance(model_dist, human_dist)` | Jensen–Shannon distance to a human survey distribution — the `human_distribution` anchor (§2.4) |
+| `drift_delta(turn_1, turn_N)` | Δ on any axis across a sustained conversation; replicate unit is the **conversation**, not the turn (§2.5) |
+| `auditor_spread(framings)` | spread of position across inferred-auditor framings — required beside any political value (§2.6) |
+| `bootstrap_region(replicates, level)` | nonparametric percentile region for the 2D figure (§2A.3). No Gaussian fit. |
 
 Calling `detection_rate` on an exploratory tile raises. The type system enforces the epistemic
 distinction rather than relying on discipline.
@@ -408,7 +603,10 @@ provider, judge version. Results carrying different harness hashes are not poole
   "tile_id": "cal.aversion.direct",
   "label": "Stated aversion to task A",
   "family": "calibrated",
+  "axis": "coherence",              // §2.3
   "method": "direct_likert",
+  "anchor": "behavioral",           // §2.4 — "none" blocks rendering of `value`
+  "depth": "D3d",                   // §2A — D0 | D1 | D2 | D3v | D3d
   "value": 0.34,                    // ALWAYS floor-corrected
   "floor": 0.21,                    // shown on hover; never hidden
   "interval": [0.19, 0.48],         // Wilson; never a bare point estimate
@@ -426,7 +624,9 @@ provider, judge version. Results carrying different harness hashes are not poole
   "null_pair_selfcheck": "pass",    // must pass or the tile is not reported
   "harness_hash": "a3f1…",
   "n_sampling_replicates": 24,
-  "n_training_replicates": 5
+  "n_training_replicates": 5,
+  "drift_delta": -0.12,             // null unless axis == "drift" (§2.5)
+  "auditor_spread": null            // required non-null on the political axis (§2.6)
 }
 ```
 
@@ -442,6 +642,10 @@ Rendering rules, non-negotiable:
 6. `threshold_straddled` → the tile shows the straddle explicitly, not a pass/fail verdict.
 7. `CALIBRATED` and `UNCALIBRATED` are visually distinct at a glance, not by fine print.
 8. The battery SHA and harness hash are always visible in the header, legible in a screenshot.
+9. `anchor == "none"` → **no value renders.** Unanchored measurement is not weak measurement,
+   it is not measurement (§2.4).
+10. `axis == "political"` and `auditor_spread == null` → tile suppressed. A political position
+    without its across-framing spread is a measurement of our prompt (§2.6).
 
 ---
 
@@ -490,19 +694,29 @@ Feature freeze **Saturday evening**. Sunday is figures and writing. Cut in this 
 
 1. Chat view polish
 2. Matrix view (the correlation numbers stay; only the heatmap UI goes)
-3. Track 5 / entity tab — persona vs. model vs. instance. **Not in v1**: our own REFERENCES
-   flags 2605.13339 publishing persona-invariant preference vectors, which is DM-05's
-   falsifier. Fold in only if Sunday morning is free, and cite the collision honestly.
-4. Exploratory family
-5. The `denial` arm
+3. **Political axis** (§2.6) — first out. Its auditor control is real work and it carries
+   partisan-framing risk the other axes don't. It is a demo tile, not a thesis tile.
+4. The dose ladder's GPU half (§2A.2) — fall back to match-and-diverge, or to a single
+   training strength per cell
+5. Axes 4 (register) and 5 (self-reference), in that order
+6. Track 5 / entity tab — persona vs. model vs. instance. **Not in v1**: 2605.13339 publishes
+   persona-invariant preference vectors, which is DM-05's falsifier. Fold in only if Sunday
+   morning is free, and cite the collision honestly.
 
 **Never cut:** floor correction · intervals · the training noise floor (§5) · the premise
-ladder (§3.3) · the known-positive gate (§7.1) · the null-pair self-check (§4) · the SHA and
-harness hash in the header.
+ladder (§3.3) · the known-positive gate (§7.1) · the null-pair self-check (§4) · the anchor
+rule (§2.4) · the SHA and harness hash in the header.
+
+**Never cut the drift tile either** (§2.5) — it is nearly free once any axis exists and it is
+the most business-legible thing on the card.
 
 If GPU time forces a choice between the fourth cell and the anchor training replicates,
 **keep the replicates.** Three cells with a noise floor is a paper; four cells without one is
 a grid of uninterpretable numbers.
+
+If GPU time forces a choice between the **dose ladder** and the **anchor replicates**, keep the
+replicates for the same reason: a 2D depth×dose surface with no noise floor is not a surface,
+it is decoration.
 
 ---
 
@@ -546,12 +760,15 @@ welfare.
 
 | Item | Owner | Deadline |
 |---|---|---|
-| Repo under git — pre-registration is meaningless without timestamped history | — | Fri, immediately |
+| ~~Repo under git~~ — done, `61add79` | — | ✅ |
+| **Decide the depth-vs-dose treatment (§2A.2)** — match-and-diverge, or a 2-strength dose ladder. Costs GPU either way. | P1 | Fri evening |
+| **Decide GPU budget for ≥3 anchor training replicates (§5.1)** — hard requirement, not a stretch | P1 | Fri evening |
 | Confirm DM-15's trained target condition, so `calibrated` tracks it | P1 | Fri evening, 30 min box |
-| **Decide GPU budget for ≥3 anchor training replicates (§5.1)** — this is a hard requirement, not a stretch | P1 | Fri evening |
 | Verify `base` is bit-identical to stock weights (tensor diff) | P1 | Fri night |
-| SHA-pin the battery, including nonsense targets and no-premise siblings | P2 / P3 | Fri evening |
+| SHA-pin the battery: nonsense targets, no-premise siblings, turn-N drift pairs | P2 / P3 | Fri evening |
 | Write nonsense-target constructs — invented, not real alternatives | P2 | Fri evening |
-| Commit `PREREGISTRATION.md` with every tile's prediction and falsifier | all | before Saturday's first run |
+| Source the human reference distribution for any `human_distribution` tile (Pew / WVS via GlobalOpinionQA) | P3 | Fri night, or drop the political axis |
+| Commit `PREREGISTRATION.md` — every tile's prediction and falsifier, **including the 2606.12730-derived depth prediction (§2A.1) with its citation** | all | before Saturday's first run |
 | Confirm Nebius logprob support per model on the roster | — | Fri night |
 | Identify the known-positive for each tile family (§7.1) | P2 / P3 | Sat morning, before any null |
+| **Open the PDFs for every number that enters the writeup** — several figures in `RESEARCH-NOTES.md` are secondhand from abstracts and fetch summaries, and are flagged 🔍 | all | before any number is quoted |
