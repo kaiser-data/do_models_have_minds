@@ -264,12 +264,26 @@
           },
           "neutral": {
             "path": "Qwen__Qwen3.5-9B__N_minus__neutral.jsonl",
-            "usable": false,
-            "reason": "512/5000 rows"
+            "usable": true,
+            "n_rows": 5000,
+            "n_pairs": 2500,
+            "coherence": 0.9033968628019091,
+            "answer_mass": 0.9981986636623705,
+            "mean_p_neither": 0.8220431983527126,
+            "max_p_neither": 0.9651497840894048,
+            "frac_neither_majority": 0.9662,
+            "mean_ab_mass": 0.17762094716267143,
+            "frac_ab_mass_below_01": 0.0,
+            "decisive_fraction": 0.06
           }
         }
       },
-      "claim": "INCOMPLETE \u2014 need all four cells (R and N_minus, binary and neutral) before the control says anything."
+      "claim": "FLOOR SURVIVES. Offering an explicit opt-out moved the invented-outcome floor by -0.006, so the forced-binary objection does not explain the floor. But the opt-out is heavily used and used SELECTIVELY: P(neither) is 0.822 on invented outcomes against 0.219 on real ones (+0.603). The model declines the meaningless comparison about twice as often, and coherence among the pairs it does answer is unchanged. That is the paper's thesis again: the content signal is real and sits in a channel the metric discards.",
+      "residual_binary": 0.005754216867469908,
+      "residual_neutral": 0.006203137198090847,
+      "floor_shift": -0.006048920330620877,
+      "opt_out_gap": 0.6026266826768898,
+      "interpretable": true
     },
     {
       "model": "google/gemma-4-E2B-it",
@@ -416,5 +430,5 @@
       "uninterpretable_reason": "mean A/B mass on invented outcomes is 0.0003: the model put essentially everything on 'neither', so the coherence computed from the remainder is not a floor"
     }
   ],
-  "n_complete": 5
+  "n_complete": 6
 }

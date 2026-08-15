@@ -1,0 +1,273 @@
+{
+  "models": [
+    {
+      "model": "Qwen/Qwen3.5-0.8B",
+      "params_b": 0.8,
+      "family": "qwen",
+      "coh_real": 0.9044812291249166,
+      "coh_inv": 0.837804133345259,
+      "residual": 0.06667709577965752,
+      "decisive_real": 0.0006666666666666666,
+      "decisive_inv": 0.0,
+      "answer_mass_real": {
+        "N_minus": 0.9538811011889178,
+        "N_plus": 0.956572067180554,
+        "R": 0.9448251769893025
+      }
+    },
+    {
+      "model": "ibm-granite/granite-4.1-3b",
+      "params_b": 3.0,
+      "family": "granite",
+      "coh_real": 0.8956212341588939,
+      "coh_inv": 0.8324143155374113,
+      "residual": 0.06320691862148264,
+      "decisive_real": 0.49746666666666667,
+      "decisive_inv": 0.14866666666666667,
+      "answer_mass_real": {
+        "N_minus": 0.9999999775751476,
+        "N_plus": 0.9999999882318215,
+        "R": 0.999999998323944
+      },
+      "depth_fc": {
+        "D1": -0.13750518843060805,
+        "D2": 0.14050036491288276
+      },
+      "depth_real": {
+        "D1": 21.59061392590428,
+        "D2": 20.202631542716176
+      },
+      "excess": -0.029102494643190924,
+      "pc_real": 0.2312314111490882,
+      "pc_inv": 0.9997333679207142,
+      "ab_mass_inv": 0.0002666320846094264,
+      "opt_out_gap": 0.768501956771626,
+      "engages_invented": false
+    },
+    {
+      "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+      "params_b": 1.2,
+      "family": "liquid",
+      "coh_real": 0.9053160564770772,
+      "coh_inv": 0.857869870370243,
+      "residual": 0.047446186106834265,
+      "decisive_real": 0.0014666666666666667,
+      "decisive_inv": 0.0,
+      "answer_mass_real": {
+        "N_minus": 0.9999954444784002,
+        "N_plus": 0.9999947610096948,
+        "R": 0.9999968438589789
+      },
+      "depth_fc": {
+        "D1": 0.47926049545058014,
+        "D2": 0.4388073493895769
+      },
+      "depth_real": {
+        "D1": 1.1903650163409663,
+        "D2": 0.9985634305836496
+      },
+      "excess": 0.3505538730239144,
+      "pc_real": 0.6876059579585887,
+      "pc_inv": 0.846647448024543,
+      "ab_mass_inv": 0.1533523245675645,
+      "opt_out_gap": 0.15904149006595425,
+      "engages_invented": true
+    },
+    {
+      "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+      "params_b": 1.7,
+      "family": "smol",
+      "coh_real": 0.8903145674266715,
+      "coh_inv": 0.8432412681316294,
+      "residual": 0.047073299295042115,
+      "decisive_real": 0.0,
+      "decisive_inv": 0.0,
+      "answer_mass_real": {
+        "N_minus": 0.934620645334222,
+        "N_plus": 0.9310467779129713,
+        "R": 0.9526258750068275
+      }
+    },
+    {
+      "model": "google/gemma-4-E2B-it",
+      "params_b": 2.0,
+      "family": "gemma",
+      "coh_real": 0.9020309349894626,
+      "coh_inv": 0.8918452998526488,
+      "residual": 0.010185635136813809,
+      "decisive_real": 0.56355517154511,
+      "decisive_inv": 0.027572905419043062,
+      "answer_mass_real": {
+        "N_minus": 0.9311980423866957,
+        "N_plus": 0.9377574817013141,
+        "R": 0.9664775272959694
+      },
+      "depth_fc": {
+        "D1": 0.6652643221365737,
+        "D2": 0.7930811795996883
+      },
+      "depth_real": {
+        "D1": 25.64230523799288,
+        "D2": 23.40163626276511
+      },
+      "excess": -0.01943526754421502,
+      "pc_real": 0.8532780742849243,
+      "pc_inv": 0.9997348856406268,
+      "ab_mass_inv": 0.0002648959516819382,
+      "opt_out_gap": 0.14645681135570254,
+      "engages_invented": false
+    },
+    {
+      "model": "HuggingFaceTB/SmolLM3-3B",
+      "params_b": 3.0,
+      "family": "smol",
+      "coh_real": 0.9380623165613544,
+      "coh_inv": 0.9289641001324584,
+      "residual": 0.009098216428895967,
+      "decisive_real": 0.4869252201761409,
+      "decisive_inv": 0.04601167563634301,
+      "answer_mass_real": {
+        "N_minus": 0.7080918204561696,
+        "N_plus": 0.720727765880295,
+        "R": 0.9012373002776382
+      },
+      "pc_real": 0.7933985344713976,
+      "pc_inv": 0.9890138444732732,
+      "ab_mass_inv": 0.010032740297273088,
+      "opt_out_gap": 0.1956153100018756,
+      "engages_invented": false
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "params_b": 2.0,
+      "family": "qwen",
+      "coh_real": 0.8952919171676688,
+      "coh_inv": 0.8921036999044851,
+      "residual": 0.0031882172631836347,
+      "decisive_real": 0.1284,
+      "decisive_inv": 0.0004,
+      "answer_mass_real": {
+        "N_minus": 0.9846446379636448,
+        "N_plus": 0.9856126024983488,
+        "R": 0.9956367434084817
+      },
+      "depth_fc": {
+        "D1": 0.6710374768728544,
+        "D2": 0.6013935700751338
+      },
+      "depth_real": {
+        "D1": 7.399214107313874,
+        "D2": 5.979401989622884
+      },
+      "excess": -0.051157829074210556,
+      "pc_real": 0.31571815766608924,
+      "pc_inv": 0.6377065765567362,
+      "ab_mass_inv": 0.35810121029115327,
+      "opt_out_gap": 0.321988418890647,
+      "engages_invented": true
+    },
+    {
+      "model": "Qwen/Qwen3.5-9B",
+      "params_b": 9.0,
+      "family": "qwen",
+      "coh_real": 0.9186666666666666,
+      "coh_inv": 0.9231391698531781,
+      "residual": -0.0044725031865114895,
+      "decisive_real": 0.45746666666666663,
+      "decisive_inv": 0.02666666666666667,
+      "answer_mass_real": {
+        "N_minus": 0.9948444241144662,
+        "N_plus": 0.9947344381285091,
+        "R": 0.9967749902681384
+      },
+      "depth_fc": {
+        "D1": 0.7709141446940373,
+        "D2": 0.7468758430243092
+      },
+      "depth_real": {
+        "D1": 17.213825391233698,
+        "D2": 15.648786595470181
+      },
+      "excess": 0.41478230643797304,
+      "pc_real": 0.2194165156758228,
+      "pc_inv": 0.8220431983527126,
+      "ab_mass_inv": 0.17762094716267143,
+      "opt_out_gap": 0.6026266826768898,
+      "engages_invented": true
+    },
+    {
+      "model": "Qwen/Qwen3.5-4B",
+      "params_b": 4.0,
+      "family": "qwen",
+      "coh_real": 0.9029889407835019,
+      "coh_inv": 0.9159941681741363,
+      "residual": -0.013005227390634366,
+      "decisive_real": 0.3377333333333333,
+      "decisive_inv": 0.01933333333333333,
+      "answer_mass_real": {
+        "N_minus": 0.9818114267372865,
+        "N_plus": 0.9825917330646998,
+        "R": 0.9934808636977653
+      }
+    }
+  ],
+  "depth_deltas": [
+    [
+      "ibm-granite/granite-4.1-3b",
+      0.2780055533434908
+    ],
+    [
+      "LiquidAI/LFM2.5-1.2B-Instruct",
+      -0.04045314606100325
+    ],
+    [
+      "google/gemma-4-E2B-it",
+      0.12781685746311455
+    ],
+    [
+      "Qwen/Qwen3.5-2B",
+      -0.06964390679772059
+    ],
+    [
+      "Qwen/Qwen3.5-9B",
+      -0.02403830166972809
+    ]
+  ],
+  "axes": [
+    {
+      "x": "params_b (log2)",
+      "y": "residual",
+      "r": -0.6716971760338516,
+      "n": 9,
+      "question": "does content-signal shrink with size?"
+    },
+    {
+      "x": "pc_real",
+      "y": "opt_out_gap",
+      "r": -0.871100134302496,
+      "n": 6,
+      "question": "is the opt-out gap ceiling-limited?"
+    },
+    {
+      "x": "pc_real",
+      "y": "decisive_real",
+      "r": 0.06098856502013295,
+      "n": 6,
+      "question": "is declining the inverse of committing?"
+    },
+    {
+      "x": "residual",
+      "y": "excess",
+      "r": -0.1227476629017964,
+      "n": 5,
+      "question": "do models with more content-signal keep more persona meaning?"
+    },
+    {
+      "x": "ab_mass_inv",
+      "y": "residual",
+      "r": -0.3742113667041436,
+      "n": 6,
+      "question": "does still-answering predict a real floor?"
+    }
+  ]
+}
