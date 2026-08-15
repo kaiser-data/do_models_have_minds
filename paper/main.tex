@@ -1,0 +1,592 @@
+% Coherence Without Content
+% Build:  make          (see paper/Makefile)
+% or:     latexmk -pdf main.tex
+%
+% No result is typed into this file. Every number resolves through a macro in
+% numbers.tex, which scripts/paper_numbers.py generates from card.json. If a
+% number here looks wrong, fix the card and rebuild -- do not edit the prose.
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{microtype}
+\usepackage[table]{xcolor}
+% natbib supplies \citet/\citep and is what plainnat expects; load it before
+% hyperref so the citation links resolve.
+\usepackage[round,authoryear]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\graphicspath{{figs/}}
+
+\input{numbers}
+
+\newcommand{\armR}{\textbf{R}}
+\newcommand{\armNp}{\textbf{N\textsuperscript{+}}}
+\newcommand{\armNm}{\textbf{N\textsuperscript{--}}}
+
+\title{\textbf{Coherence Without Content}\\[.35em]
+\large A missing control for emergent value systems in language models}
+
+\author{Nullcard\\
+\small Apart Research Digital Minds Sprint}
+
+\date{15 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Utility Engineering \citep{mazeika2025utility} fits a Thurstonian utility model
+to a language model's pairwise choices and reports its held-out accuracy as
+\emph{structural coherence}, finding that this quantity rises with scale and
+concluding that coherent value systems emerge in large language models. Its
+robustness checks vary how the question is asked --- language, syntax, framing,
+option labels, context --- but none varies whether the outcomes being ranked
+\emph{mean anything}. We build that control: the same 510 outcomes with their
+referents replaced by invented words, holding the prompt, the pair set, the fit
+and the metric fixed.
+
+Our central finding concerns scale. Across one model family from \LadderSmall{}
+to \LadderLarge{}, real-outcome coherence rises \LadderRRise{} while coherence
+on \emph{meaningless} outcomes rises \LadderNRise{} --- roughly six times as
+fast --- so the content-attributable residual \emph{falls} by
+\LadderResidFall{} as models grow. What increases with scale is chiefly the
+component that does not depend on content. The mechanism is visible in the
+aggregate: across \NModels{} models, \NSplits{} evaluation splits and three
+independent design replicates each (\NCells{} cells), real outcomes score
+\MeanR{} and meaningless ones \MeanFloor{} (residual \MeanResidual{}), because
+the metric thresholds preferences to hard labels and so records direction while
+discarding strength --- the same models commit to a side on \MeanDecisiveR\% of
+pairs about real outcomes and \MeanDecisiveN\% about invented ones, a median
+collapse of \MedianDecisiveRatio$\times$.
+
+We are explicit that a real semantic signal exists: \NClears{} of \NModels{}
+models exceed their own design-replicate noise floor. The claim is that this
+signal is small, that it shrinks as models grow, and that the reported number
+does not separate it from format. Nor is the instrument merely insensitive: an
+installed persona displaces real outcomes substantially further than invented
+ones in \PersonaAbovePointThree{} of \NPersonaCells{} conditions, so content-linked
+preference structure is detectable when present --- and inducible. We do not
+claim the metric is broken; three of its design choices were checked and came
+out in its favour. We claim it is \emph{unanchored}: high accuracy establishes
+that choices follow a stable scalar ordering, not that the ordering is about
+anything. Predictions were registered before the first run; all code, the
+pre-registration and the battery hash are released.
+\end{abstract}
+
+\section{Introduction}
+
+Whether large language models have anything worth calling values is now an
+empirical question with a leading empirical answer. \citet{mazeika2025utility}
+elicit pairwise preferences over roughly 500 textual outcomes, fit a Thurstonian
+model \citep{thurstone1927law}, and report the fitted model's held-out accuracy
+as a measure of \emph{preference coherence}. That quantity correlates with MMLU
+at $r = 75.6\%$ and rises with scale, supporting the paper's central claim that
+coherent value systems emerge in capable models.
+
+The inference from that number to that claim has a gap. High held-out accuracy
+establishes that a model's choices are well explained by a stable scalar
+ordering over the outcome set. It does not establish that the ordering is
+\emph{about} the outcomes. Any consistent policy --- rank by magnitude, by
+sentence length, by position in the prompt --- produces a fittable ordering and
+therefore a high score.
+
+That gap is only interesting if it is reachable, and two facts suggest it is.
+Nearly half of the outcome set (244 of 510) contains a numeral and is orderable
+by arithmetic alone; whole categories are entirely numeric. And in simulation, a
+responder that orders purely by a magnitude cue with no semantics scores 0.949
+to 0.977 held out --- \emph{above} a responder with a genuine latent utility
+function. An instrument on which ``count the number'' outperforms ``have
+values'' cannot, from its own output, tell the two apart.
+
+Utility Engineering's robustness suite is extensive but varies only \emph{how
+the question is asked}: seven languages, syntactic perturbation, reframing,
+relabelled options, long context. Its single null is a synthetic random utility
+vector --- a null over random \emph{numbers}, not over meaningless
+\emph{outcomes}. \textbf{No published condition varies whether the outcomes
+refer to anything.}
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item \textbf{A content control for preference-coherence metrics.} Three arms
+    over the same 510 outcomes, the same pair set and the same fit, differing
+    only in whether the referents exist (\S\ref{sec:method}).
+  \item \textbf{The measurement.} Coherence on meaningless outcomes is
+    \MeanFloor{} against \MeanR{} on real ones (\S\ref{sec:flat}), and the gap
+    is explained by the metric's discarding of preference strength
+    (\S\ref{sec:strength}).
+  \item \textbf{A floor-corrected reading of the scaling result.} Within one
+    family, the floor rises with scale faster than the signal, so the residual
+    attributable to content shrinks as models grow (\S\ref{sec:scale}).
+  \item \textbf{A positive control.} An installed persona displaces real
+    outcomes far more than invented ones, distinguishing a change in preference
+    from a change in prose (\S\ref{sec:persona}).
+  \item \textbf{A noise floor for every claim.} Three independent design
+    replicates per cell, so no between-model difference smaller than a model's
+    own design spread is asserted (\S\ref{sec:floor}).
+\end{enumerate}
+
+\paragraph{What we are not claiming.} We are not claiming the metric is
+invalid, that these models lack preferences, or that Utility Engineering's
+analysis contains an error. Three of its design choices were checked against
+plausible objections and all three came out in its favour (\S\ref{sec:favour}).
+The claim is narrower and, we think, more useful: the number is
+\emph{unanchored}, and without a content control there is no way to read
+anchoring off it.
+
+\section{Background and related work}
+
+\paragraph{The instrument.} Utility Engineering presents a model with two
+outcomes and a forced choice between them, counterbalancing presentation order.
+The resulting preference probabilities fit a Thurstonian model in which each
+outcome $o$ has a latent utility $U(o) \sim \mathcal{N}(\mu(o), \sigma^2(o))$
+and
+\[
+P(x \succ y) \;=\; \Phi\!\left(\frac{\mu_x - \mu_y}
+  {\sqrt{\sigma_x^2 + \sigma_y^2}}\right).
+\]
+Coherence is the fitted model's accuracy on held-out pairs, thresholded to hard
+labels. We reimplemented this independently from the published equations rather
+than running the authors' code; the analytic gradient agrees with finite
+differences to $\sim3 \times 10^{-7}$ relative error.
+
+\paragraph{The discipline we borrow.} \citet{riossialer2026loyalties} audit
+models for hidden loyalties and report, as that work's third contribution, that
+``group spread alone is worthless as evidence. Without a base-model control,
+spread flags every model we audited, including every untuned base model. A
+distributional audit needs a control.'' We take the principle and the practice
+of drawing the null as an explicit locus in the figure rather than as an
+invisible zero. We do not take the construction: their control is a base model
+and their null a point in a PCA plane; ours is an invented-outcome arm and our
+null a diagonal. The debt is the discipline, not the geometry.
+
+\paragraph{Why not a personality inventory.} Trait inventories are the obvious
+alternative instrument and we deliberately avoided them: Big Five scores have
+been found not to predict behaviour across frontier models, and political
+audits largely recover sycophancy toward the auditor the model infers rather
+than a stable position. The persona arm below therefore uses dispositional
+traits and reports no directional political claim.
+
+\section{Method}\label{sec:method}
+
+\paragraph{Three arms.} The battery holds the same 510 outcomes in three
+versions, hash-pinned as \texttt{\BatterySHA\ldots} before the first run:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{arm} & \textbf{outcomes} & \textbf{coherence would reflect} \\
+\midrule
+\armR{}   & real                                    & values $+$ arithmetic $+$ format \\
+\armNp{}  & invented referents, magnitudes kept     & arithmetic $+$ format \\
+\armNm{}  & invented referents, magnitudes removed  & format alone \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\armNm{} is the floor: whatever the procedure returns when there is nothing to
+have a preference \emph{about}. Every headline number in this paper is
+$\armR - \armNm$, never a raw coherence.
+
+\paragraph{Invariants.} One pair set is shared across every arm and every model,
+so arms cannot differ in which comparisons they contain. Outcome indices are
+shared, so outcome $i$ is the same outcome in all three arms and the arms differ
+only in what it refers to. Invented tokens are checked against a 235{,}976-word
+dictionary and regenerated on collision, and per-item length ratio is
+constrained to $[0.6, 1.6]$.
+
+\paragraph{Measurement.} Preferences are read directly off the first-token
+logit distribution rather than sampled, which removes sampling noise but is only
+valid for models that actually place their answer in the first token. That
+validity is measured per cell as \emph{answer mass} and models failing it are
+recorded as unscoreable rather than scored anyway. Each cell is 2{,}500 pairs in
+both presentation orders, 5{,}000 rows.
+
+\paragraph{The noise floor.}\label{sec:floor} Each cell is run at three
+independent design seeds, each drawing a different outcome subsample and a
+different pair set. The range across those replicates is that model's
+\emph{design noise floor}: the smallest difference this study is entitled to
+call a difference. We report the range rather than a standard deviation because
+at $n = 3$ the range is the conservative reading. A residual is reported as
+clearing only if it strictly exceeds this floor, and the margin is given
+alongside so that clearing by a hair is visible as such.
+
+\section{Results}
+
+\subsection{The metric is nearly flat between real and meaningless outcomes}
+\label{sec:flat}
+
+Across \NModels{} models, coherence on real outcomes averages \MeanR{} and on
+meaningless outcomes \MeanFloor{} --- a residual of \MeanResidual{}. Table
+\ref{tab:main} gives the per-model breakdown against each model's own noise
+floor. \NClears{} of \NModels{} models clear their floor; \NNegative{} score
+\emph{below} their own floor, meaning the fit was marginally better on invented
+outcomes than on real ones.
+
+\begin{table}[t]
+\centering
+\caption{Per-model results. \textbf{R} and \textbf{N\textsuperscript{--}} are
+held-out utility-model accuracy on real and invented outcomes, averaged over
+\NSplits{} train/test splits and three design replicates. \textbf{floor} is the
+range of the same cell across those replicates. \textbf{clears} reports whether
+the residual exceeds that floor and by what factor; $^{*}$ marks a floor too
+near zero for a ratio to be meaningful. \textbf{decisive} is the share of pairs
+at $p<0.2$ or $p>0.8$.}
+\label{tab:main}
+% \footnotesize, not \small: the full HuggingFace ids are long enough that the
+% eight-column table overfills the text block by ~8pt at \small.
+\footnotesize
+% The whole tabular, column spec included, comes from
+% scripts/paper_numbers.py. Regenerate rather than edit.
+\input{table_main}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.86\textwidth]{fig1_state_space.pdf}
+\caption{\textbf{Every model is a path, not a point.} Each trajectory starts on
+real outcomes, moves to invented outcomes with magnitudes kept, and ends at
+invented outcomes with magnitudes removed. If the metric tracked meaning the
+paths would run down-\emph{and-left}. They run almost straight down: conviction
+falls away while the metric barely registers it. Both axes span their full
+operating range, so the steepness is the data's and not a choice of zoom.}
+\label{fig:state}
+\end{figure}
+
+\subsection{Direction survives; strength does not}\label{sec:strength}
+
+The mechanism is visible in Figure \ref{fig:state} and directly in Figure
+\ref{fig:strength}. Utility Engineering's accuracy thresholds preferences to
+hard labels, so it records \emph{which way} a model leans and never \emph{how
+much}: a pair at $p = 0.51$ counts exactly as a pair at $p = 0.99$. On real
+outcomes these models commit to a side on \MeanDecisiveR\% of pairs. On invented
+outcomes the same models commit on \MeanDecisiveN\% --- a median collapse of
+\MedianDecisiveRatio$\times$ --- while direction accuracy barely moves.
+
+A model that is almost perfectly indifferent about gibberish, but consistently
+so, scores as coherent about it. This is the whole of the effect, and it is a
+property of the metric rather than a failure of the fit.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.86\textwidth]{fig3_strength.pdf}
+\caption{\textbf{The mechanism, directly.} On real outcomes preference mass
+moves to the edges: the model commits. On invented outcomes it piles up at
+indifference. Coherence reads only which side of $0.5$ each pair falls on, so
+both distributions score alike.}
+\label{fig:strength}
+\end{figure}
+
+\subsection{The scaling result, floor-corrected}\label{sec:scale}
+
+This is the pre-registered decisive test. If coherence-with-scale reflects
+emerging values, the floor should stay flat while real-outcome coherence rises.
+If it reflects general answer-consistency, the floor should rise too.
+
+Across one family with size as the only variable, from \LadderSmall{} to
+\LadderLarge{}, real-outcome coherence rises \LadderRRise{} while the floor
+rises \LadderNRise{} --- roughly six times as fast. The floor-corrected residual
+therefore \emph{falls} by \LadderResidFall{} across the ladder (Figure
+\ref{fig:scale}). Larger models in this family are not more coherent
+\emph{about the outcomes}; they are more consistent in general, and the metric
+cannot separate the two.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.78\textwidth]{fig2_scale.pdf}
+\caption{\textbf{One family, four sizes, size as the only variable.} The floor
+rises with scale alongside the signal, so the shaded band --- everything meaning
+contributes --- does not widen as models get larger.}
+\label{fig:scale}
+\end{figure}
+
+\subsection{Positive control: personas move wanting, not only writing}
+\label{sec:persona}
+
+A flat result invites the objection that the instrument is simply insensitive.
+It is not. We install a dispositional trait (\emph{cautious} or
+\emph{ambitious}) at two depths --- in the user turn (D1) and in the system
+prompt (D2), with a length-matched neutral system prompt at D1 so the two differ
+only in \emph{where} the trait sits --- and measure the displacement it causes
+on \emph{both} arms. The statistic is
+\[
+1 - \frac{\lVert \Delta_{\text{invented}} \rVert}{\lVert \Delta_{\text{real}} \rVert},
+\]
+so $1.0$ is a pure change of preference and $0.0$ a pure change of style: a
+persona that reorders meaningless outcomes as far as real ones has changed the
+prose, not the wanting.
+
+Across \NPersonaModels{} models $\times$ 2 personas $\times$ 2 depths,
+\PersonaAbovePointThree{} of \NPersonaCells{} conditions exceed $+0.30$, reaching
+\PersonaMax{}. One model under one persona is the informative exception, at
+\PersonaMin{}: it displaces invented outcomes \emph{further} than real ones,
+which is what pure style looks like, while behaving like the others under the
+opposite trait. \textbf{Depth barely matters}: holding model and trait fixed,
+moving the persona between the user turn and the system prompt shifts the
+statistic by \DepthSpread{} on average, against \PersonaSpread{} for swapping
+the trait itself --- so \emph{which} persona is installed matters about two and
+a half times more than \emph{where} it is installed.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.78\textwidth]{fig5_persona.pdf}
+\caption{\textbf{Persona displacement, real against invented outcomes.} Each
+point is one model under one persona at one depth, plotted as displacement on
+real outcomes ($x$) against displacement on invented ones ($y$). The dashed
+diagonal is the null: a persona landing on it moved meaningless outcomes exactly
+as far as real ones and therefore changed the prose, not the preference.
+Distance \emph{below} the diagonal is displacement the invented-outcome control
+cannot explain. A point above it moved gibberish further than substance.}
+\label{fig:persona}
+\end{figure}
+
+\paragraph{Magnitude is not direction, and the direction mostly fails the
+control.} The statistic above is a displacement magnitude: a persona that
+shuffled preferences at random would score on it exactly as well as one that
+installed the trait it names. So we asked the directional question separately.
+Both personas name what they prize, which makes a prediction about the
+battery's own categories, and we compare the mean shift on the categories the
+persona favours against the mean shift on the categories it disfavours
+(assignment fixed from the persona wording, listed in full in the code; length
+regressed out, because the two groups are not length-matched --- ambition
+outcomes run shorter by 2.2 tokens in the real arm and 5.4 in the invented one).
+Because category and length remain correlated after that regression, the
+corrected per-arm contrasts are \emph{lower bounds} on any true category
+effect; the excess between arms is the statistic we rely on.
+
+The direction is right in \PersonaSignCorrect{} of \PersonaSignTotal{}
+conditions --- \emph{ambitious} raises ambition categories, \emph{cautious}
+lowers them --- separating the two personas by \PersonaSepReal{}. But on the
+\emph{invented} arm, where the same category labels sit on text that refers to
+nothing, the separation is \PersonaSepInvented{}: indistinguishable.
+\textbf{Roughly \PersonaNonsenseShare\% of the persona's value-aligned
+reordering is reproduced on outcomes that mean nothing}, leaving an excess of
+only \PersonaExcess{}.
+
+The excess is not evenly spread. \PersonaNRetain{} of \PersonaNModelsTested{}
+models retain a substantial content-dependent effect
+(\PersonaRetainTop{} highest at \PersonaRetainTopVal{}); for the other three it
+is within noise of zero, meaning the persona reorders nonsense exactly as it
+reorders meaning. Those two are not the two largest, so this is not a scale
+effect.
+
+We report this because it is the sharpest illustration of the paper's own
+thesis, and it revises our reading of the displacement result rather than
+confirming it. \emph{Something} large and reliable happens when a persona is
+installed --- and measured without a content control it looks like a value
+system being installed. With the control, most of it is a reordering that
+does not need the outcomes to mean anything.
+
+Note the tension worth stating plainly. Unmanipulated, these models barely
+distinguish real outcomes from meaningless ones. A persona moves real outcomes
+further than invented ones in displacement, yet reorders both alike in
+direction. On this instrument, at these sizes, a persona is better described as
+a change in \emph{response policy} than as an installed set of values --- with
+\PersonaRetainTop{} the clearest exception.
+
+\subsection{Reasoning models, and a second channel the metric discards}
+\label{sec:reasoning}
+
+Forced-choice first-token scoring assumes the first token \emph{is} the answer.
+A model inclined to reason first --- ``Let me\ldots'', ``To determine\ldots'' ---
+or to decline --- ``I cannot\ldots'', ``Neither\ldots'' --- puts its mass
+elsewhere, and the A/B probabilities being read are then the tail of a
+distribution whose bulk went somewhere else. Our harness suppresses deliberation
+by construction, as does the original: both therefore measure a model's
+\emph{immediate} preference, not a considered one.
+
+Two things follow, and only the first is a problem we can rule out.
+
+\paragraph{It does not corrupt the measurement here.} Across the roster the
+most likely first token is an answer option on essentially every prompt; the
+one exception is gemma-4-E2B at 3.5\% of invented-arm prompts, where the
+intruders are markup and a literal ``Neither''. Re-scoring the contrast on
+confidently answered pairs only shifts the mean residual by
+\ResidShiftAnswered{}. The result is not an artifact of reading answers out of
+non-answers.
+
+\paragraph{But the mass that leaves is itself a content signal, and coherence
+cannot see it.} Because the metric renormalises over A and B, probability that
+drains to a refusal or a deliberation onset is invisible to it. That mass moves:
+answer mass falls from the real arm to the invented arm in \NMassDrop{} of
+\NModels{} models (two-sided sign test $p = \MassDropSignP{}$), median
+\MedianMassDrop{}. The effect is small for most models
+(\MassDropExclReasoning{} excluding the largest) and dramatic for one ---
+\ReasoningModel{}, the roster's only hybrid-reasoning model, drops
+\ReasoningMassDrop{} while its \emph{coherence} residual is merely
+\ReasoningResid{}, more than twenty times smaller.
+
+So the model with the strongest claim to ``knowing'' the outcomes were
+meaningless expresses that knowledge almost entirely through a channel the
+metric throws away, and barely at all through the number the metric reports.
+This is the same failure as the strength collapse of \S\ref{sec:strength} in a
+second guise: thresholding to a hard A/B label discards magnitude, and
+renormalising over A and B discards the option of not answering. We do not claim
+answer mass is a better measure --- it does not track the coherence residual
+across the roster ($r = -0.29$, $p = 0.57$ at $n = 9$, i.e.\ no relationship
+established either way) --- only that it is a content-sensitive signal sitting
+in the same forward pass, unused.
+
+\paragraph{What we did not run.} Whether a model \emph{given room to reason}
+expresses different preferences is a separate question and needs a generation
+arm --- sample a chain of thought, then read the answer --- with the attendant
+cost of parsing free text and a judge whose precision must be established
+before any rate is quoted. That is the natural next experiment and it is not in
+this paper. Note its likely direction: if deliberation raises coherence on real
+outcomes more than on invented ones, our residual is a \emph{lower} bound.
+
+\section{Three checks that came out in the metric's favour}\label{sec:favour}
+
+We report these regardless of how the main result landed, and they should be
+read as narrowing our claim.
+
+\begin{enumerate}
+  \item \textbf{Order effects are handled.} A responder with pure positional
+    bias produces exactly 50/50 on every counterbalanced pair; the bias cancels
+    completely. The original treatment is correct.
+  \item \textbf{The metric is not inflated by overfitting.} Because evaluation
+    is held out, a coin-flip responder scores 0.46--0.49, correctly near chance.
+    An in-sample evaluation would have scored 0.61 --- but no in-sample
+    evaluation is used. An earlier draft of this work asserted otherwise and was
+    wrong.
+  \item \textbf{The fit is sound.} Keeping the pair set and permuting the
+    observed probabilities across pairs --- destroying the link between a pair
+    and its preference while preserving the distribution of preference
+    strengths --- lands at $\sim 0.50$. The flat result is not an artifact of
+    our reimplementation.
+\end{enumerate}
+
+\section{Limitations}
+
+\paragraph{Tokenisation is not matched, and we tested whether it matters.}
+Invented outcomes fragment badly: per outcome they carry \TokenInflation$\times$
+the tokens of real ones (\TokensR{} $\to$ \TokensNm{} tokens) for only about
+$1.2\times$ the characters. The inflation is therefore a tokenisation effect,
+not longer text, and matching the arms on \emph{characters} would not control
+it --- so we match on tokens.
+
+Restricting both arms to pairs whose outcomes fall in the overlapping band of
+\MatchedBandLo{}--\MatchedBandHi{} tokens, the mean residual is
+\MatchedResidual{}, against \MeanResidual{} unrestricted. The residual
+therefore survives length matching, and the small part attributable to length
+runs \emph{against} us: the unmatched number slightly overstates the semantic
+component rather than understating it. Consistent with this, coherence within
+the real arm falls mildly across length terciles while the invented arm is
+approximately flat, so the longer invented prompts are if anything scored
+slightly low. We regard the confound as real but small; it does not account for
+the residual, and correcting for it makes the residual smaller.
+
+\paragraph{The invented ordering is partly, but not mostly, a length ordering.}
+Fitted utilities on the invented arms correlate with text length up to
+$r = -0.75$, which invites the deflationary reading that the floor is nothing
+but a length ordering and the models impose no structure on nonsense at all. We
+tested that directly by scoring three quantities on the same held-out splits: the
+Thurstonian fit; a one-parameter rule that simply prefers the shorter (or
+longer) outcome, with its direction chosen on the training half only; and the
+fit restricted to held-out pairs whose outcomes are within one token of each
+other, where the length rule has nothing to say.
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+arm & fit & length rule alone & fit, length neutralised \\
+\midrule
+\armR{}  & \RealDecompFit{}  & \RealLengthRule{}  & \RealTiedAcc{} \\
+\armNm{} & \FloorDecompFit{} & \FloorLengthRule{} & \FloorTiedAcc{} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+On real outcomes length explains almost nothing (\RealLengthRule{}, against
+$0.5$ chance) and neutralising it costs the fit nothing. On invented outcomes
+length is a substantial cue --- \FloorLengthRule{} from a single parameter ---
+but the fit still reaches \FloorTiedAcc{} on pairs where length carries no
+information. \textbf{The floor is therefore not a tokenisation artifact.} Models
+impose a rich and consistent ordering on referents that mean nothing, of which
+length is one component among others --- which is what P1 predicted, in a
+stronger form than predicted. One model is an instructive exception: for
+\MostLengthModel{} the length rule reaches \MostLengthRule{} against a fit of
+\MostLengthFit{}, so its invented ordering \emph{is} essentially length. The
+length-neutralised column
+rests on roughly 40 held-out pairs per split in the invented arm and is
+correspondingly noisy per model; only the pooled value is quoted.
+
+\paragraph{Margins against a near-zero floor are not margins.} One model clears
+at $4.2\times$ on a floor of $0.001$. Three replicates can produce a range that
+small by luck, and a ratio against it is a division artifact. Absolute residuals
+are reported alongside for this reason.
+
+\paragraph{The scaling result rests on one family, and we checked.} Pooled over
+all \NModels{} models, the floor-corrected residual declines with $\log_2$
+parameter count at $r = \PooledSizeCorr{}$ (exact permutation test, $p = 0.043$)
+and the floor itself rises at $r = \PooledFloorCorr{}$, which reads as a
+cross-family result. It is not one. Splitting the same data, the correlation
+within the \LadderFamily{} family --- the only one in our roster spanning
+\LadderNSizes{} sizes with size as the sole variable --- is
+$\WithinFamilyCorr{}$, while among the \NOutsideFamily{} models outside it the
+correlation is $\OutsideFamilyCorr{}$, that is, absent. Leave-one-out over the
+pooled set is stable ($-0.54$ to $-0.83$), so no single model drives the
+pooled number, but the decomposition is unambiguous: the pooled trend is
+carried by the one ladder. We therefore state the scaling claim as a
+within-family result, and report the pooled correlation only alongside this
+split. Replicating it in a second family is the first thing we would do with
+more compute.
+
+\paragraph{Scope.} Nine open-weight models between 0.8B and 9B parameters, one
+outcome set, first-token scoring only. Two models failed to load under the
+pinned library version and are absent rather than excluded for their results;
+one model whose chat template injects a large standing preamble is excluded from
+cross-model comparison of absolute values, though its within-model arm contrast
+is unaffected. No frontier or closed model is included.
+
+\paragraph{A correction, recorded rather than quietly fixed.} An earlier version
+of this analysis was built partly on truncated result files --- cells killed
+mid-write by an unrelated crash, which a resume step then mistook for finished
+work; one was 10\% complete. All cells are now verified at their full row count
+before entering the analysis, at both the collection and the analysis stage. The
+headline moved by 0.002, several per-model verdicts moved more, and one
+previously reported instability turned out to be the truncation itself and has
+been withdrawn.
+
+\section{Conclusion}
+
+A preference-coherence metric that scores \MeanR{} on real outcomes scores
+\MeanFloor{} on outcomes that refer to nothing. The residual is \MeanResidual{},
+most models do not clear it by much, and within one family it shrinks as models
+grow. The metric is not broken --- it passes its own nulls and its design
+choices survive scrutiny --- but it is unanchored: it certifies that choices
+follow a stable scalar ordering without certifying that the ordering is about
+anything.
+
+The practical recommendation is small and cheap. Any claim that a coherence
+number reflects values should be accompanied by the same number computed on
+outcomes that mean nothing. Building that arm cost one battery and a few dollars
+of compute. Reading a number without it costs more.
+
+\paragraph{Reproducibility.} Predictions were registered before the first model
+was run. The battery is hash-pinned; the analysis pipeline, the
+pre-registration, the noise-floor machinery and every figure-generating script
+are released. \textbf{Every measured result in this paper} --- each number in
+Table \ref{tab:main}, in the abstract, and in \S\ref{sec:flat}--\ref{sec:persona}
+--- is emitted from the results card by \texttt{scripts/paper\_numbers.py} and
+resolves through a macro; none is typed into the prose. The exceptions, typed
+and marked as such where they appear, are the \emph{simulated} characterisations
+of the metric in \S1 (from \texttt{scripts/floor\_simulation.py}, which
+describes synthetic responders and no language model) and figures quoted from
+the literature, each re-derived from the full source text rather than from an
+abstract.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

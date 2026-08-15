@@ -1,0 +1,325 @@
+% Coherence Without Content -- 10-minute sprint talk.
+% Build:  latexmk -pdf slides.tex   (or `make slides` in paper/)
+%
+% Shares numbers.tex and figs/ with main.tex, so the talk cannot quote a
+% different number from the paper. Same reason the paper has no typed results.
+%
+% Timing: ~10 min. Slides 3-6 are the spine; if you are cut short, the talk
+% still lands after slide 6 (the scale ladder). Everything after is support.
+
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usetheme{default}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercolor{frametitle}{fg=black}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamertemplate{itemize item}{--}
+\setbeamertemplate{itemize subitem}{--}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\graphicspath{{figs/}}
+\input{numbers}
+
+\definecolor{accent}{HTML}{B4453A}
+\newcommand{\hl}[1]{\textcolor{accent}{\textbf{#1}}}
+
+\title{Coherence Without Content}
+\subtitle{A missing control for emergent value systems in LLMs}
+\author{Nullcard}
+\institute{\small Apart Research Digital Minds Sprint}
+\date{15 August 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% The hook: state the punchline before the method. A sprint audience decides
+% in 40 seconds whether to keep listening.
+% ---------------------------------------------------------------------------
+\begin{frame}{The one-slide version}
+  \Large
+  A published metric says these models have coherent values.
+
+  \bigskip
+  We ran it on outcomes that \hl{mean nothing}.
+
+  \bigskip
+  \begin{center}
+  \begin{tabular}{@{}lr@{}}
+    real outcomes        & \MeanR{} \\
+    meaningless outcomes & \MeanFloor{} \\
+    \midrule
+    difference           & \hl{\MeanResidual{}} \\
+  \end{tabular}
+  \end{center}
+
+  \bigskip
+  \normalsize
+  The metric is not broken. It is \hl{unanchored}.
+\end{frame}
+
+\begin{frame}{The claim we are testing}
+  \textbf{Utility Engineering} (Mazeika et al., 2025)
+  \begin{itemize}
+    \item Ask a model to choose between two outcomes, 500 of them
+    \item Fit a Thurstonian utility model to the choices
+    \item Report held-out accuracy as \emph{structural coherence}
+    \item It rises with scale $\Rightarrow$ ``value systems emerge''
+  \end{itemize}
+
+  \bigskip
+  Their robustness checks vary \emph{how the question is asked}: seven
+  languages, syntax, framing, option labels, long context.
+
+  \bigskip
+  \begin{center}
+  \hl{No condition varies whether the outcomes mean anything.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Why that gap is reachable, not pedantic}
+  High held-out accuracy proves choices follow a \emph{stable scalar ordering}.
+  It does not prove the ordering is \emph{about} anything.
+
+  \bigskip
+  \begin{itemize}
+    \item \hl{244 of 510 outcomes contain a numeral} --- orderable by
+      arithmetic alone. Whole categories are 100\% numeric.
+    \item In simulation, a responder ordering purely by magnitude, with
+      \hl{zero semantics}, scores \hl{0.949--0.977} held out.
+    \item A responder with a genuine latent utility function scores
+      0.858--0.928 --- \hl{lower}.
+  \end{itemize}
+
+  \bigskip
+  An instrument where ``count the number'' beats ``have values'' cannot tell
+  them apart from its own output.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{The control}
+  Same 510 outcomes. Same prompt, verbatim. Same fit. Same metric.
+  \hl{Only the referents change.}
+
+  \bigskip
+  \begin{center}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    arm & outcomes & coherence would reflect \\
+    \midrule
+    \textbf{R}                  & real & values $+$ arithmetic $+$ format \\
+    \textbf{N\textsuperscript{+}} & invented, magnitudes kept & arithmetic $+$ format \\
+    \textbf{N\textsuperscript{--}} & invented, magnitudes gone & \hl{format alone} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \bigskip
+  \textbf{N\textsuperscript{--}} is the floor: what the procedure returns when
+  there is nothing to have a preference \emph{about}.
+
+  \medskip
+  \small Every number we report is $\mathbf{R} - \mathbf{N^{-}}$, never a raw
+  coherence. \NModels{} models, \NCells{} cells, 3 design replicates each.
+\end{frame}
+
+\begin{frame}{Result 1 --- the metric barely notices}
+  \begin{center}
+    \includegraphics[height=.62\textheight,width=\textwidth,keepaspectratio]{fig1_state_space.pdf}
+  \end{center}
+  \small
+  Each model is a \emph{path}: real $\rightarrow$ invented-with-magnitudes
+  $\rightarrow$ invented. If the metric tracked meaning, paths would run
+  down-\emph{and-left}. They run \hl{almost straight down}.
+\end{frame}
+
+\begin{frame}{Result 2 --- direction survives, conviction does not}
+  The metric thresholds preferences to hard labels.
+  A pair at $p=0.51$ counts exactly like a pair at $p=0.99$.
+
+  \bigskip
+  \begin{center}
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    commits to a side, real outcomes      & \MeanDecisiveR\% \\
+    commits to a side, invented outcomes  & \MeanDecisiveN\% \\
+    \midrule
+    median collapse                        & \hl{\MedianDecisiveRatio$\times$} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \bigskip
+  A model that is almost perfectly \hl{indifferent about gibberish} --- but
+  consistently so --- scores as coherent about it.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% The decisive slide. Pre-registered, and it went the way that undercuts the
+% scaling claim. Do not rush this one.
+% ---------------------------------------------------------------------------
+\begin{frame}{Result 3 --- the scaling claim, floor-corrected}
+  \textbf{Pre-registered decisive test.} One family, size the only variable,
+  \LadderSmall{} $\rightarrow$ \LadderLarge{}.
+
+  \bigskip
+  \begin{itemize}
+    \item If values emerge with scale: floor stays flat, signal rises.
+    \item If it is general answer-consistency: \hl{the floor rises too}.
+  \end{itemize}
+
+  \bigskip
+  \begin{center}
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    real-outcome coherence rises by  & \LadderRRise{} \\
+    the \hl{floor} rises by           & \hl{\LadderNRise{}} \\
+    \midrule
+    floor-corrected residual         & \hl{\LadderResidFall{}} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \bigskip
+  Bigger models here are not more coherent \emph{about the outcomes}.
+  They are more consistent in general.
+
+  \medskip
+  \footnotesize
+  Pooled over all \NModels{} models $r=\PooledSizeCorr$ ($p=0.043$) --- but that
+  is \emph{carried by this family} (within \LadderNSizes{} sizes:
+  \WithinFamilyCorr; the other \NOutsideFamily{} models: \OutsideFamilyCorr).
+  \hl{We claim it within one family only.}
+\end{frame}
+
+\begin{frame}{``Maybe your instrument just can't see anything''}
+  Fair objection. So: install a persona and measure the shift on \hl{both arms}.
+
+  \bigskip
+  \[
+    1 - \frac{\lVert \Delta_{\text{invented}} \rVert}{\lVert \Delta_{\text{real}} \rVert}
+    \qquad
+    \begin{array}{l}
+      1.0 = \text{pure preference change} \\
+      0.0 = \text{pure style change}
+    \end{array}
+  \]
+
+  \bigskip
+  \begin{itemize}
+    \item \hl{\PersonaAbovePointThree{} of \NPersonaCells{}} conditions exceed
+      $+0.30$, up to \PersonaMax{}
+    \item One informative exception at \PersonaMin{} --- moved \emph{gibberish}
+      further than substance. That is what style looks like.
+    \item \hl{Depth barely matters}: user turn vs.\ system prompt shifts it
+      \DepthSpread{}; swapping the trait shifts it \PersonaSpread{}
+  \end{itemize}
+
+  \bigskip
+  So the instrument \emph{can} see content. It is the unmanipulated coherence
+  number that fails to depend on it.
+\end{frame}
+
+\begin{frame}{Three checks that came out in their favour}
+  We report these regardless. They \hl{narrow} our claim.
+
+  \bigskip
+  \begin{enumerate}
+    \item \textbf{Order effects are handled.} Pure positional bias produces
+      exactly 50/50 on counterbalanced pairs. It cancels completely.
+    \item \textbf{Not inflated by overfitting.} Held-out evaluation keeps a
+      coin flip at 0.46--0.49. \emph{Our first draft claimed otherwise and was
+      wrong.}
+    \item \textbf{The fit is sound.} Shuffle probabilities across pairs and the
+      metric lands at $\sim$0.50.
+  \end{enumerate}
+
+  \bigskip
+  \begin{center}
+  We are not saying the metric is broken.\\
+  We are saying \hl{a high score does not distinguish values from format}.
+  \end{center}
+\end{frame}
+
+\begin{frame}{What we would want you to hold against us}
+  \begin{itemize}
+    \item \textbf{Tokenisation is not matched --- so we tested it.} Invented
+      outcomes carry \TokenInflation$\times$ the tokens. Matched on tokens
+      (\MatchedBandLo--\MatchedBandHi), the residual is \MatchedResidual{} vs
+      \MeanResidual{} --- it \hl{survives}, and the length part runs against us.
+    \item \textbf{Is the floor just length?} No --- we checked. A
+      one-parameter length rule gets \FloorLengthRule{} on the invented arm
+      (vs \RealLengthRule{} on real). But with length neutralised the fit
+      still scores \hl{\FloorTiedAcc{}}. Models impose \emph{rich} order on
+      nonsense, not one cheap cue.
+    \item \textbf{Scope.} 9 open-weight models, 0.8B--9B, one outcome set.
+      The scaling claim rests on one family.
+    \item \textbf{We shipped a bug and corrected it.} Six truncated result
+      files reached an earlier analysis; one was 10\% complete. Now every cell
+      is row-count verified at two stages. Headline moved 0.002; one previously
+      reported ``instability'' was the bug and is withdrawn.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Takeaway}
+  \Large
+  \begin{center}
+  A coherence number without a content control\\
+  does not distinguish \hl{having values}\\
+  from \hl{being consistent}.
+
+  \bigskip
+  \normalsize
+  The control costs one battery and a few dollars of GPU.\\
+  Reading the number without it costs more.
+  \end{center}
+
+  \vfill
+  \small
+  Pre-registered before the first run \textperiodcentered{} battery hash-pinned
+  \texttt{\BatterySHA\ldots} \textperiodcentered{} code, pre-registration and
+  figures released.
+\end{frame}
+
+\appendix
+
+\begin{frame}{Backup --- all numbers}
+  \scriptsize
+  \begin{center}
+  \input{table_main}
+  \end{center}
+  \vspace{.5em}
+  \tiny \textbf{floor} = range of the same cell across three independent
+  designs. $^{*}$ = floor too near zero for a ratio to mean anything.
+\end{frame}
+
+\begin{frame}{Backup --- the mechanism, directly}
+  \begin{center}
+    \includegraphics[height=.68\textheight,width=\textwidth,keepaspectratio]{fig3_strength.pdf}
+  \end{center}
+  \small
+  Real outcomes: mass at the edges. Invented: mass at indifference.
+  Coherence reads only \emph{which side of 0.5}.
+\end{frame}
+
+\begin{frame}{Backup --- persona displacement}
+  \begin{center}
+    \includegraphics[height=.68\textheight,width=\textwidth,keepaspectratio]{fig5_persona.pdf}
+  \end{center}
+  \small
+  Dashed diagonal is the null. \hl{Below} it = displacement the invented-outcome
+  control cannot explain.
+\end{frame}
+
+\end{document}

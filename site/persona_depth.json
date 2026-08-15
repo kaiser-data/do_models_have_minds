@@ -1,0 +1,162 @@
+[
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "cautious",
+    "depth": "D1",
+    "shift_real": 1.2378490447048887,
+    "shift_invented": 0.7579774061240545,
+    "floor_corrected": 0.3876657179108933
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "cautious",
+    "depth": "D2",
+    "shift_real": 1.1261757537363075,
+    "shift_invented": 0.7444901801628294,
+    "floor_corrected": 0.3389218532783731
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "ambitious",
+    "depth": "D1",
+    "shift_real": 1.1428809879770438,
+    "shift_invented": 0.49046134959002247,
+    "floor_corrected": 0.570855272990267
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "ambitious",
+    "depth": "D2",
+    "shift_real": 0.8709511074309917,
+    "shift_invented": 0.40177597707693463,
+    "floor_corrected": 0.5386928455007807
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "cautious",
+    "depth": "D1",
+    "shift_real": 5.941551531013208,
+    "shift_invented": 1.720858179977713,
+    "floor_corrected": 0.7103688874874983
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "cautious",
+    "depth": "D2",
+    "shift_real": 4.427892123337066,
+    "shift_invented": 1.9282507112630018,
+    "floor_corrected": 0.5645217504057478
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "ambitious",
+    "depth": "D1",
+    "shift_real": 8.856876683614539,
+    "shift_invented": 3.2619339544743324,
+    "floor_corrected": 0.6317060662582106
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "ambitious",
+    "depth": "D2",
+    "shift_real": 7.530911855908702,
+    "shift_invented": 2.7241914650655086,
+    "floor_corrected": 0.6382653897445199
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "cautious",
+    "depth": "D1",
+    "shift_real": 15.460802460790548,
+    "shift_invented": 4.446262018423098,
+    "floor_corrected": 0.7124171251977984
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "cautious",
+    "depth": "D2",
+    "shift_real": 15.066549390986712,
+    "shift_invented": 4.608356759844392,
+    "floor_corrected": 0.6941332324837923
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "ambitious",
+    "depth": "D1",
+    "shift_real": 18.96684832167685,
+    "shift_invented": 3.235532574174466,
+    "floor_corrected": 0.8294111641902763
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "ambitious",
+    "depth": "D2",
+    "shift_real": 16.23102379995365,
+    "shift_invented": 3.252397649260826,
+    "floor_corrected": 0.7996184535648261
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "cautious",
+    "depth": "D1",
+    "shift_real": 22.84879846390488,
+    "shift_invented": 6.921740721433548,
+    "floor_corrected": 0.6970632511653474
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "cautious",
+    "depth": "D2",
+    "shift_real": 23.202983079189423,
+    "shift_invented": 3.5177982668076595,
+    "floor_corrected": 0.8483902584938423
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "ambitious",
+    "depth": "D1",
+    "shift_real": 28.43581201208088,
+    "shift_invented": 10.422709177508562,
+    "floor_corrected": 0.6334653931078
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "ambitious",
+    "depth": "D2",
+    "shift_real": 23.600289446340796,
+    "shift_invented": 6.188654324255296,
+    "floor_corrected": 0.7377721007055342
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "cautious",
+    "depth": "D1",
+    "shift_real": 27.300956742400263,
+    "shift_invented": 16.713926799279072,
+    "floor_corrected": 0.38778970433218574
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "cautious",
+    "depth": "D2",
+    "shift_real": 25.156291475944958,
+    "shift_invented": 11.849759841068792,
+    "floor_corrected": 0.5289544226978045
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "ambitious",
+    "depth": "D1",
+    "shift_real": 15.880271109408291,
+    "shift_invented": 26.40571609009734,
+    "floor_corrected": -0.6628000811934018
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "ambitious",
+    "depth": "D2",
+    "shift_real": 15.248971609487391,
+    "shift_invented": 19.03001043256067,
+    "floor_corrected": -0.24795369287203894
+  }
+]

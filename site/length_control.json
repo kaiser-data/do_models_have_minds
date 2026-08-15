@@ -1,0 +1,677 @@
+{
+  "metric": "tokens",
+  "tokenizer": "Qwen/Qwen3.5-2B",
+  "arm_lengths": {
+    "R": 13.229411764705882,
+    "N_plus": 26.386274509803922,
+    "N_minus": 26.564705882352943
+  },
+  "models": {
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.8996472883622293,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.9113113286777006
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.8701676025026748
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.8628663674305063
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.8429945041027975,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.8778201884214167
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.8220053805287335
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.8293457791903679
+          }
+        ]
+      }
+    },
+    "HuggingFaceTB/SmolLM3-3B": {
+      "R": {
+        "n_pairs": 2498,
+        "mean_pair_length": 13.08146517213771,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.9414669946164004,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.9500907436078215
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 900,
+            "coherence": 0.9316740945326721
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 936,
+            "coherence": 0.9124431883824673
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2445,
+        "mean_pair_length": 26.59631901840491,
+        "length_quartiles": [
+          21.0,
+          25.5,
+          31.5
+        ],
+        "overall": 0.9308592231964156,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.9280599538086086
+          },
+          {
+            "lo": 22.5,
+            "hi": 29.5,
+            "n_pairs": 879,
+            "coherence": 0.9271600589005136
+          },
+          {
+            "lo": 29.5,
+            "hi": 56.5,
+            "n_pairs": 821,
+            "coherence": 0.9264586827021498
+          }
+        ]
+      }
+    },
+    "LiquidAI/LFM2.5-1.2B-Instruct": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.9078579745837055,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.92523124655022
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.8983425414364641
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.9082091250426669
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.8676026006806561,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.8281701011009428
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.8656127198442188
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.8798626219222652
+          }
+        ]
+      }
+    },
+    "Qwen/Qwen3.5-0.8B": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.8923150300601203,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.8974298581806528
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.8935297728667895
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.9136648082830812
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.8567947139258436,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.833562505620904
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.8530159277787362
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.8267436398498109
+          }
+        ]
+      }
+    },
+    "Qwen/Qwen3.5-2B": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.8955583166332666,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.9141333595961754
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.8847882136279926
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.8742405279326431
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.8890675680678626,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.8671594446045171
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.8972399516991547
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.9004819349038206
+          }
+        ]
+      }
+    },
+    "Qwen/Qwen3.5-4B": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.9055279840638562,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.8841369534587764
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.9236824625406104
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.8996253809441666
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.9213894527732307,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.8897787744777158
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.9190782980270311
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.9332639997933748
+          }
+        ]
+      }
+    },
+    "Qwen/Qwen3.5-9B": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.9151999999999999,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.92660114310133
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.8850828729281768
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.8880703151666856
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.90944578313253,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.876814361486727
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.9325685699499742
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.8868018128822381
+          }
+        ]
+      }
+    },
+    "google/gemma-4-E2B-it": {
+      "R": {
+        "n_pairs": 2425,
+        "mean_pair_length": 13.064536082474227,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.9009082389026156,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 937,
+            "coherence": 0.9215719569575824
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 887,
+            "coherence": 0.8887640449438201
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 904,
+            "coherence": 0.8686516853932584
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2412,
+        "mean_pair_length": 26.758499170812602,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.9085995033733172,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 814,
+            "coherence": 0.8927605914148845
+          },
+          {
+            "lo": 22.5,
+            "hi": 29.5,
+            "n_pairs": 855,
+            "coherence": 0.9039078087375302
+          },
+          {
+            "lo": 29.5,
+            "hi": 56.5,
+            "n_pairs": 841,
+            "coherence": 0.859697890778038
+          }
+        ]
+      }
+    },
+    "ibm-granite/granite-4.1-3b": {
+      "R": {
+        "n_pairs": 2500,
+        "mean_pair_length": 13.0818,
+        "length_quartiles": [
+          10.5,
+          12.5,
+          15.0
+        ],
+        "overall": 0.8787599149328583,
+        "by_tercile": [
+          {
+            "lo": 5.0,
+            "hi": 11.5,
+            "n_pairs": 968,
+            "coherence": 0.8972071568423733
+          },
+          {
+            "lo": 11.5,
+            "hi": 14.0,
+            "n_pairs": 902,
+            "coherence": 0.8669244935543278
+          },
+          {
+            "lo": 14.0,
+            "hi": 28.0,
+            "n_pairs": 937,
+            "coherence": 0.8281943338263741
+          }
+        ]
+      },
+      "N_minus": {
+        "n_pairs": 2500,
+        "mean_pair_length": 26.7612,
+        "length_quartiles": [
+          21.0,
+          26.0,
+          32.0
+        ],
+        "overall": 0.8328754640916879,
+        "by_tercile": [
+          {
+            "lo": 7.5,
+            "hi": 22.5,
+            "n_pairs": 848,
+            "coherence": 0.77766387604723
+          },
+          {
+            "lo": 22.5,
+            "hi": 30.0,
+            "n_pairs": 934,
+            "coherence": 0.7275588150495336
+          },
+          {
+            "lo": 30.0,
+            "hi": 56.5,
+            "n_pairs": 834,
+            "coherence": 0.7368387432940122
+          }
+        ]
+      }
+    }
+  },
+  "matched_band": {
+    "band": [
+      13.0,
+      24.0
+    ],
+    "per_model": {
+      "HuggingFaceTB/SmolLM2-1.7B-Instruct": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.8851336378771615
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.8822213421645297
+        },
+        "residual": 0.0029122957126317406
+      },
+      "HuggingFaceTB/SmolLM3-3B": {
+        "R": {
+          "n_pairs": 1220,
+          "coherence": 0.928071344513777
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.916989269934778
+        },
+        "residual": 0.011082074578999013
+      },
+      "LiquidAI/LFM2.5-1.2B-Instruct": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.9140682502509201
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.8770807948416532
+        },
+        "residual": 0.036987455409266845
+      },
+      "Qwen/Qwen3.5-0.8B": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.8946938775510205
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.8416451898921234
+        },
+        "residual": 0.05304868765889703
+      },
+      "Qwen/Qwen3.5-2B": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.8946938775510205
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.8845460322151618
+        },
+        "residual": 0.010147845335858663
+      },
+      "Qwen/Qwen3.5-4B": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.9244601055074104
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.9139653723500079
+        },
+        "residual": 0.01049473315740257
+      },
+      "Qwen/Qwen3.5-9B": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.9191836734693878
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.8965412541254125
+        },
+        "residual": 0.022642419343975262
+      },
+      "google/gemma-4-E2B-it": {
+        "R": {
+          "n_pairs": 1184,
+          "coherence": 0.8843881856540085
+        },
+        "N_minus": {
+          "n_pairs": 976,
+          "coherence": 0.9113017193087701
+        },
+        "residual": -0.02691353365476168
+      },
+      "ibm-granite/granite-4.1-3b": {
+        "R": {
+          "n_pairs": 1222,
+          "coherence": 0.847520001776856
+        },
+        "N_minus": {
+          "n_pairs": 1010,
+          "coherence": 0.7818214705367634
+        },
+        "residual": 0.06569853124009262
+      }
+    },
+    "mean_residual": 0.02067783430915134
+  }
+}

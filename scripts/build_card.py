@@ -27,26 +27,80 @@ from nullcard.scoring.analyze import (  # noqa: E402
     cell_coherence,
     load_cell,
 )
-from nullcard.scoring.stats import wilson_interval  # noqa: E402
+from nullcard.scoring.stats import training_noise_floor, wilson_interval  # noqa: E402
 from nullcard.scoring.thurstonian import completeness, transitivity_rate  # noqa: E402
 
 ARMS = ("R", "N_plus", "N_minus")
 N_SPLITS = 5
 
+# 2500 pairs in both presentation orders. A cell with fewer rows than this did
+# not finish, and a half-finished cell is not a measurement — its coherence is
+# fitted on whichever pairs happened to run before the process died. Six such
+# cells reached this card once, and SmolLM2's N+ "instability" turned out to be
+# a cell that was 10% complete. They are excluded here as well as at the
+# source, because the two failures that produce them (a killed sweep, a resume
+# that trusts os.path.exists) are exactly the ones that recur.
+EXPECTED_ROWS = 5000
 
-def parse_cell_name(path: Path) -> tuple[str, str]:
+
+DEFAULT_DESIGN_SEED = 20260815
+
+
+def parse_cell_name(path: Path) -> tuple[str, str, int, str, str]:
+    """-> (model, arm, design_seed, persona, depth).
+
+    Replicates carry `__s<seed>`; persona cells carry `__<persona>-<depth>`.
+    Both suffixes are stripped before the arm is read, so a filename that has
+    neither still parses as the baseline cell.
+    """
     stem = path.stem
+    persona, depth = "none", "D0"
+    seed = DEFAULT_DESIGN_SEED
+
+    parts = stem.split("__")
+    if parts and "-" in parts[-1] and parts[-1].rsplit("-", 1)[-1].startswith("D"):
+        persona, depth = parts[-1].rsplit("-", 1)
+        stem = "__".join(parts[:-1])
+    if "__s" in stem:
+        head, _, tail = stem.rpartition("__s")
+        if tail.isdigit():
+            stem, seed = head, int(tail)
     for arm in sorted(ARMS, key=len, reverse=True):
         if stem.endswith(f"__{arm}"):
-            return stem[: -len(arm) - 2].replace("__", "/"), arm
+            return stem[: -len(arm) - 2].replace("__", "/"), arm, seed, persona, depth
     raise ValueError(f"cannot parse cell name: {path.name}")
+
+
+def _floor_verdict(value: float, floor: float | None) -> dict:
+    """Does this residual clear the model's own design noise floor?
+
+    Kept as a computed field because the alternative is a human reading a
+    table and deciding, and that decision then travels into prose as "3 of 9
+    clear" with no rule attached to it. The rule is: strictly greater than the
+    floor. `floor_margin` carries how comfortably — 1.4x and 2.9x are both
+    "clears" and should not be reported as the same thing.
+    """
+    if floor is None:
+        return {"clears_floor": None, "floor_margin": None}
+    return {
+        "clears_floor": bool(value > floor),
+        "floor_margin": (value / floor) if floor > 0 else None,
+    }
 
 
 def summarise_cell(path: Path) -> dict | None:
     rows = load_cell(path)
     if not rows:
         return None
-    model, arm = parse_cell_name(path)
+    if len(rows) < EXPECTED_ROWS:
+        print(f"  EXCLUDED (incomplete, {len(rows)}/{EXPECTED_ROWS} rows): {path.name}")
+        return None
+    model, arm, design_seed, persona, depth = parse_cell_name(path)
+    # The base card is the D0 (no persona) surface. Persona cells are analysed
+    # separately by scripts/persona_depth.py; folding them in here would average
+    # a manipulated condition into the baseline.
+    if persona != "none" or depth != "D0":
+        return None
     probs = aggregate_pair_probabilities(rows)
     if len(probs) < 10:
         return None
@@ -80,6 +134,7 @@ def summarise_cell(path: Path) -> dict | None:
     return {
         "model": model,
         "arm": arm,
+        "design_seed": design_seed,
         "coherence": float(np.mean(accs)),
         "coherence_spread": float(np.max(accs) - np.min(accs)),
         "shuffled_null": float(np.mean(nulls)) if nulls else None,
@@ -104,9 +159,29 @@ def summarise_cell(path: Path) -> dict | None:
 
 def build_card(results_dir: Path) -> dict:
     cells = [c for c in (summarise_cell(p) for p in sorted(results_dir.glob("*.jsonl"))) if c]
-    by_model: dict[str, dict[str, dict]] = {}
+
+    # Average over design replicates, and keep their spread. Each design seed
+    # draws a different outcome subsample and a different pair set, so the
+    # spread across seeds is the smallest difference between two models that we
+    # are entitled to call a difference (spec §5.1).
+    grouped: dict[tuple[str, str], list[dict]] = {}
     for c in cells:
-        by_model.setdefault(c["model"], {})[c["arm"]] = c
+        grouped.setdefault((c["model"], c["arm"]), []).append(c)
+
+    by_model: dict[str, dict[str, dict]] = {}
+    for (model, arm), reps in grouped.items():
+        merged = dict(reps[0])
+        merged["coherence"] = float(np.mean([r["coherence"] for r in reps]))
+        merged["n_design_replicates"] = len(reps)
+        merged["design_replicate_values"] = [r["coherence"] for r in reps]
+        merged["decisive_fraction"] = float(np.mean([r["decisive_fraction"] for r in reps]))
+        merged["mean_abs_deviation"] = float(np.mean([r["mean_abs_deviation"] for r in reps]))
+        merged["slot_a_bias"] = float(np.mean([r["slot_a_bias"] for r in reps]))
+        merged["transitivity"] = float(np.mean([r["transitivity"] for r in reps]))
+        if merged.get("shuffled_null") is not None:
+            nulls = [r["shuffled_null"] for r in reps if r.get("shuffled_null") is not None]
+            merged["shuffled_null"] = float(np.mean(nulls)) if nulls else None
+        by_model.setdefault(model, {})[arm] = merged
 
     tiles = []
     for model, arms in sorted(by_model.items()):
@@ -161,8 +236,27 @@ def build_card(results_dir: Path) -> dict:
                 r["decisive_fraction"] / n_minus["decisive_fraction"]
                 if n_minus["decisive_fraction"] > 0 else None
             ),
-            "shuffled_null": {k: v["shuffled_null"] for k, v in arms.items()},
+            "shuffled_null": {k: v.get("shuffled_null") for k, v in arms.items()},
             "split_spread": max(a["coherence_spread"] for a in arms.values()),
+            "n_design_replicates": r.get("n_design_replicates", 1),
+            # The gate on every between-model claim: the spread of the SAME cell
+            # across independent designs. A difference smaller than this is not
+            # a difference (spec §5.1). None until >=3 replicates exist, rather
+            # than a reassuring small number computed from two.
+            "design_noise_floor": (
+                training_noise_floor(r["design_replicate_values"])
+                if r.get("n_design_replicates", 1) >= 3 else None
+            ),
+            # The verdict, computed rather than counted by eye. `clears_floor`
+            # is the spec's own test — the residual exceeds the spread of the
+            # same cell across independent designs — and `floor_margin` is the
+            # ratio, so a model that clears by a hair is visible as such
+            # instead of being tallied beside one that clears by 3x.
+            **_floor_verdict(
+                r["coherence"] - n_minus["coherence"],
+                training_noise_floor(r["design_replicate_values"])
+                if r.get("n_design_replicates", 1) >= 3 else None,
+            ),
             "slot_a_bias": r["slot_a_bias"],
             "transitivity": {k: v["transitivity"] for k, v in arms.items()},
             "mean_answer_mass": {k: v["mean_answer_mass"] for k, v in arms.items()},
@@ -174,24 +268,29 @@ def build_card(results_dir: Path) -> dict:
 
 
 def print_table(card: dict) -> None:
-    print(f"\n{'':<38} {'---- direction (UE metric) ----':^26}  {'---- strength ----':^22}")
-    print(f"{'model':<38} {'R':>7} {'N-':>7} {'R-N-':>8} {'null':>6}  "
-          f"{'dec R':>7} {'dec N-':>7} {'ratio':>6}")
+    print(f"\n{'':<38} {'--- direction (UE metric) ---':^24} {'design':>7} {'':>5}  "
+          f"{'-- strength --':^17}")
+    print(f"{'model':<38} {'R':>7} {'N-':>7} {'R-N-':>8} {'floor':>7} {'clears':>6} "
+          f"{'reps':>5}  {'dec R':>7} {'dec N-':>7}")
     print("-" * 96)
     for t in card["tiles"]:
         if t["badge"] != "FLOOR_CORRECTED":
             print(f"{t['model']:<38} {t['badge']}  ({t.get('reason','')})")
             continue
-        ratio = t.get("decisive_ratio_R_over_Nminus")
+        dnf = t.get("design_noise_floor")
+        margin = t.get("floor_margin")
+        verdict = ("  --" if t.get("clears_floor") is None
+                   else f"{margin:>4.1f}x" if t["clears_floor"] else "   no")
         print(
             f"{t['model']:<38} "
             f"{t['raw_coherence']:>7.3f} "
             f"{t['floor']:>7.3f} "
             f"{t['value']:>8.3f} "
-            f"{(t['shuffled_null'].get('R') or float('nan')):>6.3f}  "
+            f"{(f'{dnf:.3f}' if dnf is not None else '  n/a'):>7} "
+            f"{verdict:>6} "
+            f"{t.get('n_design_replicates', 1):>5}  "
             f"{t['decisive_fraction']['R']:>7.3f} "
-            f"{t['decisive_fraction']['N_minus']:>7.3f} "
-            f"{(ratio if ratio is not None else float('nan')):>6.1f}x"
+            f"{t['decisive_fraction']['N_minus']:>7.3f}"
         )
     scored = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     if scored:

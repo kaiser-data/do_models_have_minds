@@ -1,0 +1,222 @@
+[
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "cautious",
+    "depth": "D1",
+    "real": 0.03472645730635655,
+    "real_lc": -0.004720912577868962,
+    "invented": -0.3076493806089193,
+    "invented_lc": -0.40281851365503063,
+    "excess": 0.3423758379152758,
+    "excess_lc": 0.3980976010771617
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "cautious",
+    "depth": "D2",
+    "real": -0.014640802455030823,
+    "real_lc": -0.08700019221080595,
+    "invented": -0.3552648282773767,
+    "invented_lc": -0.46979431439031205,
+    "excess": 0.3406240258223459,
+    "excess_lc": 0.3827941221795061
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "ambitious",
+    "depth": "D1",
+    "real": 0.4238924228544984,
+    "real_lc": 0.502204408674223,
+    "invented": 0.2438607050051839,
+    "invented_lc": 0.21553599516166544,
+    "excess": 0.18003171784931452,
+    "excess_lc": 0.28666841351255756
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "ambitious",
+    "depth": "D2",
+    "real": 0.12467850753214926,
+    "real_lc": 0.16230148778931996,
+    "invented": -0.13591269246139026,
+    "invented_lc": -0.17235386753711215,
+    "excess": 0.2605911999935395,
+    "excess_lc": 0.3346553553264321
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "cautious",
+    "depth": "D1",
+    "real": -0.27981974166890056,
+    "real_lc": -0.3112992432295593,
+    "invented": -0.279133333155288,
+    "invented_lc": -0.32855036877098165,
+    "excess": -0.0006864085136125686,
+    "excess_lc": 0.01725112554142233
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "cautious",
+    "depth": "D2",
+    "real": -0.28613006571333827,
+    "real_lc": -0.3124798993715272,
+    "invented": -0.26403167773674424,
+    "invented_lc": -0.3110955344754299,
+    "excess": -0.022098387976594025,
+    "excess_lc": -0.0013843648960972788
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "ambitious",
+    "depth": "D1",
+    "real": 0.5843522634053007,
+    "real_lc": 0.6639259367231909,
+    "invented": 0.6022262064666399,
+    "invented_lc": 0.7544781307392013,
+    "excess": -0.01787394306133927,
+    "excess_lc": -0.09055219401601045
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "ambitious",
+    "depth": "D2",
+    "real": 0.4707091127012305,
+    "real_lc": 0.546630948630457,
+    "invented": 0.5496321643163737,
+    "invented_lc": 0.6765768315566139,
+    "excess": -0.07892305161514324,
+    "excess_lc": -0.12994588292615683
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "cautious",
+    "depth": "D1",
+    "real": -0.18940529593361613,
+    "real_lc": -0.21872776067712407,
+    "invented": -0.769910330969165,
+    "invented_lc": -0.7043286920448021,
+    "excess": 0.5805050350355488,
+    "excess_lc": 0.485600931367678
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "cautious",
+    "depth": "D2",
+    "real": -0.18361709325123846,
+    "real_lc": -0.22361439536926733,
+    "invented": -0.6799227370759577,
+    "invented_lc": -0.6013749937987531,
+    "excess": 0.4963056438247193,
+    "excess_lc": 0.37776059842948584
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "ambitious",
+    "depth": "D1",
+    "real": 0.6182176637818622,
+    "real_lc": 0.7359309195111103,
+    "invented": 0.24061434029097767,
+    "invented_lc": 0.3177558083122044,
+    "excess": 0.3776033234908845,
+    "excess_lc": 0.41817511119890594
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "ambitious",
+    "depth": "D2",
+    "real": 0.5389659818752968,
+    "real_lc": 0.6481319072587974,
+    "invented": 0.198897245472237,
+    "invented_lc": 0.2705393225029751,
+    "excess": 0.3400687364030598,
+    "excess_lc": 0.37759258475582236
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "cautious",
+    "depth": "D1",
+    "real": -0.19398999728445265,
+    "real_lc": -0.20713658299579263,
+    "invented": -0.006523362457521845,
+    "invented_lc": -0.05791399759998466,
+    "excess": -0.18746663482693082,
+    "excess_lc": -0.14922258539580796
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "cautious",
+    "depth": "D2",
+    "real": -0.27874940824858363,
+    "real_lc": -0.3060082238380008,
+    "invented": -0.0992603029502178,
+    "invented_lc": -0.15216179212271727,
+    "excess": -0.17948910529836581,
+    "excess_lc": -0.15384643171528353
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "ambitious",
+    "depth": "D1",
+    "real": 0.6126531016945559,
+    "real_lc": 0.7085488935338331,
+    "invented": 0.5372326042429787,
+    "invented_lc": 0.6266234517853717,
+    "excess": 0.0754204974515772,
+    "excess_lc": 0.08192544174846139
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "ambitious",
+    "depth": "D2",
+    "real": 0.5120879359090349,
+    "real_lc": 0.6128427942304555,
+    "invented": 0.3276299947382588,
+    "invented_lc": 0.4694402890446855,
+    "excess": 0.18445794117077607,
+    "excess_lc": 0.14340250518577002
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "cautious",
+    "depth": "D1",
+    "real": -0.4339865550669765,
+    "real_lc": -0.4547836449871285,
+    "invented": -0.3586375491298125,
+    "invented_lc": -0.4491750236939146,
+    "excess": -0.07534900593716398,
+    "excess_lc": -0.005608621293213878
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "cautious",
+    "depth": "D2",
+    "real": -0.5174763455431979,
+    "real_lc": -0.5472162096768585,
+    "invented": -0.4295606229635759,
+    "invented_lc": -0.4797756072527406,
+    "excess": -0.08791572257962199,
+    "excess_lc": -0.06744060242411787
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "ambitious",
+    "depth": "D1",
+    "real": 0.2002931890087702,
+    "real_lc": 0.2853390038217236,
+    "invented": 0.3083726700789089,
+    "invented_lc": 0.32939840652424374,
+    "excess": -0.1080794810701387,
+    "excess_lc": -0.04405940270252012
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "ambitious",
+    "depth": "D2",
+    "real": 0.29473209915504534,
+    "real_lc": 0.36741327398009915,
+    "invented": 0.3482498660352671,
+    "invented_lc": 0.366714626133011,
+    "excess": -0.05351776688022175,
+    "excess_lc": 0.0006986478470881741
+  }
+]

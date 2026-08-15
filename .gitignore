@@ -12,3 +12,16 @@ results*.jsonl
 results/
 sweep_summary.json
 .netlify/
+
+# LaTeX build intermediates. The PDFs and the GENERATED inputs
+# (numbers.tex, table_main.tex, figs/*.pdf) are committed on purpose: results/
+# is ignored, so they are the only way to rebuild the paper from a clean clone.
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.bbl
+paper/*.out
+paper/*.xdv
+paper/*.nav
+paper/*.snm
+paper/*.toc

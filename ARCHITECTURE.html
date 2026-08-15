@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nullcard — architecture</title>
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#f6f6f4; --panel:#fcfcfb; --ink:#111110; --ink2:#55534e; --ink3:#8b8880;
+    --line:#d9d7d0; --accent:#b4453a; --accent-soft:#f2dcd9; --ok:#2f6f4f;
+  }
+  @media (prefers-color-scheme: dark){ :root{
+    color-scheme: dark;
+    --bg:#131312; --panel:#1b1b19; --ink:#f4f3ef; --ink2:#bab8ae; --ink3:#8d8a82;
+    --line:#35342f; --accent:#e2705f; --accent-soft:#3a2320; --ok:#6bbd8f;
+  }}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:44px 24px 90px}
+  h1{font-size:30px;letter-spacing:-.02em;margin:.1em 0 .1em}
+  .sub{color:var(--ink2);max-width:74ch;margin:0 0 8px}
+  h2{font-size:19px;letter-spacing:-.01em;margin:52px 0 6px;
+     padding-top:20px;border-top:1px solid var(--line)}
+  figure{margin:18px 0 0;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:20px 20px 16px;overflow-x:auto}
+  svg{display:block;width:100%;max-width:100%;height:auto;min-width:720px}
+  figcaption{font-size:13.5px;color:var(--ink2);margin-top:14px;max-width:82ch}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;
+    background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .note{font-size:14px;color:var(--ink2);max-width:80ch}
+  ul{max-width:80ch;color:var(--ink2);font-size:15px}
+  li{margin:.3em 0}
+  b{color:var(--ink)}
+
+  /* SVG element classes — kept out of the <svg> so the markup stays readable */
+  .bx{fill:var(--panel);stroke:currentColor;stroke-width:1.25;rx:7}
+  .bx-in{fill:var(--bg)}
+  .bx-gate{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.75}
+  .bx-ghost{fill:none;stroke:var(--ink3);stroke-width:1.15;stroke-dasharray:5 4}
+  .band{fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:3 5}
+  .ln{stroke:currentColor;stroke-width:1.4;fill:none}
+  .ln-gate{stroke:var(--accent);stroke-width:1.7;fill:none}
+  .ln-ghost{stroke:var(--ink3);stroke-width:1.2;fill:none;stroke-dasharray:5 4}
+  .t{fill:var(--ink);font-size:13px;font-family:ui-sans-serif,-apple-system,sans-serif}
+  .t-mono{fill:var(--ink);font-size:12.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .t-sub{fill:var(--ink3);font-size:11px;
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .t-edge{fill:var(--ink2);font-size:11px;
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .t-edge-a{fill:var(--accent);font-size:11px;font-weight:600;
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+  .t-band{fill:var(--ink3);font-size:11px;font-weight:700;letter-spacing:.14em;
+    font-family:ui-sans-serif,-apple-system,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p style="color:var(--ink3);font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0">
+Nullcard · do_models_have_minds</p>
+<h1>Architecture</h1>
+<p class="sub">How a hash-pinned outcome battery becomes a published number, and
+the three gates it has to pass on the way.</p>
+
+<h2>1 · The pipeline</h2>
+
+<figure>
+<svg viewBox="0 0 1120 800" role="img"
+     aria-label="Three-band pipeline. Band one, collect on Modal: the battery and
+     roster feed a CPU gate, which passes only usable models to run_cell on an L4
+     GPU capped at ten containers, writing cells to a Modal volume; a feedback
+     arrow re-reads the volume and skips cells that are already complete. Band
+     two, score locally: results are pulled down and read by three analysis
+     scripts, one of which excludes any cell short of five thousand rows, each
+     emitting a JSON. Band three, publish: those JSONs feed the figure, site and
+     paper generators, producing SVGs, a deployed site and two PDFs.">
+
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+    <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+    </marker>
+    <marker id="ar-g" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ink3)"/>
+    </marker>
+  </defs>
+
+  <!-- ============================ BAND A : COLLECT ==================== -->
+  <text class="t-band" x="26" y="40">1 · COLLECT — MODAL</text>
+
+  <rect class="bx bx-in" x="90"  y="60"  width="180" height="52"/>
+  <text class="t-mono" x="180" y="82"  text-anchor="middle">outcomes_3arm.json</text>
+  <text class="t-sub"  x="180" y="99"  text-anchor="middle">510 outcomes × 3 arms · SHA-pinned</text>
+
+  <rect class="bx bx-in" x="90"  y="128" width="180" height="52"/>
+  <text class="t-mono" x="180" y="150" text-anchor="middle">roster.py</text>
+  <text class="t-sub"  x="180" y="167" text-anchor="middle">9 models · L4 · gated flags</text>
+
+  <rect class="bx bx-gate" x="340" y="82"  width="190" height="76"/>
+  <text class="t" x="435" y="106" text-anchor="middle" font-weight="600">wave 0 · cpu_gate</text>
+  <text class="t-sub" x="435" y="124" text-anchor="middle">CPU only — costs cents</text>
+  <text class="t-sub" x="435" y="140" text-anchor="middle">chat template · token counts</text>
+
+  <rect class="bx bx-ghost" x="340" y="186" width="190" height="40"/>
+  <text class="t-sub" x="435" y="204" text-anchor="middle">excluded, never silent</text>
+  <text class="t-sub" x="435" y="219" text-anchor="middle">gated · no template · load fail</text>
+
+  <rect class="bx" x="600" y="82"  width="180" height="76"/>
+  <text class="t-mono" x="690" y="106" text-anchor="middle">run_cell</text>
+  <text class="t-sub"  x="690" y="124" text-anchor="middle">L4 GPU · first-token logprobs</text>
+  <text class="t-sub"  x="690" y="140" text-anchor="middle">max_containers = 10</text>
+
+  <rect class="bx" x="850" y="82"  width="190" height="76"/>
+  <text class="t-mono" x="945" y="106" text-anchor="middle">volume: nullcard-results</text>
+  <text class="t-sub"  x="945" y="124" text-anchor="middle">121 cells × 5000 rows</text>
+  <text class="t-sub"  x="945" y="140" text-anchor="middle">+ .done sidecar per cell</text>
+
+  <path class="ln" marker-end="url(#ar)" d="M270,86 L332,110"/>
+  <path class="ln" marker-end="url(#ar)" d="M270,154 L332,132"/>
+  <path class="ln" marker-end="url(#ar)" d="M530,120 L592,120"/>
+  <text class="t-edge" x="561" y="112" text-anchor="middle">usable only</text>
+  <path class="ln-ghost" marker-end="url(#ar-g)" d="M435,158 L435,182"/>
+  <path class="ln" marker-end="url(#ar)" d="M780,120 L842,120"/>
+  <text class="t-edge" x="811" y="112" text-anchor="middle">write</text>
+
+  <!-- resume gate: the guard that the truncated-cell bug got past -->
+  <path class="ln-gate" marker-end="url(#ar-a)"
+        d="M945,158 L945,206 L690,206 L690,166"/>
+  <text class="t-edge-a" x="817" y="222" text-anchor="middle">cell_is_complete() — rows == 5000, or .done says aborted → skip</text>
+
+  <line class="band" x1="26" y1="252" x2="1094" y2="252"/>
+
+  <!-- ============================ BAND B : SCORE ====================== -->
+  <text class="t-band" x="26" y="286">2 · SCORE — LOCAL, NO GPU</text>
+
+  <rect class="bx bx-in" x="90" y="356" width="180" height="52"/>
+  <text class="t-mono" x="180" y="378" text-anchor="middle">results/</text>
+  <text class="t-sub"  x="180" y="395" text-anchor="middle">121 cells, pulled down</text>
+
+  <rect class="bx bx-gate" x="340" y="304" width="190" height="60"/>
+  <text class="t-mono" x="435" y="326" text-anchor="middle">build_card.py</text>
+  <text class="t-sub"  x="435" y="343" text-anchor="middle">excludes cells &lt; 5000 rows</text>
+  <text class="t-sub"  x="435" y="357" text-anchor="middle">Thurstonian · 5 splits · noise floor</text>
+
+  <rect class="bx" x="340" y="380" width="190" height="52"/>
+  <text class="t-mono" x="435" y="402" text-anchor="middle">persona_depth.py</text>
+  <text class="t-sub"  x="435" y="419" text-anchor="middle">‖Δreal‖ vs ‖Δinvented‖</text>
+
+  <rect class="bx" x="340" y="448" width="190" height="52"/>
+  <text class="t-mono" x="435" y="470" text-anchor="middle">length_control.py</text>
+  <text class="t-sub"  x="435" y="487" text-anchor="middle">token-matched contrast</text>
+
+  <rect class="bx bx-in" x="600" y="310" width="180" height="48"/>
+  <text class="t-mono" x="690" y="339" text-anchor="middle">card.json</text>
+
+  <rect class="bx bx-in" x="600" y="382" width="180" height="48"/>
+  <text class="t-mono" x="690" y="411" text-anchor="middle">persona_depth.json</text>
+
+  <rect class="bx bx-in" x="600" y="450" width="180" height="48"/>
+  <text class="t-mono" x="690" y="479" text-anchor="middle">length_control.json</text>
+
+  <path class="ln" marker-end="url(#ar)" d="M945,158 L945,268 L180,268 L180,350"/>
+  <text class="t-edge" x="560" y="262" text-anchor="middle">modal volume get</text>
+
+  <path class="ln" marker-end="url(#ar)" d="M270,376 L300,376 L300,334 L332,334"/>
+  <path class="ln" marker-end="url(#ar)" d="M270,382 L300,382 L300,406 L332,406"/>
+  <path class="ln" marker-end="url(#ar)" d="M270,388 L300,388 L300,474 L332,474"/>
+
+  <path class="ln" marker-end="url(#ar)" d="M530,334 L592,334"/>
+  <path class="ln" marker-end="url(#ar)" d="M530,406 L592,406"/>
+  <path class="ln" marker-end="url(#ar)" d="M530,474 L592,474"/>
+
+  <line class="band" x1="26" y1="530" x2="1094" y2="530"/>
+
+  <!-- ============================ BAND C : PUBLISH ==================== -->
+  <text class="t-band" x="26" y="562">3 · PUBLISH</text>
+
+  <!-- collector spine: every published artifact is fed from the JSONs above -->
+  <path class="ln" d="M780,334 L820,334 L820,600"/>
+  <path class="ln" d="M780,406 L820,406"/>
+  <path class="ln" d="M780,474 L820,474"/>
+  <path class="ln" marker-end="url(#ar)" d="M820,600 L706,600"/>
+  <path class="ln" marker-end="url(#ar)" d="M820,600 L560,600 L560,620 L520,620"/>
+  <path class="ln" marker-end="url(#ar)" d="M820,600 L300,600 L300,620 L262,620"/>
+
+  <rect class="bx" x="82"  y="594" width="180" height="52"/>
+  <text class="t-mono" x="172" y="616" text-anchor="middle">figures.py</text>
+  <text class="t-sub"  x="172" y="633" text-anchor="middle">matplotlib · SVG + PDF</text>
+
+  <rect class="bx" x="340" y="594" width="180" height="52"/>
+  <text class="t-mono" x="430" y="616" text-anchor="middle">build_site.py</text>
+  <text class="t-sub"  x="430" y="633" text-anchor="middle">nothing hand-entered</text>
+
+  <rect class="bx" x="598" y="594" width="190" height="52"/>
+  <text class="t-mono" x="693" y="616" text-anchor="middle">paper_numbers.py</text>
+  <text class="t-sub"  x="693" y="633" text-anchor="middle">→ 73 LaTeX macros</text>
+
+  <rect class="bx bx-in" x="82"  y="700" width="180" height="56"/>
+  <text class="t" x="172" y="722" text-anchor="middle">fig1–3, fig5</text>
+  <text class="t-sub" x="172" y="740" text-anchor="middle">one source, two consumers</text>
+
+  <rect class="bx bx-in" x="340" y="700" width="180" height="56"/>
+  <text class="t" x="430" y="722" text-anchor="middle">site/index.html</text>
+  <text class="t-sub" x="430" y="740" text-anchor="middle">→ Netlify</text>
+
+  <rect class="bx bx-in" x="598" y="700" width="190" height="56"/>
+  <text class="t" x="693" y="722" text-anchor="middle">main.pdf · slides.pdf</text>
+  <text class="t-sub" x="693" y="740" text-anchor="middle">tectonic · 9 pp · 15 frames</text>
+
+  <path class="ln" marker-end="url(#ar)" d="M172,646 L172,694"/>
+  <path class="ln" marker-end="url(#ar)" d="M430,646 L430,694"/>
+  <path class="ln" marker-end="url(#ar)" d="M693,646 L693,694"/>
+
+  <!-- figures are consumed by BOTH outputs; this is the edge that keeps the
+       page and the paper from drawing different pictures of the same data -->
+  <path class="ln" marker-end="url(#ar)" d="M262,728 L334,728"/>
+  <path class="ln" marker-end="url(#ar)" d="M520,728 L592,728"/>
+  <text class="t-edge" x="298" y="720" text-anchor="middle">same SVG</text>
+  <text class="t-edge" x="556" y="720" text-anchor="middle">same PDF</text>
+
+  <rect class="bx bx-gate" x="850" y="594" width="190" height="162"/>
+  <text class="t" x="945" y="620" text-anchor="middle" font-weight="600">the three gates</text>
+  <text class="t-sub" x="945" y="644" text-anchor="middle">cost — CPU before GPU</text>
+  <text class="t-sub" x="945" y="662" text-anchor="middle">resume — rows, not existence</text>
+  <text class="t-sub" x="945" y="680" text-anchor="middle">analysis — short cells excluded</text>
+  <text class="t-sub" x="945" y="706" text-anchor="middle">Gate 2 and 3 are independent</text>
+  <text class="t-sub" x="945" y="722" text-anchor="middle">checks on the same failure,</text>
+  <text class="t-sub" x="945" y="738" text-anchor="middle">which reached print once.</text>
+</svg>
+<figcaption>
+<b>Three gates stand between a rented GPU and a published number.</b> The
+<span style="color:var(--accent)">red</span> path is the resume gate — the one
+that failed. It used to test <code>os.path.exists</code>, so cells killed
+mid-write were skipped as finished; six truncated cells reached
+<code>card.json</code> and one of them, 10&nbsp;% complete, was written up as a
+finding. It now counts rows, and a cell that stopped early <em>on purpose</em>
+is distinguished by a <code>.done</code> sidecar written only on a clean exit.
+<code>build_card.py</code> re-checks the same thing independently. Note also
+that <code>figures.py</code> emits one set of plots consumed by both the web
+page and the paper: a figure cannot say one thing online and another in print.
+</figcaption>
+</figure>
+
+<h2>2 · What makes it an experiment</h2>
+
+<figure>
+<svg viewBox="0 0 1120 470" role="img"
+     aria-label="The three-arm design. One shared pair set and one shared fit are
+     applied to three versions of the same 510 outcomes: real text, invented
+     referents keeping the magnitudes, and invented referents with magnitudes
+     removed. Each yields a coherence score; the reported result is real minus
+     the magnitudes-removed floor.">
+
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+    <marker id="ar2-a" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+
+  <text class="t-band" x="26" y="34">ONE PAIR SET · ONE FIT · ONLY THE REFERENTS CHANGE</text>
+
+  <rect class="bx bx-in" x="30" y="58"  width="330" height="62"/>
+  <text class="t-sub" x="46" y="78">arm R — real</text>
+  <text class="t-mono" x="46" y="100">“You receive $1 to use however</text>
+  <text class="t-mono" x="46" y="114">you want.”</text>
+
+  <rect class="bx bx-in" x="30" y="184" width="330" height="62"/>
+  <text class="t-sub" x="46" y="204">arm N+ — invented, magnitudes kept</text>
+  <text class="t-mono" x="46" y="226">“You receive 1 kriabrons to</text>
+  <text class="t-mono" x="46" y="240">fiatoum vraemaent you tabiar.”</text>
+
+  <rect class="bx bx-in" x="30" y="310" width="330" height="62"/>
+  <text class="t-sub" x="46" y="330">arm N− — invented, magnitudes gone</text>
+  <text class="t-mono" x="46" y="352">“You receive lunouplur kriabrons</text>
+  <text class="t-mono" x="46" y="366">to fiatoum vraemaent you tabiar.”</text>
+
+  <rect class="bx" x="440" y="150" width="200" height="140"/>
+  <text class="t" x="540" y="184" text-anchor="middle" font-weight="600">identical harness</text>
+  <text class="t-sub" x="540" y="208" text-anchor="middle">same 2500 pairs</text>
+  <text class="t-sub" x="540" y="226" text-anchor="middle">both presentation orders</text>
+  <text class="t-sub" x="540" y="244" text-anchor="middle">same Thurstonian fit</text>
+  <text class="t-sub" x="540" y="262" text-anchor="middle">same held-out protocol</text>
+
+  <path class="ln" marker-end="url(#ar2)" d="M360,89  L400,89  L400,190 L432,190"/>
+  <path class="ln" marker-end="url(#ar2)" d="M360,215 L432,215"/>
+  <path class="ln" marker-end="url(#ar2)" d="M360,341 L400,341 L400,250 L432,250"/>
+
+  <rect class="bx bx-in" x="720" y="62"  width="150" height="52"/>
+  <text class="t" x="795" y="86" text-anchor="middle">R = 0.906</text>
+  <text class="t-sub" x="795" y="103" text-anchor="middle">values + arithmetic + format</text>
+
+  <rect class="bx bx-in" x="720" y="188" width="150" height="52"/>
+  <text class="t" x="795" y="212" text-anchor="middle">N+ = 0.881</text>
+  <text class="t-sub" x="795" y="229" text-anchor="middle">arithmetic + format</text>
+
+  <rect class="bx bx-in" x="720" y="314" width="150" height="52"/>
+  <text class="t" x="795" y="338" text-anchor="middle">N− = 0.880</text>
+  <text class="t-sub" x="795" y="355" text-anchor="middle">format alone</text>
+
+  <path class="ln" marker-end="url(#ar2)" d="M640,190 L680,190 L680,88  L712,88"/>
+  <path class="ln" marker-end="url(#ar2)" d="M640,215 L712,215"/>
+  <path class="ln" marker-end="url(#ar2)" d="M640,250 L680,250 L680,340 L712,340"/>
+
+  <path class="ln-gate" marker-end="url(#ar2-a)" d="M895,88  L940,88  L940,196"/>
+  <path class="ln-gate" marker-end="url(#ar2-a)" d="M895,340 L940,340 L940,236"/>
+  <rect class="bx bx-gate" x="950" y="176" width="140" height="80"/>
+  <text class="t" x="1020" y="204" text-anchor="middle" font-weight="600">R − N−</text>
+  <text class="t" x="1020" y="226" text-anchor="middle">= +0.025</text>
+  <text class="t-sub" x="1020" y="244" text-anchor="middle">the reported number</text>
+</svg>
+<figcaption>
+<b>The floor is subtracted, never assumed.</b> Every headline number is
+R&nbsp;−&nbsp;N−: what the identical procedure returns on outcomes that refer to
+nothing is treated as the zero point. The middle arm isolates arithmetic —
+nearly half the original outcome set contains a numeral and is orderable without
+understanding anything — and it lands at 0.881 against N−'s 0.880, so
+<b>keeping the magnitudes buys about +0.001</b>. Almost the entire floor is
+already there before any number survives, which is why N− rather than N+ is the
+zero point. Sample texts are the actual first outcome of the battery in each arm;
+scores are means over 9 models and are read from <code>card.json</code>.
+</figcaption>
+</figure>
+
+<h2>Reading it</h2>
+<ul>
+<li><b>Nothing reaches a GPU untested.</b> Wave 0 runs the whole templating and
+tokenisation path on CPU for cents. It caught a four-major-version-stale
+<code>transformers</code> pin, a <code>BatchEncoding</code> that silently made
+every prompt two tokens long, and four unusable models.</li>
+<li><b>One bad model must not kill the grid.</b> <code>run_cell</code> returns
+failures rather than raising, because a single <code>ImportError</code> once
+propagated through <code>starmap</code> and took every healthy in-flight cell
+with it — which is what created the truncated files in the first place.</li>
+<li><b>The card is the only source of numbers.</b> <code>card.json</code> feeds
+the figures, the site and the paper's LaTeX macros. The paper says
+<code>\MeanR</code>, never <code>0.906</code>, so prose cannot drift from data.</li>
+<li><b>Analysis is cheap and repeatable.</b> Everything below band 1 runs
+locally in seconds with no GPU, no API key and no network.</li>
+</ul>
+
+</div>
+</body>
+</html>

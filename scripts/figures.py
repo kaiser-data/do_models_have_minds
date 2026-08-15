@@ -64,6 +64,38 @@ PARAMS = {m.hf_id: m.params_b for m in SELF_HOSTED}
 FAMILY = {m.hf_id: m.family for m in SELF_HOSTED}
 
 
+def _shade(hex_colour: str, lightness: float) -> str:
+    """Step a hue's lightness. Used for size-within-family.
+
+    Family carries hue; parameter count carries lightness, light -> dark. That is
+    the sequential rule applied inside a categorical slot, and it is what makes
+    four Qwen models tellable apart when they are all "the blue one".
+    """
+    import colorsys
+
+    r, g, b = (int(hex_colour[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    h, l, sat = colorsys.rgb_to_hls(r, g, b)
+    l = max(0.20, min(0.86, l * lightness))
+    r, g, b = colorsys.hls_to_rgb(h, l, sat)
+    return "#%02x%02x%02x" % (round(r * 255), round(g * 255), round(b * 255))
+
+
+def _model_colours(rows, base: dict) -> dict:
+    """One colour per model: family hue, stepped by size within the family."""
+    out = {}
+    by_family: dict[str, list] = {}
+    for r in rows:
+        by_family.setdefault(r["family"], []).append(r)
+    for fam, members in by_family.items():
+        members = sorted(members, key=lambda r: r["params"])
+        n = len(members)
+        for i, m in enumerate(members):
+            # single-member families keep the exact validated hue
+            factor = 1.0 if n == 1 else 1.34 - 0.62 * (i / (n - 1))
+            out[m["model"]] = _shade(base.get(fam, "#78766f"), factor)
+    return out
+
+
 def _style(th):
     plt.rcParams.update({
         "figure.facecolor": "none", "axes.facecolor": "none",
@@ -134,7 +166,8 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
     rows = _rows(tiles, cells)
     if not rows:
         return
-    colour = {f: th["cat"][i] for i, f in enumerate(FAMILY_ORDER)}
+    base = {f: th["cat"][i] for i, f in enumerate(FAMILY_ORDER)}
+    colour = _model_colours(rows, base)
 
     fig, ax = plt.subplots(figsize=(9.6, 7.4))
 
@@ -165,7 +198,7 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
 
     for r in order:
         (x0, y0), (x1, y1), (x2, y2) = r["path"]
-        c = colour.get(r["family"], th["ink3"])
+        c = colour[r["model"]]
         ax.plot([x0, x1], [y0, y1], color=c, lw=1.9, alpha=0.5,
                 solid_capstyle="round", zorder=2)
         ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
@@ -201,21 +234,30 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
     ax.grid(True, color=th["grid"], lw=0.7, zorder=0); ax.set_axisbelow(True)
     _despine(ax)
 
-    fams = [f for f in FAMILY_ORDER if any(r["family"] == f for r in rows)]
-    handles = [Line2D([], [], marker="o", ls="", markersize=8, color=colour[f],
-                      markeredgecolor=th["surface"], label=f) for f in fams]
-    leg = ax.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 1.055),
-                    ncol=len(fams), frameon=False, fontsize=10, handletextpad=0.35,
-                    columnspacing=1.3)
+    ordered = sorted(rows, key=lambda r: (FAMILY_ORDER.index(r["family"])
+                                          if r["family"] in FAMILY_ORDER else 99,
+                                          r["params"]))
+    handles = [Line2D([], [], marker="o", ls="", markersize=7.5,
+                      color=colour[r["model"]], markeredgecolor=th["surface"],
+                      label=r["short"]) for r in ordered]
+    # matplotlib fills legends column-major; transpose so the entries read
+    # left-to-right in family/size order instead of down each column.
+    ncol = 5
+    nrow = -(-len(handles) // ncol)
+    handles = [handles[r + c * nrow]
+               for r in range(nrow) for c in range(ncol)
+               if r + c * nrow < len(handles)]
+    leg = ax.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 1.045),
+                    ncol=ncol, frameon=False, fontsize=9, handletextpad=0.3,
+                    columnspacing=1.0)
     for t_ in leg.get_texts():
         t_.set_color(th["ink2"])
-    ax.set_title("big dot = real outcomes   ·   small dot = invented, magnitudes kept   "
-                 "·   arrowhead = invented, no magnitudes\n"
-                 "marker area = parameter count",
-                 fontsize=9.5, color=th["ink3"], pad=10, linespacing=1.6)
+    # The marker-shape key lives in the page/paper caption, not here: as a title
+    # it collides with a two-row legend and duplicates the caption anyway.
 
     fig.tight_layout()
-    fig.savefig(out, format="svg", bbox_inches="tight", transparent=True)
+    fig.savefig(out, format=Path(out).suffix.lstrip(".") or "svg",
+                bbox_inches="tight", transparent=True)
     plt.close(fig)
 
 
@@ -258,7 +300,8 @@ def fig_scale_ladder(tiles, out: Path, theme: str = "light"):
     ax.set_title("The shaded band is everything meaning contributes",
                  fontsize=11.5, color=th["ink"], pad=12)
     fig.tight_layout()
-    fig.savefig(out, format="svg", bbox_inches="tight", transparent=True)
+    fig.savefig(out, format=Path(out).suffix.lstrip(".") or "svg",
+                bbox_inches="tight", transparent=True)
     plt.close(fig)
 
 
@@ -290,7 +333,8 @@ def fig_strength_distribution(results_dir: Path, model: str, out: Path,
         _despine(ax)
     axes[0].set_ylabel("pairs", fontsize=10)
     fig.tight_layout()
-    fig.savefig(out, format="svg", bbox_inches="tight", transparent=True)
+    fig.savefig(out, format=Path(out).suffix.lstrip(".") or "svg",
+                bbox_inches="tight", transparent=True)
     plt.close(fig)
 
 
@@ -300,21 +344,27 @@ def main() -> None:
     ap.add_argument("--card", default="card.json")
     ap.add_argument("--out", default="site")
     ap.add_argument("--exemplar", default="google/gemma-4-E2B-it")
+    # The paper wants vector PDF and only the light theme; the web page wants
+    # both themes as SVG. Same code path either way, so a figure in the paper
+    # is the same figure the page shows and cannot drift from it.
+    ap.add_argument("--format", default="svg", choices=("svg", "pdf", "png"))
+    ap.add_argument("--themes", default="light,dark")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
+    ext = args.format
 
     made = []
-    for theme in ("light", "dark"):
+    for theme in [t.strip() for t in args.themes.split(",") if t.strip()]:
         sfx = "" if theme == "light" else "-dark"
-        fig_state_space(tiles, out / f"fig1_state_space{sfx}.svg", theme, card['cells'])
-        fig_scale_ladder(tiles, out / f"fig2_scale{sfx}.svg", theme)
+        fig_state_space(tiles, out / f"fig1_state_space{sfx}.{ext}", theme, card['cells'])
+        fig_scale_ladder(tiles, out / f"fig2_scale{sfx}.{ext}", theme)
         fig_strength_distribution(Path(args.results), args.exemplar,
-                                  out / f"fig3_strength{sfx}.svg", theme)
+                                  out / f"fig3_strength{sfx}.{ext}", theme)
         made += [f"fig1_state_space{sfx}", f"fig2_scale{sfx}", f"fig3_strength{sfx}"]
-    print("wrote:", ", ".join(made))
+    print(f"wrote ({ext}):", ", ".join(made))
 
 
 if __name__ == "__main__":

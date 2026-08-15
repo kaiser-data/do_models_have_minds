@@ -1,8 +1,23 @@
-# Handoff — Nullcard
+# Handoff — Nullcard, implementation phase
 
-**Written:** 2026-08-14 · **Sprint:** Apart Research Digital Minds, 14–16 Aug 2026
-**Deadline:** Sun 23:59 **AoE** = **Mon 13:59 Berlin.** Confirm this yourselves — it is ~14
-hours more than "Sunday midnight" implies.
+**Written:** 2026-08-15 ~06:00 Berlin · **Deadline:** Sun 23:59 AoE = **Mon 13:59 Berlin**
+**Supersedes** the design-phase handoff (in git at `0e2f728`); the design docs it
+pointed at are still current.
+
+---
+
+## Where things stand in four sentences
+
+The design is implemented and has produced a result. The instrument is pointed at
+Utility Engineering's coherence metric, and across 9 models with 3 design
+replicates each (81 cells), **coherence on real outcomes (0.906) is barely above
+coherence on outcomes that mean nothing (0.880)** — and for 3 of 9 models that
+residual does not clear the model's own noise floor. Meanwhile the *conviction*
+behind those preferences collapses ~15×. The persona depth ladder is **done**
+(40 cells) and says personas move real outcomes far more than invented ones.
+
+**Spent:** ~$10 GPU. **Live page:** <https://nullcard-preresults.netlify.app>
+(shows the pre-correction numbers — see "Correction, 2026-08-15 morning")
 
 ---
 
@@ -10,154 +25,284 @@ hours more than "Sunday midnight" implies.
 
 | File | What it is |
 |---|---|
-| `PITCH.md` | one page, for teammates and judges. Start here. |
-| `docs/superpowers/specs/2026-08-14-nullcard-design.md` | the spec. Everything below refers to its § numbers. |
-| `RESEARCH-NOTES.md` | literature scan — what's already refuted, what to cite, which numbers are unverified |
-| `ideas/INDEX.md` + `ideas/TEAM-PLAN-3P.md` | the pre-existing 3-arm plan this is the delivery vehicle for |
-| `SKILLS.md` | the seven skills carried over from *Secret Loyalties*. Five of them shaped this design directly — §3.3, §4, §5, §6.1, §7 exist because of them. |
-
-Repo initialised, one commit: `61add79`. **Nothing has been implemented.** This is design only.
-
----
-
-## What Nullcard is, in four sentences
-
-A psychometric model card that refuses to print a number without its floor. It runs a
-SHA-pinned battery through five elicitation methods across a **depth ladder** — the same trait
-installed by user prompt, system prompt, or fine-tuning — and renders tiles showing effect
-minus floor, with intervals. Where DM-15's trained cells give ground truth, each tile also
-reports a **detection rate and a false-positive rate**, which is the thing the field does not
-have. Primary target: **Track 4** (3+ elicitation methods + reusable toolkit); also hits 2, 6,
-3, 1.
+| `HANDOFF-SIMPLE.md` | **self-contained, assumes no context.** Use this one if you are picking the project up cold, or handing it to a session without the tooling. |
+| `PLAN.md` | what to do next, ranked, with time and cost estimates. **Start here.** |
+| `paper/` | the writeup (`main.tex`), the talk (`slides.tex`), and a `Makefile`. Numbers are generated, never typed — see `scripts/paper_numbers.py`. |
+| `PREREGISTRATION.md` | the five predictions, committed before the first run |
+| `REFERENCES.md` | every source, what was taken from it, and what was not |
+| `docs/superpowers/specs/2026-08-14-nullcard-design.md` | the spec. § numbers below refer to it |
+| `RESEARCH-NOTES.md` · `PITCH.md` | literature scan · external framing |
 
 ---
 
-## Decisions already made — do not relitigate
+## The finding
 
-| Decision | Where |
+Utility Engineering (arXiv:2502.08640) fits a Thurstonian model to an LLM's
+pairwise choices and reports held-out accuracy as *structural coherence*, rising
+with scale (their Fig. 4, r = 75.6% vs MMLU). Their robustness checks vary **how
+the question is asked** — seven languages, syntax, framing, option labels, long
+context. Their only null is a synthetic random utility vector. **No condition
+varies whether the outcomes mean anything.**
+
+We built that condition: the same 510 outcomes in three arms —
+
+| arm | outcomes | coherence would reflect |
+|---|---|---|
+| **R** | real | values + arithmetic + format |
+| **N+** | invented referents, magnitudes kept | arithmetic + format |
+| **N−** | invented referents, magnitudes removed | format alone |
+
+Result across 9 models, now with **3 design replicates each** (81 cells, all
+verified complete):
+**R = 0.906, N− = 0.880, mean residual = +0.025.** Against each model's own design
+noise floor (`training_noise_floor`, the spread of the same cell across three
+independent designs), **6 of 9 clear their floor** — but the margins matter more
+than the count, and `card.json` now carries `clears_floor` and `floor_margin`
+so this is read off a computed field rather than counted by eye:
+
+| model | R−N− | floor | margin |
+|---|---|---|---|
+| Qwen3.5-0.8B | +0.067 | 0.023 | 2.9× |
+| granite-4.1-3b | +0.063 | 0.029 | 2.2× |
+| SmolLM2-1.7B | +0.047 | 0.015 | 3.0× |
+| LFM2.5-1.2B | +0.047 | 0.023 | 2.0× |
+| gemma-4-E2B | +0.010 | 0.007 | 1.5× |
+| Qwen3.5-2B | +0.003 | 0.001 | 4.2× *(see below)* |
+| SmolLM3-3B | +0.009 | 0.029 | no |
+| Qwen3.5-4B | −0.013 | 0.015 | no |
+| Qwen3.5-9B | −0.004 | 0.010 | no |
+
+**Do not quote Qwen3.5-2B's 4.2×.** Its floor is 0.001 — a three-point range that
+happened to come out near zero — and a ratio against a near-zero denominator is
+not a margin, it is a division artefact. The residual is +0.003 in absolute
+terms, which is nothing. gemma's 1.5× is likewise a hair.
+
+The models that clear convincingly are still the small ones (0.8B, 1.2B, 1.7B,
+3b), and the two *negative* residuals are the two largest — which runs opposite
+to coherence-emerges-with-scale.
+
+But the sharper finding is that direction and strength come apart:
+
+| | real | invented | ratio |
+|---|---|---|---|
+| gemma-4-E2B decisive pairs | 59.5% | 3.2% | 18× |
+| Qwen3.5-9B decisive pairs | 44.2% | 3.1% | 14× |
+
+UE's accuracy thresholds preferences to hard labels (their §4.1), so it records
+*which way* a model leans and never *how much*. A pair at p=0.51 counts like one
+at p=0.99. **The claim is that the metric is unanchored, not that it is broken.**
+
+**Three of their choices were checked and came out in their favour.** Report all
+three: order-counterbalancing cancels positional bias exactly; held-out
+evaluation keeps a coin-flip responder at 0.46; and the metric passes a
+shuffled-probability null at ~0.50.
+
+---
+
+## Correction, 2026-08-15 morning — six cells were never finished
+
+The persona sweep was found stopped with its client dead. Recovering it turned up
+something worse than a stalled run: **15 of 99 result files were truncated**, and
+six of them were baseline cells that had been feeding `card.json` since the first
+build.
+
+`--skip-existing` tested `os.path.exists`. Trap #3 (below) killed cells
+mid-write; checkpointing left partial files behind; every later re-run saw those
+files and skipped them. The card was fitting coherence on whatever pairs had
+happened to run before the process died — SmolLM2's N+ cell was **512 of 5000
+rows, 10% complete**.
+
+What moved after re-running all six to completion:
+
+| | before | after |
+|---|---|---|
+| SmolLM2-1.7B residual / floor | +0.031 / 0.034 (fails) | **+0.047 / 0.015 (3.0×)** |
+| Qwen3.5-4B residual | −0.016 | −0.013 |
+| Qwen3.5-9B residual | −0.001 | −0.004 |
+| LFM2.5-1.2B residual | +0.048 | +0.047 |
+| mean R | 0.904 | 0.906 |
+
+**The headline is unchanged** — R barely above N−, strength collapsing — but the
+per-model verdicts moved, and one documented "finding" evaporated: the note that
+*"SmolLM2's N+ cell moves 0.177 across five splits, 3–5× any other"* was not
+instability, it was a 10%-complete cell. That sentence has been struck from the
+limits below.
+
+Both ends are now guarded and tested (`tests/test_resume.py`, 14 tests):
+
+- `cell_is_complete()` counts rows instead of trusting existence, and a cell that
+  stopped early *on purpose* (`--abort-on-mass`) is distinguished by a `.done`
+  sidecar written only on a clean exit.
+- `build_card.py` excludes short cells again on the way in and prints each one,
+  so the same file cannot reach a published number by a different route.
+
+Also: `run_cell` now carries `max_containers=MAX_GPUS` (10). The grid fans out to
+the same total cost either way; the cap is there so an unattended sweep cannot
+quietly rent forty L4s.
+
+## Two corrections already made — do not reintroduce
+
+1. **The overfitting claim was wrong.** An in-sample simulation showed a coin flip
+   scoring 0.611 and it looked like the metric was inflated. Their §4.1 says they
+   evaluate *held-out*, where a coin flip scores 0.46. The concern does not apply.
+2. **The first permutation control was worthless.** Relabelling outcomes
+   consistently is an isomorphism — it preserves the whole preference graph, so
+   accuracy was unchanged and it looked like the metric was broken. The correct
+   null keeps the pair set and **shuffles the probabilities across pairs**. It
+   lands at 0.50.
+
+---
+
+## Running right now
+
+**Nothing is running. Zero GPUs are allocated.** Both sweeps finished.
+
+| sweep | state |
 |---|---|
-| Framing A + B combined into one card | §1 |
-| Delivery vehicle for the DM-01/DM-03/DM-15 arms, not a replacement | §1 |
-| Depth ladder D0→D3d replaces the genuine/portrayal/denial arms — **portrayal *is* D2** | §2A |
-| Construct is benign task-aversion, mixed with exploratory axes | §2.1–2.3 |
-| FastAPI backend + Next.js frontend | §3.5, §3.6, §11 |
-| Nebius (breadth, logprobs) + Modal (open weights, QLoRA cells) — both confirmed | §6 |
-| Big Five explicitly **not** built | §2.3 |
-| Political axis is a demo tile, first thing cut | §2.6, §12 |
+| design replicates, seeds `20260816` / `20260817` | **done** — 81 cells, 3 per cell, all complete |
+| persona depth ladder | **done** — 40 cells, 31 run + 9 already good, no failures, no aborts |
+
+121 cells on the volume, every one at the full 5000 rows. Recover with
+`modal volume get nullcard-results / results/ --force`, then
+`python3 scripts/build_card.py && python3 scripts/figures.py && python3 scripts/persona_depth.py`.
 
 ---
 
-## Open decisions — these block work
+## The depth ladder result — personas move wanting, not just writing
 
-**1. Depth vs. dose (§2A.2) — the biggest one, decide Friday evening.**
-A QLoRA trained to convergence isn't *deeper* than a system prompt, it's *stronger*. If D3d
-separates from D2, that could be depth or just dose, and the result reads as "we trained it
-harder." Two treatments:
-- **match-and-diverge** — titrate each depth to equal *stated* aversion, then look for
-  divergence in the *behavioural* channel. Cheaper.
-- **dose ladder** — depth × strength as a 2D surface. Discussed and provisionally preferred,
-  **not yet costed.** 3 training strengths is not affordable alongside §5's replicates; a
-  2-strength GPU ladder plus the full (free) prompt ladder is the affordable version.
+Same trait at D1 (user turn) / D2 (system prompt), measured on **both** arms,
+5 models × 2 personas × 2 depths × 2 arms. The control is the point: a persona
+that reorders *invented* outcomes as far as real ones changed the response
+style, not the preferences. Reported as `1 − ‖Δ_invented‖ / ‖Δ_real‖`, so **1.0
+is a pure preference change and 0.0 is pure style**.
 
-**2. GPU budget for ≥3 anchor training replicates (§5.1).** Not a stretch goal. See below.
+| model | ambitious D1 | ambitious D2 | cautious D1 | cautious D2 |
+|---|---|---|---|---|
+| gemma-4-E2B | +0.633 | +0.738 | +0.697 | **+0.848** |
+| Qwen3.5-9B | **+0.829** | +0.800 | +0.712 | +0.694 |
+| Qwen3.5-2B | +0.632 | +0.638 | +0.710 | +0.565 |
+| LFM2.5-1.2B | +0.571 | +0.539 | +0.388 | +0.339 |
+| granite-4.1-3b | **−0.663** | −0.248 | +0.388 | +0.529 |
 
-**3. DM-15's actual trained target (§2.1).** The `calibrated` battery must track it. 30-minute
-box Friday, then move — the battery is construct-parameterised so it can swap.
+Four of five models land at **+0.34 to +0.85**: the persona shifts real outcomes
+several times further than invented ones, which is the signature of a changed
+preference rather than a changed voice. granite-4.1-3b is the exception and an
+instructive one — under *ambitious* it moves invented outcomes **further** than
+real ones (−0.663), which is what pure style looks like, while under *cautious*
+it behaves like the others.
 
----
+**D1 vs D2 barely separates.** Where the trait sits — user turn or system prompt
+— moves the statistic by less than the gap between personas on the same model.
+Whatever a persona does, it does not need the system prompt to do it.
 
-## The three things most likely to sink this
+Note the tension worth writing up: on the *baseline* the models barely
+distinguish real outcomes from meaningless ones (R−N− ≈ +0.025), yet a persona
+moves real outcomes far more than meaningless ones. The instrument is not blind
+to content — it is the unmanipulated coherence number that fails to depend on it.
 
-**1. The n=1 problem (§5).** DM-15's cells are trained **once each**. `seed × paraphrase ×
-order` expansion is *sampling* noise for one artifact — it is **not** a training noise floor,
-and cannot license a between-cell claim. Before any cell-to-cell contrast is quoted, train the
-anchor (`W1_averse`) **3–5 times with seed as the only difference**; that spread is the
-smallest effect the paper may claim. Real calibration from the literature: one anchor cell
-across five seeds spanned 38.3%–52.4% — three cleared a 50% gate, two failed it. If detection
-thresholds sit inside a spread like that, "this tile detects and that one doesn't" is a coin
-flip in a table.
-
-**If forced to choose between the fourth cell and the replicates, keep the replicates.**
-
-**2. Leading premises (§3.3).** Every mood/opinion/aversion item presupposes the state it
-measures, and models supply fluent, consistent, quotable elaboration on demand. Polarity pairs
-catch acquiescence but **not** this. Every premise-carrying item needs three conditions:
-premise+real / premise+**invented** target / no premise. Nonsense targets must be *invented*,
-never real alternatives — a real alternative carries its own familiarity signal.
-
-**3. Unguarded nulls (§7).** A bland helpful-assistant system line took confessions from 5/5 to
-0/5 in a documented case. No tile reports a zero until a known-positive has fired through that
-exact harness config; otherwise the badge is `NOT_ASSESSED`, never a zero. Run every tile with
-*and* without the system prompt.
+`site/persona_depth.json` and `site/fig5_persona{,-dark}.svg` are generated; the
+figure is **not yet wired into `site/index.html`**.
 
 ---
 
-## Literature that constrains the design
+## Traps already hit — wave 0 caught all of them for cents
 
-Full detail and links in `RESEARCH-NOTES.md`.
+Keep the CPU gate. It paid for itself six times:
 
-- **2604.27633** — political bias audits mostly capture **sycophancy to the inferred auditor**.
-  A political tile without an auditor-framing control measures our own prompt.
-- **2606.12730** (June 2026) — Big Five **failed** to predict behaviour across 11 models;
-  behaviour-specific instruments worked. Coherence persists for **training-anchored**
-  behaviours, collapses for **context-driven** ones. → this is where §2A.1's pre-registered
-  prediction comes from, and it's why there is no Big Five tile.
-- **2306.16388** (GlobalOpinionQA) — JS-distance between model and *human* answer distributions.
-  The one way to make a subjective axis objectively scoreable without inventing a right answer.
-- **2606.09843 / 2509.03730** — the self-report/behaviour gap is already published. Our angle
-  is **calibration and false-positive rates**, not gap discovery. Cite early.
-- **2605.13339** — persona-invariant preference vectors, but only across *prompted* personas.
-  They had no trained arm, so the depth ladder extends rather than collides.
-- **2604.27789** — silent model updates, no version change; aggregate metrics miss behavioural
-  regressions. The business framing.
+1. **`transformers` pinned four major versions stale** (4.46 vs 5.15). Presents as
+   "model has no chat template", not as a version error, because the standalone
+   `chat_template.jinja` convention postdates the pin.
+2. **`apply_chat_template` returns a `BatchEncoding` in transformers 5**, so
+   `len(result)` is 2 — the number of dict keys. Every prompt silently became two
+   tokens and the sweep still "ran". Now unwrapped, with a `< 10 tokens` guard.
+3. **One bad model killed a whole grid.** Phi-4-mini's bundled remote code imports
+   `LossKwargs`, removed in transformers 5; the ImportError propagated through
+   `starmap` and took every healthy in-flight cell with it. Failures are now
+   *returned*, not raised.
+4. **A base model with no chat template** (`OLMo-2-0425-1B`) — removed from the roster.
+5. **`Qwen3.5-0.8B` was in `SCALE_LADDER` but not `SELF_HOSTED`**, so it silently
+   drew as an unknown family with a wrong 2.0B marker size.
+6. **Gated repos** (`meta-llama/*`, `gemma-3-4b-it`) — the HF token lacks access;
+   they are marked `GATED` in the roster and excluded, not silently failing.
 
-🔍 **Several numbers in `RESEARCH-NOTES.md` are secondhand** from abstracts and fetch
-summaries — notably the Sonnet 4 (~16% of requests) and GPT-4 (52%→10%) incident figures in §5.
-They are the most quotable things in the memo. **Open the PDFs before any of them enters the
-writeup.**
+Known-not-fixed: **Ministral-3-3B templates to 592 tokens** (a ~520-token standing
+system preamble) where every other model is 68–133. Its arm *contrast* is
+within-model so the preamble cancels there, but its absolute coherence is not
+comparable across models (§7.4). It currently fails to load under transformers 5
+anyway.
 
 ---
 
-## Build order when implementation starts
+## Honest limits, all declared in `PREREGISTRATION.md`
 
-1. **`scoring/` first, TDD, against fixtures.** Pure functions, zero I/O, deterministic. Friday
-   night, **$0 spend**. This is where correctness actually lives.
-2. **Freeze the `card.json` contract (§8)** before either side of the app is built.
-3. **`runner/` against `MockProvider`** — full pipeline end-to-end for $0. Nothing hits a paid
-   provider until this passes; nothing hits GPU until Modal wave 0 (`--dry-run`, whole grid,
-   CPU) passes.
-4. **Backend and frontend in parallel** against the frozen contract — backend on MockProvider,
-   frontend on a static fixture `card.json`. Neither blocks the other.
-5. Build the four Modal flags **before** the first wave (§6.2): `--dry-run`, `--skip-existing`,
-   `--epoch-checkpoints`, `--abort-on`. Retrofitting mid-sweep means relaunching.
+- ~~n = 1 per cell~~ **resolved** — 3 design replicates per cell. Contrasts are
+  now read against each model's own floor, and most do not clear it.
+- **Invented outcomes tokenise ~30% longer** (R ≈ 81 → N− ≈ 108 tokens). Some of
+  the residual could be a prompt-length effect. Planned mitigation: a
+  length-matched sub-analysis on the shortest quartile.
+- **Fitted utilities on invented arms correlate with text length up to r = −0.75.**
+  The "ordering" there is substantially a length ordering — a result in itself,
+  and a limit on how strongly P3 can be stated.
+- ~~**SmolLM2's N+ cell moves 0.177 across five splits**, 3–5× any other~~
+  **withdrawn** — that cell was 512 of 5000 rows. Re-run, it is unremarkable.
+  See the correction section. The figures still draw spread bars.
+- **Margins against a near-zero floor are not margins.** Qwen3.5-2B "clears" at
+  4.2× on a floor of 0.001. Three replicates can produce a range that small by
+  luck, and `floor_margin` divides by it. Read the absolute residual too.
+- **83→129 tests pass and none contacts a model.** The Thurstonian fit agrees
+  with UE's implementation by construction, not by demonstration.
 
-**Figures come from a matplotlib script over `card.json`, never from the frontend** (§11). A
-broken frontend then costs the demo video — which is optional — and cannot sink the paper.
+---
+
+## Not done
+
+- **Persona-eval arm** (`anthropics/evals`, 136 files × 1000 items incl.
+  `believes-it-has-phenomenal-consciousness`). Identified, never run.
+- **Guardrail-masking arm.** The data already shows refusal is topic-ordered
+  (Religion 0.9751 mean answer mass, then autonomy, politics, AI rights) and that
+  **the intruding token is always `'I'`** — but only 0.3% of rows. Forced choice
+  *hides* the guardrail rather than avoiding it. Testing that needs an
+  open-generation arm plus a judge with hand-verified precision (§7.3).
+- **OmniRoute frontier comparison.** Gateway installed and starts
+  (`localhost:20128/v1`, 77 concrete models), but `omniroute providers list`
+  reports **"No providers configured"** — free pools 429, `aug/*` 502, identically
+  with and without `logprobs`. Needs `omniroute setup`/OAuth, which only the
+  operator can do. When it works: **never `auto/*`** (routing changes the harness
+  mid-run) and expect closed models to need K-sampling instead of logprobs.
+- **Any training.** Cut; the inference result no longer needs it.
 
 ---
 
 ## Standing rules
 
-1. Nothing on GPU that hasn't run on CPU. Nothing on a paid provider that hasn't passed on
-   `MockProvider`.
-2. No prediction written down beforehand → not an experiment.
-3. A failing arm gets dropped at the Saturday 14:00 checkpoint, not escalated.
-4. Every number reported as **effect minus floor**, with an interval, never absolute.
-5. Battery SHA-pinned before any result exists. A battery edited after seeing results is not a
-   battery.
-6. **Feature freeze Saturday evening.** Sunday is figures and writing. The writeup reliably
-   takes a quarter of the sprint and every team underestimates it.
+1. Nothing on GPU that has not passed wave 0. Nothing on a paid provider that has
+   not passed on a mock.
+2. Every number is **effect minus floor**, with an interval, never absolute.
+3. No between-cell contrast before the noise floor exists (§5.1).
+4. The battery is SHA-pinned (`342db046…`). A battery edited after seeing results
+   is not a battery.
+5. **No external number enters the writeup without being re-derived from the full
+   text.** Abstracts are not the source.
+6. Simulated output must announce itself — see `scripts/floor_simulation.py`,
+   whose banner exists because those figures are quoted in the pre-registration.
+7. Figures come from matplotlib over `card.json`, never from the frontend, so a
+   broken page cannot cost the paper.
 
----
+8. **A result file is complete or it does not exist.** Never resume on
+   `os.path.exists`. Six cells got into the card that way and one of them became
+   a written-up finding. `cell_is_complete()` and the card-side row check are
+   both there now; do not simplify either back to a existence test.
+9. **Cap the GPUs.** `MAX_GPUS = 10`. Raise it deliberately, never by deleting it.
 
 ## Next action
 
-Either:
-- **implement** → start at build-order step 1 (`scoring/` TDD), or
-- **plan first** → the design spec is approved and unimplemented; the next step in the
-  brainstorming flow is `superpowers:writing-plans` to turn §3–§8 into a task-level
-  implementation plan.
+Data collection is **finished** — 121 complete cells, nothing running, nothing
+queued. What is left is presentation and writing:
 
-Before either, someone should close the three open decisions above — the depth-vs-dose
-treatment and the replicate budget both cost GPU money and both are cheaper to decide than to
-undo.
+1. **Wire `fig5_persona` into `site/index.html`** and add the depth-ladder
+   section. The figure and its JSON exist; the page does not reference them.
+2. **Redeploy.** The live page still shows the pre-correction numbers
+   ("3 of 9", R = 0.904) and SmolLM2's withdrawn instability claim.
+3. **Freeze**, then write. Per `PLAN.md` the remaining optional arms
+   (guardrail-masking, OmniRoute frontier) are not blockers and OmniRoute is
+   still blocked on operator auth.

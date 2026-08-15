@@ -78,7 +78,74 @@ def slope_chart(tiles, key_r, key_n, title, subtitle, fmt, ymax=None):
     )
 
 
-def build(card: dict) -> str:
+def persona_section(rows: list[dict], figure) -> str:
+    """The depth-ladder arm. Omitted entirely when its data is absent.
+
+    Written as a separate block rather than folded into the main table because
+    it answers a different question: the table asks whether coherence depends
+    on content at all, this asks whether an installed persona moves preference
+    or only prose.
+    """
+    if not rows:
+        return ""
+
+    by_model: dict[str, list[dict]] = {}
+    for r in rows:
+        by_model.setdefault(r["model"], []).append(r)
+
+    cells = []
+    for model in sorted(by_model, key=lambda m: -max(
+            r["floor_corrected"] for r in by_model[m])):
+        rs = {(r["persona"], r["depth"]): r["floor_corrected"] for r in by_model[model]}
+        tds = "".join(
+            f"<td class='{'pos' if rs[k] > 0 else 'neg'}'>{rs[k]:+.2f}</td>"
+            if k in rs else "<td class='muted'>&mdash;</td>"
+            for k in (("ambitious", "D1"), ("ambitious", "D2"),
+                      ("cautious", "D1"), ("cautious", "D2"))
+        )
+        cells.append(f"<tr><td class='m'>{model}</td>{tds}</tr>")
+
+    vals = [r["floor_corrected"] for r in rows]
+    n_pref = sum(1 for v in vals if v > 0.3)
+
+    return f"""
+<h2>Does a persona change what a model wants, or how it writes?</h2>
+<p>The same trait installed at two depths — <b>D1</b> in the user turn, <b>D2</b> in
+the system prompt — and measured on <em>both</em> arms. That control is the whole
+point: a persona that reorders <em>invented</em> outcomes as far as it reorders real
+ones has changed the response style, not the preferences. The statistic is
+<code>1 &minus; &#8214;&Delta;invented&#8214; / &#8214;&Delta;real&#8214;</code>, so
+<b>1.0 is a pure preference change and 0.0 is pure style</b>.</p>
+
+{figure("fig5_persona", "Persona shift, real against invented outcomes",
+  "Each point is one model under one persona at one depth: displacement on real "
+  "outcomes across, displacement on invented ones up. The dashed diagonal is the "
+  "null &mdash; land on it and the persona moved gibberish exactly as far as "
+  "substance, which is a change of prose and not of preference. Distance "
+  "<i>below</i> the diagonal is what the control cannot explain.")}
+
+<div class="tw"><table>
+<thead><tr><th>model</th><th>ambitious D1</th><th>ambitious D2</th>
+<th>cautious D1</th><th>cautious D2</th></tr></thead>
+<tbody>{"".join(cells)}</tbody></table></div>
+
+<p style="font-size:13px">{n_pref} of {len(vals)} model&times;persona&times;depth
+conditions land above +0.30: the persona moves real outcomes substantially further
+than meaningless ones, which is the signature of a changed preference rather than a
+changed voice. The clear exception is <b>granite-4.1-3b under <i>ambitious</i></b>,
+which moves invented outcomes <em>further</em> than real ones — what pure style
+looks like — while behaving like the others under <i>cautious</i>.
+<b>Depth barely separates.</b> Whether the trait sits in the user turn or the system
+prompt moves the statistic less than swapping one persona for the other does.</p>
+
+<p>Note the tension with the result above. Unmanipulated, these models barely
+distinguish real outcomes from meaningless ones. Add a persona and the separation
+appears. The instrument is not blind to content — it is the coherence number that
+fails to depend on it.</p>
+"""
+
+
+def build(card: dict, personas: list[dict] | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
 
@@ -101,17 +168,40 @@ def build(card: dict) -> str:
             f'<figcaption>{caption}</figcaption></figure>'
         )
 
-    body_rows = "".join(
-        f"<tr><td class='m'>{t['model']}</td>"
-        f"<td>{t['raw_coherence']:.3f}</td>"
-        f"<td>{t['floor']:.3f}</td>"
-        f"<td class='{'pos' if t['value']>0 else 'neg'}'>{t['value']:+.3f}</td>"
-        f"<td class='muted'>{(t['shuffled_null'].get('R') or 0):.3f}</td>"
-        f"<td>{t['decisive_fraction']['R']*100:.1f}%</td>"
-        f"<td>{t['decisive_fraction']['N_minus']*100:.1f}%</td>"
-        f"<td class='muted'>{t['slot_a_bias']:.2f}</td></tr>"
-        for t in tiles
-    )
+    def _clears(t):
+        """The verdict as the card computed it, with the margin it cleared by.
+
+        A bare tick would put a residual of +0.003 over a floor of 0.001 in the
+        same column as +0.067 over 0.023. The margin is printed so a reader can
+        see which of those they are looking at, and margins against a
+        near-zero floor are flagged rather than shown as a large multiple.
+        """
+        if t.get("clears_floor") is None:
+            return "<td class='muted'>&mdash;</td>"
+        if not t["clears_floor"]:
+            return "<td class='neg'>no</td>"
+        if t["design_noise_floor"] < 0.005:
+            return "<td class='muted' title='floor too small to divide by'>&gt; floor*</td>"
+        return f"<td class='pos'>{t['floor_margin']:.1f}&times;</td>"
+
+    def _row(t):
+        dnf = t.get("design_noise_floor")
+        dnf_cell = (f"<td class='muted'>{dnf:.3f}</td>" if dnf is not None
+                    else "<td class='muted'>&mdash;</td>")
+        return (
+            f"<tr><td class='m'>{t['model']}</td>"
+            f"<td>{t['raw_coherence']:.3f}</td>"
+            f"<td>{t['floor']:.3f}</td>"
+            f"<td class='{'pos' if t['value'] > 0 else 'neg'}'>{t['value']:+.3f}</td>"
+            f"{dnf_cell}{_clears(t)}"
+            f"<td class='muted'>{(t['shuffled_null'].get('R') or 0):.3f}</td>"
+            f"<td>{t['decisive_fraction']['R'] * 100:.1f}%</td>"
+            f"<td>{t['decisive_fraction']['N_minus'] * 100:.1f}%</td>"
+            f"<td class='muted'>{t['slot_a_bias']:.2f}</td></tr>"
+        )
+
+    body_rows = "".join(_row(t) for t in tiles)
+    n_clears = sum(1 for t in tiles if t.get("clears_floor"))
 
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -196,9 +286,9 @@ that mean nothing.</p>
 
 <div class="banner">
 <strong>PRELIMINARY.</strong> Work in progress, mid-sprint. 9 models, one battery,
-n=1 per cell — no training-seed replicates yet, so no between-model claim is made here.
-Numbers may move. This page is generated from <code>card.json</code>; nothing on it
-is hand-entered.
+<b>3 design replicates per cell</b>, so each model carries its own noise floor and
+between-model differences smaller than that floor are not claimed. Numbers may move.
+This page is generated from <code>card.json</code>; nothing on it is hand-entered.
 </div>
 
 <h2>What was measured</h2>
@@ -237,8 +327,7 @@ models commit to a side on {mean_dec_r*100:.0f}% of pairs, and on invented ones
   "outcomes with magnitudes removed (arrowhead). If the metric tracked meaning the "
   "paths would run down-<i>and-left</i>. They run almost straight down: conviction "
   "falls away while the metric barely registers it. Horizontal bars are the spread "
-  "across five train/test splits &mdash; SmolLM2&rsquo;s wide bar is why its middle "
-  "point sits far left, and is an unstable estimate rather than a finding. "
+  "across five train/test splits. "
   "Both axes span their full operating range (accuracy from chance to 1, conviction "
   "from 0 to its 0.5 maximum), so the steepness is the data&rsquo;s and not a "
   "zoom choice.")}
@@ -262,15 +351,26 @@ about it.</p>
 <h2>All numbers</h2>
 <div class="tw"><table>
 <thead><tr><th>model</th><th>R</th><th>N&#8722;</th><th>R&#8722;N&#8722;</th>
+<th>design floor</th><th>clears</th>
 <th>shuffled null</th><th>decisive R</th><th>decisive N&#8722;</th><th>slot-A bias</th></tr></thead>
 <tbody>{body_rows}</tbody></table></div>
-<p style="font-size:13px"><b>shuffled null</b> keeps the pair set and permutes the
+<p style="font-size:13px"><b>design floor</b> is the spread of the same cell across
+three independent designs — a different outcome subsample and a different pair set
+each time. It is the smallest difference this study is entitled to call a
+difference, so <b>clears</b> asks only whether R&#8722;N&#8722; exceeds it, and
+prints by how much. {n_clears} of {len(tiles)} models clear.
+<b>*</b> marks a floor too near zero to divide by: the model is above its floor,
+but the ratio would be an artifact of a small denominator rather than a large
+effect.
+<b>shuffled null</b> keeps the pair set and permutes the
 observed probabilities across pairs, destroying the link between a pair and its
 preference. It lands at ~0.50, which is how we know the metric itself is sound and
 the flat result is not an artifact of our reimplementation.
 <b>decisive</b> is the share of pairs with p&lt;0.2 or p&gt;0.8.
 <b>slot-A bias</b> is the raw rate of picking the first option before
 counterbalancing — 0.5 is none.</p>
+
+{persona_section(personas or [], figure)}
 
 <h2>What this does and does not show</h2>
 <p><b>It does not show the metric is broken.</b> It passes its own null at 0.50, its
@@ -284,9 +384,17 @@ to tell those apart from the number alone.</p>
 <p><b>Caveats we can already name.</b> Invented outcomes tokenise ~30% longer than
 real ones, so some of the residual could be a prompt-length effect. Fitted utilities
 on the invented arms correlate with text length up to r=&#8722;0.75, meaning the
-"ordering" there is substantially a length ordering. n=1 per cell. Two models
+"ordering" there is substantially a length ordering. Two models
 (Phi-4-mini, Ministral-3) failed to load under transformers 5 and are absent, not
-excluded for their results.</p>
+excluded for their results. A design floor estimated from three replicates is
+itself noisy, and one model's came out near zero — see the <b>*</b> note above.</p>
+<p><b>A correction, recorded rather than quietly fixed.</b> An earlier version of
+this page was built partly on truncated result files: cells killed mid-write by an
+unrelated crash, which a resume step then mistook for finished work. One was 10%
+complete. All cells are now verified at their full row count before they enter the
+card, and both the sweep and the card check independently. The headline moved by
+0.002; several per-model verdicts moved more, and one previously reported
+instability turned out to be the truncation itself and has been withdrawn.</p>
 
 <footer>
 Battery SHA-256 <code>{tiles[0]['battery_sha256'][:16]}…</code> ·
@@ -301,9 +409,16 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--card", default="card.json")
     ap.add_argument("--out", default="site/index.html")
+    ap.add_argument("--personas", default="site/persona_depth.json")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
+    # Optional: the depth ladder is a separate sweep and the page must build
+    # without it, so its section is dropped rather than the build failing.
+    ppath = Path(args.personas)
+    personas = json.loads(ppath.read_text()) if ppath.exists() else []
+    if not personas:
+        print(f"  no persona data at {ppath}; omitting that section")
     for t in card["tiles"]:
         if t["badge"] == "FLOOR_CORRECTED":
             t["dec_r"] = t["decisive_fraction"]["R"]
@@ -311,7 +426,7 @@ def main() -> None:
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(build(card))
+    out.write_text(build(card, personas))
     print(f"wrote {out}  ({out.stat().st_size/1024:.1f} KB)")
 
 

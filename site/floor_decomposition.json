@@ -1,0 +1,160 @@
+{
+  "summary": {
+    "R": {
+      "fit": 0.9041379713505613,
+      "length_rule": 0.5409284339696949,
+      "fit_on_length_tied": 0.8987926771041652
+    },
+    "N_minus": {
+      "fit": 0.8844032014827046,
+      "length_rule": 0.6951530423331147,
+      "fit_on_length_tied": 0.8478366593421868
+    }
+  },
+  "per_model": {
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct": {
+      "R": {
+        "fit": 0.8996472883622293,
+        "length_rule": 0.5150504569611802,
+        "fit_on_length_tied": 0.8916010388902835,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.8429945041027975,
+        "length_rule": 0.5878117681460087,
+        "fit_on_length_tied": 0.7769607234082894,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    },
+    "HuggingFaceTB/SmolLM3-3B": {
+      "R": {
+        "fit": 0.9414669946164004,
+        "length_rule": 0.5596622650288462,
+        "fit_on_length_tied": 0.9451472598232689,
+        "n_tied_pairs": 93,
+        "n_pairs": 2498
+      },
+      "N_minus": {
+        "fit": 0.9308592231964156,
+        "length_rule": 0.7464427452463414,
+        "fit_on_length_tied": 0.9425697865353038,
+        "n_tied_pairs": 35,
+        "n_pairs": 2445
+      }
+    },
+    "LiquidAI/LFM2.5-1.2B-Instruct": {
+      "R": {
+        "fit": 0.9078579745837055,
+        "length_rule": 0.5029857058568825,
+        "fit_on_length_tied": 0.9155138737102426,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.8676026006806561,
+        "length_rule": 0.5609702266023961,
+        "fit_on_length_tied": 0.8723970788295381,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    },
+    "Qwen/Qwen3.5-0.8B": {
+      "R": {
+        "fit": 0.8923150300601203,
+        "length_rule": 0.4805844159573719,
+        "fit_on_length_tied": 0.878262130694773,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.8567947139258436,
+        "length_rule": 0.592199444716245,
+        "fit_on_length_tied": 0.934579260111175,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    },
+    "Qwen/Qwen3.5-2B": {
+      "R": {
+        "fit": 0.8955583166332666,
+        "length_rule": 0.5359888282773708,
+        "fit_on_length_tied": 0.9050726190584617,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.8890675680678626,
+        "length_rule": 0.6677562847858591,
+        "fit_on_length_tied": 0.8426568735079373,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    },
+    "Qwen/Qwen3.5-4B": {
+      "R": {
+        "fit": 0.9055279840638562,
+        "length_rule": 0.5906175142648639,
+        "fit_on_length_tied": 0.8712739110300044,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.9213894527732307,
+        "length_rule": 0.8066399272708924,
+        "fit_on_length_tied": 0.8339099215797738,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    },
+    "Qwen/Qwen3.5-9B": {
+      "R": {
+        "fit": 0.9151999999999999,
+        "length_rule": 0.5813427507818509,
+        "fit_on_length_tied": 0.9248146878839133,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.90944578313253,
+        "length_rule": 0.7783251339716399,
+        "fit_on_length_tied": 0.7585489745064213,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    },
+    "google/gemma-4-E2B-it": {
+      "R": {
+        "fit": 0.9009082389026156,
+        "length_rule": 0.5639585558128584,
+        "fit_on_length_tied": 0.88297176397753,
+        "n_tied_pairs": 91,
+        "n_pairs": 2425
+      },
+      "N_minus": {
+        "fit": 0.9085995033733172,
+        "length_rule": 0.6815354450895073,
+        "fit_on_length_tied": 0.9027551951012963,
+        "n_tied_pairs": 38,
+        "n_pairs": 2412
+      }
+    },
+    "ibm-granite/granite-4.1-3b": {
+      "R": {
+        "fit": 0.8787599149328583,
+        "length_rule": 0.5381654127860294,
+        "fit_on_length_tied": 0.8744768088690096,
+        "n_tied_pairs": 92,
+        "n_pairs": 2500
+      },
+      "N_minus": {
+        "fit": 0.8328754640916879,
+        "length_rule": 0.8346964051691426,
+        "fit_on_length_tied": 0.7661521204999466,
+        "n_tied_pairs": 40,
+        "n_pairs": 2500
+      }
+    }
+  }
+}

@@ -41,6 +41,7 @@ class Model:
 
 SELF_HOSTED: list[Model] = [
     # --- ~1-2B ---------------------------------------------------------------
+    Model("Qwen/Qwen3.5-0.8B",                  "qwen",    0.8, 0.8, "1-2B", "L4"),
     Model("Qwen/Qwen3.5-2B",                    "qwen",    2.0, 2.0, "1-2B", "L4"),
     Model("google/gemma-4-E2B-it",              "gemma",   2.0, 2.0, "1-2B", "L4"),
     Model("LiquidAI/LFM2.5-1.2B-Instruct",      "liquid",  1.2, 1.2, "1-2B", "L4"),
