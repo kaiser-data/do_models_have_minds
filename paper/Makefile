@@ -18,7 +18,7 @@ TEXCMD ?= tectonic -X compile
 FIGS  := figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf \
          figs/fig4_detector.pdf figs/fig5_persona.pdf
 GEN   := numbers.tex table_main.tex table_stated.tex table_revealed.tex \
-         appendix_prompts.tex $(FIGS)
+         appendix_prompts.tex table_claims.tex $(FIGS)
 
 .PHONY: all inputs slides lint clean distclean
 
@@ -48,6 +48,12 @@ numbers.tex table_main.tex table_stated.tex table_revealed.tex: \
 		$(REPO)/self_report_summary.json \
 		$(REPO)/self_report_summary_personas.json
 	cd $(REPO) && python3 scripts/paper_numbers.py
+
+# The claims ledger: regenerates the evidence table AND fails the build if a
+# claim's numbers moved past tolerance since the prose was written against
+# them. Depends on numbers.tex, so it runs after the card is rebuilt.
+table_claims.tex: $(REPO)/claims.json numbers.tex
+	cd $(REPO) && python3 scripts/claims.py --table
 
 # The appendix renders prompts from the battery and answers from the result
 # rows, so it depends on the battery and on the module that builds prompts.

@@ -1,0 +1,65 @@
+{
+  "taken": "manual --accept",
+  "note": "values the current prose was written against; re-read the affected sections before accepting",
+  "values": {
+    "floor-gap": {
+      "MeanR": "0.906",
+      "MeanFloor": "0.880",
+      "MeanResidual": "+0.025"
+    },
+    "strength-collapse": {
+      "MeanDecisiveR": "41",
+      "MeanDecisiveN": "4.5",
+      "MedianDecisiveRatio": "17"
+    },
+    "scaling-residual-falls": {
+      "LadderResidFall": "-0.071",
+      "WithinFamilyCorr": "-0.84",
+      "LadderNSizes": "4",
+      "OutsideFamilyCorr": "-0.19"
+    },
+    "persona-displacement": {
+      "PersonaAbovePointThree": "18",
+      "NPersonaCells": "20",
+      "PersonaMax": "+0.85",
+      "PersonaMin": "-0.66"
+    },
+    "persona-direction-shallow": {
+      "PersonaNonsenseShare": "66",
+      "PersonaSepReal": "+0.791",
+      "PersonaSepInvented": "+0.781",
+      "PersonaExcess": "+0.133"
+    },
+    "detector-dissociation": {
+      "DetKeptAuroc": "0.596",
+      "DetBestAuroc": "0.821",
+      "DetBestTPR": "40",
+      "DetFPR": "5",
+      "DetNModels": "9"
+    },
+    "track3-directive-blind": {
+      "RevGapLo": "+0.054",
+      "RevGapHi": "+0.059",
+      "RevSpecLo": "+0.88",
+      "RevSpecHi": "+1.40",
+      "RevNInterp": "2",
+      "RevNTriad": "3",
+      "StatedBaseLo": "0.246",
+      "StatedHaveLo": "0.869"
+    },
+    "answer-mass-channel": {
+      "NMassDrop": "8",
+      "NModels": "9",
+      "MassDropSignP": "0.039",
+      "MedianMassDrop": "+0.011",
+      "ReasoningMassDrop": "0.193"
+    },
+    "floor-not-length": {
+      "FloorLengthRule": "0.695",
+      "FloorTiedAcc": "0.848",
+      "RealLengthRule": "0.541",
+      "MostLengthModel": "granite-4.1-3b"
+    },
+    "neutral-option": {}
+  }
+}

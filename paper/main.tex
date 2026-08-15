@@ -736,6 +736,43 @@ read as narrowing our claim.
     our reimplementation.
 \end{enumerate}
 
+\section{State of the evidence}\label{sec:evidence}
+
+This paper is built to grow: the roster, the replicate count and the number of
+conditions are all expected to increase, and a claim that is thin today may be
+established or withdrawn later. So rather than leave a reader to reconstruct
+how much weight each result carries from $n$'s scattered through the prose, we
+state it (Table~\ref{tab:claims}).
+
+The table is generated from a claims ledger that names, for every claim, the
+quantities it rests on. Each rebuild re-reads those quantities and fails the
+build if any has moved beyond tolerance since the version this prose was
+written against. That is not bookkeeping: this project has already had one
+episode in which truncated cells shifted a headline and several per-model
+verdicts, and the failure was invisible precisely because every individual
+number moved only slightly.
+
+\begin{table}[h]
+\centering
+\small
+\input{table_claims}
+\caption{Every claim in this paper with the evidence behind it. \emph{Established}
+means the claim survives its own controls at current $n$; \emph{provisional}
+means it is real but rests on one family, one instrument or a small $n$, and is
+labelled as such wherever it appears; \emph{open} means specified and not yet
+run, carrying no number. The three provisional rows and the one open row are
+the paper's honest edge, and each names in the ledger the specific addition
+that would settle it.}
+\label{tab:claims}
+\end{table}
+
+The distribution matters more than any single row. Six claims are established
+on the full roster; three are provisional and say so in the body; one is open
+and reports nothing. The provisional three are not evenly weak, either --- the
+scaling result rests on a single family and is the largest outstanding
+liability in the paper, which is why \S\ref{sec:limits} states it as a
+within-family result rather than a cross-family one.
+
 \section{Limitations}\label{sec:limits}
 
 \paragraph{Both detectors are scored knowing the answer.} The separation

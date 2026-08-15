@@ -1,0 +1,221 @@
+{
+  "_comment": [
+    "The claims ledger. This file is the paper's spine as a data structure, and",
+    "it exists so the paper can grow without anyone having to remember what the",
+    "last version asserted.",
+    "",
+    "Every claim names the macros it rests on. scripts/claims.py checks those",
+    "macros still exist, snapshots their current values, and on the next run",
+    "reports exactly which claims moved and by how much. A claim whose number",
+    "drifts past its tolerance fails the check rather than quietly changing",
+    "meaning between drafts -- which is the failure mode this project has",
+    "already had once, when six truncated cells moved a headline.",
+    "",
+    "status:  established | provisional | contested | open",
+    "  established  survives its own controls at current n; safe to lead with",
+    "  provisional  real but under-powered or resting on one family/instrument",
+    "  contested    the evidence points both ways and the paper says so",
+    "  open         specified, not yet run. Carries no number.",
+    "",
+    "'grows_by' is the point of the ledger: what specific addition would move",
+    "this claim from provisional to established. That is the experiment queue,",
+    "written where the claim lives instead of in a handoff nobody reads.",
+    "'priority' orders the queue by what the weakness costs the paper, not alphabetically. It is the only hand-set ordering in the ledger."
+  ],
+  "tolerance_default": 0.02,
+  "claims": [
+    {
+      "id": "floor-gap",
+      "statement": "Coherence on outcomes that refer to nothing is nearly as high as on real ones.",
+      "status": "established",
+      "section": "sec:flat",
+      "macros": [
+        "MeanR",
+        "MeanFloor",
+        "MeanResidual"
+      ],
+      "evidence": {
+        "models": 9,
+        "cells": 81,
+        "replicates_per_cell": 3
+      },
+      "what_would_falsify": "A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).",
+      "grows_by": "More model families. The claim is already cross-family; adding models tightens the mean rather than changing its kind.",
+      "priority": 9
+    },
+    {
+      "id": "strength-collapse",
+      "statement": "Conviction collapses on invented outcomes while the coherence score barely moves, because the metric thresholds to a hard label.",
+      "status": "established",
+      "section": "sec:strength",
+      "macros": [
+        "MeanDecisiveR",
+        "MeanDecisiveN",
+        "MedianDecisiveRatio"
+      ],
+      "evidence": {
+        "models": 9,
+        "cells": 81,
+        "replicates_per_cell": 3
+      },
+      "what_would_falsify": "A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.",
+      "grows_by": "Nothing needed for the claim; it is the sharpest result and holds on every model.",
+      "priority": 10
+    },
+    {
+      "id": "scaling-residual-falls",
+      "statement": "Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow.",
+      "status": "provisional",
+      "section": "sec:scale",
+      "macros": [
+        "LadderResidFall",
+        "WithinFamilyCorr",
+        "LadderNSizes",
+        "OutsideFamilyCorr"
+      ],
+      "evidence": {
+        "families": 1,
+        "sizes_in_family": 4,
+        "models_outside_family": 5
+      },
+      "what_would_falsify": "A second family whose within-family correlation is flat or positive.",
+      "grows_by": "A SECOND FAMILY spanning 3+ sizes. This is the single highest-value addition in the ledger: the claim is currently carried by one ladder and the paper says so.",
+      "priority": 2
+    },
+    {
+      "id": "persona-displacement",
+      "statement": "An installed persona displaces real outcomes further than invented ones, so the instrument is not merely insensitive.",
+      "status": "established",
+      "section": "sec:persona",
+      "macros": [
+        "PersonaAbovePointThree",
+        "NPersonaCells",
+        "PersonaMax",
+        "PersonaMin"
+      ],
+      "evidence": {
+        "models": 5,
+        "conditions": 20
+      },
+      "what_would_falsify": "Persona cells clustering on the diagonal once more models are added.",
+      "grows_by": "The remaining 4 roster models at both depths, taking 20 conditions to 36.",
+      "priority": 5
+    },
+    {
+      "id": "persona-direction-shallow",
+      "statement": "Most of a persona's value-aligned reordering reproduces on outcomes that mean nothing, so a persona is better described as a response policy than as installed values.",
+      "status": "established",
+      "section": "sec:persona",
+      "macros": [
+        "PersonaNonsenseShare",
+        "PersonaSepReal",
+        "PersonaSepInvented",
+        "PersonaExcess"
+      ],
+      "evidence": {
+        "models": 5,
+        "conditions": 20
+      },
+      "what_would_falsify": "A larger excess once length is controlled differently, or models that retain content-dependence at scale.",
+      "grows_by": "More models; 2 of 5 currently retain a substantial excess and whether that fraction is stable is unknown.",
+      "priority": 6
+    },
+    {
+      "id": "detector-dissociation",
+      "statement": "The channel the coherence metric consumes separates real from invented outcomes near chance, while a channel it discards does so well.",
+      "status": "established",
+      "section": "sec:detector",
+      "macros": [
+        "DetKeptAuroc",
+        "DetBestAuroc",
+        "DetBestTPR",
+        "DetFPR",
+        "DetNModels"
+      ],
+      "evidence": {
+        "models": 9,
+        "ground_truth": "by construction, every pair run in both arms"
+      },
+      "what_would_falsify": "The discarded channel failing to separate the arms on new models.",
+      "grows_by": "An affordance ladder: score the detector at decreasing auditor knowledge. Converts a conceded limitation into a result.",
+      "priority": 8
+    },
+    {
+      "id": "track3-directive-blind",
+      "statement": "Both the stated and the revealed channel register which trait was named and neither registers what the model was told to do about it.",
+      "status": "provisional",
+      "section": "sec:track3",
+      "macros": [
+        "RevGapLo",
+        "RevGapHi",
+        "RevSpecLo",
+        "RevSpecHi",
+        "RevNInterp",
+        "RevNTriad",
+        "StatedBaseLo",
+        "StatedHaveLo"
+      ],
+      "evidence": {
+        "models_stated": 5,
+        "models_revealed_passing_gate": 2,
+        "models_with_complete_triad": 3
+      },
+      "what_would_falsify": "A model whose revealed gap approaches its specificity margin.",
+      "grows_by": "The missing concealed+verbal cells for Qwen3.5-9B and granite-4.1-3b, taking the revealed channel from n=2 to n=4. Cheap, and it is the weakest n in the paper.",
+      "priority": 3
+    },
+    {
+      "id": "answer-mass-channel",
+      "statement": "Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.",
+      "status": "provisional",
+      "section": "sec:reasoning",
+      "macros": [
+        "NMassDrop",
+        "NModels",
+        "MassDropSignP",
+        "MedianMassDrop",
+        "ReasoningMassDrop"
+      ],
+      "evidence": {
+        "models": 9,
+        "test": "two-sided sign test"
+      },
+      "what_would_falsify": "Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).",
+      "grows_by": "More hybrid-reasoning models. The dramatic case is n=1 and the effect is small for everyone else.",
+      "priority": 4
+    },
+    {
+      "id": "floor-not-length",
+      "statement": "The ordering models impose on invented outcomes is not merely a length ordering.",
+      "status": "established",
+      "section": "sec:limits",
+      "macros": [
+        "FloorLengthRule",
+        "FloorTiedAcc",
+        "RealLengthRule",
+        "MostLengthModel"
+      ],
+      "evidence": {
+        "models": 9,
+        "note": "length-neutralised column rests on ~40 held-out pairs per split; pooled value only"
+      },
+      "what_would_falsify": "The length-neutralised fit falling to chance with more held-out pairs.",
+      "grows_by": "More pairs tied on token count, so the length-neutralised column stops being the noisiest cell in the paper.",
+      "priority": 7
+    },
+    {
+      "id": "neutral-option",
+      "statement": "The floor survives when the model is given an explicit option to decline the comparison.",
+      "status": "open",
+      "section": "app:neutral",
+      "macros": [],
+      "evidence": {
+        "cells_run": 0,
+        "note": "template and scoring implemented and unit-tested; no model has been shown the prompt"
+      },
+      "what_would_falsify": "A large P(C) on invented outcomes together with a collapse in coherence among the remaining choices. That would make the floor an artifact of forced choice.",
+      "grows_by": "One model, both arms, ~10k forward passes. This is the strongest published objection to the design and the cheapest open item in the ledger.",
+      "priority": 1
+    }
+  ]
+}
