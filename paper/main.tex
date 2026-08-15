@@ -319,6 +319,94 @@ at $n = 3$ the range is the conservative reading. A residual is reported as
 clearing only if it strictly exceeds this floor, and the margin is given
 alongside so that clearing by a hair is visible as such.
 
+\subsection{Every quantity in this paper, defined}\label{sec:defs}
+
+Each statistic below is used somewhere in the results and stated here once, so
+a reader can check what a number means without reconstructing it from prose.
+Notation: a \emph{pair} $(i,j)$ is two outcomes shown together; a \emph{cell} is
+one model on one arm at one design seed.
+
+\paragraph{Reading a preference.} For a pair shown in presentation order
+$\mathrm{AB}$, let $\ell$ be the first-token log-probabilities. Writing
+$\mathcal{A}$ and $\mathcal{B}$ for the token forms meaning ``A'' and ``B''
+(including whitespace variants),
+\[
+m_A = \!\!\sum_{t \in \mathcal{A}}\!\! e^{\ell_t},\quad
+m_B = \!\!\sum_{t \in \mathcal{B}}\!\! e^{\ell_t},\qquad
+\underbrace{a = \frac{m_A}{m_A + m_B}}_{\text{preference}},\qquad
+\underbrace{\mu = m_A + m_B}_{\text{answer mass}}.
+\]
+$\mu$ is the validity gate: mass outside $\{A,B\}$ means the model answered
+something other than the question, and cells with $\mu < 0.5$ are recorded
+unscoreable rather than scored. Counterbalancing over both presentations gives
+the position-free estimate for the pair,
+\[
+p_{ij} = \tfrac{1}{2}\!\left(a_{\mathrm{AB}} + (1 - a_{\mathrm{BA}})\right),
+\]
+because outcome $i$ occupies slot B in the second presentation. A responder
+with pure positional bias yields $p_{ij} = 0.5$ exactly, which is why the bias
+cancels rather than needing to be modelled.
+
+\paragraph{Coherence.} A Thurstonian model gives each outcome a latent utility
+$u_i \sim \mathcal{N}(\mu_i, \sigma_i^2)$, so that
+$\Pr(i \succ j) = \Phi\!\big((\mu_i - \mu_j)/\sqrt{\sigma_i^2 + \sigma_j^2}\big)$.
+Fitting $\{\mu,\sigma\}$ on a training split of pairs, \emph{coherence} is the
+fitted model's accuracy on the held-out split,
+\[
+\mathrm{coh} = \frac{1}{|T|}\sum_{(i,j) \in T}
+\mathbf{1}\!\left[\,\mathrm{sign}\!\left(\hat{\Pr}(i \succ j) - \tfrac{1}{2}\right)
+= \mathrm{sign}\!\left(p_{ij} - \tfrac{1}{2}\right)\right],
+\]
+averaged over \NSplits{} splits. \textbf{This is the step where strength is
+discarded}: a pair at $p = 0.51$ and one at $p = 0.99$ enter the sum
+identically, which is the mechanism behind \S\ref{sec:strength}.
+
+\paragraph{The residual, and the floor it is read against.} For one model,
+\[
+\mathrm{residual} = \mathrm{coh}(\armR) - \mathrm{coh}(\armNm),
+\qquad
+\mathrm{floor} = \max_s \mathrm{coh}_s - \min_s \mathrm{coh}_s
+\]
+over the $s = 1,2,3$ design seeds. A residual counts as clearing only if
+$\mathrm{residual} > \mathrm{floor}$. Every headline number is a residual, never
+a raw coherence.
+
+\paragraph{Decisiveness.} The strength the metric throws away, recovered
+directly:
+\[
+\mathrm{dec} = \frac{1}{|P|}\sum_{(i,j) \in P}
+\mathbf{1}\!\left[\,|p_{ij} - \tfrac{1}{2}| > 0.3\,\right].
+\]
+
+\paragraph{Persona displacement.} Let $\Delta_{\text{arm}}$ be the vector of
+per-pair changes a persona causes against the same model's \texttt{persona=none}
+run on that arm. The displacement statistic is
+\[
+1 - \frac{\lVert \Delta_{\armNm} \rVert}{\lVert \Delta_{\armR} \rVert},
+\]
+so $1$ is a pure change of preference and $0$ a pure change of style: a persona
+that reorders meaningless outcomes as far as real ones scores $0$.
+
+\paragraph{Concealment alignment (\S\ref{sec:track3}).} With the genuine
+persona supplying a template, a condition $c$ scores
+\[
+\mathrm{score}(c) = r\!\left(\Delta_c,\ \Delta_{\text{genuine}}\right),
+\]
+Pearson, matched on pair index and presentation order. Detection is
+$\mathrm{score}(\text{concealed})$; its false-positive denominator is
+$\mathrm{score}(\text{verbal})$; and the row is interpretable only if
+$\mathrm{score}(\text{concealed}) - \mathrm{score}(\text{ambitious}) \geq
+\RevSpecMargin{}$.
+
+\paragraph{Declining (\S\ref{sec:neutral}).} With a third option offered,
+\[
+P(\text{neither}) = \frac{m_C}{m_A + m_B + m_C},
+\]
+while $a$ keeps its definition above and so remains the preference \emph{given}
+that a preference was expressed. The diagnostic that decides whether a floor
+exists at all is the mass left on the two options,
+$\mu\,(1 - P(\text{neither}))$: below $0.05$ there is no ordering to fit.
+
 \section{Results}
 
 \subsection{The metric is nearly flat between real and meaningless outcomes}

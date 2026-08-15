@@ -306,6 +306,17 @@ p{{color:var(--text-secondary);max-width:70ch}}
 .banner{{background:var(--warn-bg);border:1px solid var(--warn-br);border-left-width:4px;
  border-radius:6px;padding:14px 18px;margin:24px 0;font-size:14.5px;color:var(--text-primary)}}
 .banner strong{{letter-spacing:.02em}}
+.formula{{margin:22px 0;padding:18px 20px;background:var(--surface-1);
+  border:1px solid var(--border);border-radius:3px}}
+.formula h3{{font-size:15px;margin:0 0 6px;font-weight:650}}
+.formula .eq{{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:14px;padding:12px 14px;margin:10px 0;background:var(--surface-0);
+  border-left:2px solid var(--series-r);overflow-x:auto;white-space:pre;
+  font-variant-numeric:tabular-nums}}
+.formula .plain{{font-size:14px;color:var(--text-secondary);margin:8px 0 0}}
+.formula .eg{{font-size:13px;color:var(--text-muted);margin-top:10px;
+  padding-top:10px;border-top:1px dashed var(--border)}}
+.formula .eg b{{color:var(--text-primary)}}
 .hero{{display:flex;flex-wrap:wrap;gap:16px;margin:32px 0}}
 .stat{{flex:1 1 200px;background:var(--surface-1);border:1px solid var(--border);
  border-radius:10px;padding:18px 20px}}
@@ -411,6 +422,77 @@ models commit to a side on {mean_dec_r*100:.0f}% of pairs, and on invented ones
 much</em>. A pair at p=0.51 counts exactly like one at p=0.99. That is why a model
 can be almost perfectly indifferent about gibberish and still score as coherent
 about it.</p>
+
+<h2>How each number is computed</h2>
+<p>Every value on this page comes from the four steps below. They are written out
+because a coherence score is easy to quote and hard to interpret, and most of the
+argument here is about what the arithmetic throws away.</p>
+
+<div class="formula">
+  <h3>1. Reading one preference</h3>
+  <div class="eq">a  =  mass("A") / ( mass("A") + mass("B") )
+&#956;  =  mass("A") + mass("B")          &#8592; "answer mass"</div>
+  <p class="plain">The model is shown two outcomes and asked to reply "A" or "B".
+  We never sample text; we read the probability it assigns to each letter as its
+  very next token. <b>a</b> is the preference. <b>&#956;</b> is how much of its
+  attention went to answering at all &mdash; if the model was about to say
+  "Let me think&hellip;", &#956; is low and the row is thrown out rather than
+  scored as a preference.</p>
+  <p class="eg">Real example, Qwen3.5-2B, first pair:
+  P(A)&nbsp;=&nbsp;0.912, P(B)&nbsp;=&nbsp;0.085 &rarr;
+  <b>a&nbsp;=&nbsp;0.915</b>, <b>&#956;&nbsp;=&nbsp;0.997</b>.</p>
+</div>
+
+<div class="formula">
+  <h3>2. Cancelling position bias</h3>
+  <div class="eq">p  =  &#189; &#215; ( a(shown AB)  +  1 &#8722; a(shown BA) )</div>
+  <p class="plain">Every pair is asked twice with the options swapped. A model
+  that just always picks the first option scores exactly 0.5 here, so the bias
+  removes itself &mdash; no correction term needed.</p>
+  <p class="eg">Same pair: &#189;&nbsp;&#215;&nbsp;(0.915&nbsp;+&nbsp;0.438)
+  =&nbsp;<b>0.676</b>.</p>
+</div>
+
+<div class="formula">
+  <h3>3. Coherence</h3>
+  <div class="eq">fit u&#7522; for every outcome on 80% of pairs
+coherence = share of the held-out 20% whose
+            WINNER the fitted model predicts</div>
+  <p class="plain">A Thurstonian model gives each outcome one number, a utility,
+  and predicts that the higher one wins. Coherence is how often that prediction
+  is right on pairs it never saw. <b>This is where strength disappears:</b> a
+  pair the model felt 51/49 about counts exactly as much as one it felt 99/1
+  about. Only who won is recorded.</p>
+  <p class="eg">A model that ranks by sentence length alone, with no idea what
+  the sentences mean, scores about <b>0.70</b> on this.</p>
+</div>
+
+<div class="formula">
+  <h3>4. The number we actually report</h3>
+  <div class="eq">residual  =  coherence(real)  &#8722;  coherence(invented)
+floor     =  spread across 3 re-runs with different random designs</div>
+  <p class="plain">Coherence on its own cannot tell you whether an ordering is
+  <em>about</em> anything, so we never report it alone. We run the identical
+  procedure on outcomes whose words were replaced by invented ones, and report
+  the difference. A result counts only if it beats the model's own re-run spread.</p>
+  <p class="eg">Across 9 models: real <b>0.906</b>, invented <b>0.880</b>,
+  residual <b>+0.025</b>. Six of nine beat their own floor.</p>
+</div>
+
+<div class="formula">
+  <h3>5. What the metric cannot see</h3>
+  <div class="eq">decisive     = share of pairs with |p &#8722; &#189;| &gt; 0.3
+P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
+  <p class="plain">Two quantities sitting in the same forward pass that coherence
+  discards by construction. <b>Decisive</b> is how often the model actually
+  committed. <b>P(neither)</b> is how often it declines, measured by re-running
+  the battery with an explicit third option, "Neither &mdash; I have no
+  preference between these".</p>
+  <p class="eg">Qwen3.5-2B commits on <b>41%</b> of real pairs and <b>4.5%</b> of
+  invented ones. Offered an opt-out, models decline on <b>every</b> model tested
+  more often for invented outcomes &mdash; up to <b>100%</b> of them &mdash;
+  while the coherence number barely moves.</p>
+</div>
 
 <h2>All numbers</h2>
 <div class="tw"><table>

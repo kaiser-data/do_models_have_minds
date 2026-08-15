@@ -22,6 +22,8 @@ from pathlib import Path
 BUILTIN = {
     "Phi", "Delta", "Rightarrow", "LaTeX", "TeX",
     "Large", "LARGE", "Huge", "N", "R", "U", "P", "S",
+    # Standard math operators/symbols LaTeX already defines.
+    "Pr", "Re", "Im", "Phi", "Psi", "Omega", "Sigma", "Lambda", "Theta",
 }
 
 

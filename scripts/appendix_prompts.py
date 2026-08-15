@@ -60,11 +60,42 @@ def tex_escape(s: str) -> str:
     return "".join(out)
 
 
+# Characters the monospace font cannot set. Substituted FOR DISPLAY ONLY and
+# footnoted where used: the prompt that ran is the one in the source, and an
+# appendix that silently prints a different string than was sent would be the
+# same defect as a hand-written example prompt.
+_DISPLAY_SUBS = {"\u2014": "--", "\u2013": "-", "\u2019": "'", "\u201c": '"',
+                 "\u201d": '"', "\u2026": "..."}
+
+
+def display_safe(s: str) -> tuple[str, bool]:
+    out = s
+    changed = False
+    for bad, good in _DISPLAY_SUBS.items():
+        if bad in out:
+            out = out.replace(bad, good)
+            changed = True
+    return out, changed
+
+
+def wrap(s: str, width: int = 78) -> str:
+    """Hard-wrap so a long prompt line cannot overflow the text block."""
+    import textwrap
+    lines = []
+    for para in s.split("\n"):
+        lines.extend(textwrap.wrap(para, width=width) or [""])
+    return "\n".join(lines)
+
+
 def verbatim(s: str) -> str:
     """A prompt shown as-is. Uses a Verbatim block so nothing in the battery
     text can be interpreted as markup."""
+    shown, changed = display_safe(s)
+    note = ("\n\\noindent\\footnotesize\\emph{(The prompt as sent contains a "
+            "literal em dash; the monospace face here cannot set it, so it is "
+            "shown as \\texttt{--}.)}\\normalsize\n" if changed else "")
     return ("\\begin{quote}\\small\\begin{verbatim}\n"
-            + s.rstrip() + "\n\\end{verbatim}\\end{quote}\n")
+            + wrap(shown.rstrip()) + "\n\\end{verbatim}\\end{quote}\n" + note)
 
 
 def load_rows(results: Path, cell: str) -> list[dict]:
