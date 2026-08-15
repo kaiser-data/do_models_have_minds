@@ -73,6 +73,14 @@
       "NeutABRefuseHi": "0.0100",
       "NeutNCells": "12"
     },
+    "harness-not-invariant": {
+      "HarnessNRendered": "9",
+      "HarnessNInjecting": "2",
+      "HarnessNClean": "7",
+      "HarnessNDated": "1",
+      "HarnessInjectingModels": "SmolLM2-1.7B-Instruct, SmolLM3-3B",
+      "HarnessDatedModel": "SmolLM3-3B"
+    },
     "opt-out-is-a-discarded-channel": {
       "NeutGapLo": "+0.146",
       "NeutGapHi": "+0.769",

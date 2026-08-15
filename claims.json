@@ -268,6 +268,28 @@
       "priority": 1
     },
     {
+      "id": "harness-not-invariant",
+      "statement": "The baseline condition is not the same instrument across models: some chat templates supply a system prompt the sweep never sent, and one stamps the current date into it.",
+      "status": "established",
+      "section": "sec:limits",
+      "macros": [
+        "HarnessNRendered",
+        "HarnessNInjecting",
+        "HarnessNClean",
+        "HarnessNDated",
+        "HarnessInjectingModels",
+        "HarnessDatedModel"
+      ],
+      "evidence": {
+        "models_rendered": "\\HarnessNRendered",
+        "models_injecting": "\\HarnessNInjecting",
+        "note": "\\HarnessNClean of \\HarnessNRendered receive no system block and \\HarnessNInjecting receive one from their template (\\HarnessInjectingModels). \\HarnessDatedModel additionally has the current date stamped in, so its prompt is not constant across days. This is a claim AGAINST our own cross-family comparisons and is listed so it cannot be quietly dropped."
+      },
+      "what_would_falsify": "A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.",
+      "grows_by": "Nothing; it is a fact about the templates. It is DISCHARGED, not grown, by equalising the harness: either supply the same explicit system prompt to every model, or strip the template's, and re-run the affected cells. Until then cross-family contrasts involving the affected models carry an uncontrolled difference.",
+      "priority": 1
+    },
+    {
       "id": "opt-out-is-a-discarded-channel",
       "statement": "Offered an explicit opt-out, every model tested declines meaningless comparisons more often than real ones -- a large content signal the coherence metric discards by construction.",
       "status": "established",

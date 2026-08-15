@@ -48,6 +48,8 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 These need no further data to stand. They are listed because a living paper must keep its settled claims falsifiable, not just its open ones.
 
+- **`harness-not-invariant`** — The baseline condition is not the same instrument across models: some chat templates supply a system prompt the sweep never sent, and one stamps the current date into it. *Would falsify:* A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.
+
 - **`opt-out-is-a-discarded-channel`** — Offered an explicit opt-out, every model tested declines meaningless comparisons more often than real ones -- a large content signal the coherence metric discards by construction. *Would falsify:* A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.
 
 - **`persona-displacement`** — An installed persona displaces real outcomes further than invented ones, so the instrument is not merely insensitive. *Would falsify:* Persona cells clustering on the diagonal once more models are added.

@@ -934,6 +934,32 @@ within-family result rather than a cross-family one.
 
 \section{Limitations}\label{sec:limits}
 
+\paragraph{Two models did not receive the prompt we thought we sent.} Our sweep
+supplies no system message in the baseline condition and records
+\texttt{system\_prompt: None} for those cells. That records what was
+\emph{sent}. What each model \emph{receives} is decided by its own chat
+template, and rendering the templated input for all \HarnessNRendered{} models
+shows the two are not the same thing: \HarnessNClean{} models receive no system
+block, and \HarnessNInjecting{} (\HarnessInjectingModels{}) receive one supplied
+by their template, declaring an assistant identity we did not write.
+
+This matters twice. First, a cross-family comparison of the floor is then partly
+a comparison of system prompts nobody chose --- and the affected models are not
+peripheral, since \HarnessDatedModel{} carries the highest raw coherence in
+Table~\ref{tab:main}. Second, and worse, \HarnessDatedModel{}'s template stamps
+the \emph{current date} into the prompt, so \HarnessNDated{} model's input is
+not constant even for itself: cells run on different days were not run on the
+same instrument, and no amount of seed control reaches a clock inside a prompt.
+
+We report per-model results as they stand and mark cross-family contrasts
+involving these models as carrying an uncontrolled harness difference. The fix
+is not expensive --- render, hash and diff the templated input per model before
+a sweep, which \texttt{scripts/render\_prompts.py} now does and which gates
+future runs --- but it was not in place for the results reported here. We state
+it first among the limitations because it was invisible in every artifact we
+kept: each recorded field described our intent rather than the model's input,
+and no result would have looked wrong.
+
 \paragraph{Both detectors are scored knowing the answer.} The separation
 reported in \S\ref{sec:detector} is computed with the arm label in hand: we know
 which outcomes were invented, and we ask how well a channel recovers that label.

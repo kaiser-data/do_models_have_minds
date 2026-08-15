@@ -322,6 +322,7 @@ three came out in the original paper's favour.</p>
 choices are explained by a stable scalar ordering. It does not establish that the
 ordering is <em>about</em> anything — and without a content control there is no way
 to tell those apart from the number alone.</p>
+<p><b>Two models did not receive the prompt we thought we sent.</b> Our sweep supplies no system message in the baseline condition and records <code>system_prompt: None</code>. That records what was <em>sent</em>. Rendering the templated input for all 9 models shows 7 receive no system block and <b>2</b> (SmolLM2-1.7B-Instruct, SmolLM3-3B) receive one from their own chat template, declaring an assistant identity we did not write. Worse, <b>SmolLM3-3B</b>'s template stamps the <b>current date</b> into the prompt, so its input is not constant even for itself &mdash; cells run on different days were not run on the same instrument, and no seed control reaches a clock inside a prompt. Cross-family contrasts involving these models therefore carry an uncontrolled harness difference. It was invisible in every artifact we kept, because each recorded field described our intent rather than the model's input.</p>
 <p><b>Caveats we can already name.</b> Invented outcomes tokenise ~30% longer than
 real ones, so some of the residual could be a prompt-length effect. Fitted utilities
 on the invented arms correlate with text length up to r=&#8722;0.75, meaning the

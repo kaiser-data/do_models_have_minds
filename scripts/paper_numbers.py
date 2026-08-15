@@ -78,7 +78,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           detector: dict | None = None, stated: list[dict] | None = None,
           stated_base: list[dict] | None = None,
           revealed: dict | None = None,
-          neutral: dict | None = None) -> str:
+          neutral: dict | None = None,
+          rendered: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -101,6 +102,27 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("NClears", str(sum(1 for t in tiles if t.get("clears_floor")))))
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
+
+    # The harness itself, as measured rather than as intended. The sweep sends
+    # no system message at D0 and records system_prompt: None; some chat
+    # templates supply one anyway. These macros exist so the limitation is
+    # stated in the paper with numbers that update when the roster does --
+    # a hand-typed "two models" would go stale the first time one is added.
+    if rendered is not None:
+        inj = sorted(m for m, c in rendered.get("models", {}).items()
+                     if c.get("D0", {}).get("injects_unrequested_system_text"))
+        dated = sorted(m for m, c in rendered.get("models", {}).items()
+                       if any(v.get("injects_current_date") for v in c.values()))
+        out.append(_cmd("HarnessNRendered", str(rendered.get("n_verified", 0))))
+        out.append(_cmd("HarnessNInjecting", str(len(inj))))
+        out.append(_cmd("HarnessNClean",
+                        str(rendered.get("n_verified", 0) - len(inj))))
+        out.append(_cmd("HarnessNDated", str(len(dated))))
+        if inj:
+            out.append(_cmd("HarnessInjectingModels",
+                            ", ".join(m.split("/")[-1] for m in inj)))
+        if dated:
+            out.append(_cmd("HarnessDatedModel", dated[0].split("/")[-1]))
 
     # Strength: the headline contrast. Restricted to models that are decisive
     # at all on real outcomes, because a model that never commits anywhere has
@@ -717,6 +739,7 @@ def main() -> None:
     ap.add_argument("--stated-base", default="self_report_summary.json")
     ap.add_argument("--revealed", default="site/deception.json")
     ap.add_argument("--neutral", default="site/neutral_control.json")
+    ap.add_argument("--rendered", default="site/rendered_prompts.json")
     ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
     ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
     ap.add_argument("--neutral-table-out", default="paper/table_neutral.tex")
@@ -755,8 +778,12 @@ def main() -> None:
                              ("revealed channel", revealed, rpath3)):
         if obj is None:
             print(f"  no {label} at {path}; omitting those macros")
+    rpath4 = Path(args.rendered)
+    rendered = json.loads(rpath4.read_text()) if rpath4.exists() else None
+    if rendered is None:
+        print(f"  no rendered prompts at {rpath4}; omitting harness macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
-                 detector, stated, stated_base, revealed, neutral)
+                 detector, stated, stated_base, revealed, neutral, rendered)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

@@ -99,6 +99,46 @@ def _null_sentence(null: dict) -> str:
             f"line, is chance in the figure below.")
 
 
+def _harness_caveat(rendered: dict | None) -> str:
+    """What the models actually received, when it was not what we sent.
+
+    Rendered rather than asserted, and printed even when clean: a page that
+    mentions the check only when it fails leaves a reader unable to tell a
+    passing check from an absent one.
+    """
+    if not rendered:
+        return ""
+    models = rendered.get("models", {})
+    inj = sorted(m for m, c in models.items()
+                 if c.get("D0", {}).get("injects_unrequested_system_text"))
+    dated = sorted(m for m, c in models.items()
+                   if any(v.get("injects_current_date") for v in c.values()))
+    n = rendered.get("n_verified", len(models))
+    if not inj:
+        return (f'<p><b>The harness is the same for every model.</b> We rendered '
+                f'the fully templated input for all {n} models: none receives a '
+                f'system prompt we did not send.</p>')
+    names = ", ".join(m.split("/")[-1] for m in inj)
+    extra = ""
+    if dated:
+        extra = (f" Worse, <b>{dated[0].split('/')[-1]}</b>'s template stamps the "
+                 f"<b>current date</b> into the prompt, so its input is not "
+                 f"constant even for itself &mdash; cells run on different days "
+                 f"were not run on the same instrument, and no seed control "
+                 f"reaches a clock inside a prompt.")
+    return (f'<p><b>Two models did not receive the prompt we thought we sent.</b> '
+            f'Our sweep supplies no system message in the baseline condition and '
+            f'records <code>system_prompt: None</code>. That records what was '
+            f'<em>sent</em>. Rendering the templated input for all {n} models '
+            f'shows {n - len(inj)} receive no system block and <b>{len(inj)}</b> '
+            f'({names}) receive one from their own chat template, declaring an '
+            f'assistant identity we did not write.{extra} Cross-family contrasts '
+            f'involving these models therefore carry an uncontrolled harness '
+            f'difference. It was invisible in every artifact we kept, because '
+            f'each recorded field described our intent rather than the model\'s '
+            f'input.</p>')
+
+
 def detector_section(det: dict | None, figure) -> str:
     """The clearest result: what the metric keeps vs what it throws away.
 
@@ -272,7 +312,7 @@ fails to depend on it.</p>
 
 
 def build(card: dict, personas: list[dict] | None = None,
-          detector: dict | None = None) -> str:
+          detector: dict | None = None, rendered: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
 
@@ -611,6 +651,7 @@ three came out in the original paper's favour.</p>
 choices are explained by a stable scalar ordering. It does not establish that the
 ordering is <em>about</em> anything — and without a content control there is no way
 to tell those apart from the number alone.</p>
+{_harness_caveat(rendered)}
 <p><b>Caveats we can already name.</b> Invented outcomes tokenise ~30% longer than
 real ones, so some of the residual could be a prompt-length effect. Fitted utilities
 on the invented arms correlate with text length up to r=&#8722;0.75, meaning the
@@ -641,6 +682,7 @@ def main() -> None:
     ap.add_argument("--out", default="site/index.html")
     ap.add_argument("--personas", default="site/persona_depth.json")
     ap.add_argument("--detector", default="site/nonsense_detector.json")
+    ap.add_argument("--rendered", default="site/rendered_prompts.json")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
@@ -659,7 +701,11 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     dpath = Path(args.detector)
     detector = json.loads(dpath.read_text()) if dpath.exists() else None
-    out.write_text(build(card, personas, detector))
+    rpath = Path(args.rendered)
+    rendered = json.loads(rpath.read_text()) if rpath.exists() else None
+    if rendered is None:
+        print(f"  no rendered prompts at {rpath}; harness caveat omitted")
+    out.write_text(build(card, personas, detector, rendered))
     print(f"wrote {out}  ({out.stat().st_size/1024:.1f} KB)")
 
 
