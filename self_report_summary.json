@@ -1,0 +1,47 @@
+[
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "persona": "none",
+    "depth": "D0",
+    "stated_cautiousness": 0.4545314616599849,
+    "n_items": 12,
+    "n_scored": 24,
+    "mean_answer_mass": 0.9937557695402667
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "persona": "none",
+    "depth": "D0",
+    "stated_cautiousness": 0.39748488948529287,
+    "n_items": 12,
+    "n_scored": 24,
+    "mean_answer_mass": 0.9985083190407514
+  },
+  {
+    "model": "google/gemma-4-E2B-it",
+    "persona": "none",
+    "depth": "D0",
+    "stated_cautiousness": 0.4239421614277981,
+    "n_items": 12,
+    "n_scored": 24,
+    "mean_answer_mass": 0.8579310855720247
+  },
+  {
+    "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "persona": "none",
+    "depth": "D0",
+    "stated_cautiousness": 0.49065761066592595,
+    "n_items": 12,
+    "n_scored": 24,
+    "mean_answer_mass": 0.9999996227129806
+  },
+  {
+    "model": "ibm-granite/granite-4.1-3b",
+    "persona": "none",
+    "depth": "D0",
+    "stated_cautiousness": 0.24617991594571884,
+    "n_items": 12,
+    "n_scored": 24,
+    "mean_answer_mass": 0.9999999964634315
+  }
+]

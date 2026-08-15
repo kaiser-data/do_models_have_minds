@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nullcard Method Map</title>
+<style>
+/* ---------------------------------------------------------------
+   Palette is the project's own, not a new one: #2a78d6 / #eb6834 are
+   the validated site series colours for real vs invented outcomes.
+   They carry the same meaning here — signal and floor — so the page
+   never introduces a third accent competing with them.
+   --------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --ground:   #f6f7f9;
+  --panel:    #ffffff;
+  --panel-2:  #eef1f4;
+  --ink:      #12151a;
+  --muted:    #5b6470;
+  --faint:    #868f9c;
+  --rule:     #dde1e6;
+  --rule-sw:  #c6ccd4;
+  --real:     #2a78d6;
+  --invented: #eb6834;
+  --real-wash:     #2a78d612;
+  --invented-wash: #eb683412;
+  --shadow: 0 1px 2px #12151a0d, 0 8px 24px #12151a08;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground:   #0f1216;
+    --panel:    #161b21;
+    --panel-2:  #1d232b;
+    --ink:      #eceff3;
+    --muted:    #9aa4b1;
+    --faint:    #737e8c;
+    --rule:     #262d36;
+    --rule-sw:  #38414d;
+    --real:     #6ba6ec;
+    --invented: #f58a5c;
+    --real-wash:     #6ba6ec14;
+    --invented-wash: #f58a5c14;
+    --shadow: 0 1px 2px #0006, 0 8px 24px #0004;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground:   #0f1216;
+  --panel:    #161b21;
+  --panel-2:  #1d232b;
+  --ink:      #eceff3;
+  --muted:    #9aa4b1;
+  --faint:    #737e8c;
+  --rule:     #262d36;
+  --rule-sw:  #38414d;
+  --real:     #6ba6ec;
+  --invented: #f58a5c;
+  --real-wash:     #6ba6ec14;
+  --invented-wash: #f58a5c14;
+  --shadow: 0 1px 2px #0006, 0 8px 24px #0004;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 28px 96px;
+}
+
+/* --- type ------------------------------------------------------- */
+h1, h2, h3 {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  font-weight: 600;
+  text-wrap: balance;
+  margin: 0;
+}
+h1 { font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.1; letter-spacing: -.015em; }
+h2 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); line-height: 1.2; letter-spacing: -.01em; }
+h3 { font-size: 1.02rem; line-height: 1.3; }
+
+.eyebrow {
+  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+p { margin: 0; }
+.lede { font-size: 1.12rem; color: var(--muted); max-width: 64ch; }
+.note { font-size: .875rem; color: var(--muted); max-width: 72ch; }
+code, .mono, .num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.num { font-size: .92em; }
+strong { font-weight: 650; }
+
+/* --- masthead --------------------------------------------------- */
+header {
+  border-bottom: 1px solid var(--rule);
+  background: var(--panel);
+  margin-bottom: 56px;
+}
+.masthead {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 28px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* The two-tone hairline is the page's recurring motif: signal over floor. */
+.duo-rule {
+  height: 3px;
+  width: 96px;
+  background: linear-gradient(90deg, var(--real) 0 50%, var(--invented) 50% 100%);
+  border-radius: 2px;
+}
+.thesis {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.45;
+  max-width: 60ch;
+  color: var(--ink);
+}
+.thesis .sig { color: var(--real); font-weight: 600; }
+.thesis .flr { color: var(--invented); font-weight: 600; }
+
+/* --- sections --------------------------------------------------- */
+section { margin-top: 64px; }
+.sec-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* --- the subtraction ladder ------------------------------------- */
+/* Numbered because the arms genuinely are a ladder: each removes one
+   more thing than the one above it. Order carries information. */
+.ladder { display: flex; flex-direction: column; gap: 0; }
+.rung {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 24px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+  align-items: start;
+}
+.rung:last-child { border-bottom: 1px solid var(--rule); }
+.rung-tag {
+  font: 700 15px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 7px 0 0;
+  letter-spacing: .02em;
+}
+.rung:nth-child(1) .rung-tag { color: var(--real); }
+.rung:nth-child(2) .rung-tag { color: var(--muted); }
+.rung:nth-child(3) .rung-tag { color: var(--invented); }
+.rung-body { display: flex; flex-direction: column; gap: 7px; }
+.rung h3 { font-family: inherit; font-size: .98rem; font-weight: 650; }
+.rung .what { font-size: .9rem; color: var(--muted); }
+.reflects {
+  font: 500 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--faint);
+}
+.reflects b { color: var(--ink); font-weight: 600; }
+
+/* --- method grid ------------------------------------------------ */
+.methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.m {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  box-shadow: var(--shadow);
+}
+.m-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.m h3 { font-family: inherit; font-size: .97rem; font-weight: 650; }
+.m .instrument { font-size: .855rem; color: var(--muted); }
+
+/* The control line is the point of every card, so it is set apart
+   rather than run into the prose. */
+.control {
+  border-left: 2px solid var(--invented);
+  background: var(--invented-wash);
+  padding: 8px 11px;
+  font-size: .845rem;
+  line-height: 1.5;
+}
+.control .lbl {
+  display: block;
+  font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--invented);
+  margin-bottom: 5px;
+}
+.result {
+  font-size: .88rem;
+  padding-top: 3px;
+  border-top: 1px dashed var(--rule);
+  color: var(--ink);
+}
+.result .num { color: var(--real); font-weight: 600; }
+.result .neg { color: var(--invented); font-weight: 600; }
+
+/* --- track chips ------------------------------------------------ */
+.chip {
+  flex: none;
+  font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .06em;
+  padding: 5px 7px;
+  border-radius: 2px;
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  white-space: nowrap;
+}
+.chip.t1 { color: var(--real); border-color: var(--real); background: var(--real-wash); }
+.chip.t3 { color: var(--invented); border-color: var(--invented); background: var(--invented-wash); }
+
+/* --- track table ------------------------------------------------ */
+.scroll { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  min-width: 660px;
+}
+th {
+  text-align: left;
+  font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 0 14px 10px 0;
+  border-bottom: 1px solid var(--rule-sw);
+  vertical-align: bottom;
+}
+td {
+  padding: 14px 14px 14px 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  color: var(--muted);
+}
+td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+tr.dim td { color: var(--faint); }
+.status {
+  font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .07em;
+  white-space: nowrap;
+}
+.status.primary { color: var(--real); }
+.status.strong  { color: var(--ink); }
+.status.partial { color: var(--muted); }
+.status.none    { color: var(--faint); }
+
+/* --- principles ------------------------------------------------- */
+.rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0 32px; }
+.rule-item {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+.rule-item .n {
+  font: 600 11px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--faint);
+}
+.rule-item .txt { font-size: .89rem; line-height: 1.55; color: var(--muted); }
+.rule-item .txt b { color: var(--ink); font-weight: 650; }
+
+footer {
+  margin-top: 72px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: .82rem;
+  color: var(--faint);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+
+@media (max-width: 640px) {
+  .rung { grid-template-columns: 62px 1fr; gap: 14px; }
+  .masthead { padding: 40px 22px 34px; }
+  .wrap { padding: 0 22px 64px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="masthead">
+    <div class="duo-rule"></div>
+    <div class="eyebrow">Nullcard &middot; Apart Research Digital Minds Sprint</div>
+    <h1>Method Map</h1>
+    <p class="thesis">
+      Every method in this project has the same shape: take a measurement of
+      <span class="sig">something real</span>, take the same measurement of
+      <span class="flr">something that means nothing</span>, and report only the
+      difference. What follows is each instrument, the control that licenses it,
+      and the sprint track it answers.
+    </p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============================================================ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">The shared instrument</div>
+      <h2>One readout, used everywhere</h2>
+    </div>
+    <p class="note" style="margin-bottom:22px">
+      Nothing below changes how the model is asked. A single forced choice between
+      two outcomes, scored from the <strong>first-token logprob</strong>, run in
+      <strong>both presentation orders</strong> so positional bias cancels; the
+      resulting pair probabilities fit a <strong>Thurstonian utility model</strong>,
+      and its held-out accuracy is the number Utility Engineering calls
+      <em>structural coherence</em>. 510 outcomes, 2 500 pairs, 5 000 rows per cell,
+      battery SHA-pinned before the first run. Holding the readout fixed is what
+      makes every contrast below a contrast about <em>content</em> rather than about
+      measurement.
+    </p>
+
+    <div class="eyebrow" style="margin-bottom:10px">The subtraction ladder &mdash; three arms of the same battery</div>
+    <div class="ladder">
+      <div class="rung">
+        <div class="rung-tag">R</div>
+        <div class="rung-body">
+          <h3>Real outcomes</h3>
+          <p class="what">The battery as written. Referents exist, magnitudes mean what they say.</p>
+          <p class="reflects">coherence would reflect &rarr; <b>values + arithmetic + format</b></p>
+        </div>
+      </div>
+      <div class="rung">
+        <div class="rung-tag">N<sup>+</sup></div>
+        <div class="rung-body">
+          <h3>Invented referents, magnitudes kept</h3>
+          <p class="what">The nouns are nonsense words; the numbers still order.</p>
+          <p class="reflects">coherence would reflect &rarr; <b>arithmetic + format</b></p>
+        </div>
+      </div>
+      <div class="rung">
+        <div class="rung-tag">N<sup>&minus;</sup></div>
+        <div class="rung-body">
+          <h3>Invented referents, magnitudes removed</h3>
+          <p class="what">Nothing left to prefer. Whatever score survives here is the floor.</p>
+          <p class="reflects">coherence would reflect &rarr; <b>format alone</b></p>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:20px">
+      Utility Engineering's own robustness suite varies <em>how the question is asked</em>
+      &mdash; seven languages, syntax, framing, option labels, long context &mdash; but never
+      whether the outcomes refer to anything. That missing rung is the whole project.
+    </p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">The analyses</div>
+      <h2>Thirteen methods, each with the control that earns it</h2>
+      <p class="note">
+        A method without its control is not on this page. Cards are grouped by what
+        they interrogate, not by the order they were run.
+      </p>
+    </div>
+
+    <div class="methods">
+
+      <div class="m">
+        <div class="m-top"><h3>Content control</h3><span class="chip t1">T1 &middot; T6</span></div>
+        <p class="instrument">The core measurement. Same fit, same pair set, same prompt across all three arms.</p>
+        <div class="control"><span class="lbl">Control</span>Arm N<sup>&minus;</sup> is the null: identical in every respect except that the outcomes mean nothing.</div>
+        <p class="result">Real <span class="num">0.906</span> vs invented <span class="neg">0.880</span>. Residual <span class="num">+0.025</span>.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Noise floor</h3><span class="chip t1">T1</span></div>
+        <p class="instrument">Three independent design-seed replicates of every cell, 81 cells in total.</p>
+        <div class="control"><span class="lbl">Control</span>Each model is its own control. No between-cell difference smaller than that model's own replicate spread is asserted.</div>
+        <p class="result"><span class="num">6</span> of <span class="num">9</span> models exceed their own floor &mdash; reported, not hidden.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Strength vs direction</h3><span class="chip t1">T1</span></div>
+        <p class="instrument">Decisive fraction: share of pairs where the model commits (p &lt; 0.2 or p &gt; 0.8).</p>
+        <div class="control"><span class="lbl">Control</span>The same models on the same pairs in the invented arm &mdash; isolating conviction from direction.</div>
+        <p class="result"><span class="num">41%</span> decisive on real, <span class="neg">4.5%</span> on invented: a median <span class="neg">17&times;</span> collapse the metric cannot see.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Floor-corrected scaling</h3><span class="chip t1">T1</span></div>
+        <p class="instrument">One family across four sizes, so parameter count is the only variable.</p>
+        <div class="control"><span class="lbl">Control</span>Within-family only. The pooled cross-family correlation is reported beside its decomposition, never alone.</div>
+        <p class="result">Floor rises <span class="neg">+0.085</span> while signal rises <span class="num">+0.014</span> &mdash; residual <em>falls</em> <span class="neg">&minus;0.071</span> with scale.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Length matching</h3><span class="chip">confound</span></div>
+        <p class="instrument">Invented outcomes fragment: 2&times; the tokens for 1.2&times; the characters.</p>
+        <div class="control"><span class="lbl">Control</span>Restrict both arms to the overlapping 13&ndash;24 token band and re-run the whole contrast.</div>
+        <p class="result">Residual <span class="num">+0.021</span> matched vs <span class="num">+0.025</span> unmatched &mdash; the confound runs <em>against</em> us.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Floor decomposition</h3><span class="chip">confound</span></div>
+        <p class="instrument">Is the invented ordering just a length ordering? Three quantities on identical held-out splits.</p>
+        <div class="control"><span class="lbl">Control</span>A one-parameter "prefer the shorter" rule, direction fixed on the training half only, plus pairs tied on length where that rule is mute.</div>
+        <p class="result">Length rule alone <span class="neg">0.695</span>, but the fit still reaches <span class="num">0.848</span> where length says nothing.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Persona displacement</h3><span class="chip">T5</span></div>
+        <p class="instrument">A dispositional trait installed at two depths &mdash; user turn (D1) and system prompt (D2).</p>
+        <div class="control"><span class="lbl">Control</span>The same persona applied to invented outcomes. Displacement that survives there is prose, not preference.</div>
+        <p class="result"><span class="num">18</span> of <span class="num">20</span> conditions move real further than invented. Depth matters <span class="num">2.5&times;</span> less than which trait.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Persona validity</h3><span class="chip">T5</span></div>
+        <p class="instrument">Direction, not magnitude: does the persona move the categories it claims to prize? Length regressed out.</p>
+        <div class="control"><span class="lbl">Control</span>The identical category contrast on the invented arm, where the labels sit on text referring to nothing.</div>
+        <p class="result">Separation <span class="num">+0.791</span> real vs <span class="neg">+0.781</span> invented &mdash; <strong>66% of the reordering needs no meaning.</strong></p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Reasoning &amp; answer mass</h3><span class="chip">T4 &middot; T1</span></div>
+        <p class="instrument">Probability that leaves the A/B options entirely &mdash; to a refusal, or to "Let me think".</p>
+        <div class="control"><span class="lbl">Control</span>Re-score the contrast on confidently answered pairs only, to prove the result is not read out of non-answers.</div>
+        <p class="result">Shift of just <span class="num">+0.002</span>. But mass drops in <span class="num">8</span>/<span class="num">9</span> models (p&nbsp;=&nbsp;0.039); the one reasoning model drops <span class="neg">0.193</span>.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Nonsense detector</h3><span class="chip t1">T6</span></div>
+        <p class="instrument">Four channels of the <em>same</em> forward pass, asked to separate real outcomes from invented ones.</p>
+        <div class="control"><span class="lbl">Control</span>Ground truth by construction &mdash; every pair ran in both arms, so positives and negatives are matched, not selected. Threshold calibrated on real rows only.</div>
+        <p class="result">The channel coherence keeps: <span class="neg">0.596</span>. A channel it discards: <span class="num">0.821</span>.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Stated channel</h3><span class="chip t3">T3</span></div>
+        <p class="instrument">A 12-item forced-choice self-description battery in the identical harness &mdash; no LLM judge involved.</p>
+        <div class="control"><span class="lbl">Control</span>The no-premise baseline, run in the same sweep. Without it, "0.87&ndash;1.00 cautious" reads as a trait rather than as an artifact of being asked.</div>
+        <p class="result">No premise: <span class="num">0.25&ndash;0.49</span>. Any premise: <span class="neg">0.87&ndash;1.00</span> &mdash; whether told to have, hide, or fake it.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>Revealed channel</h3><span class="chip t3">T3</span></div>
+        <p class="instrument">Correlate each condition's per-pair displacement against the genuine persona's template.</p>
+        <div class="control"><span class="lbl">Control</span>Two of them. A <em>false-positive denominator</em> (a model told to only talk cautious) and a <em>specificity gate</em> (a different trait, which must lose by 0.30).</div>
+        <p class="result">Separates trait from trait by <span class="num">+0.88 to +1.40</span>; separates hiding from faking by <span class="neg">+0.054 to +0.059</span>.</p>
+      </div>
+
+      <div class="m">
+        <div class="m-top"><h3>The metric's own nulls</h3><span class="chip t1">T1</span></div>
+        <p class="instrument">Three checks run to see whether the target metric fails on its own terms.</p>
+        <div class="control"><span class="lbl">Control</span>Permute observed probabilities across pairs, keeping the strength distribution; simulate a coin-flip responder; simulate pure positional bias.</div>
+        <p class="result">All three come out <strong>in the metric's favour</strong> &mdash; and are reported anyway.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Track mapping</div>
+      <h2>What each track gets, and how strongly</h2>
+      <p class="note">
+        Claimed against the official sprint track list. A track is claimed at the
+        strength the evidence supports and no higher &mdash; Track&nbsp;4 is explicitly
+        downgraded because one instrument read several ways is not several instruments.
+      </p>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>Track</th><th>Claim</th><th>What answers it</th><th>Headline</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1 &middot; Preferences &amp; Trade-offs</td>
+            <td><span class="status primary">PRIMARY</span></td>
+            <td>Content control, noise floor, strength vs direction, scaling</td>
+            <td>Conviction collapses <span class="mono">17&times;</span> on nonsense while the coherence score barely moves</td>
+          </tr>
+          <tr>
+            <td>3 &middot; Introspection &amp; Self-Report</td>
+            <td><span class="status strong">STRONG</span></td>
+            <td>Stated channel + revealed channel, agreeing independently</td>
+            <td>Both channels register <em>which</em> trait was named; neither registers what the model was told to do about it</td>
+          </tr>
+          <tr>
+            <td>5 &middot; Persona &amp; Model Identity</td>
+            <td><span class="status strong">STRONG</span></td>
+            <td>Persona displacement + persona validity</td>
+            <td>Roughly <span class="mono">66%</span> of a persona's value-aligned reordering needs no meaning</td>
+          </tr>
+          <tr>
+            <td>4 &middot; Elicitation Methods</td>
+            <td><span class="status partial">PARTIAL</span></td>
+            <td>Framing/persona sensitivity, reasoning &amp; answer-mass channel</td>
+            <td>Claimed partial on purpose: one method read through several channels, not three independent methods</td>
+          </tr>
+          <tr>
+            <td>6 &middot; Open / Novel</td>
+            <td><span class="status strong">STRONG</span></td>
+            <td>The transferable content control; the nonsense detector</td>
+            <td>The model's discarded uncertainty channel spots the nonsense at <span class="mono">0.821</span>; the reported number manages <span class="mono">0.596</span></td>
+          </tr>
+          <tr class="dim">
+            <td>2 &middot; Distress &amp; Valence</td>
+            <td><span class="status none">NOT ATTEMPTED</span></td>
+            <td>&mdash;</td>
+            <td>Out of scope, and stated as such rather than gestured at</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">High principles</div>
+      <h2>The rules the methods are downstream of</h2>
+      <p class="note">
+        These are standing rules in the repo, most of them added after something
+        went wrong. Each one is the reason a method above has the shape it has.
+      </p>
+    </div>
+    <div class="rules">
+      <div class="rule-item"><span class="n">01</span><span class="txt"><b>Every number is effect minus floor.</b> Never an absolute, always with an interval. A score with no null attached is not a measurement.</span></div>
+      <div class="rule-item"><span class="n">02</span><span class="txt"><b>A detection rate without its false-positive denominator is not a finding.</b> Half of a detector is not a result &mdash; it is a number that can only flatter you.</span></div>
+      <div class="rule-item"><span class="n">03</span><span class="txt"><b>A detector needs a specificity control, not just a denominator.</b> Detection and FPR alone read as "works, weakly". A second trait revealed the instrument had 20&times; the resolution it was showing.</span></div>
+      <div class="rule-item"><span class="n">04</span><span class="txt"><b>A control removes the property and keeps everything else.</b> Ours removes the meaning and keeps the choosing. If the headline survives the removal, the instrument was never anchored to it.</span></div>
+      <div class="rule-item"><span class="n">05</span><span class="txt"><b>A premise-carrying probe needs its no-premise baseline in the same run.</b> Ask a model to describe its caution and it will. That is not evidence of caution.</span></div>
+      <div class="rule-item"><span class="n">06</span><span class="txt"><b>A manipulation check is a gate, not an analysis step.</b> If a condition is meant to install something, verify it installed before reading anything downstream.</span></div>
+      <div class="rule-item"><span class="n">07</span><span class="txt"><b>Completeness is a row count, not a marker.</b> A <code>.done</code> file is a claim about the data, not the data. Six truncated cells once became a written-up finding.</span></div>
+      <div class="rule-item"><span class="n">08</span><span class="txt"><b>The battery is SHA-pinned before the first run.</b> A battery edited after seeing results is not a battery.</span></div>
+      <div class="rule-item"><span class="n">09</span><span class="txt"><b>No hand-typed result in the paper.</b> Every figure resolves through a generated macro, so a rebuild cannot leave a stale number behind &mdash; including in the title.</span></div>
+      <div class="rule-item"><span class="n">10</span><span class="txt"><b>No external number without re-deriving it from the full text.</b> Abstracts are not sources, and a briefing full of figures with no citations is a sourcing to-do list.</span></div>
+      <div class="rule-item"><span class="n">11</span><span class="txt"><b>Report what runs against you.</b> Three of the target metric's design choices were checked and survived. They are in the paper under their own heading.</span></div>
+      <div class="rule-item"><span class="n">12</span><span class="txt"><b>Simulated output must announce itself.</b> Any figure produced by simulation carries a banner saying so, because those numbers are quoted in the pre-registration.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Nullcard &mdash; Coherence Without Content</span>
+    <span>9 models &middot; 0.8B&ndash;9B &middot; 81 baseline cells &middot; 3 design replicates each</span>
+    <span>Predictions registered before the first run</span>
+  </footer>
+
+</div>
+</body>
+</html>

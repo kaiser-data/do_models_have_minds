@@ -27,6 +27,7 @@ from nullcard.scoring.analyze import (  # noqa: E402
     cell_coherence,
     load_cell,
 )
+from nullcard.runner.forced_choice import ANSWER_MASS_FLOOR  # noqa: E402
 from nullcard.scoring.stats import training_noise_floor, wilson_interval  # noqa: E402
 from nullcard.scoring.thurstonian import completeness, transitivity_rate  # noqa: E402
 
@@ -88,12 +89,49 @@ def _floor_verdict(value: float, floor: float | None) -> dict:
     }
 
 
+def read_sidecar(path: Path) -> dict | None:
+    """The `.done` record the sweep writes on a clean exit, or None.
+
+    Absence means one of two different things and the caller must not conflate
+    them: 84 full cells predate the marker convention entirely, while a short
+    file with no marker is a cell that was killed. Presence is informative --
+    `status: aborted` is a cell the sweep stopped on purpose, which is a
+    verdict, not damage.
+    """
+    marker = path.with_suffix(path.suffix + ".done")
+    if not marker.exists():
+        return None
+    try:
+        return json.loads(marker.read_text())
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
 def summarise_cell(path: Path) -> dict | None:
     rows = load_cell(path)
     if not rows:
         return None
+    side = read_sidecar(path)
     if len(rows) < EXPECTED_ROWS:
-        print(f"  EXCLUDED (incomplete, {len(rows)}/{EXPECTED_ROWS} rows): {path.name}")
+        # Distinguish the two short-cell causes in the log. Both are excluded,
+        # but only one is a fault: a deliberate abort is the harness working.
+        if side and side.get("status") == "aborted":
+            print(f"  EXCLUDED (aborted by design, {len(rows)}/{EXPECTED_ROWS} rows): "
+                  f"{path.name}\n      reason: {side.get('abort_reason')}")
+        else:
+            print(f"  EXCLUDED (incomplete, {len(rows)}/{EXPECTED_ROWS} rows): {path.name}")
+        return None
+    # The other half of spec §7.4, which this script computed and then ignored:
+    # a cell can run to full length while the model never answers in the first
+    # token, and a row count cannot see that. Currently no cell fails here --
+    # the gate is the point, not the count.
+    mass = float(np.mean([r["answer_mass"] for r in rows]))
+    if mass < ANSWER_MASS_FLOOR:
+        print(f"  EXCLUDED (answer mass {mass:.3f} < {ANSWER_MASS_FLOOR:.2f}, "
+              f"first token is not an answer): {path.name}")
+        return None
+    if side is not None and side.get("first_token_scoreable") is False:
+        print(f"  EXCLUDED (sweep marked it unscoreable): {path.name}")
         return None
     model, arm, design_seed, persona, depth = parse_cell_name(path)
     # The base card is the D0 (no persona) surface. Persona cells are analysed
@@ -299,8 +337,8 @@ def print_table(card: dict) -> None:
         print("-" * 90)
         print(f"{'MEAN':<42} {np.mean([t['raw_coherence'] for t in scored]):>7.3f} "
               f"{'':>7} {np.mean(floors):>7.3f} {np.mean(vals):>8.3f}")
-        print(f"\nThe floor (N-) is what the same procedure returns on outcomes that "
-              f"refer to nothing.\nAnything not above it is not evidence of a value system.")
+        print("\nThe floor (N-) is what the same procedure returns on outcomes that "
+              "refer to nothing.\nAnything not above it is not evidence of a value system.")
 
 
 def main() -> None:

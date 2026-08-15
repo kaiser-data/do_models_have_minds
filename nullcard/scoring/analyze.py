@@ -19,6 +19,7 @@ from pathlib import Path
 
 import numpy as np
 
+from nullcard.runner.forced_choice import ANSWER_MASS_FLOOR
 from nullcard.scoring.thurstonian import (
     Comparison,
     fit_thurstonian,
@@ -47,7 +48,7 @@ def load_cell(path: str | Path) -> list[dict]:
 
 
 def aggregate_pair_probabilities(
-    rows: Sequence[Mapping], min_answer_mass: float = 0.5
+    rows: Sequence[Mapping], min_answer_mass: float = ANSWER_MASS_FLOOR
 ) -> dict[tuple[int, int], float]:
     """Counterbalance the two presentation orders into one probability per pair.
 

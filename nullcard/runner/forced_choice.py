@@ -45,6 +45,13 @@ def _mass(top_logprobs: Mapping[str, float], forms: Sequence[str]) -> float:
     return sum(math.exp(lp) for tok, lp in top_logprobs.items() if tok in forms)
 
 
+# The single definition of the validity gate's threshold. It was previously
+# written out at three sites -- the sweep, the aggregator's default argument and
+# the card -- which is how the card came to enforce a row count but not this.
+# One number, imported everywhere it is applied.
+ANSWER_MASS_FLOOR = 0.50
+
+
 def answer_mass(top_logprobs: Mapping[str, float]) -> float:
     """Probability mass sitting on an answer token at the first position.
 

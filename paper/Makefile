@@ -16,8 +16,8 @@ REPO  := ..
 # built-in, so the rule silently ran the wrong binary.
 TEXCMD ?= tectonic -X compile
 FIGS  := figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf \
-         figs/fig5_persona.pdf
-GEN   := numbers.tex table_main.tex $(FIGS)
+         figs/fig4_detector.pdf figs/fig5_persona.pdf
+GEN   := numbers.tex table_main.tex table_stated.tex table_revealed.tex $(FIGS)
 
 .PHONY: all inputs slides lint clean distclean
 
@@ -38,7 +38,14 @@ inputs: $(GEN)
 lint: $(GEN)
 	cd $(REPO) && python3 scripts/lint_paper.py
 
-numbers.tex table_main.tex: $(REPO)/card.json $(REPO)/site/persona_depth.json
+# One script emits all four, so they share one rule and one dependency list;
+# splitting it would let make run paper_numbers.py four times in parallel and
+# race on the same outputs.
+numbers.tex table_main.tex table_stated.tex table_revealed.tex: \
+		$(REPO)/card.json $(REPO)/site/persona_depth.json \
+		$(REPO)/site/deception.json \
+		$(REPO)/self_report_summary.json \
+		$(REPO)/self_report_summary_personas.json
 	cd $(REPO) && python3 scripts/paper_numbers.py
 
 figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf: $(REPO)/card.json
@@ -46,6 +53,11 @@ figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf: $(REPO)/ca
 
 figs/fig5_persona.pdf: $(REPO)/site/persona_depth.json
 	cd $(REPO) && python3 scripts/persona_depth.py --out paper/figs --format pdf --themes light
+
+# Was missing: fig4 ships in the paper but `make` never rebuilt it, so an edit to
+# fig_detector.py or the detector JSON could not reach the PDF without a manual run.
+figs/fig4_detector.pdf: $(REPO)/site/nonsense_detector.json $(REPO)/scripts/fig_detector.py
+	cd $(REPO) && python3 scripts/fig_detector.py --out paper/figs --format pdf --themes light
 
 clean:
 	rm -f *.bbl *.blg *.aux *.log *.out *.nav *.snm *.toc *.xdv

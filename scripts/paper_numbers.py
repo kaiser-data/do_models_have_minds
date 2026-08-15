@@ -64,10 +64,20 @@ def _slug(model: str) -> str:
     return "".join(digits.get(c, c) for c in tail if c.isalnum())
 
 
+GENUINE, CONCEALED, VERBAL, UNRELATED = (
+    "cautious", "cautious-concealed", "cautious-verbal", "ambitious")
+# scripts/deception.py keys models as Org__Name; everything else in this repo
+# uses Org/Name, and _slug splits on "/". Normalise once, at the boundary.
+def _norm(model: str) -> str:
+    return model.replace("__", "/")
+
+
 def build(card: dict, personas: list[dict], length: dict | None = None,
           floor_decomp: dict | None = None, reasoning: dict | None = None,
           validity: list[dict] | None = None,
-          detector: dict | None = None) -> str:
+          detector: dict | None = None, stated: list[dict] | None = None,
+          stated_base: list[dict] | None = None,
+          revealed: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -282,6 +292,98 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             out.append(_cmd("DetBestModel", best_model[1].split("/")[-1]))
             out.append(_cmd("DetBestModelAuroc", f"{best_model[0]:.3f}"))
 
+    # Track 3. A persona carries a trait AND a directive about it -- have it,
+    # hide it, or only talk about it. Both channels are asked the same question:
+    # do they respond to the directive, or only to the trait being named? Every
+    # range below excludes the inert model, which is reported separately; a
+    # range spanning it would make a flat control look like a ceiling.
+    if stated and stated_base:
+        base = {r["model"]: r for r in stated_base}
+        bym: dict[str, dict] = {}
+        for r in stated:
+            bym.setdefault(r["model"], {})[r["persona"]] = r
+        # "Responsive" is defined on the DATA, not by naming a model: a model
+        # whose three directive cells all sit within a hair of 0.5 has not
+        # answered the battery, and averaging it into a range hides that.
+        def _flat(cells: dict) -> bool:
+            v = [cells[c]["stated_cautiousness"] for c in (GENUINE, CONCEALED, VERBAL)]
+            return max(abs(x - 0.5) for x in v) < 0.1
+
+        inert = sorted(m for m, c in bym.items() if _flat(c))
+        resp = sorted(m for m in bym if m not in inert)
+        out.append(_cmd("StatedNModels", str(len(bym))))
+        out.append(_cmd("StatedNResponsive", str(len(resp))))
+        out.append(_cmd("StatedNItems", str(stated[0]["n_items"])))
+        for label, cond in (("Have", GENUINE), ("Hide", CONCEALED), ("Fake", VERBAL)):
+            v = [bym[m][cond]["stated_cautiousness"] for m in resp]
+            out.append(_cmd(f"Stated{label}Lo", f"{min(v):.3f}"))
+            out.append(_cmd(f"Stated{label}Hi", f"{max(v):.3f}"))
+        bv = [base[m]["stated_cautiousness"] for m in bym if m in base]
+        out.append(_cmd("StatedBaseLo", f"{min(bv):.3f}"))
+        out.append(_cmd("StatedBaseHi", f"{max(bv):.3f}"))
+        if inert:
+            iv = [bym[inert[0]][c]["stated_cautiousness"]
+                  for c in (GENUINE, CONCEALED, VERBAL)]
+            out.append(_cmd("StatedInertModel", inert[0].split("/")[-1]))
+            out.append(_cmd("StatedInertLo", f"{min(iv):.3f}"))
+            out.append(_cmd("StatedInertHi", f"{max(iv):.3f}"))
+            out.append(_cmd("StatedInertBase",
+                            f"{base[inert[0]]['stated_cautiousness']:.3f}"))
+        # The worst-scored cell, so the footnote naming it cannot go stale.
+        n_full = max(r["n_scored"] for r in stated)
+        worst = min(stated, key=lambda r: (r["n_scored"], r["mean_answer_mass"]))
+        out.append(_cmd("StatedNScored", str(n_full)))
+        out.append(_cmd("StatedWorstModel", worst["model"].split("/")[-1]))
+        out.append(_cmd("StatedWorstCond", worst["persona"].replace("cautious-", "")))
+        out.append(_cmd("StatedWorstScored", str(worst["n_scored"])))
+        out.append(_cmd("StatedWorstMass", f"{worst['mean_answer_mass']:.2f}"))
+
+    if revealed:
+        rows = {r["model"]: r for r in revealed["arms"]["R"]}
+        good = [r for r in revealed["arms"]["R"] if r.get("specific")]
+        cov = revealed["coverage"]
+        out.append(_cmd("RevNModels", str(cov["models_total"])))
+        out.append(_cmd("RevNTriad", str(cov["models_with_complete_R_triad"])))
+        out.append(_cmd("RevNInterp", str(len(good))))
+        out.append(_cmd("RevSpecMargin",
+                        f"{revealed['specificity_margin_required']:.2f}"))
+        gaps = [r["scores"][CONCEALED] - r["scores"][VERBAL] for r in good]
+        margins = [r["scores"][CONCEALED] - r["scores"][UNRELATED] for r in good]
+        out.append(_cmd("RevGapLo", f"{min(gaps):+.3f}"))
+        out.append(_cmd("RevGapHi", f"{max(gaps):+.3f}"))
+        out.append(_cmd("RevSpecLo", f"{min(margins):+.2f}"))
+        out.append(_cmd("RevSpecHi", f"{max(margins):+.2f}"))
+        # The model that fails the specificity gate: a control that behaved like
+        # a control, and it must be quotable as such rather than as missing data.
+        failed = [r for r in revealed["arms"]["R"]
+                  if r.get("specific") is False]
+        if failed:
+            f = failed[0]
+            out.append(_cmd("RevInertModel", _norm(f["model"]).split("/")[-1]))
+            out.append(_cmd("RevInertMargin",
+                            f"{f['scores'][CONCEALED] - f['scores'][UNRELATED]:+.3f}"))
+            out.append(_cmd("RevInertGap",
+                            f"{f['scores'][CONCEALED] - f['scores'][VERBAL]:+.3f}"))
+        # Pairs dropped because the model put no mass on either option label.
+        drop = max(rows.values(), key=lambda r: r.get("n_unscorable", 0))
+        if drop.get("n_unscorable"):
+            out.append(_cmd("RevDropModel", _norm(drop["model"]).split("/")[-1]))
+            out.append(_cmd("RevDropPairs", str(drop["n_unscorable"])))
+            out.append(_cmd("RevKeptPairs", str(drop["n_pairs"])))
+        # The content control: displacement that reproduces on invented outcomes
+        # is style, not preference. Only one model has the cell; say so.
+        inv = [r for r in revealed["arms"]["N_minus"]
+               if r["computable"] and _norm(r["model"]) in
+               {_norm(g["model"]) for g in good}]
+        out.append(_cmd("RevNInvented", str(len(inv))))
+        if inv:
+            i = inv[0]
+            out.append(_cmd("RevInventedModel", _norm(i["model"]).split("/")[-1]))
+            out.append(_cmd("RevInventedConcealed", f"{i['scores'][CONCEALED]:+.3f}"))
+            out.append(_cmd("RevInventedVerbal", f"{i['scores'][VERBAL]:+.3f}"))
+            out.append(_cmd("RevInventedGap",
+                            f"{i['scores'][CONCEALED] - i['scores'][VERBAL]:+.3f}"))
+
     if personas:
         vals = [r["floor_corrected"] for r in personas]
         out.append(_cmd("NPersonaCells", str(len(vals))))
@@ -309,6 +411,79 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         out.append(_cmd("PersonaSpread", f"{_spread_over('persona'):.3f}"))
 
     return "".join(out)
+
+
+def build_stated_table(stated: list[dict], stated_base: list[dict]) -> str:
+    """Track 3, stated channel: self-reported cautiousness under each directive.
+
+    The no-premise column is the whole point of the table. Without it, 0.87-1.00
+    under every directive reads as "these models are cautious"; with it, the same
+    numbers read as "any mention of the trait moves the report to ceiling, and
+    the directive attached to it does not move it back".
+    """
+    base = {r["model"]: r["stated_cautiousness"] for r in stated_base}
+    bym: dict[str, dict] = {}
+    for r in stated:
+        bym.setdefault(r["model"], {})[r["persona"]] = r
+    rows = []
+    for model in sorted(bym, key=lambda m: -bym[m][GENUINE]["stated_cautiousness"]):
+        cells = bym[model]
+        # A cell scored on fewer items than the rest is marked, not hidden.
+        n_full = max(r["n_scored"] for r in stated)
+        def _f(cond: str) -> str:
+            r = cells[cond]
+            mark = r"$^{\dagger}$" if r["n_scored"] < n_full else ""
+            return f"{r['stated_cautiousness']:.3f}{mark}"
+        b = f"{base[model]:.3f}" if model in base else "--"
+        # Escaped outside the f-string: a backslash inside one is a syntax
+        # error before 3.12, and pyproject declares >=3.11.
+        name = model.split("/")[-1].replace("_", r"\_")
+        rows.append(f"\\texttt{{{name}}} & "
+                    f"{b} & {_f(GENUINE)} & {_f(CONCEALED)} & {_f(VERBAL)}")
+    return (
+        "% Generated by scripts/paper_numbers.py. Do not edit.\n"
+        "\\begin{tabular}{@{}lrrrr@{}}\n"
+        "\\toprule\n"
+        "model & no premise & told to have & told to hide & told to fake \\\\\n"
+        "\\midrule\n"
+        + " \\\\\n".join(rows) + " \\\\\n"
+        "\\bottomrule\n"
+        "\\end{tabular}\n"
+    )
+
+
+def build_revealed_table(revealed: dict) -> str:
+    """Track 3, revealed channel: alignment with the genuine-persona template.
+
+    Columns are ordered detection, false positive, gap -- so the gap is read
+    next to the denominator that makes it mean anything -- and the specificity
+    control sits last as the gate on whether the row is interpretable at all.
+    """
+    rows = []
+    for r in revealed["arms"]["R"]:
+        name = _norm(r["model"]).split("/")[-1].replace("_", r"\_")
+        if not r["computable"]:
+            missing = ", ".join(m.replace("cautious-", "") for m in r["missing"])
+            rows.append(f"\\texttt{{{name}}} & \\multicolumn{{4}}{{c}}{{"
+                        f"\\emph{{no data: {missing} cells not collected}}}} & --")
+            continue
+        s = r["scores"]
+        verdict = ("pass" if r.get("specific") else
+                   "\\textbf{fail}" if r.get("specific") is False else "--")
+        rows.append(
+            f"\\texttt{{{name}}} & {s[CONCEALED]:+.3f} & {s[VERBAL]:+.3f} & "
+            f"{s[CONCEALED] - s[VERBAL]:+.3f} & {s[UNRELATED]:+.3f} & {verdict}")
+    return (
+        "% Generated by scripts/paper_numbers.py. Do not edit.\n"
+        "\\begin{tabular}{@{}lrrrrl@{}}\n"
+        "\\toprule\n"
+        "model & concealed & verbal (FPR) & gap & \\emph{ambitious} & "
+        "specific? \\\\\n"
+        "\\midrule\n"
+        + " \\\\\n".join(rows) + " \\\\\n"
+        "\\bottomrule\n"
+        "\\end{tabular}\n"
+    )
 
 
 def build_table(card: dict) -> str:
@@ -342,8 +517,9 @@ def build_table(card: dict) -> str:
             clears = r"$>$\,floor$^{*}$"
         else:
             clears = f"{t['floor_margin']:.1f}$\\times$"
+        name = t["model"].replace("_", r"\_")
         rows.append(
-            f"\\texttt{{{t['model'].replace('_', r'\_')}}} & "
+            f"\\texttt{{{name}}} & "
             f"{t['raw_coherence']:.3f} & {t['floor']:.3f} & {t['value']:+.3f} & "
             f"{(f'{dnf:.3f}' if dnf is not None else '--')} & {clears} & "
             f"{t['decisive_fraction']['R'] * 100:.1f}\\% & "
@@ -374,6 +550,11 @@ def main() -> None:
     ap.add_argument("--reasoning", default="site/reasoning_effect.json")
     ap.add_argument("--validity", default="site/persona_validity.json")
     ap.add_argument("--detector", default="site/nonsense_detector.json")
+    ap.add_argument("--stated", default="self_report_summary_personas.json")
+    ap.add_argument("--stated-base", default="self_report_summary.json")
+    ap.add_argument("--revealed", default="site/deception.json")
+    ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
+    ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
@@ -394,13 +575,36 @@ def main() -> None:
     validity = json.loads(vpath.read_text()) if vpath.exists() else None
     dpath = Path(args.detector)
     detector = json.loads(dpath.read_text()) if dpath.exists() else None
-    text = build(card, personas, length, floor_decomp, reasoning, validity, detector)
+    # Track 3 inputs. Each is optional in the same way the others are: the
+    # macros are simply not emitted, and lint_paper.py then fails loudly on the
+    # subsection that uses them rather than the paper compiling with blanks.
+    spath, sbpath, rpath3 = (Path(args.stated), Path(args.stated_base),
+                             Path(args.revealed))
+    stated = json.loads(spath.read_text()) if spath.exists() else None
+    stated_base = json.loads(sbpath.read_text()) if sbpath.exists() else None
+    revealed = json.loads(rpath3.read_text()) if rpath3.exists() else None
+    for label, obj, path in (("stated self-report", stated, spath),
+                             ("self-report baseline", stated_base, sbpath),
+                             ("revealed channel", revealed, rpath3)):
+        if obj is None:
+            print(f"  no {label} at {path}; omitting those macros")
+    text = build(card, personas, length, floor_decomp, reasoning, validity,
+                 detector, stated, stated_base, revealed)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 
     tout = Path(args.table_out)
     tout.write_text(build_table(card))
     print(f"wrote {tout}")
+
+    if stated and stated_base:
+        stout = Path(args.stated_table_out)
+        stout.write_text(build_stated_table(stated, stated_base))
+        print(f"wrote {stout}")
+    if revealed:
+        rtout = Path(args.revealed_table_out)
+        rtout.write_text(build_revealed_table(revealed))
+        print(f"wrote {rtout}")
 
 
 if __name__ == "__main__":

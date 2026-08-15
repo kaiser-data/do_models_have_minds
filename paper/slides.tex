@@ -4,8 +4,11 @@
 % Shares numbers.tex and figs/ with main.tex, so the talk cannot quote a
 % different number from the paper. Same reason the paper has no typed results.
 %
-% Timing: ~10 min. Slides 3-6 are the spine; if you are cut short, the talk
-% still lands after slide 6 (the scale ladder). Everything after is support.
+% Timing: ~11 min. The spine now runs claim -> gap -> control -> results 1, 2,
+% detector, 3; if you are cut short, the talk still lands after the scale ladder.
+% Everything after that is support. The detector slide was inserted before the
+% ladder (it completes Result 2 and is the sentence people repeat), which adds
+% ~1 min -- drop the "three checks" slide first if you need it back.
 
 \documentclass[aspectratio=169,11pt]{beamer}
 
@@ -31,8 +34,11 @@
 \definecolor{accent}{HTML}{B4453A}
 \newcommand{\hl}[1]{\textcolor{accent}{\textbf{#1}}}
 
+% Same finding-named title as the paper, shortened for a slide: the paper's
+% subtitle carries the hedge in a second clause that does not fit here, and the
+% floor number is the half an audience repeats.
 \title{Coherence Without Content}
-\subtitle{A missing control for emergent value systems in LLMs}
+\subtitle{A value-coherence metric scores invented outcomes at \MeanFloor{}}
 \author{Nullcard}
 \institute{\small Apart Research Digital Minds Sprint}
 \date{15 August 2026}
@@ -67,6 +73,12 @@
   \bigskip
   \normalsize
   The metric is not broken. It is \hl{unanchored}.
+
+  \medskip
+  \small
+  And the evidence was in the forward pass all along: the channel the metric
+  \hl{discards} tells real outcomes from nonsense at \DetBestAuroc{}; the channel
+  it \hl{keeps} manages \DetKeptAuroc{}.
 \end{frame}
 
 \begin{frame}{The claim we are testing}
@@ -163,6 +175,27 @@
   \bigskip
   A model that is almost perfectly \hl{indifferent about gibberish} --- but
   consistently so --- scores as coherent about it.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% The portable takeaway: the one sentence an audience can repeat. It completes
+% Result 2 -- the conviction the metric throws away is the part that carries the
+% information. Figure title convention (state the finding, not the variables) is
+% borrowed from Choudhary & Pundir's figures; see REFERENCES.md.
+% ---------------------------------------------------------------------------
+\begin{frame}{The metric discards the one channel that can see nonsense}
+  \begin{center}
+    \includegraphics[height=.64\textheight,width=\textwidth,keepaspectratio]{fig4_detector.pdf}
+  \end{center}
+  \small
+  Same forward pass, \DetNModels{} models. Kept channel \hl{\DetKeptAuroc{}};
+  discarded \DetBestName{} channel \hl{\DetBestAuroc{}}, up to
+  \DetBestModelAuroc{} on \DetBestModel{}.
+
+  \smallskip
+  \footnotesize
+  The kept channel is binary, so a detection rate at a fixed \DetFPR\%
+  false-positive rate is not well defined for it; we compare AUROC only.
 \end{frame}
 
 % ---------------------------------------------------------------------------

@@ -64,7 +64,9 @@ results = modal.Volume.from_name("nullcard-results", create_if_missing=True)
 RESULTS_DIR = "/results"
 N_OUTCOMES = 120          # stratified subsample of the 510; keeps cells minutes not hours
 N_PAIRS = 2500
-ANSWER_MASS_FLOOR = 0.50  # below this the first token is not an answer
+# The validity-gate threshold now lives beside the quantity it gates, in
+# nullcard.runner.forced_choice, and is imported at the point of use (this
+# module keeps nullcard imports inside the container-side functions).
 DEFAULT_DESIGN_SEED = 20260815
 MAX_GPUS = 10             # rented-GPU ceiling; see run_cell's max_containers
 
@@ -218,6 +220,34 @@ def cell_filename(model_id: str, arm: str, design_seed: int = DEFAULT_DESIGN_SEE
     if persona != "none" or depth != "D0":
         stem += f"__{persona}-{depth}"
     return stem + ".jsonl"
+
+
+def summary_filename(stem: str, personas: list[str], depths: list[str]) -> str:
+    """The same anti-clobber convention as cell_filename, for run summaries.
+
+    Cells were always config-suffixed; the run summaries were not, so every
+    invocation wrote the same two constants. A --probe-only persona run therefore
+    overwrote the summary of the persona=none baseline it existed to be compared
+    against -- the one condition that makes the others interpretable.
+
+    The default config keeps the bare name so existing files stay findable.
+    Depth tags contain no hyphen, so a reader can recover the depth with
+    rsplit("-", 1) even though persona names are hyphenated.
+    """
+    if personas == ["none"] and depths == ["D0"]:
+        return f"{stem}.json"
+    return f"{stem}__{'+'.join(personas)}-{'+'.join(depths)}.json"
+
+
+def _warn_if_clobbering(path: str) -> None:
+    """Config-suffixed names make cross-condition collisions impossible, but
+    re-running the SAME config still overwrites. Say so rather than doing it
+    silently -- that silence is what cost us the baseline the first time."""
+    import os
+
+    if os.path.exists(path):
+        print(f"  NOTE: {path} exists and will be overwritten "
+              f"(same persona/depth config as a previous run).")
 
 
 # ---------------------------------------------------------------------------
@@ -467,7 +497,8 @@ def _run_cell_inner(
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    from nullcard.runner.forced_choice import answer_mass, build_forced_choice_prompt, p_option_a
+    from nullcard.runner.forced_choice import (
+        ANSWER_MASS_FLOOR, answer_mass, build_forced_choice_prompt, p_option_a)
 
     import sys
 
@@ -708,6 +739,7 @@ def main(
     personas: str = "none",
     depths: str = "D0",
     self_report_probe: bool = False,
+    probe_only: bool = False,
 ):
     import sys
 
@@ -749,32 +781,43 @@ def main(
         return
 
     print("\n=== GPU ===")
-    cells = [(m, a, p, d) for m in model_ids for a in arm_list
-             for p in persona_list for d in depth_list
-             if not (p == "none" and d != "D0")]
-    print(f"personas={persona_list} depths={depth_list} -> {len(cells)} cells")
-    summaries = list(
-        run_cell.starmap(
-            [(m, a, batch_size, 500, 0.25, skip_existing, design_seed, p, d)
-             for m, a, p, d in cells]
+    # skip_existing is checked inside run_cell, i.e. after a GPU container has
+    # already started. Resuming a finished sweep just to reach the probe would
+    # cold-start one GPU per completed cell to learn it has nothing to do, so
+    # --probe-only skips the map entirely rather than relying on skip_existing.
+    if probe_only:
+        print("--probe-only set: skipping the cell sweep, running the stated channel only.")
+    else:
+        cells = [(m, a, p, d) for m in model_ids for a in arm_list
+                 for p in persona_list for d in depth_list
+                 if not (p == "none" and d != "D0")]
+        print(f"personas={persona_list} depths={depth_list} -> {len(cells)} cells")
+        summaries = list(
+            run_cell.starmap(
+                [(m, a, batch_size, 500, 0.25, skip_existing, design_seed, p, d)
+                 for m, a, p, d in cells]
+            )
         )
-    )
-    for s in summaries:
-        print(json.dumps(s))
+        for s in summaries:
+            print(json.dumps(s))
 
-    with open("sweep_summary.json", "w") as f:
-        json.dump(summaries, f, indent=2)
-    print(f"\nwrote {len(summaries)} cell summaries -> sweep_summary.json")
+        cells_out = summary_filename("sweep_summary", persona_list, depth_list)
+        _warn_if_clobbering(cells_out)
+        with open(cells_out, "w") as f:
+            json.dump(summaries, f, indent=2)
+        print(f"\nwrote {len(summaries)} cell summaries -> {cells_out}")
 
     # The stated channel. Cheap (12 items, both orders) and run in the same app
     # so the two channels cannot end up measured under different code.
-    if self_report_probe:
+    if self_report_probe or probe_only:
         print("\n=== SELF-REPORT (stated dispositions) ===")
         probes = [(m, p, d) for m in model_ids for p in persona_list
                   for d in depth_list if not (p == "none" and d != "D0")]
         stated = list(self_report.starmap(probes))
         for s in stated:
             print(json.dumps(s))
-        with open("self_report_summary.json", "w") as f:
+        stated_out = summary_filename("self_report_summary", persona_list, depth_list)
+        _warn_if_clobbering(stated_out)
+        with open(stated_out, "w") as f:
             json.dump(stated, f, indent=2)
-        print(f"wrote {len(stated)} probes -> self_report_summary.json")
+        print(f"wrote {len(stated)} probes -> {stated_out}")

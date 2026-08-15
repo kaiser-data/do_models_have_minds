@@ -270,7 +270,7 @@ def build(card: dict, personas: list[dict] | None = None,
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Coherence Without Content — preliminary results</title>
+<title>Coherence Without Content — a content control for value-coherence metrics</title>
 <style>
 :root {{
   color-scheme: light;

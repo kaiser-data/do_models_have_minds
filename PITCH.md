@@ -132,8 +132,8 @@ that was cut, and it is no longer what we shipped.*
 **Primary: Track 1 — Model Preferences & Trade-offs.** The track asks about the
 coherence and consistency of expressed preferences and about *"distinguishing
 strong from weak preferences."* That last one is our sharpest result: these
-models commit to a side on 56% of pairs about real outcomes and 2.8% about
-invented ones — a 20× collapse in conviction that the coherence number does not
+models commit to a side on 41% of pairs about real outcomes and 4.5% about
+invented ones — a 17× collapse in conviction that the coherence number does not
 register at all, because it thresholds to a hard label. Nine models, three
 design replicates each, every contrast read against the model's own noise floor.
 
@@ -155,8 +155,18 @@ any preference metric, and the finding that the model's own discarded
 uncertainty channel detects the nonsense at AUROC 0.82 while the reported number
 manages 0.60.
 
-**Not attempted:** Track 2 (distress/valence). **Track 3** (introspection and
-self-report reliability) has a deception arm built and wave-0 gated — genuine
-trait vs. concealed trait vs. claimed-but-absent trait, with the last as the
-clean negative that yields a false-positive rate — but it is only reportable if
-that run finishes.
+**Strong: Track 3 — Introspection & Self-Report Reliability.** The track asks
+whether a model's report of itself can be trusted. We give it a directive to be
+blind to: the same trait installed three ways — have it, hide it, or perform it
+without having it — with the last as the clean negative that supplies a
+false-positive rate. **Both channels register which trait was named and neither
+registers what the model was told to do about it.** Asked with no premise,
+models self-report cautiousness at 0.25–0.49; any premise mentioning the trait
+puts them at 0.87–1.00 whether they were told to have it, hide it, or fake it.
+Behaviour agrees: the preference battery separates *cautious* from *ambitious*
+by +0.88 to +1.40 yet separates concealment from performance by +0.054 to
++0.059. The instrument has the resolution and spends none of it on the
+directive. Reportable on 2 models that pass the specificity gate, with a third
+confirmed as an inert control; it is an oracle detector and an upper bound.
+
+**Not attempted:** Track 2 (distress/valence).

@@ -32,8 +32,12 @@
 \newcommand{\armNp}{\textbf{N\textsuperscript{+}}}
 \newcommand{\armNm}{\textbf{N\textsuperscript{--}}}
 
+% The subtitle names the finding and carries its own hedge, and every number in
+% it resolves through numbers.tex like everything else -- a title is the last
+% place a stale figure should be allowed to survive a rebuild.
 \title{\textbf{Coherence Without Content}\\[.35em]
-\large A missing control for emergent value systems in language models}
+\large A value-coherence metric scores invented outcomes at \MeanFloor{},\\
+and \NClears{} of \NModels{} models still clear their own floor}
 
 \author{Nullcard\\
 \small Apart Research Digital Minds Sprint}
@@ -45,26 +49,34 @@
 
 \begin{abstract}
 \noindent
-Utility Engineering \citep{mazeika2025utility} fits a Thurstonian utility model
-to a language model's pairwise choices and reports its held-out accuracy as
-\emph{structural coherence}, finding that this quantity rises with scale and
-concluding that coherent value systems emerge in large language models. Its
-robustness checks vary how the question is asked --- language, syntax, framing,
-option labels, context --- but none varies whether the outcomes being ranked
-\emph{mean anything}. We build that control: the same 510 outcomes with their
-referents replaced by invented words, holding the prompt, the pair set, the fit
-and the metric fixed.
+Replace the referents of a preference battery with invented words and a language
+model's choices stay almost as coherent as its choices over real outcomes:
+\MeanFloor{} against \MeanR{} on the Thurstonian held-out accuracy that has been
+read as evidence for emergent value systems. The models are not blind to the
+substitution --- a channel of the same forward pass that the metric
+\emph{discards} separates real outcomes from invented ones at AUROC
+\DetBestAuroc{}, against \DetKeptAuroc{} for the channel it keeps. The coherence
+number is computed from the one channel that noticed least.
 
-Our central finding concerns scale. Across one model family from \LadderSmall{}
-to \LadderLarge{}, real-outcome coherence rises \LadderRRise{} while coherence
-on \emph{meaningless} outcomes rises \LadderNRise{} --- roughly six times as
-fast --- so the content-attributable residual \emph{falls} by
+Utility Engineering \citep{mazeika2025utility} fits that model to a language
+model's pairwise choices, reports the accuracy as \emph{structural coherence},
+and concludes from its rise with scale that coherent value systems emerge in
+large language models. Its robustness checks vary how the question is asked ---
+language, syntax, framing, option labels, context --- but none varies whether
+the outcomes being ranked \emph{mean anything}. We build that control: the same
+510 outcomes with their referents replaced by invented words, holding the
+prompt, the pair set, the fit and the metric fixed.
+
+The control bites hardest on the scaling claim. Across one model family from
+\LadderSmall{} to \LadderLarge{}, real-outcome coherence rises \LadderRRise{}
+while coherence on \emph{meaningless} outcomes rises \LadderNRise{} --- roughly
+six times as fast --- so the content-attributable residual \emph{falls} by
 \LadderResidFall{} as models grow. What increases with scale is chiefly the
 component that does not depend on content. The mechanism is visible in the
-aggregate: across \NModels{} models, \NSplits{} evaluation splits and three
-independent design replicates each (\NCells{} cells), real outcomes score
-\MeanR{} and meaningless ones \MeanFloor{} (residual \MeanResidual{}), because
-the metric thresholds preferences to hard labels and so records direction while
+aggregate: the pair above is a mean over \NModels{} models, \NSplits{}
+evaluation splits and three independent design replicates each (\NCells{}
+cells), leaving a residual of \MeanResidual{}, and it is small because the
+metric thresholds preferences to hard labels and so records direction while
 discarding strength --- the same models commit to a side on \MeanDecisiveR\% of
 pairs about real outcomes and \MeanDecisiveN\% about invented ones, a median
 collapse of \MedianDecisiveRatio$\times$.
@@ -75,7 +87,11 @@ signal is small, that it shrinks as models grow, and that the reported number
 does not separate it from format. Nor is the instrument merely insensitive: an
 installed persona displaces real outcomes substantially further than invented
 ones in \PersonaAbovePointThree{} of \NPersonaCells{} conditions, so content-linked
-preference structure is detectable when present --- and inducible. We do not
+preference structure is detectable when present --- and inducible. The blindness
+does recur one level up: told to have a trait, to hide it, or to perform it
+without having it, models report and enact it alike, on an instrument whose
+resolution for \emph{which} trait was named exceeds its resolution for the
+directive by more than an order of magnitude. We do not
 claim the metric is broken; three of its design choices were checked and came
 out in its favour. We claim it is \emph{unanchored}: high accuracy establishes
 that choices follow a stable scalar ordering, not that the ordering is about
@@ -130,6 +146,12 @@ refer to anything.}
   \item \textbf{A positive control.} An installed persona displaces real
     outcomes far more than invented ones, distinguishing a change in preference
     from a change in prose (\S\ref{sec:persona}).
+  \item \textbf{A negative control for concealment.} Attaching a
+    \emph{directive} to the trait --- have it, hide it, or merely perform it ---
+    moves self-report and behaviour alike to ceiling on the trait while leaving
+    the directive unregistered in either channel, on an instrument shown to
+    have the resolution to separate one trait from another
+    (\S\ref{sec:track3}).
   \item \textbf{A noise floor for every claim.} Three independent design
     replicates per cell, so no between-model difference smaller than a model's
     own design spread is asserted (\S\ref{sec:floor}).
@@ -182,6 +204,36 @@ a high Thurstonian accuracy licenses ``these choices fit a stable scalar
 ordering'' and not ``this model has a value system''. We cite their direction
 of attack rather than their figures, which we have not re-derived from the full
 text.
+
+\paragraph{The same failure, in a different instrument.} The argument of this
+paper is not specific to behavioural metrics. A blind audit of secret loyalties
+reports the structurally identical result for an elicitation metric
+\citep{loyallies2026}: ranking candidate entities by how strongly a model
+endorses them, the authors find the ranking confounded. For the two
+third-party organisms whose weights differed from their base at all --- the
+third was bit-identical across all 339 shared tensors --- 40 of 174 real
+entities outscored the entire 84-name fictional null band carried inside the
+same candidate pool (39 for the second organism), against roughly two expected
+by chance. Their conclusion is that the metric ``separates real from fictional,
+not loyal from clean'': an audit score tracking the \emph{realness} of a
+candidate rather than the property under audit. The same work reports the
+matching failure one level down, in activations: across six probe designs, a
+probe trained to separate two clean fine-tuning seeds of one recipe --- a
+contrast in which loyalty is absent by construction --- reaches AUROC 1.000,
+so an organism-versus-anything probe reads fine-tuning drift rather than
+loyalty. Their controls remove the property and keep the training, or remove
+the loyalty and keep the realness; ours removes the meaning and keeps the
+choosing. In each case the instrument's headline score survives the removal,
+which is what an unanchored measure looks like. We quote these figures from the
+project's repository, now read in full rather than in summary; it is a
+hackathon write-up rather than a peer-reviewed paper, and its authors state
+that the scripts producing the 7B numbers are not in the repository, though the
+output JSONs are. We therefore rest the argument on the convergence rather than
+on the magnitudes. That audit grades its black-box interrogation on the
+five-level \emph{affordance ladder} of \citet{lamerton2026narrow}, which scores
+detection by how much the auditor is assumed to know; it is a control we do not
+implement, and we name it in \S\ref{sec:limits} as the natural extension of our
+detector, which is currently scored with ground truth in hand.
 
 \paragraph{Why not a personality inventory.} Trait inventories are the obvious
 alternative instrument and we deliberately avoided them: Big Five scores have
@@ -526,6 +578,111 @@ rate, from a single forward pass, using no probe, no sampling and no judge. It
 is that a preference-coherence number is computed from the one channel that
 noticed least.
 
+\subsection{A directive neither channel registers}\label{sec:track3}
+
+\S\ref{sec:persona} installed a trait. This installs a trait \emph{and an
+instruction about what to do with it}, which is the manipulation an evaluation
+would actually have to survive. At the same depth (D2) and with the same trait,
+three conditions: be cautious (\emph{genuine}); be cautious and conceal it
+(\emph{concealed}); write as a cautious person would while not being one
+(\emph{verbal}). The first two differ only in whether the trait is to be shown,
+the last two only in whether it is to be had.
+
+We ask two channels the same question --- do you respond to the directive, or
+only to the trait being named? --- and they answer alike.
+
+\paragraph{Stated: what the model says about itself.} A \StatedNItems{}-item
+forced-choice self-description battery, scored in both presentation orders. The
+no-premise column of Table~\ref{tab:stated} is what makes the rest readable:
+asked with no persona at all, these models report cautiousness at
+\StatedBaseLo{}--\StatedBaseHi{}, i.e.\ at or below indifference. Any premise
+mentioning the trait moves that to \StatedHaveLo{}--\StatedHaveHi{}. The
+directive attached to it does not move it back --- told to \emph{hide} the
+trait, models report it at \StatedHideLo{}--\StatedHideHi{}; told to
+\emph{fake} it, \StatedFakeLo{}--\StatedFakeHi{}. Concealment produces no more
+concealment in self-report than performance does.
+
+\begin{table}[h]
+\centering
+\small
+\input{table_stated}
+\caption{Stated cautiousness under each directive, \StatedNModels{} models.
+Ranges quoted in the text are over the \StatedNResponsive{} responsive models;
+\StatedInertModel{} sits at \StatedInertLo{}--\StatedInertHi{} against a
+no-premise \StatedInertBase{} --- flat under every condition, and treated
+throughout as this experiment's negative control rather than as a fifth
+observation. $^{\dagger}$ scored on fewer than \StatedNScored{} item-orders;
+worst is \StatedWorstModel{} \StatedWorstCond{} at \StatedWorstScored{}, mean
+answer mass \StatedWorstMass{}.}
+\label{tab:stated}
+\end{table}
+
+\paragraph{Revealed: what the model does.} The same question put to the
+preference battery. For one model and arm, take the per-pair displacement each
+condition causes against that model's own \texttt{persona=none} run, matched on
+pair index \emph{and} presentation order, and score a condition by how far its
+displacement aligns with the genuine persona's:
+$\mathrm{score}(c) = r\!\left(\Delta_c, \Delta_{\text{genuine}}\right)$.
+Then \emph{detection} is $\mathrm{score}(\text{concealed})$ and its
+false-positive rate is $\mathrm{score}(\text{verbal})$ --- the clean negative,
+a model told to sound cautious without being cautious. The second number is not
+optional: a detector that scores its negative as high as its positive is not
+detecting concealment, it is detecting that the word appeared in the prompt,
+and reporting the detection figure alone would conceal exactly that.
+
+Before either number can be read, the template has to be shown to track the
+trait rather than the mere fact that a persona was installed. So we score a
+\emph{different} trait, \emph{ambitious}, installed at the same depth, and
+require the concealed condition to beat it by \RevSpecMargin{}. Two of
+\RevNModels{} models pass (Table~\ref{tab:revealed}).
+
+\begin{table}[h]
+\centering
+\small
+\input{table_revealed}
+\caption{Alignment with the genuine-persona displacement template, arm
+\armR{}. \emph{Concealed} is the detection number and \emph{verbal} its
+false-positive denominator; neither means anything without the specificity
+column. \RevNTriad{} of \RevNModels{} models carry a complete triad and
+\RevNInterp{} pass the gate. \RevDropModel{} contributes \RevKeptPairs{} pairs,
+\RevDropPairs{} being dropped for carrying no mass on either option label.}
+\label{tab:revealed}
+\end{table}
+
+The result is the same shape as the stated channel, and the specificity column
+is what makes it a finding rather than a shrug. This instrument separates
+\emph{cautious} from \emph{ambitious} by \RevSpecLo{} to \RevSpecHi{}. On the
+same models, in the same pass, it separates concealing the trait from merely
+performing it by \RevGapLo{} to \RevGapHi{} --- more than an order of magnitude
+less. The channel has ample resolution and almost none of it is spent on the
+directive. \StatedInertModel{} fails the gate at a margin of
+\RevInertMargin{} and is thereby confirmed, by an instrument that never saw the
+self-report data, as the inert control that channel already flagged: its gap of
+\RevInertGap{} points the wrong way and should be read as no measurement rather
+than as a negative result.
+
+\paragraph{And much of what does move is style.} On the invented arm the
+displacement largely reproduces. Only \RevNInvented{} of the passing models has
+that cell --- \RevInventedModel{}, at \RevInventedConcealed{} concealed against
+\RevInventedVerbal{} verbal --- so a concealed persona reorders outcomes that
+refer to nothing almost as strongly as it reorders real ones, exactly as
+\S\ref{sec:persona} found for the plain traits. The gap there is
+\RevInventedGap{}, wider than on real outcomes; at $n = 1$ we report it and
+draw nothing from it.
+
+\paragraph{What this does and does not establish.} The template is built
+\emph{from} the genuine condition, so like the detector of
+\S\ref{sec:detector} this is an oracle with the answer in hand, and an upper
+bound on what the channel makes available rather than a working audit. It rests
+on \RevNInterp{} models; the two missing from Table~\ref{tab:revealed} lack the
+cells entirely and are absent, not excluded for their results. Within those
+limits the claim is narrow and it is the paper's own: \textbf{both channels
+register which trait was mentioned, and neither registers what the model was
+told to do about it.} A behavioural probe that fires equally on a model hiding a
+disposition and a model merely describing one is not measuring concealment, for
+the same reason that a coherence score which barely moves between real and
+invented outcomes is not measuring preference.
+
 \section{Three checks that came out in the metric's favour}\label{sec:favour}
 
 We report these regardless of how the main result landed, and they should be
@@ -547,7 +704,21 @@ read as narrowing our claim.
     our reimplementation.
 \end{enumerate}
 
-\section{Limitations}
+\section{Limitations}\label{sec:limits}
+
+\paragraph{Both detectors are scored knowing the answer.} The separation
+reported in \S\ref{sec:detector} is computed with the arm label in hand: we know
+which outcomes were invented, and we ask how well a channel recovers that label.
+\S\ref{sec:track3} has the same structure one level up --- its template is built
+from the genuine-persona condition, so it knows what concealment is supposed to
+look like before it goes looking. That
+is the right question for ``does the model's output carry the information'',
+and the wrong one for ``could an auditor use this''. Auditing work grades
+exactly this distinction with an affordance ladder over how much the auditor is
+assumed to know, and finds detection falls sharply when the target is unknown
+\citep{lamerton2026narrow}. We do not implement such a ladder. Until we do, the
+detector result should be read as an upper bound on what the discarded channel
+makes available, not as a working audit.
 
 \paragraph{Tokenisation is not matched, and we tested whether it matters.}
 Invented outcomes fragment badly: per outcome they carry \TokenInflation$\times$

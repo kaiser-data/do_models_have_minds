@@ -23,10 +23,18 @@ THEMES = {
     "light": {"fg": "#111110", "mid": "#55534e", "faint": "#d9d7d0", "bg": "none"},
     "dark": {"fg": "#f4f3ef", "mid": "#bab8ae", "faint": "#35342f", "bg": "none"},
 }
-# The kept channel is the one under indictment, so it gets the accent; the
-# discarded channels are a single neutral family so the eye groups them.
+# The kept channel is the one under indictment, so it gets the accent (the same
+# one the slides use). The discarded channels were originally a low-chroma family
+# so the eye would group them, but that made them mutually illegible: the old
+# blue/green pair sat at normal-vision dE 12.1, under the 15 floor, and both read
+# as gray. Re-stepped to a validated set -- worst adjacent pair is now dE 22.9
+# normal / 19.0 deutan, and all four clear the chroma floor and 3:1 on the
+# surface in BOTH themes. If you change these, re-run the check rather than
+# eyeballing it:
+#   node <dataviz-skill>/scripts/validate_palette.js \
+#        "#b4453a,#3d6fb5,#3f8f3a,#8a4fa8" --mode light   (then --mode dark)
 KEPT_COLOR = "#b4453a"
-DISCARD_COLORS = ["#4a7ba7", "#3f8f6f", "#8a6fb0"]
+DISCARD_COLORS = ["#3d6fb5", "#3f8f3a", "#8a4fa8"]
 
 
 def figure(data: dict, theme: str = "light"):
@@ -52,8 +60,14 @@ def figure(data: dict, theme: str = "light"):
     # Chance is the only reference line that matters: at 0.5 a channel cannot
     # tell a real outcome from a nonsense one at all.
     ax.axhline(0.5, color=th["mid"], lw=1.1, ls=(0, (4, 3)), zorder=2)
-    ax.text(len(models) - 0.42, 0.507, "chance — cannot tell them apart",
-            fontsize=9, color=th["mid"], ha="right", va="bottom")
+    # This label has to live OUTSIDE the axes. Bars are drawn from zero, so they
+    # fill the whole band up to their height -- there is no gap at y=0.5 at any x,
+    # above the line or below it, and an in-plot label overprinted the bars.
+    # get_yaxis_transform: x in axes fraction, y in data units, so it stays pinned
+    # to the line whatever the ylim.
+    ax.text(1.012, 0.5, "chance\ncannot tell\nthem apart",
+            transform=ax.get_yaxis_transform(), fontsize=8, color=th["mid"],
+            ha="left", va="center", linespacing=1.3)
 
     ax.set_xticks(x)
     ax.set_xticklabels([m.split("/")[-1] for m in models], rotation=18,
