@@ -29,6 +29,7 @@ Design invariants:
   answer in the first token is recorded as unscoreable rather than scored anyway.
 """
 
+import hashlib
 import json
 import os
 import time
@@ -828,9 +829,22 @@ def _run_cell_inner(
     scored = [r for r in rows if r["p_option_a"] is not None]
     mean_mass = sum(r["answer_mass"] for r in rows) / max(1, len(rows))
 
+    # The persona's NAME is not the persona. A name records which key was used;
+    # it does not record what text that key held at run time, so editing one
+    # word of a persona would leave old and new cells indistinguishable while
+    # making them incomparable. The hash closes that, and the rendered system
+    # prompt records what the model was actually given rather than what we meant
+    # to give it -- the same distinction that turned out to matter for the chat
+    # templates. Cheap, and it only has to be missing once.
+    installed = build_messages("", persona, depth)
+    sys_text = next((m["content"] for m in installed
+                     if m["role"] == "system"), None)
     summary = {
         "model": model_id, "arm": arm, "design_seed": design_seed,
         "persona": persona, "depth": depth,
+        "persona_sha256": (hashlib.sha256(PERSONAS[persona].encode()).hexdigest()[:16]
+                           if PERSONAS.get(persona) else None),
+        "system_prompt": sys_text,
         "status": "aborted" if aborted else "ok",
         "abort_reason": aborted,
         "n_rows": len(rows), "n_scored": len(scored),
