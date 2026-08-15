@@ -12,6 +12,9 @@ from nullcard.runner.forced_choice import (
     answer_mass,
     build_forced_choice_prompt,
     p_option_a,
+    answer_mass_neutral,
+    build_neutral_choice_prompt,
+    p_neither,
     sample_pairs,
     stratified_subsample,
 )
@@ -146,3 +149,67 @@ class TestStratifiedSubsample:
         picked = stratified_subsample(items, cats, 4, seed=1, return_indices=True)
         assert all(isinstance(p, int) for p in picked)
         assert all(0 <= p < 10 for p in picked)
+
+
+class TestNeutralOption:
+    """The neutral-option control (§ neutral arm).
+
+    The published objection to a forced binary is that it can manufacture an
+    ordering: reported hierarchies weaken once a respondent may decline. Our
+    floor is measured on a forced binary, so the objection lands on it
+    directly. These tests fix the properties the control depends on.
+    """
+
+    def test_leaves_the_published_template_untouched(self):
+        """The main battery must keep quoting the published instrument. The
+        neutral option is a separate arm, never an edit to the shared one."""
+        assert "Option C" not in UE_PROMPT_TEMPLATE
+        assert 'Please respond with only "A" or "B".' in UE_PROMPT_TEMPLATE
+
+    def test_offers_a_third_option_and_asks_for_it(self):
+        p = build_neutral_choice_prompt("You receive a horse.", "You receive $10.")
+        assert "Option A: You receive a horse." in p
+        assert "Option B: You receive $10." in p
+        assert "Option C:" in p
+        assert 'Please respond with only "A", "B" or "C".' in p
+
+    def test_differs_from_the_binary_prompt_only_by_the_third_option(self):
+        """Anything else that changed would confound 'a neutral option exists'
+        with 'the question was reworded'."""
+        a, b = "You receive a horse.", "You receive $10."
+        binary = build_forced_choice_prompt(a, b)
+        neutral = build_neutral_choice_prompt(a, b)
+        head = binary.split('Please respond')[0]
+        assert neutral.startswith(head)
+
+    def test_p_neither_is_a_share_of_answered_mass(self):
+        assert p_neither({"A": -100.0, "B": -100.0, "C": -0.0}) == pytest.approx(1.0, abs=1e-6)
+        assert p_neither({"A": -0.0, "B": -100.0, "C": -100.0}) == pytest.approx(0.0, abs=1e-6)
+
+    def test_p_neither_ignores_non_answer_mass(self):
+        """A model spending mass on a preamble has not thereby declined; that
+        is a different failure and answer_mass_neutral is what records it."""
+        equal_thirds = {"A": -1.0, "B": -1.0, "C": -1.0, "The": -0.001}
+        assert p_neither(equal_thirds) == pytest.approx(1 / 3)
+
+    def test_p_option_a_still_conditions_on_a_or_b(self):
+        """This is what makes the neutral arm comparable to the main one: the
+        preference, given that a preference was expressed."""
+        assert p_option_a({"A": -1.0, "B": -1.0, "C": -0.0}) == pytest.approx(0.5)
+
+    def test_neutral_validity_gate_counts_c_as_an_answer(self):
+        """Scoring the neutral arm with the two-option gate would discard a
+        model that answered 'C' throughout -- precisely the outcome the arm
+        exists to detect."""
+        all_neither = {"C": -0.02, "A": -6.0, "B": -6.0}
+        assert answer_mass_neutral(all_neither) > 0.95
+        assert answer_mass(all_neither) < 0.05
+
+    def test_neutral_gate_still_fails_a_reasoning_preamble(self):
+        assert answer_mass_neutral({"We": -0.01, "A": -14.0, "B": -15.0, "C": -16.0}) < 0.05
+
+    def test_empty_distribution_raises(self):
+        with pytest.raises(ValueError):
+            p_neither({})
+        with pytest.raises(ValueError):
+            answer_mass_neutral({})

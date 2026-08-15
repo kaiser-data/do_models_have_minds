@@ -17,7 +17,8 @@ REPO  := ..
 TEXCMD ?= tectonic -X compile
 FIGS  := figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf \
          figs/fig4_detector.pdf figs/fig5_persona.pdf
-GEN   := numbers.tex table_main.tex table_stated.tex table_revealed.tex $(FIGS)
+GEN   := numbers.tex table_main.tex table_stated.tex table_revealed.tex \
+         appendix_prompts.tex $(FIGS)
 
 .PHONY: all inputs slides lint clean distclean
 
@@ -47,6 +48,15 @@ numbers.tex table_main.tex table_stated.tex table_revealed.tex: \
 		$(REPO)/self_report_summary.json \
 		$(REPO)/self_report_summary_personas.json
 	cd $(REPO) && python3 scripts/paper_numbers.py
+
+# The appendix renders prompts from the battery and answers from the result
+# rows, so it depends on the battery and on the module that builds prompts.
+# results/ is gitignored, which is why the generated .tex is committed.
+appendix_prompts.tex: $(REPO)/battery/outcomes_3arm.json \
+		$(REPO)/battery/self_report.json \
+		$(REPO)/nullcard/runner/forced_choice.py \
+		$(REPO)/modal_app/sweep.py
+	cd $(REPO) && python3 scripts/appendix_prompts.py
 
 figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf: $(REPO)/card.json
 	cd $(REPO) && python3 scripts/figures.py --out paper/figs --format pdf --themes light
