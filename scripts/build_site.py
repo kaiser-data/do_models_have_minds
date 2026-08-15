@@ -78,6 +78,69 @@ def slope_chart(tiles, key_r, key_n, title, subtitle, fmt, ymax=None):
     )
 
 
+def detector_section(det: dict | None, figure) -> str:
+    """The clearest result: what the metric keeps vs what it throws away.
+
+    Placed before the persona section because it needs no setup -- the ground
+    truth is that every pair was run in both arms, so real and invented are
+    matched positives and negatives for free.
+    """
+    if not det:
+        return ""
+    per = det["per_model"]
+    names = [k for k in next(iter(per.values())) if k != "n_matched_pairs"]
+
+    def mean(name, field="separation"):
+        v = [e[name][field] for e in per.values() if name in e]
+        return sum(v) / len(v) if v else None
+
+    kept = next((n for n in names if "[KEPT]" in n), None)
+    if kept is None:
+        return ""
+    rows = "".join(
+        f"<tr><td class='m'>{n.split('  ')[0]}</td>"
+        f"<td class='{'neg' if '[KEPT]' in n else 'pos'}'>{mean(n):.3f}</td>"
+        f"<td class='muted'>{mean(n, 'tpr_at_fpr') * 100:.0f}%</td></tr>"
+        for n in names)
+    best = max((n for n in names if "discarded" in n), key=lambda n: mean(n))
+
+    return f"""
+<h2>The model can tell. The metric does not look.</h2>
+<p>Hallucination detection has converged on one idea: the sign that a model is
+confabulating is already in its own output distribution, readable from a single
+forward pass. Coherence does the opposite twice &mdash; thresholding to a hard
+A/B label discards <em>how much</em>, and renormalising over A and B discards
+<em>not answering at all</em>. Both are exactly the signals that literature
+uses.</p>
+
+<p>Our design tests this for free. Every pair ran in <b>both</b> arms, so for one
+model and one pair we have two forward passes differing only in whether the
+outcomes refer to anything &mdash; matched positives and negatives, by
+construction rather than by selection.</p>
+
+<div class="tw"><table>
+<thead><tr><th>channel of the same forward pass</th><th>separation (AUROC)</th>
+<th>detection at 5% false alarms</th></tr></thead>
+<tbody>{rows}</tbody></table></div>
+<p style="font-size:13px">0.5 means the channel cannot tell a real outcome from a
+meaningless one. The threshold is calibrated on the <b>real</b> rows only, never
+on the nonsense. The direction channel is binary, so its detection rate at a
+fixed false-alarm rate is not well defined &mdash; read its AUROC, not its
+percentage.</p>
+
+{figure("fig4_detector", "What the metric keeps versus what it discards",
+  "Each model contributes one bar per channel. The accented bar is the only one "
+  "the coherence number consumes.")}
+
+<p><b>The models notice.</b> The channel coherence keeps separates real from
+nonsense at {mean(kept):.3f}; the best channel it discards
+({best.split('  ')[0]}) reaches {mean(best):.3f}, catching
+{mean(best, 'tpr_at_fpr') * 100:.0f}% of nonsense at a 5% false-alarm rate with
+no probe, no sampling and no judge. The preference number is computed from the
+channel that noticed least.</p>
+"""
+
+
 def persona_section(rows: list[dict], figure) -> str:
     """The depth-ladder arm. Omitted entirely when its data is absent.
 
@@ -145,7 +208,8 @@ fails to depend on it.</p>
 """
 
 
-def build(card: dict, personas: list[dict] | None = None) -> str:
+def build(card: dict, personas: list[dict] | None = None,
+          detector: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
 
@@ -370,6 +434,8 @@ the flat result is not an artifact of our reimplementation.
 <b>slot-A bias</b> is the raw rate of picking the first option before
 counterbalancing — 0.5 is none.</p>
 
+{detector_section(detector, figure)}
+
 {persona_section(personas or [], figure)}
 
 <h2>What this does and does not show</h2>
@@ -410,6 +476,7 @@ def main() -> None:
     ap.add_argument("--card", default="card.json")
     ap.add_argument("--out", default="site/index.html")
     ap.add_argument("--personas", default="site/persona_depth.json")
+    ap.add_argument("--detector", default="site/nonsense_detector.json")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
@@ -426,7 +493,9 @@ def main() -> None:
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(build(card, personas))
+    dpath = Path(args.detector)
+    detector = json.loads(dpath.read_text()) if dpath.exists() else None
+    out.write_text(build(card, personas, detector))
     print(f"wrote {out}  ({out.stat().st_size/1024:.1f} KB)")
 
 

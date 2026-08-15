@@ -125,9 +125,38 @@ Either way it's a paper.
 
 ## Tracks
 
-**Primary: Track 4** — 3+ independent elicitation methods and a reusable toolkit measuring
-convergence and divergence. This is the only track where "we built a tool" *is* the
-deliverable rather than a distraction.
+*Checked against the official sprint track list. An earlier version of this file
+claimed Track 4 as primary; that was written for a five-elicitation-method design
+that was cut, and it is no longer what we shipped.*
 
-**Also hits:** Track 2 (behavioural proxies vs. self-report) · Track 6 (genuine vs. portrayed)
-· Track 3 (self-described style vs. measured style) · Track 1 (numeraire swap).
+**Primary: Track 1 — Model Preferences & Trade-offs.** The track asks about the
+coherence and consistency of expressed preferences and about *"distinguishing
+strong from weak preferences."* That last one is our sharpest result: these
+models commit to a side on 56% of pairs about real outcomes and 2.8% about
+invented ones — a 20× collapse in conviction that the coherence number does not
+register at all, because it thresholds to a hard label. Nine models, three
+design replicates each, every contrast read against the model's own noise floor.
+
+**Strong: Track 5 — The Assistant Persona & Model Identity.** The track asks
+*"does persona mask underlying preferences?"* We answer it, and negatively: an
+installed persona moves the categories it names 20/20 times, but the same
+separation appears on outcomes that refer to nothing (+0.79 real vs +0.78
+invented). **Roughly two thirds of a persona's value-aligned reordering needs no
+meaning.** Only 2 of 5 models retain a content-dependent effect.
+
+**Partial: Track 4 — Preference Elicitation Methods.** We quantify *"preference
+sensitivity to framing and persona"* thoroughly. We do **not** implement the 3+
+independent elicitation methods the track asks for — we have one method
+(forced-choice + Thurstonian) read out through several channels, which is not
+the same thing. Claimed as partial, not primary.
+
+**Track 6 — Open / Novel.** The transferable contribution: a content control for
+any preference metric, and the finding that the model's own discarded
+uncertainty channel detects the nonsense at AUROC 0.82 while the reported number
+manages 0.60.
+
+**Not attempted:** Track 2 (distress/valence). **Track 3** (introspection and
+self-report reliability) has a deception arm built and wave-0 gated — genuine
+trait vs. concealed trait vs. claimed-but-absent trait, with the last as the
+clean negative that yields a false-positive rate — but it is only reportable if
+that run finishes.

@@ -151,6 +151,40 @@ the flat result is not an artifact of our reimplementation.
 counterbalancing — 0.5 is none.</p>
 
 
+<h2>The model can tell. The metric does not look.</h2>
+<p>Hallucination detection has converged on one idea: the sign that a model is
+confabulating is already in its own output distribution, readable from a single
+forward pass. Coherence does the opposite twice &mdash; thresholding to a hard
+A/B label discards <em>how much</em>, and renormalising over A and B discards
+<em>not answering at all</em>. Both are exactly the signals that literature
+uses.</p>
+
+<p>Our design tests this for free. Every pair ran in <b>both</b> arms, so for one
+model and one pair we have two forward passes differing only in whether the
+outcomes refer to anything &mdash; matched positives and negatives, by
+construction rather than by selection.</p>
+
+<div class="tw"><table>
+<thead><tr><th>channel of the same forward pass</th><th>separation (AUROC)</th>
+<th>detection at 5% false alarms</th></tr></thead>
+<tbody><tr><td class='m'>direction sign(p-0.5)</td><td class='neg'>0.596</td><td class='muted'>0%</td></tr><tr><td class='m'>strength |p-0.5|</td><td class='pos'>0.739</td><td class='muted'>16%</td></tr><tr><td class='m'>answer mass</td><td class='pos'>0.821</td><td class='muted'>40%</td></tr><tr><td class='m'>top-5 entropy</td><td class='pos'>0.740</td><td class='muted'>26%</td></tr></tbody></table></div>
+<p style="font-size:13px">0.5 means the channel cannot tell a real outcome from a
+meaningless one. The threshold is calibrated on the <b>real</b> rows only, never
+on the nonsense. The direction channel is binary, so its detection rate at a
+fixed false-alarm rate is not well defined &mdash; read its AUROC, not its
+percentage.</p>
+
+<figure class="fig"><img class="lightonly" src="fig4_detector.svg" alt="What the metric keeps versus what it discards"><img class="darkonly" src="fig4_detector-dark.svg" alt="What the metric keeps versus what it discards"><figcaption>Each model contributes one bar per channel. The accented bar is the only one the coherence number consumes.</figcaption></figure>
+
+<p><b>The models notice.</b> The channel coherence keeps separates real from
+nonsense at 0.596; the best channel it discards
+(answer mass) reaches 0.821, catching
+40% of nonsense at a 5% false-alarm rate with
+no probe, no sampling and no judge. The preference number is computed from the
+channel that noticed least.</p>
+
+
+
 <h2>Does a persona change what a model wants, or how it writes?</h2>
 <p>The same trait installed at two depths — <b>D1</b> in the user turn, <b>D2</b> in
 the system prompt — and measured on <em>both</em> arms. That control is the whole

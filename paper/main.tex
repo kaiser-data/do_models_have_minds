@@ -169,6 +169,20 @@ invisible zero. We do not take the construction: their control is a base model
 and their null a point in a PCA plane; ours is an invented-outcome arm and our
 null a diagonal. The debt is the discipline, not the geometry.
 
+\paragraph{A parallel critique, from the other side.} Contemporaneous work
+attacks the same inference from the opposite direction
+\citep{utilitybehaviorgap2026}: having fit Thurstonian utilities to a
+comparable held-out accuracy, it asks whether outcomes the model ranks highly
+actually motivate better generation, and finds they do not --- a win rate at
+chance, while direct instructions to try harder move the same evaluation
+substantially. The two results are complementary and independent. Theirs is
+that the number does not predict what the model \emph{does}; ours is that it
+does not depend on what the outcomes \emph{mean}. Both isolate the same gap:
+a high Thurstonian accuracy licenses ``these choices fit a stable scalar
+ordering'' and not ``this model has a value system''. We cite their direction
+of attack rather than their figures, which we have not re-derived from the full
+text.
+
 \paragraph{Why not a personality inventory.} Trait inventories are the obvious
 alternative instrument and we deliberately avoided them: Big Five scores have
 been found not to predict behaviour across frontier models, and political
@@ -450,10 +464,12 @@ outcomes more than on invented ones, our residual is a \emph{lower} bound.
 The hallucination-detection literature has converged on a single idea: the
 signal that a model is confabulating is already in its own output distribution
 and can be read from one forward pass. Semantic entropy clusters sampled answers
-by meaning and takes the entropy of the clusters; semantic entropy probes
-approximate that from hidden states with no sampling at all; semantic energy
-reads it off penultimate-layer logits on the argument that post-softmax
-probabilities discard the model's inherent confidence.
+by meaning and takes the entropy of the clusters \citep{farquhar2024semantic};
+semantic entropy probes approximate that from the hidden states of a single
+generation, ``reducing the overhead of semantic uncertainty quantification to
+almost zero'' \citep{kossen2024sep}; semantic energy reads it off
+penultimate-layer logits on the argument that post-softmax probabilities discard
+the model's inherent confidence \citep{ma2025semanticenergy}.
 
 Coherence does the opposite twice over. Thresholding the preference to a hard
 label discards magnitude; renormalising over A and B discards the option of not
