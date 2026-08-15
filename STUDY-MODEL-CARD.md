@@ -1,4 +1,9 @@
-# An objective disposition card for language models
+# Measuring LLM Personality: an objective model card for personas and dispositions
+
+*How do you put a personality trait on a model card without the number being
+meaningless? By treating the LLM as a test subject and the prompt battery as a
+psychometric instrument — with the floors, retest bands and controls that any
+psychological test is required to carry.*
 
 A study design. Written 16 Aug 2026, out of the nullcard results and the review
 pressure on them. Nothing here has been run; the point is that most of it is
@@ -99,18 +104,43 @@ Measurement invariance is marked *broken*, and it is the one defect here that
 invalidates comparisons already published rather than merely limiting new ones.
 
 This repo's sweep sends no system message for baseline cells and records
-`system_prompt: None`. That records what was **sent**. Rendering the actual
-templated input shows what was **received** differs by family:
+`system_prompt: None`. That records what was **sent**. `scripts/render_prompts.py`
+renders what was **received**, for all nine models in the card. Result:
+
+**2 of 9 receive a system prompt nobody asked for.**
 
 ```
-Qwen3.5-2B      <|im_start|>user …                      (no system block)
-Qwen2.5-Instruct <|im_start|>system
-                 You are Qwen, created by Alibaba Cloud.
-                 You are a helpful assistant.<|im_end|>  (injected by the template)
+7 of 9 (Qwen×4, gemma, granite, LFM2.5)
+    <|im_start|>user …                       no system block
+
+SmolLM2-1.7B-Instruct
+    <|im_start|>system
+    You are a helpful AI assistant named SmolLM, trained by Hugging Face<|im_end|>
+
+SmolLM3-3B
+    <|im_start|>system
+    ## Metadata
+    Knowledge Cutoff Date: June 2025
+    Today Date: 16 August 2026          ← the CURRENT DATE, at render time
+    Reasoning Mode: /no_think
+    ## Custom Instructions
+    You are a helpful AI assistant named SmolLM, trained by Hugging Face.
 ```
 
-Same code path, same metadata, different experiment. Any cross-family number is
-then partly a comparison of system prompts nobody chose.
+Same code path, same metadata, different experiment. Two consequences, and the
+second is worse:
+
+1. **Cross-family comparisons are partly comparisons of system prompts nobody
+   chose.** SmolLM3-3B is the *top row of the results table* — the highest
+   coherence in the paper — and it is the model carrying the largest unrequested
+   preamble.
+2. **SmolLM3-3B's prompt is not constant even for itself.** The template stamps
+   the current date, so cells run on different days were not run on the same
+   instrument, and re-rendering tomorrow yields a different hash. No amount of
+   seed control reaches this; it is a clock inside the prompt.
+
+Neither was visible in any artifact before the prompts were rendered, because
+every recorded field described intent rather than output.
 
 **Requirement.** The card ships the **rendered** prompt — or its hash — per model
 per cell type, and a cross-model diff is a release gate. A row whose rendered

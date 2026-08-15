@@ -88,14 +88,20 @@ def _style_axes(ax, th, ylabel: str | None):
         ax.set_yticklabels([])
 
 
-def _null_band(ax, th, hi: float, label: bool):
+def _null_band(ax, th, hi: float | None, label: bool):
     """Chance is not 0.5 here, so draw where it actually is.
+
+    `hi` comes from the detector's computed orientation null. It is NOT
+    defaulted: a hardcoded band would look identical to a computed one and a
+    reader would take the shading as a property of this run's pair counts when
+    it was a literal. Absent -> the band is omitted and the caller says so.
 
     Bars are drawn from zero and fill the plot at every x, so an in-plot label
     for this line has nowhere to sit -- it overprints whichever bar it lands on.
     It goes outside the axes instead, pinned to the line in data units.
     """
-    ax.axhspan(0.5, hi, color=th["null"], zorder=1, lw=0)
+    if hi is not None:
+        ax.axhspan(0.5, hi, color=th["null"], zorder=1, lw=0)
     ax.axhline(0.5, color=th["mid"], lw=1.0, ls=(0, (4, 3)), zorder=2)
     if label:
         ax.text(1.02, 0.5, "chance\ncannot tell\nthem apart",
@@ -125,7 +131,7 @@ def figure(data: dict, theme: str = "light"):
                  fontsize=10.5, color=th["fg"],
                  fontweight="bold" if kept else "normal", zorder=4)
 
-    _null_band(axA, th, null.get("p99_null_oriented_mean", 0.508), label=False)
+    _null_band(axA, th, null.get("p99_null_oriented_mean"), label=False)
     axA.set_xticks(xs)
     # Direction consistency rides in the tick label rather than inside the bar:
     # on the bar it was colour-on-colour and collided with the chance band, and
@@ -163,8 +169,7 @@ def figure(data: dict, theme: str = "light"):
             axB.text(i, v + 0.014, f"{v:.2f}", ha="center", va="bottom",
                      fontsize=10.5, color=th["fg"],
                      fontweight="bold" if kept else "normal", zorder=4)
-        _null_band(axB, th, null.get("p95_null_oriented_single", 0.512),
-                   label=True)
+        _null_band(axB, th, null.get("p95_null_oriented_single"), label=True)
         axB.set_xticks(np.arange(len(chans)))
         axB.set_xticklabels(SHORT, fontsize=8.4, color=th["mid"],
                             linespacing=1.4)
@@ -220,7 +225,7 @@ def figure_all_models(data: dict, theme: str = "light"):
                color=_color(i, kept), edgecolor=th["fg"] if kept else "none",
                linewidth=1.1 if kept else 0, zorder=3)
 
-    _null_band(ax, th, null.get("p95_null_oriented_single", 0.512), label=False)
+    _null_band(ax, th, null.get("p95_null_oriented_single"), label=False)
     ax.text(1.012, 0.5, "chance\ncannot tell\nthem apart",
             transform=ax.get_yaxis_transform(), fontsize=8, color=th["mid"],
             ha="left", va="center", linespacing=1.3)
@@ -247,6 +252,10 @@ def main() -> None:
     args = ap.parse_args()
 
     data = json.loads(Path(args.data).read_text())
+    if not data.get("orientation_null"):
+        print("NOTE: this detector JSON carries no orientation_null block, so "
+              "the chance band is OMITTED rather than drawn at a guessed "
+              "height. Re-run scripts/nonsense_detector.py to compute it.")
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     for theme in [t.strip() for t in args.themes.split(",") if t.strip()]:

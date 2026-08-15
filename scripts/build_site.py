@@ -78,6 +78,27 @@ def slope_chart(tiles, key_r, key_n, title, subtitle, fmt, ymax=None):
     )
 
 
+def _null_sentence(null: dict) -> str:
+    """The orientation-null sentence, or an explicit statement that it is absent.
+
+    Never a default. This number is the reference the whole figure is read
+    against, and a literal 0.5 substituted for a missing computation would print
+    as though it had been computed -- indistinguishable to the reader, and
+    reassuring in exactly the way a missing check should not be.
+    """
+    v = null.get("mean_null_oriented")
+    if v is None:
+        return ("<b>The orientation null has not been computed for this run</b>, "
+                "so the chance band is omitted from the figure below rather "
+                "than drawn at an assumed height. Re-run "
+                "<code>scripts/nonsense_detector.py</code>.")
+    return (f"Orientation can only push a value up, so a channel with no signal "
+            f"does not average 0.5. At these pair counts it averages "
+            f"<b>{v:.4f}</b> &mdash; an inflation of {v - 0.5:+.4f}, far too "
+            f"small to explain any gap between channels. That band, not the 0.5 "
+            f"line, is chance in the figure below.")
+
+
 def detector_section(det: dict | None, figure) -> str:
     """The clearest result: what the metric keeps vs what it throws away.
 
@@ -135,11 +156,7 @@ consistently; the one it <b>keeps</b> is a coin flip. So the discarded channels'
 separation would largely have survived predeclaration, and the kept channel's is
 the most orientation-dependent number here &mdash; which cuts the same way as
 everything else on this page.
-Orientation can only push a value up, so a channel with no signal does not average
-0.5. At these pair counts it averages
-<b>{null.get('mean_null_oriented', 0.5):.4f}</b> &mdash; an inflation of
-{null.get('mean_null_oriented', 0.5) - 0.5:+.4f}, far too small to explain any gap
-between channels. That band, not the 0.5 line, is chance in the figure below.</p>
+{_null_sentence(null)}</p>
 """
 
     return f"""

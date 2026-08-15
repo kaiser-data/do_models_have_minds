@@ -142,11 +142,18 @@ def _rows(tiles, cells=None):
             continue
         out.append({
             "model": m, "short": m.split("/")[-1],
-            "family": FAMILY.get(m, "other"), "params": PARAMS.get(m, 2.0),
+            # No defaults. A model missing from PARAMS would silently plot at a
+            # guessed size on a SCALE figure, which is the one axis the figure
+            # exists to argue about; "other" would quietly merge families.
+            "family": FAMILY[m], "params": PARAMS[m],
             "path": [(coh["R"], arms["R"]),
                      (coh["N_plus"], arms["N_plus"]),
                      (coh["N_minus"], arms["N_minus"])],
-            "null": (t["shuffled_null"].get("R") or 0.5),
+            # `or 0.5` here would substitute the REASSURING value for a missing
+            # sanity check: a shuffled null that failed to compute would render
+            # as a textbook-perfect 0.5, which is the exact signal the check
+            # exists to provide. None propagates and the marker is not drawn.
+            "null": t["shuffled_null"].get("R"),
             "spread": [spread.get((m, a), 0.0)
                        for a in ("R", "N_plus", "N_minus")],
         })
@@ -171,7 +178,12 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
 
     fig, ax = plt.subplots(figsize=(9.6, 7.4))
 
-    mean_null = float(np.mean([r["null"] for r in rows]))
+    nulls = [r["null"] for r in rows if r["null"] is not None]
+    if len(nulls) != len(rows):
+        raise ValueError(
+            f"{len(rows) - len(nulls)} model(s) have no shuffled null; refusing "
+            f"to average over the rest and draw it as the roster's floor")
+    mean_null = float(np.mean(nulls))
     ax.axvspan(0.5, mean_null + 0.008, color=th["ink3"], alpha=0.12, zorder=0, lw=0)
     ax.axvline(mean_null, color=th["ink3"], lw=1, ls=(0, (3, 3)), zorder=1)
     ax.text(mean_null + 0.012, 0.44, "metric's floor\n(probabilities shuffled)",
