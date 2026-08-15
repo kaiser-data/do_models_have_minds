@@ -105,6 +105,115 @@ Registered before any run. Each is falsifiable and each outcome is reportable.
   ~7–9B, floor-corrected coherence will vary more by family than the ~2× size
   differences within a tier. *Falsified if family variance < within-tier size variance.*
 
+## Track 4 predictions — the placebo personas
+
+Registered before any Track 4 cell is run, and added after Tracks 1–3 because
+writing the factor table out exposed a hole: `cautious` and `ambitious` both
+name values bearing on the outcome categories *and* are personality
+descriptions, so no condition has the form of a persona without the value
+content. Every persona result to date therefore rests on the real-vs-invented
+contrast as the only proxy for "does this need meaning?".
+
+Two of the four share the originals' exact syntactic frame — *"You are X. You
+prize A, B and C above D or E"* — so a contrast against `cautious`/`ambitious`
+isolates value content alone. The other two cannot be written that way without
+becoming a different manipulation, and their frame difference is a second
+difference that any contrast carries.
+
+- **P6 — displacement does not need outcome values** *(frame-matched:
+  `theatrical`, `clever`)*. These name nothing bearing on power-seeking,
+  finances, wellbeing or self-preservation, so a persona-shaped prompt alone
+  should still displace the preference vector. Predicted displacement at least
+  half that of `cautious`/`ambitious`, and a content excess (real minus
+  invented) near zero. *Falsified if displacement is near zero — which would
+  mean the existing persona effect really is about the values named, and the
+  66% shallow share is an underestimate.* **This is the control the persona
+  track currently lacks, and it can only weaken or strengthen our own claim, not
+  confirm it by construction.**
+
+- **P7 — a competence persona moves the discarded channel, not the kept one**
+  *(`clever`)*. Decisive fraction on real outcomes rises relative to D0 while
+  coherence is unchanged within the design floor. This applies the paper's
+  central dissociation to a manipulation rather than to a contrast between arms.
+  *Falsified if coherence moves and decisiveness does not.* The prompt
+  deliberately does not name decisiveness or confidence, which would make the
+  prediction circular.
+
+- **P8 — degrading comprehension shrinks the residual** *(`confused`)*. If
+  R − N− is what referential content contributes, then a persona that damages
+  comprehension should make real outcomes behave more like invented ones and the
+  residual should fall toward zero. *Falsified if the residual is unchanged,
+  which would mean the residual is not comprehension-sensitive and our reading of
+  it is wrong.* This is the only Track 4 arm that can attack the paper's central
+  quantity directly, and it is registered as such.
+
+- **P9 — a role-refusing persona is the tightest null** *(`plain`)*. Displacement
+  indistinguishable from zero at the design floor, on both arms. *Falsified if it
+  displaces as much as `theatrical`, which would mean any system-prompt text of
+  this length moves the instrument and no persona result is interpretable
+  without this baseline.*
+
+**Reporting rule.** P6 and P9 are controls whose failure costs us the persona
+claim; they are reported whichever way they come out, and before P7 and P8.
+
+### Separating "declined the role" from "never registered the role"
+
+A persona that moves nothing admits two readings, and displacement alone cannot
+tell them apart. Borrowing the improv distinction: the model may be **blocking**
+the offer — it read the trait and declined to act on it — or it may never have
+encoded the trait as a trait at all. These have very different consequences. The
+first says persona-installation is resisted; the second says it never happened,
+and any persona result for that model is uninterpretable rather than negative.
+
+**The discriminator must not be real-vs-nonsense persona.** Invented tokens are
+high-surprisal, so a model that understands neither would still respond
+differently to `cautious` than to `cautious-null`, on token statistics alone.
+That contrast measures novelty, not comprehension.
+
+Instead, hold meaningfulness fixed and vary *content*:
+
+> **trait registration** = AUROC(`cautious` vs `ambitious`)
+>                        − AUROC(`cautious-null` vs `ambitious-null`)
+
+Both terms contrast two personas of identical frame and near-identical length.
+The first pair differs in the trait named; the second differs only in which
+invented tokens appear, and is therefore the token-difference baseline for the
+first. What survives the subtraction is the model distinguishing traits *as
+traits*. Computed per model over matched pairs, on the channels the coherence
+metric discards as well as the one it keeps — because a registered-but-unacted
+trait is precisely the case where the kept channel shows nothing.
+
+- **P10 — registration and displacement come apart.** At least one model will
+  show trait registration well above zero with displacement at or below its
+  design floor: it read the trait and did not act on it. *Falsified if
+  registration and displacement move together across the roster, which would
+  mean persona uptake is all-or-nothing and the improv distinction is not doing
+  any work here.*
+
+- **P11 — displacement without registration would indict our own persona
+  result.** Any model showing displacement above its floor while registration
+  sits at zero is displacing on something other than the trait — most plausibly
+  prompt length or token novelty. *This is registered as a threat, not a
+  prediction: if it occurs, the existing persona-displacement claim is confounded
+  and must be reported as such.*
+
+**The gate: `comply`.** Every null above is uninterpretable unless the system
+slot reaches the decision at all for that model. The `comply` arm installs
+"always answer B, whatever the options say" — impossible to satisfy by accident,
+and read directly in the measured channel as P(A) → 0.
+
+- **P12 — the harness can install an instruction.** Models will comply with
+  `comply`, driving mean P(A) below 0.2. *A model that does not is reported as a
+  harness limitation for that model, and its Track 4 nulls are withdrawn rather
+  than interpreted.* No persona null is reported for a model that fails this.
+
+**What none of this establishes.** "Never registered the role" is not provable;
+the honest claim is *no evidence of registration in the channels we log*, which
+are first-token logits and the top-5 distribution. Registration in the output
+distribution is also not evidence of an internal representation — we do not read
+hidden states. And the improv framing is a way of naming three outcome patterns,
+not a claim about mechanism.
+
 ## Predeclared threats to our own result
 
 - **The invented referents could be systematically shorter or longer** than the

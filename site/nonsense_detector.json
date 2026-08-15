@@ -244,5 +244,44 @@
         "tpr_at_fpr": 0.1282
       }
     }
-  }
+  },
+  "direction_consistency": {
+    "direction sign(p-0.5)  [KEPT]": {
+      "n_models": 9,
+      "n_agree": 5,
+      "majority_direction": "lower on nonsense",
+      "predeclarable": false,
+      "mean_raw_auroc": 0.4656721747388413
+    },
+    "strength |p-0.5|  [discarded]": {
+      "n_models": 9,
+      "n_agree": 8,
+      "majority_direction": "lower on nonsense",
+      "predeclarable": true,
+      "mean_raw_auroc": 0.3576350964360679
+    },
+    "answer mass  [discarded]": {
+      "n_models": 9,
+      "n_agree": 7,
+      "majority_direction": "lower on nonsense",
+      "predeclarable": true,
+      "mean_raw_auroc": 0.22854707333333332
+    },
+    "top-5 entropy  [discarded]": {
+      "n_models": 9,
+      "n_agree": 7,
+      "majority_direction": "higher on nonsense",
+      "predeclarable": true,
+      "mean_raw_auroc": 0.7278375911111111
+    }
+  },
+  "orientation_null": {
+    "n_models": 9,
+    "mean_null_oriented": 0.5046068189832928,
+    "p95_null_oriented_mean": 0.506515293565234,
+    "p99_null_oriented_mean": 0.5073053672371499,
+    "p95_null_oriented_single": 0.5113166310652361,
+    "note": "Hanley-McNeil normal approximation, folded by the orientation step. Inflation is negligible at these pair counts; reported so the 0.5 reference line can be checked rather than assumed."
+  },
+  "showcase_model": "Qwen/Qwen3.5-2B"
 }

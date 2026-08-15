@@ -679,9 +679,22 @@ arms \emph{perfectly} (\DetBestModelAuroc{}).}
 \begin{figure}[t]
 \centering
 \includegraphics[width=.92\textwidth]{fig4_detector.pdf}
-\caption{\textbf{The information is in the forward pass; the metric does not
-use it.} Each model contributes four bars --- how well each channel separates
-real outcomes from nonsense. The accented bar is the one coherence consumes.}
+\caption{\textbf{Information about grounding is present in the model's output;
+the coherence metric does not use it.} Four signals from the same forward pass,
+scored on how well each separates real from referentially ungrounded outcomes.
+\textbf{(A)} averaged over \DetNModels{} models. Choice direction --- the only
+signal coherence retains --- is closest to chance at \DetKeptAuroc{}, while the
+discarded answer mass reaches \DetBestAuroc{}. Beneath each bar: whether that
+channel's direction is consistent enough across models to have been
+\emph{predeclared}. It is, for every discarded channel; it is not for the one
+that is kept. \textbf{(B)} the same contrast on a single model,
+\DetShowcase{}, where the kept signal sits near chance at \DetShowcaseKept{}
+and a discarded one separates perfectly at \DetShowcaseBest{}. Shading marks the null band: orienting each model by
+$\max(\mathrm{AUROC}, 1-\mathrm{AUROC})$ can only raise a value, so a channel
+with no signal averages slightly above $0.5$ rather than at it. A taller bar
+means sharper separation, \emph{not} a better model. AUROCs are oriented using
+known arm labels and show how much separating information each channel carries,
+not the performance of a deployable detector.}
 \label{fig:detector}
 \end{figure}
 

@@ -298,6 +298,18 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         out.append(_cmd("DetBestTPR", f"{100 * _mean(best, 'tpr_at_fpr'):.0f}"))
         out.append(_cmd("DetFPR", f"{100 * detector['fpr']:.0f}"))
         out.append(_cmd("DetNModels", str(len(per))))
+        # The model panel B of the detector figure singles out. Read from the
+        # detector's own output rather than chosen here, so the caption cannot
+        # name a different model than the figure draws.
+        if detector.get("showcase_model"):
+            sm = detector["showcase_model"]
+            out.append(_cmd("DetShowcase", sm.split("/")[-1]))
+            e = per[sm]
+            kept_ch = next(n for n in e if "[KEPT]" in n)
+            best_ch = max((n for n in e if "discarded" in n),
+                          key=lambda n: e[n]["separation"])
+            out.append(_cmd("DetShowcaseKept", f"{e[kept_ch]['separation']:.2f}"))
+            out.append(_cmd("DetShowcaseBest", f"{e[best_ch]['separation']:.2f}"))
         best_model = max(((e[best]["separation"], m) for m, e in per.items()
                           if best in e), default=(None, None))
         if best_model[1]:

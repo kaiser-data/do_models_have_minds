@@ -105,6 +105,86 @@ def auroc(neg: np.ndarray, pos: np.ndarray) -> float:
     return float((r_pos - n_pos * (n_pos + 1) / 2) / (n_neg * n_pos))
 
 
+def direction_consistency(report: dict) -> dict:
+    """Which channels could have had their direction fixed before looking?
+
+    The orientation step -- max(AUROC, 1-AUROC) -- is the most oracle-flavoured
+    part of this analysis, because it is a choice made with the arm labels in
+    hand. But it is only a free parameter if the direction actually varies. If a
+    channel points the same way on every model, its direction is a fact about
+    the channel that could have been predeclared, and orienting it costs nothing
+    an auditor would not have known in advance. If the sign is a coin flip, the
+    orientation is doing real work and the resulting separation is the weakest
+    number in the table.
+
+    So this is not decoration: it is the cheap half of the held-out detector
+    experiment we have not run, and it separates the channels that would survive
+    predeclaration from the one that would not.
+
+    A 7-of-9 majority is the threshold, being the smallest majority that a fair
+    coin clears less than 10% of the time (two-sided binomial, p = 0.180 for
+    >=7, versus 0.508 for >=6). It is a pre-set bar, not one fitted to make a
+    particular channel pass.
+    """
+    channels = [c for c in next(iter(report.values())) if c != "n_matched_pairs"]
+    out = {}
+    for ch in channels:
+        dirs = [e[ch]["direction"] for e in report.values() if ch in e]
+        if not dirs:
+            continue
+        hi = sum(1 for d in dirs if d == "higher on nonsense")
+        n_agree = max(hi, len(dirs) - hi)
+        out[ch] = {
+            "n_models": len(dirs),
+            "n_agree": n_agree,
+            "majority_direction": ("higher on nonsense" if hi >= len(dirs) - hi
+                                   else "lower on nonsense"),
+            "predeclarable": n_agree >= 7,
+            # The unoriented mean, which is what a fixed a-priori direction
+            # would actually have delivered. For the kept channel it sits BELOW
+            # chance, which is the whole point.
+            "mean_raw_auroc": float(np.mean(
+                [e[ch]["auroc"] for e in report.values() if ch in e])),
+        }
+    return out
+
+
+def orientation_null(report: dict) -> dict:
+    """How much does per-model orientation inflate a channel with no signal?
+
+    Taking max(AUROC, 1-AUROC) can only push a value up, so a pure-noise channel
+    does not average 0.5 -- it averages slightly above, and a reader comparing
+    bars against a 0.5 chance line is using the wrong reference. This computes
+    the right one.
+
+    Under H0 an AUROC over n vs n rows is approximately Normal(0.5, sd) with
+    sd = sqrt((2n+1) / (12 n^2)) (Hanley-McNeil). Orienting folds that
+    distribution, giving E[max] = 0.5 + sd*sqrt(2/pi) and Var = sd^2 (1 - 2/pi).
+
+    At the pair counts here the inflation turns out to be about +0.005, which is
+    far too small to explain any gap between channels -- so this is reported to
+    close the objection rather than because it changes an answer.
+    """
+    ns = [e["n_matched_pairs"] for e in report.values()]
+    sds = [math.sqrt((2 * n + 1) / (12.0 * n * n)) for n in ns]
+    mean_shift = math.sqrt(2.0 / math.pi)
+    means = [0.5 + sd * mean_shift for sd in sds]
+    var = [sd * sd * (1.0 - 2.0 / math.pi) for sd in sds]
+    mean_of_means = float(np.mean(means))
+    se_of_mean = math.sqrt(sum(var) / len(var) ** 2)
+    return {
+        "n_models": len(ns),
+        "mean_null_oriented": mean_of_means,
+        "p95_null_oriented_mean": mean_of_means + 1.645 * se_of_mean,
+        "p99_null_oriented_mean": mean_of_means + 2.326 * se_of_mean,
+        # Single-model band, for a figure panel showing one model.
+        "p95_null_oriented_single": 0.5 + 1.960 * max(sds),
+        "note": "Hanley-McNeil normal approximation, folded by the orientation "
+                "step. Inflation is negligible at these pair counts; reported "
+                "so the 0.5 reference line can be checked rather than assumed.",
+    }
+
+
 def tpr_at_fpr(neg: np.ndarray, pos: np.ndarray, target_fpr: float = 0.05) -> float:
     """Detection rate at a threshold calibrated on the NEGATIVES only.
 
@@ -200,9 +280,46 @@ def main() -> None:
               f"{np.mean(best):.3f}.")
         print("The information is in the same forward pass. The metric does not use it.")
 
+    consistency = direction_consistency(report)
+    nulls = orientation_null(report)
+    # The single model the figure and the paper both point at as the sharpest
+    # case. Derived here, once, because a figure that picks its own example and
+    # a caption that names one separately will eventually name different models
+    # and nothing will fail.
+    showcase = max(
+        report,
+        key=lambda m: max(report[m][n]["separation"]
+                          for n in CHANNELS if "discarded" in n and n in report[m])
+        - report[m][KEPT]["separation"])
+    print("\n" + "=" * len(header))
+    print("Could each channel's direction have been PREDECLARED?\n")
+    print("Orienting each model by max(AUROC, 1-AUROC) is a choice made with the")
+    print("arm labels in hand, and it is the part of this analysis that is most")
+    print("open to the charge of being an oracle. But the choice is only free if")
+    print("the direction varies. A channel that points the same way on every")
+    print("model could have had its direction fixed in advance, and then the")
+    print("orientation costs nothing; a channel whose sign is a coin flip could")
+    print("not, and its separation is the weakest kind of number here.\n")
+    for name in CHANNELS:
+        c = consistency.get(name)
+        if not c:
+            continue
+        verdict = ("YES -- would have held" if c["predeclarable"]
+                   else "NO -- sign is a coin flip across models")
+        print(f"  {name:<36} {c['n_agree']}/{c['n_models']} agree "
+              f"({c['majority_direction']})   {verdict}")
+    print(f"\nOrientation inflates a pure-noise channel by only "
+          f"{nulls['mean_null_oriented'] - 0.5:+.4f} at these pair counts "
+          f"(mean {nulls['mean_null_oriented']:.4f}, 99th pct "
+          f"{nulls['p99_null_oriented_mean']:.4f}), so it does not explain any "
+          f"gap between channels.")
+
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"fpr": args.fpr, "per_model": report}, indent=2))
+    out.write_text(json.dumps({"fpr": args.fpr, "per_model": report,
+                               "direction_consistency": consistency,
+                               "orientation_null": nulls,
+                               "showcase_model": showcase}, indent=2))
     print(f"\nwrote {out}")
 
 

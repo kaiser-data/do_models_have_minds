@@ -104,6 +104,44 @@ def detector_section(det: dict | None, figure) -> str:
         for n in names)
     best = max((n for n in names if "discarded" in n), key=lambda n: mean(n))
 
+    # The cheap half of the held-out detector experiment: a channel that points
+    # the same way on every model could have had its direction fixed in advance,
+    # so orienting it costs nothing an auditor would not have known. One that
+    # flips is the reverse. This is the difference between a conceded oracle and
+    # a partly answered objection, so it goes on the page next to the table.
+    cons = det.get("direction_consistency", {})
+    cons_rows = "".join(
+        f"<tr><td class='m'>{n.split('  ')[0]}</td>"
+        f"<td class='muted'>{cons[n]['n_agree']}/{cons[n]['n_models']}</td>"
+        f"<td class='{'pos' if cons[n]['predeclarable'] else 'neg'}'>"
+        f"{'yes' if cons[n]['predeclarable'] else 'no &mdash; a coin flip'}</td></tr>"
+        for n in names if n in cons)
+    null = det.get("orientation_null", {})
+    cons_block = f"""
+<h3 style="font-size:15px;margin-top:26px">Could the direction have been fixed in
+advance?</h3>
+<p>Orienting each model by <code>max(AUROC, 1&#8722;AUROC)</code> is the part of
+this analysis most open to the charge of being an oracle &mdash; it is a choice
+made with the answer key in hand. But the choice is only <em>free</em> if the
+direction varies. A channel that points the same way on every model could have
+been predeclared, and orienting it costs nothing an auditor would not have known
+in advance.</p>
+<div class="tw"><table>
+<thead><tr><th>channel</th><th>models agreeing on direction</th>
+<th>could have been predeclared?</th></tr></thead>
+<tbody>{cons_rows}</tbody></table></div>
+<p style="font-size:13px">The channels the metric <b>discards</b> point
+consistently; the one it <b>keeps</b> is a coin flip. So the discarded channels'
+separation would largely have survived predeclaration, and the kept channel's is
+the most orientation-dependent number here &mdash; which cuts the same way as
+everything else on this page.
+Orientation can only push a value up, so a channel with no signal does not average
+0.5. At these pair counts it averages
+<b>{null.get('mean_null_oriented', 0.5):.4f}</b> &mdash; an inflation of
+{null.get('mean_null_oriented', 0.5) - 0.5:+.4f}, far too small to explain any gap
+between channels. That band, not the 0.5 line, is chance in the figure below.</p>
+"""
+
     return f"""
 <h2>The model can tell. The metric does not look.</h2>
 <p>Hallucination detection has converged on one idea: the sign that a model is
