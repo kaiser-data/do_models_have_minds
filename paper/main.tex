@@ -736,66 +736,63 @@ read as narrowing our claim.
     our reimplementation.
 \end{enumerate}
 
-\subsection{Given the option to decline, the model declines --- selectively}
+\subsection{Given the option to decline, most models decline}
 \label{sec:neutral}
 
 The standing objection to a forced binary is that it can manufacture an
 ordering, and because our \emph{floor} is measured on one, that objection lands
-on the central result rather than on a detail. We ran the control: the same
-pairs, the same model, an explicit third option (``Neither --- I have no
-preference between these''), nothing else changed. $P(A)$ is renormalised over
-A and B in both instruments, so the preference \emph{given that a preference
-was expressed} remains the same quantity.
+on the central result rather than on a detail. We ran the control on
+\NeutNModels{} models: the same pairs, an explicit third option (``Neither ---
+I have no preference between these''), nothing else changed. $P(A)$ is
+renormalised over A and B in both instruments, so the preference \emph{given
+that a preference was expressed} is the same quantity either way.
 
 \begin{table}[h]
 \centering
-\small
-\begin{tabular}{@{}llccc@{}}
-\toprule
-arm & instrument & coherence & decisive & $P(\text{neither})$ \\
-\midrule
-\armR{}  & forced binary  & \NeutCohRealBin{} & 12.3\% & --- \\
-\armR{}  & neutral option & \NeutCohRealNeut{} & 23.3\% & \NeutPCReal{} \\
-\armNm{} & forced binary  & \NeutCohInvBin{} & 0.0\% & --- \\
-\armNm{} & neutral option & \NeutCohInvNeut{} & 0.6\% & \NeutPCInv{} \\
-\bottomrule
-\end{tabular}
-\caption{The neutral-option control on \NeutModel{}. Coherence is computed by
-the same route as everywhere else in this paper --- same splits, same fit ---
-so the two instruments are comparable by construction.}
+\scriptsize
+\input{table_neutral}
+\caption{The neutral-option control. Coherence is computed by the same route as
+everywhere else in this paper --- same splits, same fit. $P(\text{neither})$ is
+renormalised over the three answers.}
 \label{tab:neutral}
 \end{table}
 
-\paragraph{The floor is not an artifact of forced choice.} Offering the opt-out
-moved the invented-outcome floor by \NeutFloorShift{}. The residual is
-\NeutResidBinary{} on the forced binary and \NeutResidNeutral{} with the
-neutral option --- unchanged. Whatever the models are doing on meaningless
-outcomes, they were not doing it \emph{because} we refused to let them abstain.
+\paragraph{Every model declines the meaningless comparison more often.}
+\NeutNGapPositive{} of \NeutNModels{}, without exception, and by a wide margin:
+the gap between $P(\text{neither})$ on invented and on real outcomes runs
+\NeutGapLo{} to \NeutGapHi{}. This is a large, clean content signal, obtained
+from the same forward pass, and the coherence metric cannot see any of it ---
+renormalising over A and B is precisely the step that discards it. That is
+\S\ref{sec:detector} again in a third guise, and it is the most direct form of
+the argument we have: asked whether they have a preference between two things
+that refer to nothing, models say no.
 
-\paragraph{But the opt-out is used, heavily, and it is used selectively.} This
-is the more interesting half and it was not what the cheap proxy predicted.
-Reading mass on a literal ``Neither'' out of the \emph{binary} runs' recorded
-top-5 gives essentially zero, and we had accordingly guessed that models impose
-an order rather than declining. That proxy was measuring \emph{spontaneous}
-abstention on an instrument where declining was never offered. Offered it, the
-model puts \NeutPCPctInv\% of its answer mass on ``neither'' for invented
-outcomes against \NeutPCPctReal\% for real ones. On \NeutMajInv\% of invented
-pairs ``neither'' outweighs both options combined; on real pairs that happens
-\NeutMajReal\% of the time.
+\paragraph{For most of them the invented arm stops being answered at all.}
+\NeutNRefuse{} of \NeutNModels{} put essentially their entire distribution on
+``neither'' for invented outcomes --- mean A/B mass between \NeutABRefuseLo{}
+and \NeutABRefuseHi{}, against \NeutABHi{} for the most engaged model. For
+those three, a coherence number computed from the surviving remainder is not a
+floor that withstood the control; it is an ordering fitted to a few hundredths
+of a percent of the probability mass, and we do not report it as a floor. The
+forced binary was not inventing the ordering out of nothing, but it \emph{was}
+compelling an ordering that most of these models decline to give.
 
-So the model distinguishes the arms sharply --- by a factor of two in mean
-opt-out rate, and by a factor of thirty in how often declining wins outright
---- while the coherence computed over the choices it does make moves by
-\NeutFloorShift{}. This is \S\ref{sec:detector} again in a third guise: the
-content signal is large and real, and it sits in a channel the metric discards
-by construction, because renormalising over A and B is exactly the step that
-throws ``neither'' away.
+\paragraph{Where a floor can still be measured, it survives.} On the
+\NeutNInterp{} models that keep answering the invented arm, offering the
+opt-out moves the floor by \NeutIShiftLo{} to \NeutIShiftHi{}, and
+\NeutNSurvive{} of \NeutNInterp{} keep it. So the narrow form of the objection
+is answered where it can be tested: the floor is not an artifact of forced
+choice. The broader form survives in a different shape --- for the majority of
+models the forced choice is what produced an answer at all.
 
-\paragraph{Scope.} One model, two arms, two cells. This answers the objection
-for \NeutModel{} and for nobody else yet, and the selective-opt-out result is a
-single-model observation that we report because it is large and because the
-proxy we would otherwise have relied on was wrong, not because $n = 1$
-establishes anything.
+\paragraph{Scope, and a reversal.} \NeutNModels{} models, two arms each; one
+further model (Qwen3.5-9B) is still incomplete and is reported as such rather
+than dropped. We ran this control first on a single model, and on that model
+concluded plainly that the floor survives. It does --- for that model, which
+turns out to be one of the two that still engages with the invented arm. At
+$n = 1$ we could not have known that it was the exception rather than the rule,
+and the conclusion we drew was correspondingly too clean. It is recorded here
+rather than quietly revised.
 
 \section{State of the evidence}\label{sec:evidence}
 

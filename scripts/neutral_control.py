@@ -83,6 +83,13 @@ def score(path: Path) -> dict | None:
             continue
     # p_neither is present only on neutral rows; None elsewhere.
     pc = [r["p_neither"] for r in rows if r.get("p_neither") is not None]
+    # The mass coherence is actually computed over. answer_mass_neutral counts
+    # C, so it stays ~1.0 even when the model has put everything on "neither" --
+    # and then p_option_a renormalises a vanishing remainder and the coherence
+    # number is noise wearing a floor's clothes. This is the diagnostic that
+    # tells the two apart, and it did not exist until n>1 produced P(C)=1.000.
+    ab = [r["answer_mass"] * (1 - r["p_neither"]) for r in rows
+          if r.get("p_neither") is not None]
     d = np.array(list(probs.values()))
     return {
         "path": path.name,
@@ -96,6 +103,8 @@ def score(path: Path) -> dict | None:
         # The share of items where declining outweighs both options. A mean can
         # hide a bimodal "declines on some, decides on others".
         "frac_neither_majority": float(np.mean(np.array(pc) > 0.5)) if pc else None,
+        "mean_ab_mass": float(np.mean(ab)) if ab else None,
+        "frac_ab_mass_below_01": float(np.mean(np.array(ab) < 0.01)) if ab else None,
         "decisive_fraction": float(np.mean((d < 0.2) | (d > 0.8))),
     }
 
@@ -103,20 +112,40 @@ def score(path: Path) -> dict | None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
-    ap.add_argument("--model", default="Qwen/Qwen3.5-2B")
+    ap.add_argument("--model", default="",
+                    help="one model; default is every model with neutral cells")
     ap.add_argument("--json", default="")
     args = ap.parse_args()
 
     results = Path(args.results)
-    report = {"model": args.model, "arms": {}, "claim": None}
+    # Auto-discover rather than requiring the caller to list models: a model
+    # whose cells landed but which nobody remembered to add to a list would be
+    # silently absent from the summary, which is the same failure as an
+    # unreported exclusion.
+    if args.model:
+        models = [args.model]
+    else:
+        models = sorted({
+            p.name.split("__" + a + "__neutral")[0].replace("__", "/", 1)
+            for a in ARMS for p in results.glob(f"*__{a}__neutral.jsonl")})
+    if not models:
+        print("no neutral cells found.")
+        return 1
+    reports = [analyse(results, m) for m in models]
+    return summarise(reports, args.json)
 
-    print(f"=== neutral-option control — {args.model} ===\n")
+
+def analyse(results: Path, model: str) -> dict:
+    args_model = model
+    report = {"model": args_model, "arms": {}, "claim": None}
+
+    print(f"\n=== neutral-option control — {args_model} ===\n")
     print(f"{'arm':10s}{'instrument':12s}{'coherence':>11s}{'decisive':>10s}"
           f"{'P(neither)':>12s}{'answer mass':>13s}")
     for arm in ARMS:
         entry = {}
         for label, neutral in (("binary", False), ("neutral", True)):
-            s = score(cell_path(results, args.model, arm, neutral))
+            s = score(cell_path(results, args_model, arm, neutral))
             entry[label] = s
             if s is None:
                 print(f"{arm:10s}{label:12s}{'-- not run --':>11s}")
@@ -160,13 +189,26 @@ def main() -> int:
         # verdict must be computed from every quantity it mentions.
         pc_r = report["arms"]["R"]["neutral"].get("mean_p_neither")
         pc_n = report["arms"]["N_minus"]["neutral"].get("mean_p_neither")
+        # Computed for EVERY model. The first version set this only inside the
+        # floor-survives branch, so the summary counted 3/3 where the truth was
+        # 5/5 -- a denominator quietly restricted to the flattering subset.
+        if pc_r is not None and pc_n is not None:
+            report["opt_out_gap"] = pc_n - pc_r
+        ab_n = report["arms"]["N_minus"]["neutral"].get("mean_ab_mass")
+        if ab_n is not None and ab_n < 0.05:
+            report["interpretable"] = False
+            report["uninterpretable_reason"] = (
+                f"mean A/B mass on invented outcomes is {ab_n:.4f}: the model "
+                f"put essentially everything on 'neither', so the coherence "
+                f"computed from the remainder is not a floor")
+        else:
+            report["interpretable"] = True
         if abs(nn - nb) < 0.05:
             report["claim"] = (
                 f"FLOOR SURVIVES. Offering an explicit opt-out moved the "
                 f"invented-outcome floor by {nn - nb:+.3f}, so the forced-binary "
                 f"objection does not explain the floor.")
             if pc_r is not None and pc_n is not None:
-                report["opt_out_gap"] = pc_n - pc_r
                 report["claim"] += (
                     f" But the opt-out is heavily used and used SELECTIVELY: "
                     f"P(neither) is {pc_n:.3f} on invented outcomes against "
@@ -187,9 +229,57 @@ def main() -> int:
                 f"reporting.")
 
     print(f"\nCLAIM: {report['claim']}")
-    if args.json:
-        Path(args.json).write_text(json.dumps(report, indent=2) + "\n")
-        print(f"\nwrote {args.json}")
+    return report
+
+
+def summarise(reports: list, json_out: str) -> int:
+    """Across models. The per-model verdicts above are the evidence; this is
+    where n stops being 1 -- so it reports the SPREAD, not just a mean, and
+    names any model that disagrees rather than averaging it away."""
+    ok = [r for r in reports if r.get("floor_shift") is not None]
+    print(f"\n\n=== across {len(ok)} model(s) with a complete quartet ===")
+    if ok:
+        print(f"{'model':26s}{'floor shift':>12s}{'P(C) real':>10s}"
+              f"{'P(C) inv':>9s}{'gap':>8s}{'A/B mass inv':>13s}{'floor?':>8s}")
+        for r in sorted(ok, key=lambda r: -(r.get("opt_out_gap") or 0)):
+            pr = r["arms"]["R"]["neutral"].get("mean_p_neither")
+            pn = r["arms"]["N_minus"]["neutral"].get("mean_p_neither")
+            ab = r["arms"]["N_minus"]["neutral"].get("mean_ab_mass")
+            gap = (pn - pr) if (pr is not None and pn is not None) else None
+            print(f"{r['model'].split('/')[-1][:25]:26s}{r['floor_shift']:>+12.3f}"
+                  f"{pr:>10.3f}{pn:>9.3f}"
+                  f"{(f'{gap:+.3f}' if gap is not None else '--'):>8s}"
+                  f"{ab:>13.4f}"
+                  f"{('yes' if r.get('interpretable') else 'NO'):>8s}")
+        # The floor range must be read over the models where a floor EXISTS.
+        # Three of five put ~all mass on "neither" for invented outcomes, so
+        # their coherence is computed from ~0.03% of the distribution: that is
+        # not a floor that survived, it is a floor that was never measured.
+        interp = [r for r in ok if r.get("interpretable")]
+        shifts = [r["floor_shift"] for r in interp]
+        gaps = [r["opt_out_gap"] for r in ok if r.get("opt_out_gap") is not None]
+        survived = [r for r in interp if abs(r["floor_shift"]) < 0.05]
+        print(f"\n{len(interp)}/{len(ok)} models still answer the invented arm "
+              f"often enough for a floor to mean anything.")
+        if shifts:
+            print(f"  among those: floor shift {min(shifts):+.3f} to "
+                  f"{max(shifts):+.3f}; {len(survived)}/{len(interp)} keep it")
+        for r in ok:
+            if not r.get("interpretable"):
+                print(f"  NOT A FLOOR  {r['model'].split('/')[-1]:24s} "
+                      f"{r['uninterpretable_reason']}")
+        if gaps:
+            higher = sum(1 for g in gaps if g > 0)
+            print(f"opt-out gap (invented - real) {min(gaps):+.3f} to "
+                  f"{max(gaps):+.3f}; {higher}/{len(gaps)} decline the "
+                  f"MEANINGLESS comparison more often")
+    blocked = [r["model"] for r in reports if r.get("floor_shift") is None]
+    if blocked:
+        print(f"incomplete (reported, not dropped): {', '.join(blocked)}")
+    if json_out:
+        Path(json_out).write_text(json.dumps(
+            {"models": reports, "n_complete": len(ok)}, indent=2) + "\n")
+        print(f"\nwrote {json_out}")
     return 0
 
 

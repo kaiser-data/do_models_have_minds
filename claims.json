@@ -205,45 +205,44 @@
     },
     {
       "id": "neutral-option",
-      "statement": "The floor survives when the model may decline the comparison -- and the opt-out it is given is used selectively, twice as often on invented outcomes as on real ones.",
+      "statement": "Where a floor can still be measured, it survives an explicit opt-out -- but on most models the invented arm stops being answered at all once declining is possible.",
       "status": "provisional",
       "section": "sec:neutral",
       "macros": [
-        "NeutModel",
-        "NeutFloorShift",
-        "NeutResidBinary",
-        "NeutResidNeutral",
-        "NeutPCReal",
-        "NeutPCInv"
+        "NeutNModels",
+        "NeutNInterp",
+        "NeutNRefuse",
+        "NeutIShiftLo",
+        "NeutIShiftHi",
+        "NeutABRefuseHi"
       ],
       "evidence": {
-        "models": 1,
-        "arms": 2,
-        "cells_run": 2,
-        "note": "one model (Qwen3.5-2B); the objection is answered on it and nowhere else yet"
+        "models": 5,
+        "cells_run": 10,
+        "note": "2 of 5 still answer the invented arm; 1 more model incomplete"
       },
-      "what_would_falsify": "A model whose invented-arm coherence collapses once declining is possible, i.e. a floor that was an artifact of forced choice after all.",
-      "grows_by": "The same two cells on 3-4 more models. At n=1 this answers the objection for Qwen3.5-2B and no one else, and the selective-opt-out finding is the more interesting half.",
+      "what_would_falsify": "A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.",
+      "grows_by": "Qwen3.5-9B's invented cell (OOM at batch 16, rerunning at 8), then the remaining roster. n=2 interpretable is thin.",
       "priority": 1
     },
     {
       "id": "opt-out-is-a-discarded-channel",
-      "statement": "Offered an explicit opt-out, the model declines meaningless comparisons about twice as often as real ones -- a large content signal that the coherence metric, which renormalises over the two answers, cannot see.",
-      "status": "provisional",
+      "statement": "Offered an explicit opt-out, every model tested declines meaningless comparisons more often than real ones -- a large content signal the coherence metric discards by construction.",
+      "status": "established",
       "section": "sec:neutral",
       "macros": [
-        "NeutPCReal",
-        "NeutPCInv",
-        "NeutCohInvBin",
-        "NeutCohInvNeut"
+        "NeutGapLo",
+        "NeutGapHi",
+        "NeutNGapPositive",
+        "NeutNModels"
       ],
       "evidence": {
-        "models": 1,
-        "cells_run": 2,
-        "note": "same two cells as neutral-option; n=1"
+        "models": 5,
+        "cells_run": 10,
+        "note": "5/5 without exception, gap +0.146 to +0.769"
       },
-      "what_would_falsify": "P(neither) failing to separate the arms on further models, or tracking the coherence residual (in which case it is not a discarded channel but the same one).",
-      "grows_by": "More models, and a check of whether P(neither) correlates with the residual across the roster the way answer mass does not.",
+      "what_would_falsify": "A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.",
+      "grows_by": "More models; the direction is unanimous at n=5 so this is about width.",
       "priority": 2
     }
   ]

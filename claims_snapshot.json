@@ -61,18 +61,18 @@
       "MostLengthModel": "granite-4.1-3b"
     },
     "neutral-option": {
-      "NeutModel": "Qwen3.5-2B",
-      "NeutFloorShift": "+0.003",
-      "NeutResidBinary": "+0.006",
-      "NeutResidNeutral": "+0.006",
-      "NeutPCReal": "0.316",
-      "NeutPCInv": "0.638"
+      "NeutNModels": "5",
+      "NeutNInterp": "2",
+      "NeutNRefuse": "3",
+      "NeutIShiftLo": "-0.023",
+      "NeutIShiftHi": "+0.003",
+      "NeutABRefuseHi": "0.0100"
     },
     "opt-out-is-a-discarded-channel": {
-      "NeutPCReal": "0.316",
-      "NeutPCInv": "0.638",
-      "NeutCohInvBin": "0.889",
-      "NeutCohInvNeut": "0.892"
+      "NeutGapLo": "+0.146",
+      "NeutGapHi": "+0.769",
+      "NeutNGapPositive": "5",
+      "NeutNModels": "5"
     }
   }
 }
