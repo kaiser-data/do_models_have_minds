@@ -6,3 +6,9 @@ __pycache__/
 .DS_Store
 results*.jsonl
 .next/
+
+# Raw sweep output — 54MB of per-call rows. Regenerable from the Modal volume
+# `nullcard-results`; card.json carries the analysis that the paper and site use.
+results/
+sweep_summary.json
+.netlify/

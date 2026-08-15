@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coherence Without Content — preliminary results</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface-0:#f5f5f3; --surface-1:#fcfcfb; --border:#e2e1dc; --grid:#dcdbd5;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#78766f;
+  --series-r:#2a78d6; --series-n:#eb6834;
+  --pos:#008300; --neg:#c4341c; --warn-bg:#fdf3e3; --warn-br:#e0a94a;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) {
+  color-scheme: dark;
+  --surface-0:#131312; --surface-1:#1a1a19; --border:#33322e; --grid:#3a3934;
+  --text-primary:#fff; --text-secondary:#c3c2b7; --text-muted:#93918a;
+  --series-r:#3987e5; --series-n:#d95926;
+  --pos:#3fb950; --neg:#e5674f; --warn-bg:#2b2416; --warn-br:#8a6a24;
+} }
+:root[data-theme=dark] {
+  color-scheme: dark;
+  --surface-0:#131312; --surface-1:#1a1a19; --border:#33322e; --grid:#3a3934;
+  --text-primary:#fff; --text-secondary:#c3c2b7; --text-muted:#93918a;
+  --series-r:#3987e5; --series-n:#d95926;
+  --pos:#3fb950; --neg:#e5674f; --warn-bg:#2b2416; --warn-br:#8a6a24;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface-0);color:var(--text-primary);
+ font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:48px 24px 96px}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.02em;margin:.2em 0}
+h2{font-size:24px;letter-spacing:-.01em;margin:56px 0 12px;padding-top:20px;
+ border-top:1px solid var(--border)}
+h3{font-size:16px;margin:0 0 4px}
+p{color:var(--text-secondary);max-width:70ch}
+.lede{font-size:19px;color:var(--text-primary)}
+.banner{background:var(--warn-bg);border:1px solid var(--warn-br);border-left-width:4px;
+ border-radius:6px;padding:14px 18px;margin:24px 0;font-size:14.5px;color:var(--text-primary)}
+.banner strong{letter-spacing:.02em}
+.hero{display:flex;flex-wrap:wrap;gap:16px;margin:32px 0}
+.stat{flex:1 1 200px;background:var(--surface-1);border:1px solid var(--border);
+ border-radius:10px;padding:18px 20px}
+.stat .v{font-size:34px;font-weight:650;letter-spacing:-.02em;line-height:1.1}
+.stat .l{font-size:12.5px;color:var(--text-muted);margin-top:6px}
+.fig{margin:32px 0;background:var(--surface-1);border:1px solid var(--border);
+ border-radius:10px;padding:22px}
+.fig img{width:100%;height:auto;display:block}
+.fig figcaption{font-size:13.5px;color:var(--text-secondary);margin-top:14px;
+ line-height:1.6;max-width:76ch}
+.darkonly{display:none}
+@media (prefers-color-scheme: dark){ :root:not([data-theme=light]) .lightonly{display:none}
+ :root:not([data-theme=light]) .darkonly{display:block} }
+:root[data-theme=dark] .lightonly{display:none}
+:root[data-theme=dark] .darkonly{display:block}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:28px;margin:28px 0}
+.chart{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;
+ padding:20px;margin:0}
+.chart figcaption p{font-size:13px;margin:0 0 10px;color:var(--text-muted)}
+.legend{display:flex;gap:18px;font-size:12.5px;color:var(--text-secondary);margin:0 0 14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface-1)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;
+ font-variant-numeric:tabular-nums}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);
+ font-weight:600;text-align:right}
+td.m,th:first-child{text-align:left} td.m{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+tr:last-child td{border-bottom:none}
+.pos{color:var(--pos)} .neg{color:var(--neg)} .muted{color:var(--text-muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;
+ background:var(--surface-1);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--border);
+ font-size:13px;color:var(--text-muted)}
+</style></head><body><div class="wrap">
+
+<p style="color:var(--text-muted);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin:0">
+Nullcard · Apart Research Digital Minds Sprint · 15 Aug 2026</p>
+<h1>Coherence without content</h1>
+<p class="lede">A preference-coherence metric that scores the same on outcomes
+that mean nothing.</p>
+
+<div class="banner">
+<strong>PRELIMINARY.</strong> Work in progress, mid-sprint. 9 models, one battery,
+n=1 per cell — no training-seed replicates yet, so no between-model claim is made here.
+Numbers may move. This page is generated from <code>card.json</code>; nothing on it
+is hand-entered.
+</div>
+
+<h2>What was measured</h2>
+<p><a href="https://arxiv.org/abs/2502.08640">Utility Engineering</a> (Mazeika et al.,
+CAIS 2025) elicits pairwise preferences over 500 textual outcomes, fits a Thurstonian
+utility model, and reports its held-out accuracy as <em>structural coherence</em> —
+finding it rises with scale and concluding that value systems emerge in LLMs.</p>
+
+<p>Their robustness checks vary <em>how the question is asked</em>: seven languages,
+syntax, framing, option labels, long context. Their null is a synthetic random utility
+vector. <strong>No condition varies whether the outcomes refer to anything.</strong></p>
+
+<p>We rebuilt their instrument and ran three arms through it — their real outcomes
+(<b>R</b>), the same sentences with invented referents but magnitudes preserved
+(<b>N+</b>), and invented referents with magnitudes removed (<b>N&#8722;</b>).
+Same prompt, verbatim. Same fit. Same metric.</p>
+
+<div class="hero">
+  <div class="stat"><div class="v">0.900</div>
+    <div class="l">coherence on real outcomes (mean, 9 models)</div></div>
+  <div class="stat"><div class="v">0.884</div>
+    <div class="l">coherence on <b>invented</b> outcomes</div></div>
+  <div class="stat"><div class="v">+0.016</div>
+    <div class="l">everything meaning contributes</div></div>
+</div>
+
+<h2>The metric is flat; the preference is not</h2>
+<p>Direction accuracy barely moves between real and invented outcomes. But the
+<em>strength</em> of the underlying preference collapses: on real outcomes these
+models commit to a side on 41% of pairs, and on invented ones
+4.8%.</p>
+
+<figure class="fig"><img class="lightonly" src="fig1_state_space.svg" alt="Coherence against conviction"><img class="darkonly" src="fig1_state_space-dark.svg" alt="Coherence against conviction"><figcaption><b>Every model is a path, not a point.</b> Each starts on real outcomes (big dot), moves to invented outcomes with magnitudes kept (small dot), then to invented outcomes with magnitudes removed (arrowhead). If the metric tracked meaning the paths would run down-<i>and-left</i>. They run almost straight down: conviction falls away while the metric barely registers it. Horizontal bars are the spread across five train/test splits &mdash; SmolLM2&rsquo;s wide bar is why its middle point sits far left, and is an unstable estimate rather than a finding. Both axes span their full operating range (accuracy from chance to 1, conviction from 0 to its 0.5 maximum), so the steepness is the data&rsquo;s and not a zoom choice.</figcaption></figure>
+
+<figure class="fig"><img class="lightonly" src="fig3_strength.svg" alt="Distribution of preference strength"><img class="darkonly" src="fig3_strength-dark.svg" alt="Distribution of preference strength"><figcaption>The mechanism, directly. On real outcomes the model commits &mdash; mass moves to the edges. On invented ones it piles up at indifference. Coherence reads only <i>which side of 0.5</i> each pair falls on, so both score the same.</figcaption></figure>
+
+<figure class="fig"><img class="lightonly" src="fig2_scale.svg" alt="The scale ladder"><img class="darkonly" src="fig2_scale-dark.svg" alt="The scale ladder"><figcaption>One family, four sizes, size as the only variable. The floor rises with scale alongside the signal, so the shaded band &mdash; everything meaning contributes &mdash; does not widen as the models get bigger.</figcaption></figure>
+
+<p>Utility Engineering's accuracy thresholds preferences to hard labels
+(their §4.1), so it records <em>which way</em> a model leans and never <em>how
+much</em>. A pair at p=0.51 counts exactly like one at p=0.99. That is why a model
+can be almost perfectly indifferent about gibberish and still score as coherent
+about it.</p>
+
+<h2>All numbers</h2>
+<div class="tw"><table>
+<thead><tr><th>model</th><th>R</th><th>N&#8722;</th><th>R&#8722;N&#8722;</th>
+<th>shuffled null</th><th>decisive R</th><th>decisive N&#8722;</th><th>slot-A bias</th></tr></thead>
+<tbody><tr><td class='m'>HuggingFaceTB/SmolLM3-3B</td><td>0.947</td><td>0.927</td><td class='pos'>+0.019</td><td class='muted'>0.522</td><td>47.2%</td><td>5.5%</td><td class='muted'>0.61</td></tr><tr><td class='m'>Qwen/Qwen3.5-9B</td><td>0.915</td><td>0.898</td><td class='pos'>+0.018</td><td class='muted'>0.531</td><td>44.2%</td><td>3.1%</td><td class='muted'>0.39</td></tr><tr><td class='m'>LiquidAI/LFM2.5-1.2B-Instruct</td><td>0.908</td><td>0.865</td><td class='pos'>+0.043</td><td class='muted'>0.520</td><td>0.1%</td><td>0.0%</td><td class='muted'>0.07</td></tr><tr><td class='m'>Qwen/Qwen3.5-4B</td><td>0.906</td><td>0.930</td><td class='neg'>-0.024</td><td class='muted'>0.531</td><td>32.3%</td><td>2.5%</td><td class='muted'>0.50</td></tr><tr><td class='m'>google/gemma-4-E2B-it</td><td>0.901</td><td>0.909</td><td class='neg'>-0.008</td><td class='muted'>0.503</td><td>59.5%</td><td>3.2%</td><td class='muted'>0.59</td></tr><tr><td class='m'>Qwen/Qwen3.5-2B</td><td>0.896</td><td>0.889</td><td class='pos'>+0.006</td><td class='muted'>0.506</td><td>12.3%</td><td>0.0%</td><td class='muted'>0.73</td></tr><tr><td class='m'>Qwen/Qwen3.5-0.8B</td><td>0.892</td><td>0.857</td><td class='pos'>+0.036</td><td class='muted'>0.501</td><td>0.0%</td><td>0.0%</td><td class='muted'>0.57</td></tr><tr><td class='m'>ibm-granite/granite-4.1-3b</td><td>0.879</td><td>0.836</td><td class='pos'>+0.042</td><td class='muted'>0.489</td><td>48.2%</td><td>14.5%</td><td class='muted'>0.24</td></tr><tr><td class='m'>HuggingFaceTB/SmolLM2-1.7B-Instruct</td><td>0.853</td><td>0.843</td><td class='pos'>+0.010</td><td class='muted'>0.488</td><td>0.0%</td><td>0.0%</td><td class='muted'>0.56</td></tr></tbody></table></div>
+<p style="font-size:13px"><b>shuffled null</b> keeps the pair set and permutes the
+observed probabilities across pairs, destroying the link between a pair and its
+preference. It lands at ~0.50, which is how we know the metric itself is sound and
+the flat result is not an artifact of our reimplementation.
+<b>decisive</b> is the share of pairs with p&lt;0.2 or p&gt;0.8.
+<b>slot-A bias</b> is the raw rate of picking the first option before
+counterbalancing — 0.5 is none.</p>
+
+<h2>What this does and does not show</h2>
+<p><b>It does not show the metric is broken.</b> It passes its own null at 0.50, its
+order-counterbalancing cancels positional bias exactly, and its held-out protocol
+means a coin-flip responder correctly scores ~0.46. All three were checked and all
+three came out in the original paper's favour.</p>
+<p><b>It shows the metric is unanchored.</b> High held-out accuracy establishes that
+choices are explained by a stable scalar ordering. It does not establish that the
+ordering is <em>about</em> anything — and without a content control there is no way
+to tell those apart from the number alone.</p>
+<p><b>Caveats we can already name.</b> Invented outcomes tokenise ~30% longer than
+real ones, so some of the residual could be a prompt-length effect. Fitted utilities
+on the invented arms correlate with text length up to r=&#8722;0.75, meaning the
+"ordering" there is substantially a length ordering. n=1 per cell. Two models
+(Phi-4-mini, Ministral-3) failed to load under transformers 5 and are absent, not
+excluded for their results.</p>
+
+<footer>
+Battery SHA-256 <code>342db046213099ad…</code> ·
+27 cells · 2500 pairs/cell,
+both presentation orders · predictions registered before the run in
+<code>PREREGISTRATION.md</code>.
+</footer>
+</div></body></html>
