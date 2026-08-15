@@ -736,6 +736,67 @@ read as narrowing our claim.
     our reimplementation.
 \end{enumerate}
 
+\subsection{Given the option to decline, the model declines --- selectively}
+\label{sec:neutral}
+
+The standing objection to a forced binary is that it can manufacture an
+ordering, and because our \emph{floor} is measured on one, that objection lands
+on the central result rather than on a detail. We ran the control: the same
+pairs, the same model, an explicit third option (``Neither --- I have no
+preference between these''), nothing else changed. $P(A)$ is renormalised over
+A and B in both instruments, so the preference \emph{given that a preference
+was expressed} remains the same quantity.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+arm & instrument & coherence & decisive & $P(\text{neither})$ \\
+\midrule
+\armR{}  & forced binary  & \NeutCohRealBin{} & 12.3\% & --- \\
+\armR{}  & neutral option & \NeutCohRealNeut{} & 23.3\% & \NeutPCReal{} \\
+\armNm{} & forced binary  & \NeutCohInvBin{} & 0.0\% & --- \\
+\armNm{} & neutral option & \NeutCohInvNeut{} & 0.6\% & \NeutPCInv{} \\
+\bottomrule
+\end{tabular}
+\caption{The neutral-option control on \NeutModel{}. Coherence is computed by
+the same route as everywhere else in this paper --- same splits, same fit ---
+so the two instruments are comparable by construction.}
+\label{tab:neutral}
+\end{table}
+
+\paragraph{The floor is not an artifact of forced choice.} Offering the opt-out
+moved the invented-outcome floor by \NeutFloorShift{}. The residual is
+\NeutResidBinary{} on the forced binary and \NeutResidNeutral{} with the
+neutral option --- unchanged. Whatever the models are doing on meaningless
+outcomes, they were not doing it \emph{because} we refused to let them abstain.
+
+\paragraph{But the opt-out is used, heavily, and it is used selectively.} This
+is the more interesting half and it was not what the cheap proxy predicted.
+Reading mass on a literal ``Neither'' out of the \emph{binary} runs' recorded
+top-5 gives essentially zero, and we had accordingly guessed that models impose
+an order rather than declining. That proxy was measuring \emph{spontaneous}
+abstention on an instrument where declining was never offered. Offered it, the
+model puts \NeutPCPctInv\% of its answer mass on ``neither'' for invented
+outcomes against \NeutPCPctReal\% for real ones. On \NeutMajInv\% of invented
+pairs ``neither'' outweighs both options combined; on real pairs that happens
+\NeutMajReal\% of the time.
+
+So the model distinguishes the arms sharply --- by a factor of two in mean
+opt-out rate, and by a factor of thirty in how often declining wins outright
+--- while the coherence computed over the choices it does make moves by
+\NeutFloorShift{}. This is \S\ref{sec:detector} again in a third guise: the
+content signal is large and real, and it sits in a channel the metric discards
+by construction, because renormalising over A and B is exactly the step that
+throws ``neither'' away.
+
+\paragraph{Scope.} One model, two arms, two cells. This answers the objection
+for \NeutModel{} and for nobody else yet, and the selective-opt-out result is a
+single-model observation that we report because it is large and because the
+proxy we would otherwise have relied on was wrong, not because $n = 1$
+establishes anything.
+
 \section{State of the evidence}\label{sec:evidence}
 
 This paper is built to grow: the roster, the replicate count and the number of
@@ -863,18 +924,14 @@ within-family result, and report the pooled correlation only alongside this
 split. Replicating it in a second family is the first thing we would do with
 more compute.
 
-\paragraph{The forced binary is not controlled, and we say so.} Our battery
-offers two options and no way to decline, and the standing objection to that
-design is that a forced choice can manufacture an ordering which weakens once
-respondents may abstain. Because our \emph{floor} is measured on a forced
-binary, the objection lands on the central result rather than on a detail. We
-specify the control in Appendix~\ref{app:neutral} --- the same pair with an
-explicit third option --- and it is implemented and unit-tested but
-\textbf{not run}: no model has been shown that prompt, and no number in this
-paper comes from it. The cheap proxy available from the existing rows is a
-lower bound only, for the reason given there. This is the first experiment we
-would run next, and until it is run the forced-binary confound is
-unaddressed rather than ruled out.
+\paragraph{The forced-binary control exists, on one model.}
+\S\ref{sec:neutral} answers the standing objection to our design --- that a
+forced choice can manufacture an ordering --- and answers it in our favour:
+the floor moves \NeutFloorShift{} when the model may decline. But it is
+\NeutModel{} alone, so the objection is met for one model and open for the
+other eight. Three or four more models would settle it, and the same cells
+would turn the selective-opt-out result from a single observation into a
+finding.
 
 \paragraph{Scope.} Nine open-weight models between 0.8B and 9B parameters, one
 outcome set, first-token scoring only. Two models failed to load under the

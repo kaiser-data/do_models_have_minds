@@ -124,6 +124,5 @@ Please respond with only "A", "B" or "C".
 \end{verbatim}\end{quote}
 $P(A)$ is still renormalised over A and B alone, so it remains the same quantity as the main arm --- the preference, given that a preference was expressed --- while $P(C)$ records how often the model declines. Reporting only the first would hide the effect the control was built to find.
 \begin{quote}
-\textbf{Status: specified and unit-tested, not yet run.} No model has been shown this prompt. The template, the three-way validity gate and $P(C)$ are implemented and covered by tests, but those tests exercise hand-constructed logit distributions, not a language model. \textbf{No result from this arm appears anywhere in this paper}, and the cheap lower bound below is not a substitute for it.
+\textbf{Status: run.} 2 neutral cell(s) on disk; results are reported in the body.
 \end{quote}
-What we can say without running it is bounded and we mark it as such. In the existing forced-binary rows, mass on a literal ``Neither'' reaches the recorded top-5 essentially never --- $0.000$ for the Qwen models and $0.012$ at most for gemma-4-E2B-it on invented outcomes. Those are \emph{lower bounds}, not measurements: the token is only visible when it reaches the top-5, so the true mass could be larger and we cannot tell from these rows. They suggest, without establishing, that models impose an order on nonsense rather than declining it.

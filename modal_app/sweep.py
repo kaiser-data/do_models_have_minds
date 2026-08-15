@@ -206,6 +206,46 @@ def harness_hash(cfg: dict) -> str:
     ).hexdigest()[:16]
 
 
+def estimate_runtime(model_ids: list, n_cells_per_model: int) -> str:
+    """How long this wave will take, from what this roster actually did.
+
+    Read from throughput.json (scripts/throughput.py), which is regenerated
+    from the .done sidecars, so the estimate sharpens as the project grows
+    rather than staying a guess someone typed once.
+
+    Deliberately reports a RANGE and rounds up. An ETA that runs under is
+    worse than one that runs over: it is the one that makes you leave.
+    """
+    try:
+        with open("throughput.json") as fh:
+            t = json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        return "no throughput.json; run scripts/throughput.py for an ETA"
+
+    rates, default = t["rows_per_s"], t["default_rows_per_s"]
+    cold = t.get("cold_start_s", 150)
+    per_cell = []
+    unknown = []
+    for m in model_ids:
+        r = rates.get(m)
+        if r is None:
+            unknown.append(m)
+            r = default
+        per_cell.extend([cold + EXPECTED_ROWS / r] * n_cells_per_model)
+
+    total = sum(per_cell)
+    n = len(per_cell)
+    lanes = min(MAX_GPUS, n)
+    # Cells are not identical, so perfect packing is optimistic and one-lane
+    # serialisation is pessimistic. Quote both ends.
+    best = total / lanes
+    worst = max(per_cell) * (-(-n // lanes))
+    note = f" ({', '.join(m.split('/')[-1] for m in unknown)} unmeasured, using median)" if unknown else ""
+    return (f"{n} cell(s) across {lanes} concurrent GPU(s) -> "
+            f"~{best / 60:.0f}-{worst / 60:.0f} min wall, "
+            f"{total / 60:.0f} GPU-min total{note}")
+
+
 def cell_filename(model_id: str, arm: str, design_seed: int = DEFAULT_DESIGN_SEED,
                   persona: str = "none", depth: str = "D0",
                   neutral: bool = False) -> str:
@@ -826,6 +866,9 @@ def main(
         return
 
     print("\n=== GPU ===")
+    n_per_model = len([1 for a in arm_list for p in persona_list for d in depth_list
+                       if not (p == "none" and d != "D0")])
+    print(f"  estimated: {estimate_runtime(model_ids, n_per_model)}")
     # skip_existing is checked inside run_cell, i.e. after a GPU container has
     # already started. Resuming a finished sweep just to reach the probe would
     # cold-start one GPU per completed cell to learn it has nothing to do, so

@@ -153,12 +153,28 @@ def main() -> int:
         # objection; a floor that collapses means our headline was an artifact
         # and the paper must say so. Stated here so the verdict is not chosen
         # after seeing the number.
+        #
+        # The first version of this branch asserted "and the model takes the
+        # opt-out on essentially none of the pairs" from the floor shift ALONE,
+        # never reading P(C). It printed that sentence over P(C) = 0.638. A
+        # verdict must be computed from every quantity it mentions.
+        pc_r = report["arms"]["R"]["neutral"].get("mean_p_neither")
+        pc_n = report["arms"]["N_minus"]["neutral"].get("mean_p_neither")
         if abs(nn - nb) < 0.05:
             report["claim"] = (
                 f"FLOOR SURVIVES. Offering an explicit opt-out moved the "
-                f"invented-outcome floor by {nn - nb:+.3f}, and the model takes "
-                f"the opt-out on essentially none of the pairs. The forced-binary "
+                f"invented-outcome floor by {nn - nb:+.3f}, so the forced-binary "
                 f"objection does not explain the floor.")
+            if pc_r is not None and pc_n is not None:
+                report["opt_out_gap"] = pc_n - pc_r
+                report["claim"] += (
+                    f" But the opt-out is heavily used and used SELECTIVELY: "
+                    f"P(neither) is {pc_n:.3f} on invented outcomes against "
+                    f"{pc_r:.3f} on real ones ({pc_n - pc_r:+.3f}). The model "
+                    f"declines the meaningless comparison about twice as often, "
+                    f"and coherence among the pairs it does answer is unchanged. "
+                    f"That is the paper's thesis again: the content signal is "
+                    f"real and sits in a channel the metric discards.")
         elif nn < nb:
             report["claim"] = (
                 f"FLOOR WEAKENS. The invented-outcome floor fell {nn - nb:+.3f} "

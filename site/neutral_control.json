@@ -1,0 +1,62 @@
+{
+  "model": "Qwen/Qwen3.5-2B",
+  "arms": {
+    "R": {
+      "binary": {
+        "path": "Qwen__Qwen3.5-2B__R.jsonl",
+        "usable": true,
+        "n_rows": 5000,
+        "n_pairs": 2500,
+        "coherence": 0.8955583166332666,
+        "answer_mass": 0.9956367434084817,
+        "mean_p_neither": null,
+        "max_p_neither": null,
+        "frac_neither_majority": null,
+        "decisive_fraction": 0.1232
+      },
+      "neutral": {
+        "path": "Qwen__Qwen3.5-2B__R__neutral.jsonl",
+        "usable": true,
+        "n_rows": 5000,
+        "n_pairs": 2500,
+        "coherence": 0.898011186076805,
+        "answer_mass": 0.9939012146712526,
+        "mean_p_neither": 0.31571815766608924,
+        "max_p_neither": 0.7769704122331847,
+        "frac_neither_majority": 0.0334,
+        "decisive_fraction": 0.2328
+      }
+    },
+    "N_minus": {
+      "binary": {
+        "path": "Qwen__Qwen3.5-2B__N_minus.jsonl",
+        "usable": true,
+        "n_rows": 5000,
+        "n_pairs": 2500,
+        "coherence": 0.8890675680678626,
+        "answer_mass": 0.9846446379636448,
+        "mean_p_neither": null,
+        "max_p_neither": null,
+        "frac_neither_majority": null,
+        "decisive_fraction": 0.0004
+      },
+      "neutral": {
+        "path": "Qwen__Qwen3.5-2B__N_minus__neutral.jsonl",
+        "usable": true,
+        "n_rows": 5000,
+        "n_pairs": 2500,
+        "coherence": 0.8923314091416839,
+        "answer_mass": 0.9883925264996869,
+        "mean_p_neither": 0.6377065765567362,
+        "max_p_neither": 0.9169458277309556,
+        "frac_neither_majority": 0.8976,
+        "decisive_fraction": 0.0056
+      }
+    }
+  },
+  "claim": "FLOOR SURVIVES. Offering an explicit opt-out moved the invented-outcome floor by +0.003, so the forced-binary objection does not explain the floor. But the opt-out is heavily used and used SELECTIVELY: P(neither) is 0.638 on invented outcomes against 0.316 on real ones (+0.322). The model declines the meaningless comparison about twice as often, and coherence among the pairs it does answer is unchanged. That is the paper's thesis again: the content signal is real and sits in a channel the metric discards.",
+  "residual_binary": 0.006490748565403992,
+  "residual_neutral": 0.005679776935121117,
+  "floor_shift": 0.003263841073821272,
+  "opt_out_gap": 0.321988418890647
+}

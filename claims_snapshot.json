@@ -60,6 +60,19 @@
       "RealLengthRule": "0.541",
       "MostLengthModel": "granite-4.1-3b"
     },
-    "neutral-option": {}
+    "neutral-option": {
+      "NeutModel": "Qwen3.5-2B",
+      "NeutFloorShift": "+0.003",
+      "NeutResidBinary": "+0.006",
+      "NeutResidNeutral": "+0.006",
+      "NeutPCReal": "0.316",
+      "NeutPCInv": "0.638"
+    },
+    "opt-out-is-a-discarded-channel": {
+      "NeutPCReal": "0.316",
+      "NeutPCInv": "0.638",
+      "NeutCohInvBin": "0.889",
+      "NeutCohInvNeut": "0.892"
+    }
   }
 }

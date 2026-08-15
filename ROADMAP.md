@@ -4,15 +4,15 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 ## Queue
 
-### 1. `neutral-option` — open
+### 1. `neutral-option` — provisional
 
-> The floor survives when the model is given an explicit option to decline the comparison.
+> The floor survives when the model may decline the comparison -- and the opt-out it is given is used selectively, twice as often on invented outcomes as on real ones.
 
-**Next addition.** One model, both arms, ~10k forward passes. This is the strongest published objection to the design and the cheapest open item in the ledger.
+**Next addition.** The same two cells on 3-4 more models. At n=1 this answers the objection for Qwen3.5-2B and no one else, and the selective-opt-out finding is the more interesting half.
 
-**Would falsify it.** A large P(C) on invented outcomes together with a collapse in coherence among the remaining choices. That would make the floor an artifact of forced choice.
+**Would falsify it.** A model whose invented-arm coherence collapses once declining is possible, i.e. a floor that was an artifact of forced choice after all.
 
-*Current evidence:* cells run = 0, note = template and scoring implemented and unit-tested; no model has been shown the prompt
+*Current evidence:* models = 1, arms = 2, cells run = 2, note = one model (Qwen3.5-2B); the objection is answered on it and nowhere else yet
 
 ### 2. `scaling-residual-falls` — provisional
 
@@ -24,7 +24,17 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* families = 1, sizes in family = 4, models outside family = 5
 
-### 3. `track3-directive-blind` — provisional
+### 3. `opt-out-is-a-discarded-channel` — provisional
+
+> Offered an explicit opt-out, the model declines meaningless comparisons about twice as often as real ones -- a large content signal that the coherence metric, which renormalises over the two answers, cannot see.
+
+**Next addition.** More models, and a check of whether P(neither) correlates with the residual across the roster the way answer mass does not.
+
+**Would falsify it.** P(neither) failing to separate the arms on further models, or tracking the coherence residual (in which case it is not a discarded channel but the same one).
+
+*Current evidence:* models = 1, cells run = 2, note = same two cells as neutral-option; n=1
+
+### 4. `track3-directive-blind` — provisional
 
 > Both the stated and the revealed channel register which trait was named and neither registers what the model was told to do about it.
 
@@ -34,7 +44,7 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* models stated = 5, models revealed passing gate = 2, models with complete triad = 3
 
-### 4. `answer-mass-channel` — provisional
+### 5. `answer-mass-channel` — provisional
 
 > Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.
 

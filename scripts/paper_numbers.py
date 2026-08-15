@@ -77,7 +77,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           validity: list[dict] | None = None,
           detector: dict | None = None, stated: list[dict] | None = None,
           stated_base: list[dict] | None = None,
-          revealed: dict | None = None) -> str:
+          revealed: dict | None = None,
+          neutral: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -384,6 +385,34 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             out.append(_cmd("RevInventedGap",
                             f"{i['scores'][CONCEALED] - i['scores'][VERBAL]:+.3f}"))
 
+    # The neutral-option control. Emitted only when all four cells exist, so
+    # the paper cannot quote half of it: a P(C) without the matching coherence
+    # comparison would be an interesting number standing in for the control it
+    # is not.
+    if neutral and neutral.get("residual_binary") is not None:
+        arms = neutral["arms"]
+
+        def _g(arm, inst, field):
+            s = arms.get(arm, {}).get(inst)
+            return s.get(field) if s and s.get("usable") else None
+
+        out.append(_cmd("NeutModel", neutral["model"].split("/")[-1]))
+        out.append(_cmd("NeutResidBinary", f"{neutral['residual_binary']:+.3f}"))
+        out.append(_cmd("NeutResidNeutral", f"{neutral['residual_neutral']:+.3f}"))
+        out.append(_cmd("NeutFloorShift", f"{neutral['floor_shift']:+.3f}"))
+        for arm, tag in (("R", "Real"), ("N_minus", "Inv")):
+            for inst, itag in (("binary", "Bin"), ("neutral", "Neut")):
+                v = _g(arm, inst, "coherence")
+                if v is not None:
+                    out.append(_cmd(f"NeutCoh{tag}{itag}", f"{v:.3f}"))
+            pc = _g(arm, "neutral", "mean_p_neither")
+            if pc is not None:
+                out.append(_cmd(f"NeutPC{tag}", f"{pc:.3f}"))
+                out.append(_cmd(f"NeutPCPct{tag}", f"{100 * pc:.0f}"))
+            maj = _g(arm, "neutral", "frac_neither_majority")
+            if maj is not None:
+                out.append(_cmd(f"NeutMaj{tag}", f"{100 * maj:.0f}"))
+
     if personas:
         vals = [r["floor_corrected"] for r in personas]
         out.append(_cmd("NPersonaCells", str(len(vals))))
@@ -553,6 +582,7 @@ def main() -> None:
     ap.add_argument("--stated", default="self_report_summary_personas.json")
     ap.add_argument("--stated-base", default="self_report_summary.json")
     ap.add_argument("--revealed", default="site/deception.json")
+    ap.add_argument("--neutral", default="site/neutral_control.json")
     ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
     ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
     args = ap.parse_args()
@@ -583,13 +613,15 @@ def main() -> None:
     stated = json.loads(spath.read_text()) if spath.exists() else None
     stated_base = json.loads(sbpath.read_text()) if sbpath.exists() else None
     revealed = json.loads(rpath3.read_text()) if rpath3.exists() else None
+    npath = Path(args.neutral)
+    neutral = json.loads(npath.read_text()) if npath.exists() else None
     for label, obj, path in (("stated self-report", stated, spath),
                              ("self-report baseline", stated_base, sbpath),
                              ("revealed channel", revealed, rpath3)):
         if obj is None:
             print(f"  no {label} at {path}; omitting those macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
-                 detector, stated, stated_base, revealed)
+                 detector, stated, stated_base, revealed, neutral)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

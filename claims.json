@@ -205,17 +205,46 @@
     },
     {
       "id": "neutral-option",
-      "statement": "The floor survives when the model is given an explicit option to decline the comparison.",
-      "status": "open",
-      "section": "app:neutral",
-      "macros": [],
+      "statement": "The floor survives when the model may decline the comparison -- and the opt-out it is given is used selectively, twice as often on invented outcomes as on real ones.",
+      "status": "provisional",
+      "section": "sec:neutral",
+      "macros": [
+        "NeutModel",
+        "NeutFloorShift",
+        "NeutResidBinary",
+        "NeutResidNeutral",
+        "NeutPCReal",
+        "NeutPCInv"
+      ],
       "evidence": {
-        "cells_run": 0,
-        "note": "template and scoring implemented and unit-tested; no model has been shown the prompt"
+        "models": 1,
+        "arms": 2,
+        "cells_run": 2,
+        "note": "one model (Qwen3.5-2B); the objection is answered on it and nowhere else yet"
       },
-      "what_would_falsify": "A large P(C) on invented outcomes together with a collapse in coherence among the remaining choices. That would make the floor an artifact of forced choice.",
-      "grows_by": "One model, both arms, ~10k forward passes. This is the strongest published objection to the design and the cheapest open item in the ledger.",
+      "what_would_falsify": "A model whose invented-arm coherence collapses once declining is possible, i.e. a floor that was an artifact of forced choice after all.",
+      "grows_by": "The same two cells on 3-4 more models. At n=1 this answers the objection for Qwen3.5-2B and no one else, and the selective-opt-out finding is the more interesting half.",
       "priority": 1
+    },
+    {
+      "id": "opt-out-is-a-discarded-channel",
+      "statement": "Offered an explicit opt-out, the model declines meaningless comparisons about twice as often as real ones -- a large content signal that the coherence metric, which renormalises over the two answers, cannot see.",
+      "status": "provisional",
+      "section": "sec:neutral",
+      "macros": [
+        "NeutPCReal",
+        "NeutPCInv",
+        "NeutCohInvBin",
+        "NeutCohInvNeut"
+      ],
+      "evidence": {
+        "models": 1,
+        "cells_run": 2,
+        "note": "same two cells as neutral-option; n=1"
+      },
+      "what_would_falsify": "P(neither) failing to separate the arms on further models, or tracking the coherence residual (in which case it is not a discarded channel but the same one).",
+      "grows_by": "More models, and a check of whether P(neither) correlates with the residual across the roster the way answer mass does not.",
+      "priority": 2
     }
   ]
 }
