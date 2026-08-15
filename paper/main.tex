@@ -235,6 +235,37 @@ detection by how much the auditor is assumed to know; it is a control we do not
 implement, and we name it in \S\ref{sec:limits} as the natural extension of our
 detector, which is currently scored with ground truth in hand.
 
+\paragraph{Two peer-reviewed convergences, and what they do not license.}
+Two results published independently of this work point the same way, and we
+state carefully what each does and does not support.
+\citet{ashkinaze2025dvb} train models on preference data in which a deep value
+is deliberately confounded with a shallow feature, then break the confound at
+test. Across 104,725 trials and nine frontier models, their deep-value
+generalisation rate is $0.30$ --- below chance for every model --- so what
+survives the break is overwhelmingly the surface feature. That is our persona
+result (\S\ref{sec:persona}) in a different instrument, but the two numbers are
+\emph{not} comparable: their rate is a choice between two constructed options,
+ours the share of a length-corrected category contrast reproduced on invented
+outcomes, and their roster is frontier where ours is 0.8--9B open-weight. We
+claim the convergence, not the magnitude. We also decline the extrapolation
+their abstract invites: their size evidence is five pairwise comparisons, three
+favouring the smaller model, mean absolute difference $0.07$, which is not a
+scaling trend and should not be read beside \S\ref{sec:scale}.
+
+\citet{khan2025randomness} supply the closer match. Benchmarking against the
+standard deviation of between-country differences in human survey data
+($0.114$), they find that requiring a model to reason before answering shifts
+its expressed cultural preferences by a weighted mean difference of up to
+$0.770$, exceeding that human baseline on five of six dimensions. Our
+\S\ref{sec:reasoning} finds the same channel-sensitivity in a preference
+battery, which makes our observation a replication rather than an isolated
+result. Their scale-size manipulation, by contrast, produces effects of
+$0.031$--$0.088$, \emph{below} the human baseline --- so the ``format beats
+culture'' claim belongs to deliberation, not to response-scale design, and we
+cite it only for the former. Their two effect statistics are also not the same
+quantity as the baseline they are read against, so we take the direction and
+their own framing rather than any ratio.
+
 \paragraph{Why not a personality inventory.} Trait inventories are the obvious
 alternative instrument and we deliberately avoided them: Big Five scores have
 been found not to predict behaviour across frontier models, and political

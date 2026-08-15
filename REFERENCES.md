@@ -113,6 +113,87 @@ Full notes in `RESEARCH-NOTES.md`. Load-bearing here:
 
 ---
 
+## Convergent findings, sourced from full text
+
+A track-by-track literature brief arrived on 15 Aug 2026 listing four convergent
+claims with hard figures and **no citations**. Under the standing rule at the
+foot of this file, none of it was usable as written. Sourcing it collapsed the
+four claims into **two papers**, and two of the four did not survive the check.
+
+### Ashkinaze et al. (2025) — Deep Value Benchmark
+
+> Joshua Ashkinaze, Hua Shen, Saipranav Avula, Eric Gilbert, Ceren Budak.
+> *Deep Value Benchmark: Measuring Whether Models Generalize Deep Values or
+> Shallow Preferences.* NeurIPS 2025 (Spotlight). arXiv:2511.02109, 3 Nov 2025.
+> Full text read 15 Aug 2026 (arXiv HTML).
+
+**Covers brief claims 1 and 4** — "shallow generalization" and "Deep Value
+Benchmark" were listed as separate items; they are the same paper.
+
+**Verified.** DVGR ("Deep Value Generalization Rate") is defined as the
+proportion of trials in which the model chose the value-aligned option
+$(v_1, s_2)$, i.e. $\frac{1}{K}\sum_i \mathbb{1}[\text{prediction}_i = (v_1,s_2)]$;
+0 is purely shallow, 1 is purely deep. Overall **DVGR = 0.30**, over
+**N = 104,725 trials** and **9 models** (Gemini 2.0 flash/flash-lite, GPT-4o
+mini/standard, GPT-4.1 nano/mini/standard, Llama-3 8B/70B). DVGR was
+significantly below chance for every model.
+
+**Corrected.** The brief rendered this as *"shallow preferences beat deep values
+at every size"* and filed it as a **scaling** claim. It is not one. The actual
+result is **"smaller models had a higher DVGR in 3/5 comparisons"**, with a
+**mean absolute DVGR difference of 0.07** across 5 model pairs — the authors'
+own wording is that larger models generalized deep values *"slightly less"*.
+Five pairwise comparisons, three in the stated direction, is not a size trend
+and must not be cited beside our within-family correlation over four sizes as
+though it were the same kind of evidence.
+
+**Do not quote the numbers side by side.** 1 − DVGR = 0.70 sits temptingly close
+to our 66% (`\PersonaNonsenseShare`), and the two are **not the same quantity**.
+DVGR is a choice rate between two constructed options under a deliberately
+confounded training set; ours is the share of a persona's length-corrected
+category contrast that reproduces on invented outcomes. The regimes differ too —
+their roster is frontier/closed, ours is 0.8B–9B open-weight. The convergence is
+qualitative and should be stated as such.
+
+### Khan, Casper & Hadfield-Menell (2025) — Randomness, Not Representation
+
+> Ariba Khan, Stephen Casper, Dylan Hadfield-Menell.
+> *Randomness, Not Representation: The Unreliability of Evaluating Cultural
+> Alignment in LLMs.* FAccT 2025. arXiv:2503.08688v2 (v1 11 Mar 2025,
+> v2 8 Apr 2025). Full text read 15 Aug 2026.
+
+**Covers brief claims 2 and 3** — again one paper, not two.
+
+**Verified, and it is the stronger of the two for us.** Their human baseline is
+the **standard deviation of between-country differences, 0.114**, computed on
+GlobalOpinionQA filtered to 180 Likert questions with complete responses across
+15 countries. Requiring **reasoning before the answer** shifts expressed
+preferences by a weighted mean difference of **0.178 / 0.487 / 0.770 / 0.283 /
+0.298** across five of six cultural dimensions (Power Distance 0.015, n.s.) —
+i.e. five of six exceed the between-country baseline, one by more than 6×.
+Five models (GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 Flash, Llama 3.1 405B,
+Mistral Large), temperature 0, three runs averaged.
+
+**This is our `scripts/reasoning_effect.py` result in a neighbouring
+instrument** and turns our observation into a replication.
+
+**Corrected — claim 2 is not supported and must be dropped.** The brief said
+design choices *"induce variation larger than real cultural differences"* and
+named Likert size first. The Likert-scale-size effects are weighted standard
+deviations of **0.069, 0.088, 0.067, 0.031, 0.046, 0.043** — **all six below the
+0.114 human benchmark.** The "exceeds between-country variation" property
+belongs to the *reasoning* manipulation, not to scale size. Citing Likert size
+for it would reverse the paper's own numbers.
+
+**Metric caveat to carry if these are compared.** The paper reports two
+different statistics — weighted *mean difference* for binary conditions
+(reasoning) and weighted *standard deviation* for multi-category ones (scale
+size) — and benchmarks both against a quantity that is itself a standard
+deviation. A WMD compared to an SD is not a like-for-like comparison; we cite
+the direction and the authors' own framing, not a ratio.
+
+---
+
 ## Borrowed method, and what exactly was taken
 
 Recorded explicitly so a reader can tell our contribution from someone else's.
