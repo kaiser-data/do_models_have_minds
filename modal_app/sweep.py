@@ -207,18 +207,26 @@ def harness_hash(cfg: dict) -> str:
 
 
 def cell_filename(model_id: str, arm: str, design_seed: int = DEFAULT_DESIGN_SEED,
-                  persona: str = "none", depth: str = "D0") -> str:
+                  persona: str = "none", depth: str = "D0",
+                  neutral: bool = False) -> str:
     """One file per (model, arm, design seed).
 
     The seed is omitted for the default so the first wave's files stay findable
     by --skip-existing. Replicates get an explicit suffix, which is what keeps
     them from silently overwriting the run they are meant to be compared with.
+
+    `neutral` gets its own suffix for the same reason and a stronger one: it is
+    a DIFFERENT INSTRUMENT (three options, not two). A neutral cell landing on
+    a binary cell's filename would put incomparable rows behind a name the card
+    already trusts.
     """
     stem = f"{model_id.replace('/', '__')}__{arm}"
     if design_seed != DEFAULT_DESIGN_SEED:
         stem += f"__s{design_seed}"
     if persona != "none" or depth != "D0":
         stem += f"__{persona}-{depth}"
+    if neutral:
+        stem += "__neutral"
     return stem + ".jsonl"
 
 
@@ -451,9 +459,11 @@ def run_cell(
     design_seed: int = DEFAULT_DESIGN_SEED,
     persona: str = "none",
     depth: str = "D0",
+    neutral: bool = False,
 ) -> dict:
     out_path = os.path.join(
-        RESULTS_DIR, cell_filename(model_id, arm, design_seed, persona, depth))
+        RESULTS_DIR,
+        cell_filename(model_id, arm, design_seed, persona, depth, neutral))
     if skip_existing:
         done, n = cell_is_complete(out_path)
         if done:
@@ -474,7 +484,7 @@ def run_cell(
     try:
         return _run_cell_inner(
             model_id, arm, batch_size, checkpoint_every, abort_on_mass, out_path,
-            design_seed, persona, depth,
+            design_seed, persona, depth, neutral,
         )
     except Exception as e:
         return {
@@ -493,12 +503,34 @@ def _run_cell_inner(
     design_seed: int = DEFAULT_DESIGN_SEED,
     persona: str = "none",
     depth: str = "D0",
+    neutral: bool = False,
 ) -> dict:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     from nullcard.runner.forced_choice import (
-        ANSWER_MASS_FLOOR, answer_mass, build_forced_choice_prompt, p_option_a)
+        ANSWER_MASS_FLOOR, answer_mass, answer_mass_neutral,
+        build_forced_choice_prompt, build_neutral_choice_prompt, p_neither,
+        p_option_a)
+
+    # The neutral arm swaps the prompt AND the validity gate together. Swapping
+    # only the prompt would score a model that correctly answers "C" as having
+    # failed to answer at all -- discarding exactly the signal the arm exists
+    # to measure.
+    build_prompt = build_neutral_choice_prompt if neutral else build_forced_choice_prompt
+    gate = answer_mass_neutral if neutral else answer_mass
+
+    # The filename and the instrument must agree, and once they did not: the
+    # first neutral run wrote 10k rows of the BINARY battery into files named
+    # __neutral, because run_cell computed the neutral path but called this
+    # function without the flag. Nothing failed -- the sweep exited 0 and the
+    # files looked right. Only `neutral_option: false` inside the rows gave it
+    # away. A name is not evidence of what produced it, so check.
+    if neutral != out_path.endswith("__neutral.jsonl"):
+        raise ValueError(
+            f"instrument/filename mismatch: neutral={neutral} but out_path is "
+            f"{os.path.basename(out_path)}. Refusing to write rows that would "
+            f"misrepresent which battery produced them.")
 
     import sys
 
@@ -531,6 +563,7 @@ def _run_cell_inner(
         "persona": persona, "depth": depth,
         "system_prompt": (NEUTRAL_SYSTEM if depth == "D1"
                           else PERSONAS.get(persona) if depth == "D2" else None),
+        "neutral_option": neutral,
         "chat_template_applied": True, "thinking_disabled": True,
         "dtype": "bfloat16", "method": "forced_choice_first_token_logprob",
         "temperature": None, "top_p": None,
@@ -553,7 +586,7 @@ def _run_cell_inner(
         for start in range(0, len(jobs), batch_size):
             batch = jobs[start : start + batch_size]
             prompts = [
-                build_forced_choice_prompt(texts[sel[i]], texts[sel[j]])
+                build_prompt(texts[sel[i]], texts[sel[j]])
                 for _, i, j, _ in batch
             ]
             encoded = [_template(tok, p, persona, depth) for p in prompts]
@@ -576,17 +609,24 @@ def _run_cell_inner(
                     tok.decode([int(t)]): float(lp)
                     for t, lp in zip(top_idx[r].tolist(), top_lp[r].tolist())
                 }
-                mass = answer_mass(dist)
+                mass = gate(dist)
                 recent_mass.append(mass)
                 try:
                     pa_val = p_option_a(dist)
                 except ValueError:
                     pa_val = None
+                pc_val = None
+                if neutral:
+                    try:
+                        pc_val = p_neither(dist)
+                    except ValueError:
+                        pc_val = None
 
                 row = {
                     "model_id": model_id, "arm": arm, "pair_index": k,
                     "slot_a_outcome": sel[i], "slot_b_outcome": sel[j], "order": order,
                     "p_option_a": pa_val, "answer_mass": mass,
+                    "p_neither": pc_val, "neutral_option": neutral,
                     "top_tokens": sorted(dist.items(), key=lambda x: -x[1])[:5],
                     "battery_sha256": design["battery_sha256"], "harness_hash": hhash,
                     "design_seed": design_seed,
@@ -740,6 +780,7 @@ def main(
     depths: str = "D0",
     self_report_probe: bool = False,
     probe_only: bool = False,
+    neutral: bool = False,
 ):
     import sys
 
@@ -757,6 +798,10 @@ def main(
 
     print(f"models ({len(model_ids)}): {model_ids}")
     print(f"arms: {arm_list}")
+    if neutral:
+        print("INSTRUMENT: neutral option (A/B/C). This is a DIFFERENT battery "
+              "from the paper's; cells are written with a __neutral suffix and "
+              "are never comparable to binary cells except through P(A|A or B).")
 
     persona_list = [p.strip() for p in personas.split(",") if p.strip()]
     depth_list = [d.strip() for d in depths.split(",") if d.strip()]
@@ -794,7 +839,8 @@ def main(
         print(f"personas={persona_list} depths={depth_list} -> {len(cells)} cells")
         summaries = list(
             run_cell.starmap(
-                [(m, a, batch_size, 500, 0.25, skip_existing, design_seed, p, d)
+                [(m, a, batch_size, 500, 0.25, skip_existing, design_seed, p, d,
+                  neutral)
                  for m, a, p, d in cells]
             )
         )

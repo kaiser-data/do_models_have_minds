@@ -144,3 +144,42 @@ def test_replicate_seed_and_persona_suffixes_coexist():
                          persona="cautious-concealed", depth="D2")
     model, arm, seed, p, d = parse_cell_name(Path(name))
     assert seed == 20260817 and p == "cautious-concealed" and d == "D2"
+
+
+# ---------------------------------------------------------------------------
+# The instrument must match the filename.
+#
+# This bug shipped: run_cell computed the __neutral path but called
+# _run_cell_inner without the neutral flag, so 10,000 rows of the BINARY
+# battery were written into files named __neutral. Nothing failed. The sweep
+# exited 0, both files were the right size, and the only evidence was
+# `neutral_option: false` inside the rows. Had the analysis run first, it would
+# have reported "the floor survives when a neutral option is offered" from data
+# in which no neutral option was ever offered.
+#
+# A filename is not evidence of what produced it.
+# ---------------------------------------------------------------------------
+
+
+def test_neutral_cells_get_their_own_filename():
+    """A neutral cell must never land on a binary cell's name: it is a
+    different instrument (three options), not a variant of the same one."""
+    binary = cell_filename("Qwen/Qwen3.5-2B", "R")
+    neutral = cell_filename("Qwen/Qwen3.5-2B", "R", neutral=True)
+    assert binary != neutral
+    assert neutral.endswith("__neutral.jsonl")
+
+
+def test_neutral_suffix_composes_with_persona_and_seed():
+    name = cell_filename("Qwen/Qwen3.5-2B", "R", design_seed=20260817,
+                         persona="cautious-concealed", depth="D2", neutral=True)
+    assert name.endswith("__neutral.jsonl")
+    assert "cautious-concealed-D2" in name and "s20260817" in name
+
+
+@pytest.mark.parametrize("neutral", [False, True])
+def test_filename_and_instrument_flag_agree(neutral):
+    """The invariant the shipped bug violated, stated directly: the flag that
+    selects the prompt is the same flag that names the file."""
+    name = cell_filename("Qwen/Qwen3.5-2B", "N_minus", neutral=neutral)
+    assert name.endswith("__neutral.jsonl") == neutral
