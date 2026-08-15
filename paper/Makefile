@@ -15,7 +15,8 @@ REPO  := ..
 # NOT named TEX: make predefines that to `tex`, and ?= will not override a
 # built-in, so the rule silently ran the wrong binary.
 TEXCMD ?= tectonic -X compile
-FIGS  := figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf \
+FIGS  := figs/fig0_pipeline.pdf \
+         figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf \
          figs/fig4_detector.pdf figs/fig5_persona.pdf
 GEN   := numbers.tex table_main.tex table_stated.tex table_revealed.tex \
          appendix_prompts.tex table_claims.tex $(FIGS)
@@ -66,6 +67,9 @@ appendix_prompts.tex: $(REPO)/battery/outcomes_3arm.json \
 
 figs/fig1_state_space.pdf figs/fig2_scale.pdf figs/fig3_strength.pdf: $(REPO)/card.json
 	cd $(REPO) && python3 scripts/figures.py --out paper/figs --format pdf --themes light
+
+figs/fig0_pipeline.pdf: $(REPO)/card.json
+	cd $(REPO) && python3 scripts/fig_pipeline.py --out paper/figs --format pdf --themes light
 
 figs/fig5_persona.pdf: $(REPO)/site/persona_depth.json
 	cd $(REPO) && python3 scripts/persona_depth.py --out paper/figs --format pdf --themes light

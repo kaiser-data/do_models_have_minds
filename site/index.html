@@ -139,6 +139,9 @@ much</em>. A pair at p=0.51 counts exactly like one at p=0.99. That is why a mod
 can be almost perfectly indifferent about gibberish and still score as coherent
 about it.</p>
 
+<h2>How it runs</h2>
+<figure class="fig"><img class="lightonly" src="fig0_pipeline.svg" alt="The measurement pipeline"><img class="darkonly" src="fig0_pipeline-dark.svg" alt="The measurement pipeline"><figcaption>A rented GPU is the only stage that calls a model. Everything to its right is a pure fold over files on disk &mdash; no network, no sampling, no API key &mdash; so this page and the paper are two renderings of one artifact and cannot disagree. Each arrow carries the gate that guards it.</figcaption></figure>
+
 <h2>How each number is computed</h2>
 <p>Every value on this page comes from the four steps below. They are written out
 because a coherence score is easy to quote and hard to interpret, and most of the

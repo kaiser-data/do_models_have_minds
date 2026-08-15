@@ -276,6 +276,40 @@ traits and reports no directional political claim.
 
 \section{Method}\label{sec:method}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig0_pipeline.pdf}
+\caption{\textbf{The measurement pipeline.} A rented GPU is the only stage that
+calls a model; everything to its right is a pure fold over files on disk, with
+no network, no sampling and no API key. Answers are read from the first-token
+logit distribution rather than sampled, so temperature, top-$p$ and seed are
+absent from the design. Each arrow carries the gate that guards it: a CPU-only
+dry run of the whole battery before any GPU is rented, a row-count and
+answer-mass check before a cell may enter \texttt{card.json}, and a claims-ledger
+and lint check before any number reaches prose. Because the paper and the public
+results page are two renderings of the same \texttt{card.json}, they cannot
+disagree.}
+\label{fig:pipeline}
+\end{figure}
+
+Figure~\ref{fig:pipeline} gives the shape of the pipeline; this section gives
+the design it implements.
+
+\paragraph{Execution.} The sweep runs on rented L4 and A10G GPUs
+(Modal), one cell per model $\times$ arm $\times$ design seed, writing
+append-only JSONL. Two properties of that arrangement matter for
+interpretation rather than for engineering. First, \textbf{nothing is sampled}:
+we read $P(A)$ directly off the first-token distribution, which is the quantity
+the original method's $K{=}10$ sampling estimates, so the result carries no
+temperature or seed. This is only valid for models that place their answer in
+the first token, which is why the answer-mass gate exists and is enforced rather
+than assumed. Second, \textbf{cells are resumable and self-describing}: a cell
+records the configuration that produced it and the writer refuses to emit rows
+when that configuration disagrees with the path it was given. That guard is not
+hypothetical --- an earlier run wrote 10{,}000 rows of the wrong battery into
+correctly-named files and exited successfully, and only the configuration
+recorded inside the rows revealed it.
+
 \paragraph{Three arms.} The battery holds the same 510 outcomes in three
 versions, hash-pinned as \texttt{\BatterySHA\ldots} before the first run:
 

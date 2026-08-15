@@ -69,6 +69,41 @@ positional bias exactly, held-out evaluation keeps a coin-flip responder near ch
 
 ---
 
+## How it runs
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site/fig0_pipeline-dark.svg">
+  <img src="site/fig0_pipeline.svg" alt="Pipeline: Modal GPU sweep to append-only results to card.json to paper and site, with the gate guarding each transition">
+</picture>
+
+Four stages, and the shape is the point: **a rented GPU is the only thing that talks to a
+model.** Everything to its right is a pure fold over files on disk — no network, no
+sampling, no API key — so the paper and the site are two renderings of one artifact and
+cannot disagree with each other.
+
+| stage | what happens | what guards the exit |
+|---|---|---|
+| **Modal GPU sweep** | one cell per model × arm × design seed, on L4/A10G. Answers are read from **first-token logits**, never sampled, so there is no temperature and no seed to vary. Cells are resumable and append-only. | a CPU-only gate runs the whole battery shape before any GPU is rented, and an ETA is printed from measured throughput |
+| **`results/`** | one `.jsonl` per cell, never mutated. Not committed — 402 MB — but pinned by SHA in `results_manifest.json`. | a cell must have its full row count **and** clear the answer-mass validity gate before it enters the card |
+| **`card.json`** | the only analysed artifact. Every number in the paper and on the site folds from here. | `claims.py` fails the build if any claim's macros drift past tolerance; `lint_paper.py` fails on a missing macro |
+| **paper + site** | `paper_numbers.py` emits every figure as a LaTeX macro; `build_site.py` renders the same card to HTML. | no number may be typed by hand in either |
+
+Two properties worth stating because they are unusual, and one warning:
+
+- **Determinism.** Nothing samples. `P(A)` is read directly off the first-token
+  distribution, which is the quantity the original method's K=10 sampling estimates — so
+  temperature, top-p and seed leave the design entirely.
+- **Resumability.** A killed sweep resumes per cell, and `_run_cell_inner` refuses to
+  write when its configuration disagrees with the filename it was given. That guard
+  exists because a run once wrote 10,000 rows of the wrong battery into correctly-named
+  files and exited 0.
+- **The harness is not yet identical across models.** `render_prompts.py` renders what
+  each model actually receives: 7 of 9 get no system block, and 2 get one from their own
+  chat template — one of which includes the current date. See
+  [Limitations](#known-limitations).
+
+---
+
 ## Reproducing it
 
 **Every derived artifact is committed** — `card.json`, `paper/numbers.tex`, the figures,
@@ -140,6 +175,8 @@ folder, set `main.tex` as root.
 | `scripts/` | every analysis; each writes JSON the site and paper read |
 | `results/` | append-only `.jsonl` per cell — never mutated, **not committed** (402 MB) |
 | `results_manifest.json` | SHA-256 per cell, so a fetched `results/` can be verified |
+| `ARCHITECTURE.html` | standalone code-structure walkthrough (`open ARCHITECTURE.html`) |
+| `methods-map.html` | standalone map of the four tracks and how they relate |
 | `paper/` | `main.tex`, `slides.tex`, generated `numbers.tex` |
 | `site/` | generated static page (no build step, no framework) |
 | `tests/` | 189 tests; none contacts a model |
@@ -188,4 +225,29 @@ on the 2 models that pass the specificity gate; see `paper/main.tex` §"A direct
 neither channel registers".
 
 `HANDOFF-SIMPLE.md` is the zero-context orientation; `HANDOFF.md` is the detailed version;
-`PITCH.md` is the framing and track mapping.
+`PITCH.md` is the framing and track mapping. `STUDY-MODEL-CARD.md` is the design for what
+this instrument would have to become to support an objective model card.
+
+---
+
+## Known limitations
+
+The full list is `paper/main.tex` §Limitations and the machine-readable version is
+`claims.json`. The three a reader should meet first:
+
+1. **The harness is not identical across models.** The sweep sends no system message in
+   the baseline condition and records `system_prompt: None` — which records what was
+   *sent*. Rendering what was *received* shows 7 of 9 models get no system block and 2
+   (SmolLM2-1.7B-Instruct, SmolLM3-3B) get one from their own chat template. SmolLM3-3B's
+   also stamps in **the current date**, so its prompt was not constant across days, and
+   it is the highest-coherence model in the table. Cross-family contrasts involving those
+   two carry an uncontrolled difference. Run `python3 scripts/render_prompts.py` to see
+   it; `--check` gates future runs.
+2. **The detector results are oracle separations.** Arm labels are known, each channel's
+   orientation is chosen using both arms, and the best discarded channel is best on the
+   data it is scored on. They show the information is present in the output distribution,
+   not that an auditor could extract it.
+3. **The scaling result rests on one family.** Within the Qwen3.5 ladder the residual
+   falls with size; pooled across families the correlation is weak and weakens further
+   under length matching (−0.67 → −0.16). A second family spanning 3+ sizes is the
+   highest-value outstanding experiment.
