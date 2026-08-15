@@ -116,9 +116,9 @@ Same prompt, verbatim. Same fit. Same metric.</p>
   <div class="stat"><div class="v">0.906</div>
     <div class="l">coherence on real outcomes (mean, 9 models)</div></div>
   <div class="stat"><div class="v">0.880</div>
-    <div class="l">coherence on <b>invented</b> outcomes</div></div>
+    <div class="l">coherence on <b>referentially ungrounded</b> outcomes</div></div>
   <div class="stat"><div class="v">+0.025</div>
-    <div class="l">everything meaning contributes</div></div>
+    <div class="l">upper bound on what the replaced content contributes</div></div>
 </div>
 
 <h2>The metric is flat; the preference is not</h2>
@@ -131,7 +131,7 @@ models commit to a side on 41% of pairs, and on invented ones
 
 <figure class="fig"><img class="lightonly" src="fig3_strength.svg" alt="Distribution of preference strength"><img class="darkonly" src="fig3_strength-dark.svg" alt="Distribution of preference strength"><figcaption>The mechanism, directly. On real outcomes the model commits &mdash; mass moves to the edges. On invented ones it piles up at indifference. Coherence reads only <i>which side of 0.5</i> each pair falls on, so both score the same.</figcaption></figure>
 
-<figure class="fig"><img class="lightonly" src="fig2_scale.svg" alt="The scale ladder"><img class="darkonly" src="fig2_scale-dark.svg" alt="The scale ladder"><figcaption>One family, four sizes, size as the only variable. The floor rises with scale alongside the signal, so the shaded band &mdash; everything meaning contributes &mdash; does not widen as the models get bigger.</figcaption></figure>
+<figure class="fig"><img class="lightonly" src="fig2_scale.svg" alt="The scale ladder"><img class="darkonly" src="fig2_scale-dark.svg" alt="The scale ladder"><figcaption>One family, four sizes, size as the only variable. The floor rises with scale alongside the signal, so the shaded band &mdash; the most the replaced content can be contributing &mdash; does not widen as the models get bigger. This is a statement about one family and not a scaling law: pooled across families the correlation is weak, and it weakens further once prompt length is matched.</figcaption></figure>
 
 <p>Utility Engineering's accuracy thresholds preferences to hard labels
 (their §4.1), so it records <em>which way</em> a model leans and never <em>how
@@ -204,9 +204,14 @@ P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
   committed. <b>P(neither)</b> is how often it declines, measured by re-running
   the battery with an explicit third option, "Neither &mdash; I have no
   preference between these".</p>
-  <p class="eg">Qwen3.5-2B commits on <b>41%</b> of real pairs and <b>4.5%</b> of
-  invented ones. Offered an opt-out, models decline on <b>every</b> model tested
-  more often for invented outcomes &mdash; up to <b>100%</b> of them &mdash;
+  <p class="eg">Averaged over the 6 models that commit at all on
+  real outcomes: <b>41%</b> of real pairs against
+  <b>4.5%</b> of invented ones. Per model that is a median
+  <b>17&times;</b> collapse in conviction; dividing the two
+  averages instead gives a smaller <b>9.2&times;</b>,
+  because one model keeps far more conviction on invented outcomes than the
+  rest. Offered an opt-out, <b>every</b> model tested declines invented outcomes
+  more often than real ones &mdash; on some, essentially all of them &mdash;
   while the coherence number barely moves.</p>
 </div>
 
@@ -216,11 +221,14 @@ P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
 <th>design floor</th><th>clears</th>
 <th>shuffled null</th><th>decisive R</th><th>decisive N&#8722;</th><th>slot-A bias</th></tr></thead>
 <tbody><tr><td class='m'>HuggingFaceTB/SmolLM3-3B</td><td>0.938</td><td>0.929</td><td class='pos'>+0.009</td><td class='muted'>0.029</td><td class='neg'>no</td><td class='muted'>0.505</td><td>48.7%</td><td>4.6%</td><td class='muted'>0.60</td></tr><tr><td class='m'>Qwen/Qwen3.5-9B</td><td>0.919</td><td>0.923</td><td class='neg'>-0.004</td><td class='muted'>0.010</td><td class='neg'>no</td><td class='muted'>0.519</td><td>45.7%</td><td>2.7%</td><td class='muted'>0.40</td></tr><tr><td class='m'>LiquidAI/LFM2.5-1.2B-Instruct</td><td>0.905</td><td>0.858</td><td class='pos'>+0.047</td><td class='muted'>0.023</td><td class='pos'>2.0&times;</td><td class='muted'>0.526</td><td>0.1%</td><td>0.0%</td><td class='muted'>0.07</td></tr><tr><td class='m'>Qwen/Qwen3.5-0.8B</td><td>0.904</td><td>0.838</td><td class='pos'>+0.067</td><td class='muted'>0.023</td><td class='pos'>2.9&times;</td><td class='muted'>0.497</td><td>0.1%</td><td>0.0%</td><td class='muted'>0.57</td></tr><tr><td class='m'>Qwen/Qwen3.5-4B</td><td>0.903</td><td>0.916</td><td class='neg'>-0.013</td><td class='muted'>0.015</td><td class='neg'>no</td><td class='muted'>0.525</td><td>33.8%</td><td>1.9%</td><td class='muted'>0.50</td></tr><tr><td class='m'>google/gemma-4-E2B-it</td><td>0.902</td><td>0.892</td><td class='pos'>+0.010</td><td class='muted'>0.007</td><td class='pos'>1.5&times;</td><td class='muted'>0.500</td><td>56.4%</td><td>2.8%</td><td class='muted'>0.61</td></tr><tr><td class='m'>ibm-granite/granite-4.1-3b</td><td>0.896</td><td>0.832</td><td class='pos'>+0.063</td><td class='muted'>0.029</td><td class='pos'>2.2&times;</td><td class='muted'>0.506</td><td>49.7%</td><td>14.9%</td><td class='muted'>0.25</td></tr><tr><td class='m'>Qwen/Qwen3.5-2B</td><td>0.895</td><td>0.892</td><td class='pos'>+0.003</td><td class='muted'>0.001</td><td class='muted' title='floor too small to divide by'>&gt; floor*</td><td class='muted'>0.524</td><td>12.8%</td><td>0.0%</td><td class='muted'>0.72</td></tr><tr><td class='m'>HuggingFaceTB/SmolLM2-1.7B-Instruct</td><td>0.890</td><td>0.843</td><td class='pos'>+0.047</td><td class='muted'>0.015</td><td class='pos'>3.0&times;</td><td class='muted'>0.502</td><td>0.0%</td><td>0.0%</td><td class='muted'>0.56</td></tr></tbody></table></div>
-<p style="font-size:13px"><b>design floor</b> is the spread of the same cell across
-three independent designs — a different outcome subsample and a different pair set
-each time. It is the smallest difference this study is entitled to call a
-difference, so <b>clears</b> asks only whether R&#8722;N&#8722; exceeds it, and
-prints by how much. 6 of 9 models clear.
+<p style="font-size:13px"><b>design floor</b> is the observed spread of the same
+cell across 3 independent designs — a different outcome subsample
+and a different pair set each time. It is an empirical sensitivity threshold, not
+a confidence interval and not a significance test: with only 3
+replicates the floor is itself uncertain, and one model's came out near zero.
+<b>clears</b> asks whether R&#8722;N&#8722; exceeds it and prints by how much;
+read that as "larger than this study can resolve", not as "significant".
+6 of 9 models clear.
 <b>*</b> marks a floor too near zero to divide by: the model is above its floor,
 but the ratio would be an artifact of a small denominator rather than a large
 effect.
@@ -251,10 +259,18 @@ construction rather than by selection.</p>
 <th>detection at 5% false alarms</th></tr></thead>
 <tbody><tr><td class='m'>direction sign(p-0.5)</td><td class='neg'>0.596</td><td class='muted'>0%</td></tr><tr><td class='m'>strength |p-0.5|</td><td class='pos'>0.739</td><td class='muted'>16%</td></tr><tr><td class='m'>answer mass</td><td class='pos'>0.821</td><td class='muted'>40%</td></tr><tr><td class='m'>top-5 entropy</td><td class='pos'>0.740</td><td class='muted'>26%</td></tr></tbody></table></div>
 <p style="font-size:13px">0.5 means the channel cannot tell a real outcome from a
-meaningless one. The threshold is calibrated on the <b>real</b> rows only, never
-on the nonsense. The direction channel is binary, so its detection rate at a
-fixed false-alarm rate is not well defined &mdash; read its AUROC, not its
-percentage.</p>
+meaningless one. The threshold behind the detection rate is calibrated on the
+<b>real</b> rows only, never on the nonsense. The direction channel is binary, so
+its detection rate at a fixed false-alarm rate is not well defined &mdash; read
+its AUROC, not its percentage.</p>
+<p style="font-size:13px"><b>These are oracle separations, not a deployable
+detector.</b> We know which arm each row came from; each channel's orientation is
+chosen by comparing both arms; and the best discarded channel is the best on the
+same data it is scored on. What this establishes is that information about
+grounding is present in the output distribution &mdash; not that an auditor
+without the answer key could extract it. Predeclaring each channel's direction,
+fixing the choice on held-out models, and reporting bootstrap intervals would
+turn this into a detection result; none of that has been done.</p>
 
 <figure class="fig"><img class="lightonly" src="fig4_detector.svg" alt="What the metric keeps versus what it discards"><img class="darkonly" src="fig4_detector-dark.svg" alt="What the metric keeps versus what it discards"><figcaption>Each model contributes one bar per channel. The accented bar is the only one the coherence number consumes.</figcaption></figure>
 

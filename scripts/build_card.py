@@ -196,7 +196,18 @@ def summarise_cell(path: Path) -> dict | None:
 
 
 def build_card(results_dir: Path) -> dict:
-    cells = [c for c in (summarise_cell(p) for p in sorted(results_dir.glob("*.jsonl"))) if c]
+    # Neutral cells are a different instrument -- three options, not two -- and
+    # belong to scripts/neutral_control.py. They are excluded here rather than
+    # parsed, because a two-option coherence computed over three-option rows
+    # would be a number with no meaning that still printed. Announced rather
+    # than dropped quietly: a card built over fewer cells than the tree holds
+    # must say so, or the omission reads as coverage.
+    paths = sorted(results_dir.glob("*.jsonl"))
+    neutral = [p for p in paths if p.stem.endswith("__neutral")]
+    if neutral:
+        print(f"  skipping {len(neutral)} neutral-option cell(s): a 3-option "
+              f"instrument, scored by scripts/neutral_control.py")
+    cells = [c for c in (summarise_cell(p) for p in paths if p not in neutral) if c]
 
     # Average over design replicates, and keep their spread. Each design seed
     # draws a different outcome subsample and a different pair set, so the

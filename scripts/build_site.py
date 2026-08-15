@@ -123,10 +123,18 @@ construction rather than by selection.</p>
 <th>detection at 5% false alarms</th></tr></thead>
 <tbody>{rows}</tbody></table></div>
 <p style="font-size:13px">0.5 means the channel cannot tell a real outcome from a
-meaningless one. The threshold is calibrated on the <b>real</b> rows only, never
-on the nonsense. The direction channel is binary, so its detection rate at a
-fixed false-alarm rate is not well defined &mdash; read its AUROC, not its
-percentage.</p>
+meaningless one. The threshold behind the detection rate is calibrated on the
+<b>real</b> rows only, never on the nonsense. The direction channel is binary, so
+its detection rate at a fixed false-alarm rate is not well defined &mdash; read
+its AUROC, not its percentage.</p>
+<p style="font-size:13px"><b>These are oracle separations, not a deployable
+detector.</b> We know which arm each row came from; each channel's orientation is
+chosen by comparing both arms; and the best discarded channel is the best on the
+same data it is scored on. What this establishes is that information about
+grounding is present in the output distribution &mdash; not that an auditor
+without the answer key could extract it. Predeclaring each channel's direction,
+fixing the choice on held-out models, and reporting bootstrap intervals would
+turn this into a detection result; none of that has been done.</p>
 
 {figure("fig4_detector", "What the metric keeps versus what it discards",
   "Each model contributes one bar per channel. The accented bar is the only one "
@@ -224,6 +232,15 @@ def build(card: dict, personas: list[dict] | None = None,
     ]
     mean_dec_r = sum(a for a, _ in dec_pairs) / len(dec_pairs)
     mean_dec_n = sum(b for _, b in dec_pairs) / len(dec_pairs)
+    # Two different collapse ratios, and the page has to say which it means.
+    # The median of the per-model ratios is much larger than the ratio of the
+    # two means, because one model keeps far more conviction on invented
+    # outcomes than the rest and drags the aggregate. Printing one number next
+    # to the two means invites the reader to divide them and get the other.
+    n_design_reps = min(t.get("n_design_replicates", 1) for t in tiles)
+    _ratios = sorted(a / b for a, b in dec_pairs if b > 0)
+    median_dec_ratio = _ratios[len(_ratios) // 2]
+    aggregate_dec_ratio = mean_dec_r / mean_dec_n
 
     def figure(stem, title, caption):
         return (
@@ -383,11 +400,11 @@ Same prompt, verbatim. Same fit. Same metric.</p>
 
 <div class="hero">
   <div class="stat"><div class="v">{mean_r:.3f}</div>
-    <div class="l">coherence on real outcomes (mean, 9 models)</div></div>
+    <div class="l">coherence on real outcomes (mean, {len(tiles)} models)</div></div>
   <div class="stat"><div class="v">{mean_f:.3f}</div>
-    <div class="l">coherence on <b>invented</b> outcomes</div></div>
+    <div class="l">coherence on <b>referentially ungrounded</b> outcomes</div></div>
   <div class="stat"><div class="v">{mean_gap:+.3f}</div>
-    <div class="l">everything meaning contributes</div></div>
+    <div class="l">upper bound on what the replaced content contributes</div></div>
 </div>
 
 <h2>The metric is flat; the preference is not</h2>
@@ -414,8 +431,10 @@ models commit to a side on {mean_dec_r*100:.0f}% of pairs, and on invented ones
 
 {figure("fig2_scale", "The scale ladder",
   "One family, four sizes, size as the only variable. The floor rises with scale "
-  "alongside the signal, so the shaded band &mdash; everything meaning contributes "
-  "&mdash; does not widen as the models get bigger.")}
+  "alongside the signal, so the shaded band &mdash; the most the replaced content "
+  "can be contributing &mdash; does not widen as the models get bigger. This is a "
+  "statement about one family and not a scaling law: pooled across families the "
+  "correlation is weak, and it weakens further once prompt length is matched.")}
 
 <p>Utility Engineering's accuracy thresholds preferences to hard labels
 (their §4.1), so it records <em>which way</em> a model leans and never <em>how
@@ -470,7 +489,7 @@ coherence = share of the held-out 20% whose
 <div class="formula">
   <h3>4. The number we actually report</h3>
   <div class="eq">residual  =  coherence(real)  &#8722;  coherence(invented)
-floor     =  spread across 3 re-runs with different random designs</div>
+floor     =  spread across {n_design_reps} re-runs with different random designs</div>
   <p class="plain">Coherence on its own cannot tell you whether an ordering is
   <em>about</em> anything, so we never report it alone. We run the identical
   procedure on outcomes whose words were replaced by invented ones, and report
@@ -488,9 +507,14 @@ P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
   committed. <b>P(neither)</b> is how often it declines, measured by re-running
   the battery with an explicit third option, "Neither &mdash; I have no
   preference between these".</p>
-  <p class="eg">Qwen3.5-2B commits on <b>41%</b> of real pairs and <b>4.5%</b> of
-  invented ones. Offered an opt-out, models decline on <b>every</b> model tested
-  more often for invented outcomes &mdash; up to <b>100%</b> of them &mdash;
+  <p class="eg">Averaged over the {len(dec_pairs)} models that commit at all on
+  real outcomes: <b>{mean_dec_r * 100:.0f}%</b> of real pairs against
+  <b>{mean_dec_n * 100:.1f}%</b> of invented ones. Per model that is a median
+  <b>{median_dec_ratio:.0f}&times;</b> collapse in conviction; dividing the two
+  averages instead gives a smaller <b>{aggregate_dec_ratio:.1f}&times;</b>,
+  because one model keeps far more conviction on invented outcomes than the
+  rest. Offered an opt-out, <b>every</b> model tested declines invented outcomes
+  more often than real ones &mdash; on some, essentially all of them &mdash;
   while the coherence number barely moves.</p>
 </div>
 
@@ -500,11 +524,14 @@ P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
 <th>design floor</th><th>clears</th>
 <th>shuffled null</th><th>decisive R</th><th>decisive N&#8722;</th><th>slot-A bias</th></tr></thead>
 <tbody>{body_rows}</tbody></table></div>
-<p style="font-size:13px"><b>design floor</b> is the spread of the same cell across
-three independent designs — a different outcome subsample and a different pair set
-each time. It is the smallest difference this study is entitled to call a
-difference, so <b>clears</b> asks only whether R&#8722;N&#8722; exceeds it, and
-prints by how much. {n_clears} of {len(tiles)} models clear.
+<p style="font-size:13px"><b>design floor</b> is the observed spread of the same
+cell across {n_design_reps} independent designs — a different outcome subsample
+and a different pair set each time. It is an empirical sensitivity threshold, not
+a confidence interval and not a significance test: with only {n_design_reps}
+replicates the floor is itself uncertain, and one model's came out near zero.
+<b>clears</b> asks whether R&#8722;N&#8722; exceeds it and prints by how much;
+read that as "larger than this study can resolve", not as "significant".
+{n_clears} of {len(tiles)} models clear.
 <b>*</b> marks a floor too near zero to divide by: the model is above its floor,
 but the ratio would be an artifact of a small denominator rather than a large
 effect.

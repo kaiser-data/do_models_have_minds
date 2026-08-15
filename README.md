@@ -3,17 +3,26 @@
 **Does a language model's "value system" depend on what the values mean?**
 
 We reran the *Utility Engineering* (arXiv:2502.08640) coherence procedure on outcomes
-we invented — nonsense tokens that refer to nothing — and the score barely moved.
+we invented — the content words replaced by consistent nonwords, so the sentences refer
+to nothing — and the score barely moved.
 
 | | coherence |
 |---|---|
 | real outcomes | **0.906** |
-| meaningless outcomes | **0.880** |
+| referentially ungrounded outcomes | **0.880** |
 | residual | **+0.025** |
 
 Six of nine models clear their own noise floor; two come out negative. A metric that
-scores gibberish at 0.880 is not measuring values — it is mostly measuring whether the
-model answers consistently.
+scores *"you receive a dralphen"* at 0.880 is not measuring values — it is mostly
+measuring whether the model answers consistently.
+
+**What "ungrounded" means here, precisely.** Only the referents are invented. The
+sentence frame survives by design — `receive`, `lose`, `more`, `less`, negation and
+tense are all preserved, because substituting them would break grammar rather than
+remove meaning, and the arms have to differ in what the words denote and not in whether
+they parse. So the residual is an **upper bound on what the replaced referential content
+contributes**, not "everything meaning contributes". Separating the referent from the
+valenced frame is a designed experiment we have not yet run.
 
 **We are not claiming the metric is broken. We are claiming it is unanchored** — it
 reports a number with no floor under it, and the floor turns out to be most of the number.
@@ -25,22 +34,32 @@ Live results: <https://nullcard-preresults.netlify.app>
 ## The three supporting results
 
 **Why the gap is so small.** The metric records *which way* a model leans, never *how
-much*. Models commit to a side on **41%** of real-outcome pairs and **4.5%** of invented
-ones — a **17×** collapse in conviction — while direction accuracy barely moves. A model
-that is nearly indifferent about gibberish, but consistently so, scores as coherent
-about it.
+much*. Averaged over the six models that commit at all on real outcomes, they commit on
+**41%** of real-outcome pairs and **4.5%** of invented ones — a **median 17×** collapse
+in conviction per model, or **9.2×** if you divide the two averages instead, one model
+keeping far more conviction on invented outcomes than the rest. Direction accuracy barely
+moves through any of it. A model that is nearly indifferent about ungrounded outcomes,
+but consistently so, scores as coherent about them.
 
-**The positive control, which is also a negative result.** Installing a persona moves the
-categories it names in **20 of 20** conditions, so the instrument can detect content. But
-the same separation appears on outcomes that refer to nothing (**+0.791** real vs
-**+0.781** invented): roughly **66%** of a persona's value-aligned reordering needs no
-meaning at all. Only **2 of 5** models retain a content-dependent effect.
+**The positive control, which is also a negative result.** Two different questions, and
+they do not give the same answer. *Did the preference vector move the right way?* Yes —
+installing a persona moves the categories it names in the predicted direction in **20 of
+20** conditions. *Did it move further on real outcomes than on invented ones?* Mostly —
+**18 of 20** conditions clear +0.30 of extra displacement. But the direction is
+reproduced almost as well with no meaning present (**+0.791** real vs **+0.781**
+invented): roughly **66%** of a persona's value-aligned reordering needs none. Only
+**2 of 5** models retain a substantial content-dependent effect. On this instrument a
+persona is better described as changing response policy than as installing values.
 
 **The clearest single result.** Every pair ran in both arms, so we have matched real and
 nonsense outputs from the same model. Can you tell them apart from the model's own
 output? The channel the metric *uses* reaches AUROC **0.596** — near chance. The channel
 it *throws away* (answer mass) reaches **0.821**, and **1.000** on Qwen3.5-2B. The model
-notices; the metric is computed from the part that noticed least.
+notices; the metric is computed from the part that noticed least. These are **oracle
+separations**: we know each row's arm, each channel's orientation is chosen by comparing
+both arms, and the best discarded channel is best on the data it is scored on. The result
+is that the information is present in the output distribution — not that an auditor
+without the answer key could extract it.
 
 ## Three checks that favoured the original paper
 
@@ -52,11 +71,28 @@ positional bias exactly, held-out evaluation keeps a coin-flip responder near ch
 
 ## Reproducing it
 
-Everything below runs from the repo root with **no GPU, no API key and no network**. All
-analysis is a fold over the committed `results/`.
+**Every derived artifact is committed** — `card.json`, `paper/numbers.tex`, the figures,
+the site — so the paper and the page rebuild from a clean clone with **no GPU, no API key
+and no network**. The raw `results/` tree is **not** committed: it is 402 MB of per-call
+rows across 153 cells, too large for git. Rebuilding the derived artifacts *from raw
+outputs* therefore needs that archive first.
+
+`results_manifest.json` pins every cell by SHA-256 so a fetched copy can be verified as
+the one this paper was built from, rather than trusted:
 
 ```bash
-python3 -m pytest tests/ -q          # 161 tests, none contacts a model
+modal volume get nullcard-results / results/ --force   # ← needs access; see below
+python3 scripts/results_manifest.py --verify           # content check, exits non-zero on drift
+```
+
+The archive currently lives on a private Modal volume, so third-party reproduction from
+raw outputs is **not yet possible** — only verification, once you have a copy. Publishing
+it (GitHub release or Zenodo) is the fix and has not been done.
+
+Everything below runs from a clean clone against a verified `results/`:
+
+```bash
+python3 -m pytest tests/ -q          # 189 tests, none contacts a model
 
 python3 scripts/build_card.py        # results/ -> card.json   (run this first)
 python3 scripts/figures.py           # card.json -> site/fig1..3 (SVG, both themes)
@@ -79,7 +115,8 @@ python3 scripts/nonsense_detector.py   # can the model tell?                    
 python3 scripts/fig_detector.py        # -> site/fig4_detector.svg
 ```
 
-If `results/` is empty: `modal volume get nullcard-results / results/ --force`
+Never run two `modal volume get` calls into the same tree — they race and produce
+garbage reads that look exactly like corruption. `--verify` will catch it.
 
 ### Paper and slides
 
@@ -101,10 +138,11 @@ folder, set `main.tex` as root.
 | `nullcard/` | scoring (pure functions, zero I/O), runner, model roster |
 | `modal_app/sweep.py` | the GPU sweep: CPU gate, resumable cells, self-report probe |
 | `scripts/` | every analysis; each writes JSON the site and paper read |
-| `results/` | append-only `.jsonl` per cell — never mutated |
+| `results/` | append-only `.jsonl` per cell — never mutated, **not committed** (402 MB) |
+| `results_manifest.json` | SHA-256 per cell, so a fetched `results/` can be verified |
 | `paper/` | `main.tex`, `slides.tex`, generated `numbers.tex` |
 | `site/` | generated static page (no build step, no framework) |
-| `tests/` | 161 tests; none contacts a model |
+| `tests/` | 189 tests; none contacts a model |
 
 The site and the paper are both pure functions of the same `card.json`, so **the demo
 cannot disagree with the report**. Figures come from matplotlib, never from the page, so

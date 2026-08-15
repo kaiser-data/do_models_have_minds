@@ -9,9 +9,14 @@ individual rebuild moves things by very little.
 So each claim in claims.json names the macros it rests on, and this script:
 
   1. checks those macros still exist            (a renamed macro = a dead claim)
-  2. reads their current values from numbers.tex
-  3. diffs them against claims_snapshot.json    (what the prose was written for)
-  4. fails if any moved past tolerance without the snapshot being accepted
+  2. checks every number in the claim is bound  (see check_bindings)
+  3. reads their current values from numbers.tex
+  4. diffs them against claims_snapshot.json    (what the prose was written for)
+  5. fails if any moved past tolerance without the snapshot being accepted
+
+Step 2 is the newer half and was added after the older half proved insufficient:
+the macros were checked and stayed right while the hand-written evidence beside
+them went stale, and an outside reviewer quoted the stale version back.
 
 Failing is the feature. `--accept` writes the new snapshot, and doing so is the
 moment to re-read the prose -- which is exactly the moment that otherwise never
@@ -35,6 +40,17 @@ import sys
 from pathlib import Path
 
 MACRO_RE = re.compile(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}")
+
+# A reference to a generated number, written the same way the paper writes it.
+MACRO_REF_RE = re.compile(r"\\([A-Za-z]+)")
+# A number sitting in ledger prose with nothing binding it to the generator.
+BARE_NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+# Identifiers are removed before numbers are counted, or every model name in
+# the ledger reads as three unbound numbers (granite-4.1-3b) and the check
+# becomes noise nobody reads.
+IDENTIFIER_RE = re.compile(r"[A-Za-z][\w.-]*")
+
+PROSE_FIELDS = ("statement", "what_would_falsify", "grows_by")
 
 STATUS_ORDER = {"established": 0, "provisional": 1, "contested": 2, "open": 3}
 STATUS_LABEL = {
@@ -85,6 +101,91 @@ def collect(claims: dict, macros: dict[str, str]) -> tuple[dict, list[str]]:
     return values, problems
 
 
+def resolve(text: str, macros: dict[str, str],
+            problems: list[str], where: str) -> str:
+    """Expand \\MacroName references in ledger prose, the way the paper does."""
+    def sub(m: re.Match) -> str:
+        name = m.group(1)
+        if name not in macros:
+            problems.append(f"{where} references \\{name}, which numbers.tex "
+                            f"does not define")
+            return m.group(0)
+        return macros[name]
+    return MACRO_REF_RE.sub(sub, text)
+
+
+def literals_of(claim: dict) -> dict[str, str]:
+    """Numbers this claim is allowed to state without deriving them.
+
+    A dict maps the literal to the reason it is not a generated value; a bare
+    list is accepted and means the reason was not written down.
+    """
+    lit = claim.get("literals", {})
+    if isinstance(lit, list):
+        return {str(x): "" for x in lit}
+    return {str(k): str(v) for k, v in lit.items()}
+
+
+def prose_items(claim: dict):
+    """Every field of a claim a number can hide in."""
+    for f in PROSE_FIELDS:
+        if isinstance(claim.get(f), str):
+            yield f, claim[f]
+    for k, v in claim.get("evidence", {}).items():
+        if isinstance(v, str):
+            yield f"evidence.{k}", v
+
+
+def check_bindings(claims: dict, macros: dict[str, str]) -> list[str]:
+    """Every number in the ledger must be derived, or declared not to be.
+
+    This exists because of a specific failure. The macros were checked for
+    drift and stayed correct, while the hand-written evidence beside them said
+    5 models where the generator said 6, and 2 of 5 answering where it said 3
+    of 6. Nothing failed, because nothing was looking at the prose. An external
+    reviewer read the ledger, quoted the stale numbers back, and was wrong in
+    public on our behalf.
+
+    Drift cannot be caught by comparing a number to the truth: staleness IS the
+    mismatch, and there is no way to know which macro a wrong number meant. So
+    the fix is structural rather than statistical. Evidence counts must name
+    the macro that produces them, and any other number must be declared a
+    literal with the reason it is not generated. Then a number can be wrong
+    only if someone wrote down that it was allowed to be.
+    """
+    problems = []
+    for c in claims["claims"]:
+        allowed, used = literals_of(c), set()
+
+        for k, v in c.get("evidence", {}).items():
+            if isinstance(v, bool) or not isinstance(v, (int, float)):
+                continue
+            problems.append(
+                f"claim {c['id']!r} evidence.{k} is the literal {v}. Evidence "
+                f"counts must name the macro that produces them (e.g. "
+                f"\"\\\\NModels\"), so the ledger cannot go stale while the "
+                f"paper stays right.")
+
+        for field, text in prose_items(c):
+            scannable = IDENTIFIER_RE.sub(" ", MACRO_REF_RE.sub(" ", text))
+            for num in BARE_NUMBER_RE.findall(scannable):
+                if num in allowed:
+                    used.add(num)
+                    continue
+                problems.append(
+                    f"claim {c['id']!r} {field} states the bare number {num}. "
+                    f"Write it as a macro reference, or declare it under this "
+                    f"claim's \"literals\" with the reason it is not a "
+                    f"generated value.")
+
+        for lit in sorted(set(allowed) - used):
+            problems.append(
+                f"claim {c['id']!r} declares literal {lit!r} that its prose no "
+                f"longer uses -- delete it rather than leaving it to cover a "
+                f"future number nobody checked")
+    return problems
+
+
 def tolerance_for(value: float, default: float, override: float | None) -> float:
     """One absolute tolerance cannot cover this ledger.
 
@@ -127,7 +228,26 @@ def diff(current: dict, snapshot: dict, tol: float,
     return moved
 
 
-def build_table(claims: dict) -> str:
+def resolved_evidence(claim: dict, macros: dict[str, str]) -> dict:
+    """Evidence with its macro references expanded, ints where they parse.
+
+    Every count in the ledger is stored as the name of the macro that produces
+    it. Display is the only place it becomes a number, so there is no copy to
+    fall out of date.
+    """
+    out = {}
+    for k, v in claim.get("evidence", {}).items():
+        if isinstance(v, str):
+            v = resolve(v, macros, [], f"claim {claim['id']!r} evidence.{k}")
+            try:
+                v = int(v)
+            except ValueError:
+                pass
+        out[k] = v
+    return out
+
+
+def build_table(claims: dict, macros: dict[str, str]) -> str:
     """The state of the evidence, as a table the paper can carry.
 
     A reader should be able to see at a glance which claims are load-bearing
@@ -136,7 +256,7 @@ def build_table(claims: dict) -> str:
     """
     rows = []
     for c in sorted(claims["claims"], key=lambda c: (STATUS_ORDER[c["status"]], c["id"])):
-        ev = c["evidence"]
+        ev = resolved_evidence(c, macros)
         n = ev.get("models", ev.get("models_stated", ev.get("cells_run", "--")))
         if c["status"] == "open":
             n = "0"
@@ -166,7 +286,7 @@ def build_table(claims: dict) -> str:
         "\\bottomrule\n\\end{tabular}\n")
 
 
-def build_roadmap(claims: dict) -> str:
+def build_roadmap(claims: dict, macros: dict[str, str]) -> str:
     """The experiment queue, derived from the ledger rather than kept beside it.
 
     A roadmap in its own file drifts from the claims it is supposed to serve:
@@ -189,13 +309,17 @@ def build_roadmap(claims: dict) -> str:
     todo = [c for c in rows if c["status"] != "established"]
     done = [c for c in rows if c["status"] == "established"]
 
+    def text(c: dict, field: str) -> str:
+        return resolve(c[field], macros, [], f"claim {c['id']!r} {field}")
+
     out.append("\n## Queue\n")
     for i, c in enumerate(todo, 1):
         out.append(f"\n### {i}. `{c['id']}` — {c['status']}\n")
-        out.append(f"\n> {c['statement']}\n")
-        out.append(f"\n**Next addition.** {c['grows_by']}\n")
-        out.append(f"\n**Would falsify it.** {c['what_would_falsify']}\n")
-        ev = ", ".join(f"{k.replace('_', ' ')} = {v}" for k, v in c["evidence"].items())
+        out.append(f"\n> {text(c, 'statement')}\n")
+        out.append(f"\n**Next addition.** {text(c, 'grows_by')}\n")
+        out.append(f"\n**Would falsify it.** {text(c, 'what_would_falsify')}\n")
+        ev = ", ".join(f"{k.replace('_', ' ')} = {v}"
+                       for k, v in resolved_evidence(c, macros).items())
         out.append(f"\n*Current evidence:* {ev}\n")
 
     out.append("\n## Established, and what would still overturn them\n")
@@ -203,8 +327,8 @@ def build_roadmap(claims: dict) -> str:
                "living paper must keep its settled claims falsifiable, not just "
                "its open ones.\n")
     for c in done:
-        out.append(f"\n- **`{c['id']}`** — {c['statement']} "
-                   f"*Would falsify:* {c['what_would_falsify']}\n")
+        out.append(f"\n- **`{c['id']}`** — {text(c, 'statement')} "
+                   f"*Would falsify:* {text(c, 'what_would_falsify')}\n")
     return "".join(out)
 
 
@@ -226,6 +350,7 @@ def main() -> int:
     tol = claims.get("tolerance_default", 0.02)
 
     current, problems = collect(claims, macros)
+    problems += check_bindings(claims, macros)
 
     snap_path = Path(args.snapshot)
     snapshot = json.loads(snap_path.read_text()) if snap_path.exists() else {}
@@ -266,14 +391,21 @@ def main() -> int:
         print(f"\nno claim has moved since {snapshot.get('taken', '?')}.")
 
     if args.table:
-        Path(args.table_out).write_text(build_table(claims))
+        Path(args.table_out).write_text(build_table(claims, macros))
         print(f"\nwrote {args.table_out}")
 
     if args.roadmap:
-        Path(args.roadmap_out).write_text(build_roadmap(claims))
+        Path(args.roadmap_out).write_text(build_roadmap(claims, macros))
         print(f"wrote {args.roadmap_out}")
 
     if args.accept:
+        # Accepting adopts drift, which is the point. It must not also adopt a
+        # broken binding: a claim that has lost its macro, or a number in its
+        # prose that nothing generates, is not a value anyone can accept.
+        if problems:
+            print("\nFAIL: refusing to accept while a claim's evidence is "
+                  "unbound. Fix the problems above first.")
+            return 1
         snap_path.write_text(json.dumps(
             {"taken": "manual --accept", "note": "values the current prose was "
              "written against; re-read the affected sections before accepting",
@@ -282,7 +414,8 @@ def main() -> int:
         return 0
 
     if problems:
-        print("\nFAIL: a claim has lost its evidence.")
+        print("\nFAIL: a claim's evidence is unbound -- a macro it rests on is "
+              "gone, or a number it states is not derived from one.")
         return 1
     if drifted:
         print(f"\nFAIL: {len(drifted)} value(s) moved past tolerance. "

@@ -7,8 +7,10 @@ __pycache__/
 results*.jsonl
 .next/
 
-# Raw sweep output — 54MB of per-call rows. Regenerable from the Modal volume
-# `nullcard-results`; card.json carries the analysis that the paper and site use.
+# Raw sweep output — hundreds of MB of per-call rows, too large for git. Held on
+# the Modal volume `nullcard-results`; scripts/results_manifest.py pins every
+# file's SHA-256 so a copy can be verified as THE copy the paper was built from.
+# card.json carries the analysis the paper and site actually read.
 results/
 sweep_summary.json
 .netlify/

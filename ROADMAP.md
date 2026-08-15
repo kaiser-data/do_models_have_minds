@@ -8,21 +8,21 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 > Where a floor can still be measured, it survives an explicit opt-out -- but on most models the invented arm stops being answered at all once declining is possible.
 
-**Next addition.** Qwen3.5-9B's invented cell (OOM at batch 16, rerunning at 8), then the remaining roster. n=2 interpretable is thin.
+**Next addition.** The remaining roster models, both arms. 3 interpretable of 6 is thin, and the interpretable subset is the only place the floor can be measured at all -- so width here buys the claim more than depth anywhere else.
 
 **Would falsify it.** A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.
 
-*Current evidence:* models = 5, cells run = 10, note = 2 of 5 still answer the invented arm; 1 more model incomplete
+*Current evidence:* models = 6, cells run = 12, note = 3 of 6 still put enough mass on A/B for a floor to be measured at all; the other 3 put essentially everything on 'neither', so their floor is not preserved but unmeasured. The distinguishing quantity is A/B mass, not answer mass, which counts the opt-out and so stays high even when nothing at all is left on A or B.
 
 ### 2. `scaling-residual-falls` — provisional
 
 > Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.
 
-**Next addition.** A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of 2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.
+**Next addition.** A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of the ~2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.
 
 **Would falsify it.** A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.
 
-*Current evidence:* families = 1, sizes in family = 4, models outside family = 5, note = within-family r -0.84 unmatched, -0.61 length-matched; pooled -0.67 -> -0.16
+*Current evidence:* families with a ladder = 1, sizes in family = 4, models outside family = 5, note = within-family r -0.84 unmatched and -0.61 length-matched; pooled -0.67 collapsing to -0.16. The pooled collapse is why this is a within-family statement and not a scaling law.
 
 ### 3. `track3-directive-blind` — provisional
 
@@ -38,7 +38,7 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 > Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.
 
-**Next addition.** More hybrid-reasoning models. The dramatic case is n=1 and the effect is small for everyone else.
+**Next addition.** More hybrid-reasoning models. The dramatic case is SmolLM3-3B alone and the effect is small for everyone else.
 
 **Would falsify it.** Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).
 

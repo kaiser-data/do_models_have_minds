@@ -19,7 +19,8 @@
       "OutsideFamilyCorr": "-0.19",
       "MatchedWithinCorr": "-0.61",
       "MatchedPooledCorr": "-0.16",
-      "MatchedLadderFall": "-0.030"
+      "MatchedLadderFall": "-0.030",
+      "LadderNFamilies": "1"
     },
     "persona-displacement": {
       "PersonaAbovePointThree": "18",
@@ -69,13 +70,15 @@
       "NeutNRefuse": "3",
       "NeutIShiftLo": "-0.023",
       "NeutIShiftHi": "+0.003",
-      "NeutABRefuseHi": "0.0100"
+      "NeutABRefuseHi": "0.0100",
+      "NeutNCells": "12"
     },
     "opt-out-is-a-discarded-channel": {
       "NeutGapLo": "+0.146",
       "NeutGapHi": "+0.769",
       "NeutNGapPositive": "6",
-      "NeutNModels": "6"
+      "NeutNModels": "6",
+      "NeutNCells": "12"
     }
   }
 }

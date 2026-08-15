@@ -89,6 +89,12 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("NModels", str(n)))
     out.append(_cmd("NCells", str(len(card["cells"]))))
     out.append(_cmd("NSplits", str(card["n_splits"])))
+    # Design replicates are not train/test splits, and the two get conflated:
+    # NSplits re-splits one design, NDesignReps counts independent designs
+    # (a different outcome subsample and pair set each time). The design floor
+    # rests on the second, so the ledger must be able to name it.
+    reps = {t.get("n_design_replicates", 1) for t in tiles}
+    out.append(_cmd("NDesignReps", str(min(reps))))
     out.append(_cmd("MeanR", f"{mean_r:.3f}"))
     out.append(_cmd("MeanFloor", f"{mean_f:.3f}"))
     out.append(_cmd("MeanResidual", f"{mean_r - mean_f:+.3f}"))
@@ -163,6 +169,11 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         outside = [p for p in pts if p[3] != ladder]
         out.append(_cmd("LadderFamily", ladder))
         out.append(_cmd("LadderNSizes", str(len(inside))))
+        # How many families could carry a within-family correlation at all.
+        # The scaling claim rests on this being small; it must be derived, not
+        # asserted, because "one family" is the claim's whole limitation.
+        out.append(_cmd("LadderNFamilies",
+                        str(sum(1 for c in counts.values() if c >= 3))))
         if len(inside) >= 3:
             out.append(_cmd("WithinFamilyCorr",
                             f"{_corr([math.log2(p[0]) for p in inside], [p[1] for p in inside]):.2f}"))
@@ -440,6 +451,13 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         shifts = [m["floor_shift"] for m in nmods]
         gaps = [m["opt_out_gap"] for m in nmods if m.get("opt_out_gap") is not None]
         out.append(_cmd("NeutNModels", str(len(nmods))))
+        # Counted from the arms actually present, not 2x the model count: a
+        # model can reach this list with one arm complete and one still queued,
+        # and the ledger quoted a hand-multiplied cell count that went stale
+        # exactly that way.
+        out.append(_cmd("NeutNCells", str(sum(
+            1 for m in nmods for a in m.get("arms", {}).values()
+            if a.get("neutral", {}).get("usable")))))
         out.append(_cmd("NeutShiftLo", f"{min(shifts):+.3f}"))
         out.append(_cmd("NeutShiftHi", f"{max(shifts):+.3f}"))
         interp = [m for m in nmods if m.get("interpretable")]

@@ -11,6 +11,21 @@
     "meaning between drafts -- which is the failure mode this project has",
     "already had once, when six truncated cells moved a headline.",
     "",
+    "EVERY NUMBER IN THIS FILE IS DERIVED OR DECLARED. Evidence counts are",
+    "written as the name of the macro that produces them ('\\\\NModels', not 9)",
+    "and resolved at render time, so there is no second copy to go stale. Any",
+    "other number in a claim's prose must appear in that claim's 'literals',",
+    "mapped to the reason it is not a generated value. claims.py fails on an",
+    "undeclared bare number and on a declared literal the prose stopped using.",
+    "",
+    "That rule was added the hard way. The macros were checked every session and",
+    "stayed correct while the hand-written evidence beside them said 5 models",
+    "where the generator said 6, and 2 of 5 answering where it said 3 of 6. An",
+    "outside reviewer read this file, quoted the stale numbers back in a public",
+    "review, and was wrong on our behalf. Drift cannot be caught by comparing a",
+    "number to the truth -- staleness IS the mismatch, and nothing knows which",
+    "macro a wrong number meant. So the binding is structural instead.",
+    "",
     "status:  established | provisional | contested | open",
     "  established  survives its own controls at current n; safe to lead with",
     "  provisional  real but under-powered or resting on one family/instrument",
@@ -35,9 +50,10 @@
         "MeanResidual"
       ],
       "evidence": {
-        "models": 9,
-        "cells": 81,
-        "replicates_per_cell": 3
+        "models": "\\NModels",
+        "cells": "\\NCells",
+        "replicates_per_cell": "\\NDesignReps",
+        "note": "'refer to nothing' is the referent only. The sentence frame survives the substitution by design, so the arms differ in what the words denote and not in whether they parse -- see the scope note on nonsense.py."
       },
       "what_would_falsify": "A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).",
       "grows_by": "More model families. The claim is already cross-family; adding models tightens the mean rather than changing its kind.",
@@ -54,9 +70,10 @@
         "MedianDecisiveRatio"
       ],
       "evidence": {
-        "models": 9,
-        "cells": 81,
-        "replicates_per_cell": 3
+        "models": "\\NModels",
+        "cells": "\\NCells",
+        "replicates_per_cell": "\\NDesignReps",
+        "note": "\\MeanDecisiveR and \\MeanDecisiveN are means over the models that are decisive on real outcomes at all, and \\MedianDecisiveRatio is the median of per-model ratios -- NOT the quotient of the two means, which is smaller. Any prose putting the three side by side has to say which is which."
       },
       "what_would_falsify": "A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.",
       "grows_by": "Nothing needed for the claim; it is the sharpest result and holds on every model.",
@@ -74,16 +91,22 @@
         "OutsideFamilyCorr",
         "MatchedWithinCorr",
         "MatchedPooledCorr",
-        "MatchedLadderFall"
+        "MatchedLadderFall",
+        "LadderNFamilies"
       ],
       "evidence": {
-        "families": 1,
-        "sizes_in_family": 4,
-        "models_outside_family": 5,
-        "note": "within-family r -0.84 unmatched, -0.61 length-matched; pooled -0.67 -> -0.16"
+        "families_with_a_ladder": "\\LadderNFamilies",
+        "sizes_in_family": "\\LadderNSizes",
+        "models_outside_family": "\\NOutsideFamily",
+        "note": "within-family r \\WithinFamilyCorr unmatched and \\MatchedWithinCorr length-matched; pooled \\PooledSizeCorr collapsing to \\MatchedPooledCorr. The pooled collapse is why this is a within-family statement and not a scaling law."
       },
       "what_would_falsify": "A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.",
-      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of 2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.",
+      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of the ~2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.",
+      "literals": {
+        "3": "the target number of sizes a second family would need, not a measurement",
+        "1,000": "approximate pair count inside the matched token band; the analysis reports the band itself as \\MatchedBandLo-\\MatchedBandHi and does not emit this count",
+        "2,500": "approximate pairs per cell in the battery design, not a generated result"
+      },
       "priority": 2
     },
     {
@@ -98,11 +121,17 @@
         "PersonaMin"
       ],
       "evidence": {
-        "models": 5,
-        "conditions": 20
+        "models": "\\NPersonaModels",
+        "conditions": "\\NPersonaCells",
+        "note": "\\PersonaAbovePointThree of \\NPersonaCells conditions clear +0.30 of displacement. This is a MAGNITUDE claim -- how far the preference vector moved -- and must not be reported without persona-direction-shallow, which asks whether it moved the right way."
       },
       "what_would_falsify": "Persona cells clustering on the diagonal once more models are added.",
-      "grows_by": "The remaining 4 roster models at both depths, taking 20 conditions to 36.",
+      "grows_by": "The remaining 4 roster models at both depths, taking \\NPersonaCells conditions to 36.",
+      "literals": {
+        "4": "roster models not yet run under a persona (\\NModels minus \\NPersonaModels); no macro emits the difference",
+        "36": "the condition count that addition would reach, a plan rather than a result",
+        "0.30": "the displacement threshold the design fixed in advance, not a measured value"
+      },
       "priority": 5
     },
     {
@@ -117,11 +146,12 @@
         "PersonaExcess"
       ],
       "evidence": {
-        "models": 5,
-        "conditions": 20
+        "models": "\\NPersonaModels",
+        "conditions": "\\NPersonaCells",
+        "note": "The DIRECTIONAL half of the persona result: separation \\PersonaSepReal real against \\PersonaSepInvented invented, so \\PersonaNonsenseShare% of the value-aligned reordering needs no meaning. Reporting persona-displacement without this one overstates what a persona installs."
       },
       "what_would_falsify": "A larger excess once length is controlled differently, or models that retain content-dependence at scale.",
-      "grows_by": "More models; 2 of 5 currently retain a substantial excess and whether that fraction is stable is unknown.",
+      "grows_by": "More models; \\PersonaNRetain of \\NPersonaModels currently retain a substantial excess and whether that fraction is stable is unknown.",
       "priority": 6
     },
     {
@@ -137,11 +167,12 @@
         "DetNModels"
       ],
       "evidence": {
-        "models": 9,
-        "ground_truth": "by construction, every pair run in both arms"
+        "models": "\\DetNModels",
+        "ground_truth": "by construction, every pair run in both arms",
+        "note": "ORACLE SEPARATION, not a deployable detector. The threshold behind \\DetBestTPR is calibrated on real rows alone, but the arm labels are known, each channel's orientation is chosen by comparing both arms, and the best discarded channel is picked on the same data it is scored on. The claim is that the information is present in the output distribution -- nothing stronger."
       },
       "what_would_falsify": "The discarded channel failing to separate the arms on new models.",
-      "grows_by": "An affordance ladder: score the detector at decreasing auditor knowledge. Converts a conceded limitation into a result.",
+      "grows_by": "Predeclare each channel's direction, choose channel and orientation on held-out models, score on untouched ones, and report bootstrap intervals. That converts the conceded oracle into a detection result. An affordance ladder -- scoring at decreasing auditor knowledge -- is the same move along a second axis.",
       "priority": 8
     },
     {
@@ -160,12 +191,15 @@
         "StatedHaveLo"
       ],
       "evidence": {
-        "models_stated": 5,
-        "models_revealed_passing_gate": 2,
-        "models_with_complete_triad": 3
+        "models_stated": "\\StatedNModels",
+        "models_revealed_passing_gate": "\\RevNInterp",
+        "models_with_complete_triad": "\\RevNTriad"
       },
       "what_would_falsify": "A model whose revealed gap approaches its specificity margin.",
-      "grows_by": "The missing concealed+verbal cells for Qwen3.5-9B and granite-4.1-3b, taking the revealed channel from n=2 to n=4. Cheap, and it is the weakest n in the paper.",
+      "grows_by": "The missing concealed+verbal cells for Qwen3.5-9B and granite-4.1-3b, taking the revealed channel from n=\\RevNInterp to n=4. Cheap, and it is the weakest n in the paper.",
+      "literals": {
+        "4": "the revealed-channel n those two cells would reach, a plan rather than a result"
+      },
       "priority": 3
     },
     {
@@ -181,11 +215,11 @@
         "ReasoningMassDrop"
       ],
       "evidence": {
-        "models": 9,
+        "models": "\\NModels",
         "test": "two-sided sign test"
       },
-      "what_would_falsify": "Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).",
-      "grows_by": "More hybrid-reasoning models. The dramatic case is n=1 and the effect is small for everyone else.",
+      "what_would_falsify": "Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=\\NModels).",
+      "grows_by": "More hybrid-reasoning models. The dramatic case is \\ReasoningModel alone and the effect is small for everyone else.",
       "priority": 4
     },
     {
@@ -200,11 +234,14 @@
         "MostLengthModel"
       ],
       "evidence": {
-        "models": 9,
+        "models": "\\NModels",
         "note": "length-neutralised column rests on ~40 held-out pairs per split; pooled value only"
       },
       "what_would_falsify": "The length-neutralised fit falling to chance with more held-out pairs.",
       "grows_by": "More pairs tied on token count, so the length-neutralised column stops being the noisiest cell in the paper.",
+      "literals": {
+        "40": "approximate held-out pairs per split in the length-tied subset; the analysis prints it per model and emits no aggregate macro"
+      },
       "priority": 7
     },
     {
@@ -218,15 +255,16 @@
         "NeutNRefuse",
         "NeutIShiftLo",
         "NeutIShiftHi",
-        "NeutABRefuseHi"
+        "NeutABRefuseHi",
+        "NeutNCells"
       ],
       "evidence": {
-        "models": 5,
-        "cells_run": 10,
-        "note": "2 of 5 still answer the invented arm; 1 more model incomplete"
+        "models": "\\NeutNModels",
+        "cells_run": "\\NeutNCells",
+        "note": "\\NeutNInterp of \\NeutNModels still put enough mass on A/B for a floor to be measured at all; the other \\NeutNRefuse put essentially everything on 'neither', so their floor is not preserved but unmeasured. The distinguishing quantity is A/B mass, not answer mass, which counts the opt-out and so stays high even when nothing at all is left on A or B."
       },
       "what_would_falsify": "A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.",
-      "grows_by": "Qwen3.5-9B's invented cell (OOM at batch 16, rerunning at 8), then the remaining roster. n=2 interpretable is thin.",
+      "grows_by": "The remaining roster models, both arms. \\NeutNInterp interpretable of \\NeutNModels is thin, and the interpretable subset is the only place the floor can be measured at all -- so width here buys the claim more than depth anywhere else.",
       "priority": 1
     },
     {
@@ -238,15 +276,16 @@
         "NeutGapLo",
         "NeutGapHi",
         "NeutNGapPositive",
-        "NeutNModels"
+        "NeutNModels",
+        "NeutNCells"
       ],
       "evidence": {
-        "models": 5,
-        "cells_run": 10,
-        "note": "5/5 without exception, gap +0.146 to +0.769"
+        "models": "\\NeutNModels",
+        "cells_run": "\\NeutNCells",
+        "note": "\\NeutNGapPositive of \\NeutNModels without exception, gap \\NeutGapLo to \\NeutGapHi"
       },
       "what_would_falsify": "A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.",
-      "grows_by": "More models; the direction is unanimous at n=5 so this is about width.",
+      "grows_by": "More models; the direction is unanimous at n=\\NeutNModels so this is about width rather than depth.",
       "priority": 2
     }
   ]
