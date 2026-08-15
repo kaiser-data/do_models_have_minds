@@ -1,0 +1,248 @@
+{
+  "fpr": 0.05,
+  "per_model": {
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.5951,
+        "separation": 0.5951,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.93505284,
+        "separation": 0.93505284,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.6482
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.1767054,
+        "separation": 0.8232946,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.2892
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.48350532,
+        "separation": 0.51649468,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0774
+      }
+    },
+    "HuggingFaceTB/SmolLM3-3B": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.3391,
+        "separation": 0.6609,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.24989596,
+        "separation": 0.75010404,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.118
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.04780052,
+        "separation": 0.95219948,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.7792
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.92921176,
+        "separation": 0.92921176,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.7048
+      }
+    },
+    "LiquidAI/LFM2.5-1.2B-Instruct": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.4996,
+        "separation": 0.5004,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.22217558,
+        "separation": 0.77782442,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.062
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.37667268,
+        "separation": 0.62332732,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0824
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.77333514,
+        "separation": 0.77333514,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.0688
+      }
+    },
+    "Qwen/Qwen3.5-0.8B": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.5611,
+        "separation": 0.5611,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.41800904,
+        "separation": 0.58199096,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0584
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.6632752,
+        "separation": 0.6632752,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.0256
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.45957036,
+        "separation": 0.5404296399999999,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0018
+      }
+    },
+    "Qwen/Qwen3.5-2B": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.5569,
+        "separation": 0.5569,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.3808561,
+        "separation": 0.6191439000000001,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.033
+      },
+      "answer mass  [discarded]": {
+        "auroc": 5.852e-05,
+        "separation": 0.99994148,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 1.0
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.73618788,
+        "separation": 0.73618788,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.2512
+      }
+    },
+    "Qwen/Qwen3.5-4B": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.5659,
+        "separation": 0.5659,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.23063596,
+        "separation": 0.76936404,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.1226
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.02938568,
+        "separation": 0.97061432,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.9024
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.86284418,
+        "separation": 0.86284418,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.5898
+      }
+    },
+    "Qwen/Qwen3.5-9B": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.4334,
+        "separation": 0.5666,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.20295118,
+        "separation": 0.79704882,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.1934
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.14128024,
+        "separation": 0.85871976,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0262
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.8109537,
+        "separation": 0.8109537,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.3184
+      }
+    },
+    "google/gemma-4-E2B-it": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.22264957264957264,
+        "separation": 0.7773504273504274,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.353597687924611,
+        "separation": 0.646402312075389,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.043376068376068375
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.06265172,
+        "separation": 0.93734828,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.3536
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.71730136,
+        "separation": 0.71730136,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.1804
+      }
+    },
+    "ibm-granite/granite-4.1-3b": {
+      "n_matched_pairs": 5000,
+      "direction sign(p-0.5)  [KEPT]": {
+        "auroc": 0.4173,
+        "separation": 0.5827,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.0
+      },
+      "strength |p-0.5|  [discarded]": {
+        "auroc": 0.22554152,
+        "separation": 0.7744584800000001,
+        "direction": "lower on nonsense",
+        "tpr_at_fpr": 0.1208
+      },
+      "answer mass  [discarded]": {
+        "auroc": 0.5590937,
+        "separation": 0.5590937,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.162
+      },
+      "top-5 entropy  [discarded]": {
+        "auroc": 0.77762862,
+        "separation": 0.77762862,
+        "direction": "higher on nonsense",
+        "tpr_at_fpr": 0.1282
+      }
+    }
+  }
+}

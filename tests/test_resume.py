@@ -104,3 +104,43 @@ def test_no_floor_yields_no_verdict_rather_than_a_pass():
     """Below three replicates there is no floor, and the honest answer is None."""
     v = _floor_verdict(0.05, None)
     assert v["clears_floor"] is None and v["floor_margin"] is None
+
+
+# ---------------------------------------------------------------------------
+# Cell-name round-tripping. The Track 3 conditions introduced persona names
+# that themselves contain a hyphen ("cautious-concealed"), and the filename
+# format is "<persona>-<depth>". If the parser split on the FIRST hyphen the
+# condition would silently be read as persona "cautious", depth "concealed-D2"
+# -- a deception cell quietly pooled into the plain-persona results.
+# ---------------------------------------------------------------------------
+
+from modal_app.sweep import cell_filename  # noqa: E402
+from build_card import parse_cell_name  # noqa: E402
+
+
+@pytest.mark.parametrize("persona,depth", [
+    ("none", "D0"),
+    ("cautious", "D1"),
+    ("ambitious", "D2"),
+    ("cautious-concealed", "D2"),
+    ("cautious-verbal", "D2"),
+])
+def test_cell_name_round_trips_through_the_parser(tmp_path, persona, depth):
+    name = cell_filename("Qwen/Qwen3.5-2B", "N_minus", persona=persona, depth=depth)
+    model, arm, seed, p, d = parse_cell_name(Path(name))
+    assert (model, arm, p, d) == ("Qwen/Qwen3.5-2B", "N_minus", persona, depth)
+
+
+def test_hyphenated_persona_is_not_mistaken_for_a_depth():
+    """The specific failure: splitting on the first hyphen, not the last."""
+    name = cell_filename("Qwen/Qwen3.5-2B", "R",
+                         persona="cautious-concealed", depth="D2")
+    _, _, _, p, d = parse_cell_name(Path(name))
+    assert p == "cautious-concealed" and d == "D2"
+
+
+def test_replicate_seed_and_persona_suffixes_coexist():
+    name = cell_filename("Qwen/Qwen3.5-2B", "R", design_seed=20260817,
+                         persona="cautious-concealed", depth="D2")
+    model, arm, seed, p, d = parse_cell_name(Path(name))
+    assert seed == 20260817 and p == "cautious-concealed" and d == "D2"

@@ -23,15 +23,20 @@ That is the finding. Everything else is support for it.
 
 ---
 
-## 2. State: data collection is DONE
+## 2. State: the main result is DONE
 
 **Nothing is running. No GPUs are allocated. You do not need to launch anything.**
 
-- 121 result files, all complete and verified
-- 81 baseline cells (9 models × 3 repeats × 3 conditions)
-- 40 persona cells (5 models × 2 personas × 2 depths × 2 conditions)
-- 129 tests pass
-- ~$10 of GPU spent total
+- 139 result files: **131 complete, 8 truncated**
+- 81 baseline cells (9 models × 3 repeats × 3 conditions) — complete
+- 40 persona cells (5 models × 2 personas × 2 depths × 2 conditions) — complete
+- 18 Track 3 deception cells — **HALF DONE, see §9. Optional; safe to ignore.**
+- 161 tests pass
+- ~$14 of GPU spent total
+
+All 8 truncated files are in the optional Track 3 arm. Nothing the paper or the
+site reports depends on them, and the analysis scripts exclude short cells
+automatically.
 
 **What is left is writing and presenting, not measuring.**
 
@@ -43,13 +48,21 @@ Run these from the repo root. They take seconds to a couple of minutes. They
 need no GPU, no API key and no network.
 
 ```bash
-python3 -m pytest tests/ -q          # 129 tests, none contacts a model
+python3 -m pytest tests/ -q          # 161 tests, none contacts a model
 python3 scripts/build_card.py        # results/ -> card.json  (prints the table)
 python3 scripts/figures.py           # card.json -> site/fig1..3 (SVG, 2 themes)
 python3 scripts/persona_depth.py     # results/ -> site/fig5 + persona_depth.json
 python3 scripts/build_site.py        # card.json -> site/index.html
 python3 scripts/paper_numbers.py     # card.json -> paper/numbers.tex + table
 python3 scripts/lint_paper.py        # checks the LaTeX without needing TeX
+
+# the four analyses added later — all pure re-analysis, no GPU, no network
+python3 scripts/length_control.py      # is the residual a prompt-length effect? (no)
+python3 scripts/floor_decomposition.py # is the floor just length ordering? (no)
+python3 scripts/reasoning_effect.py    # does chain-of-thought corrupt it? (no)
+python3 scripts/persona_validity.py    # do personas move the RIGHT things? (mostly not)
+python3 scripts/nonsense_detector.py   # can the model tell? (yes — see below)
+python3 scripts/fig_detector.py        # -> site/fig4_detector.svg
 ```
 
 **Order matters only in one place:** `build_card.py` must run before
@@ -131,6 +144,14 @@ unmanipulated coherence number that fails to depend on it. Where the persona
 sits (user message vs system prompt) matters far less (0.109) than which
 persona it is (0.276).
 
+**The clearest single result, if you only explain one thing.** Every pair was
+run in both arms, so we have matched examples of "real outcomes" and "nonsense
+outcomes" from the same model. Ask: can you tell them apart from the model's own
+output? The channel the metric *uses* manages AUROC 0.596 — near chance. The
+channel it *throws away* (answer mass) reaches 0.821, detecting 40% of nonsense
+at a 5% false-alarm rate, and 1.000 for Qwen3.5-2B. **The model notices. The
+metric is computed from the part that noticed least.**
+
 **Three checks that favoured the original paper.** Report these; they make the
 work credible, not weaker. Order-counterbalancing cancels positional bias
 exactly; held-out evaluation keeps a coin-flip responder near chance (0.46); and
@@ -173,6 +194,9 @@ unstable was actually just the truncated file. **Do not put it back.**
 6. Figures come from matplotlib over `card.json`, never from the web page, so a
    broken page cannot damage the paper.
 7. Max 10 GPUs (`MAX_GPUS` in `modal_app/sweep.py`). Raise deliberately.
+8. A result file is complete or it does not exist — never resume on
+   "does the file exist". See §6.
+9. Never pipe `modal run` through `grep`; it buffers and hides progress.
 
 ---
 
@@ -185,7 +209,26 @@ unstable was actually just the truncated file. **Do not put it back.**
 The page is live, the PDFs build and the data is complete. What remains is
 proofreading and the talk.
 
-## 9. Optional work, explicitly not required
+## 9. The one unfinished thing (optional)
+
+A **Track 3 deception arm** was launched and stopped half-way. It compares three
+system prompts: a genuine trait, the trait plus an instruction to deny it, and
+an instruction to *claim* the trait while choosing normally (the clean negative
+that gives a false-positive rate).
+
+State: 20 of 30 cells complete, 8 truncated, and **the self-report probe never
+ran** — so there is no "what the model says" channel, and therefore no result.
+Resume command is in `HANDOFF.md`. ~15 min, ~$2.
+
+**If in doubt, cut it.** Nothing else depends on it and the paper does not cite
+it. Half a two-channel design is not a finding.
+
+Two operational lessons from how it broke, both now written into the standing
+rules: never pipe `modal run` through `grep` (it buffers, so a stopped run looks
+like a quiet one), and the row-count completeness guard is what makes the
+truncated cells safe to resume rather than silently wrong.
+
+## 10. Optional work, explicitly not required
 
 - **Guardrail-masking arm** — data already shows refusal is topic-ordered and
   that forced choice *hides* rather than avoids the guardrail. Needs an

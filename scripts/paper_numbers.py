@@ -66,7 +66,8 @@ def _slug(model: str) -> str:
 
 def build(card: dict, personas: list[dict], length: dict | None = None,
           floor_decomp: dict | None = None, reasoning: dict | None = None,
-          validity: list[dict] | None = None) -> str:
+          validity: list[dict] | None = None,
+          detector: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -255,6 +256,32 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         out.append(_cmd("PersonaRetainTop", keep[0][1].split("/")[-1]))
         out.append(_cmd("PersonaRetainTopVal", f"{keep[0][0]:+.3f}"))
 
+    # The detector framing: how well each channel of the SAME forward pass
+    # separates real outcomes from nonsense. The kept channel against the
+    # discarded ones is the whole argument in two numbers.
+    if detector:
+        import statistics as _st
+        per = detector["per_model"]
+        names = [k for k in next(iter(per.values())) if k != "n_matched_pairs"]
+        def _mean(name, field="separation"):
+            v = [e[name][field] for e in per.values() if name in e]
+            return _st.mean(v) if v else None
+        kept = next(n for n in names if "[KEPT]" in n)
+        out.append(_cmd("DetKeptAuroc", f"{_mean(kept):.3f}"))
+        out.append(_cmd("DetKeptTPR", f"{100 * _mean(kept, 'tpr_at_fpr'):.0f}"))
+        disc = [(n, _mean(n)) for n in names if "discarded" in n]
+        best, bv = max(disc, key=lambda kv: kv[1])
+        out.append(_cmd("DetBestName", best.split("  ")[0]))
+        out.append(_cmd("DetBestAuroc", f"{bv:.3f}"))
+        out.append(_cmd("DetBestTPR", f"{100 * _mean(best, 'tpr_at_fpr'):.0f}"))
+        out.append(_cmd("DetFPR", f"{100 * detector['fpr']:.0f}"))
+        out.append(_cmd("DetNModels", str(len(per))))
+        best_model = max(((e[best]["separation"], m) for m, e in per.items()
+                          if best in e), default=(None, None))
+        if best_model[1]:
+            out.append(_cmd("DetBestModel", best_model[1].split("/")[-1]))
+            out.append(_cmd("DetBestModelAuroc", f"{best_model[0]:.3f}"))
+
     if personas:
         vals = [r["floor_corrected"] for r in personas]
         out.append(_cmd("NPersonaCells", str(len(vals))))
@@ -346,6 +373,7 @@ def main() -> None:
     ap.add_argument("--floor-decomp", default="site/floor_decomposition.json")
     ap.add_argument("--reasoning", default="site/reasoning_effect.json")
     ap.add_argument("--validity", default="site/persona_validity.json")
+    ap.add_argument("--detector", default="site/nonsense_detector.json")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
@@ -364,7 +392,9 @@ def main() -> None:
     reasoning = json.loads(rpath.read_text()) if rpath.exists() else None
     vpath = Path(args.validity)
     validity = json.loads(vpath.read_text()) if vpath.exists() else None
-    text = build(card, personas, length, floor_decomp, reasoning, validity)
+    dpath = Path(args.detector)
+    detector = json.loads(dpath.read_text()) if dpath.exists() else None
+    text = build(card, personas, length, floor_decomp, reasoning, validity, detector)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 
