@@ -208,9 +208,45 @@ values when it is not. Its high residual is then not content signal but a
 *length* signal that happens to differ between arms because the arms differ in
 tokenisation.
 
-- **T4a.** Recompute granite's residual on the length-matched pair band only. If
-  the residual collapses while other models' survive, its +0.063 is a length
-  artifact and the paper should say so per-model rather than only in aggregate.
+### T4a — RUN, and it refutes this part of Theory 4
+
+granite's residual under length matching: **+0.063 → +0.066**. It does not
+collapse; it is the *highest* matched-band residual in the roster. Its residual
+is not a length artifact, and that half of Theory 4 is withdrawn.
+
+What the test found instead is bigger than what it was looking for. The
+aggregate is stable (+0.025 → +0.021) but individual models move hard in both
+directions:
+
+| model | unmatched | matched | change |
+|---|---:|---:|---:|
+| granite-4.1-3b | +0.063 | +0.066 | +0.002 |
+| Qwen3.5-0.8B | +0.067 | +0.053 | −0.014 |
+| LFM2.5-1.2B | +0.047 | +0.037 | −0.010 |
+| Qwen3.5-9B | −0.004 | **+0.023** | +0.027 |
+| SmolLM3-3B | +0.009 | +0.011 | +0.002 |
+| Qwen3.5-4B | −0.013 | **+0.010** | +0.023 |
+| Qwen3.5-2B | +0.003 | +0.010 | +0.007 |
+| SmolLM2-1.7B | +0.047 | **+0.003** | −0.044 |
+| gemma-4-E2B-it | +0.010 | **−0.027** | −0.037 |
+
+`SmolLM2` loses almost its entire residual; `gemma` goes negative; the two Qwen
+models that looked like they had *no* content signal turn out to have positive
+residuals once length is matched.
+
+**And the scaling claim weakens with it.** Pooled over nine models, r(log size,
+residual) goes from **−0.67 to −0.16** — gone. Within the Qwen ladder it goes
+from −0.84 to −0.61, and the end-to-end fall halves, from −0.071 to −0.030.
+
+The paper reported that the *mean* residual survives length matching, which is
+true, and never asked whether the *scaling result* does. It half does. This is
+now stated in Limitations, and the ledger entry for `scaling-residual-falls`
+carries the matched figures alongside the unmatched ones.
+
+granite still deserves Theory 4's other half: it remains the most decisive model
+on nonsense, the one whose invented ordering *is* length (0.835 rule vs 0.833
+fit), and the only one needing a system prompt to install a persona. Those
+stand. Only "its residual is a length artifact" fell.
 - **T4b.** Check whether granite's opt-out saturation (P(C) = 1.000 on invented)
   coexists with its high invented-arm decisiveness in the *binary* battery. It
   does, and that pair of facts is contradictory on any "it has preferences"

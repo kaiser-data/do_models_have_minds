@@ -16,7 +16,10 @@
       "LadderResidFall": "-0.071",
       "WithinFamilyCorr": "-0.84",
       "LadderNSizes": "4",
-      "OutsideFamilyCorr": "-0.19"
+      "OutsideFamilyCorr": "-0.19",
+      "MatchedWithinCorr": "-0.61",
+      "MatchedPooledCorr": "-0.16",
+      "MatchedLadderFall": "-0.030"
     },
     "persona-displacement": {
       "PersonaAbovePointThree": "18",
@@ -61,8 +64,8 @@
       "MostLengthModel": "granite-4.1-3b"
     },
     "neutral-option": {
-      "NeutNModels": "5",
-      "NeutNInterp": "2",
+      "NeutNModels": "6",
+      "NeutNInterp": "3",
       "NeutNRefuse": "3",
       "NeutIShiftLo": "-0.023",
       "NeutIShiftHi": "+0.003",
@@ -71,8 +74,8 @@
     "opt-out-is-a-discarded-channel": {
       "NeutGapLo": "+0.146",
       "NeutGapHi": "+0.769",
-      "NeutNGapPositive": "5",
-      "NeutNModels": "5"
+      "NeutNGapPositive": "6",
+      "NeutNModels": "6"
     }
   }
 }

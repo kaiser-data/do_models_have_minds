@@ -785,11 +785,11 @@ is answered where it can be tested: the floor is not an artifact of forced
 choice. The broader form survives in a different shape --- for the majority of
 models the forced choice is what produced an answer at all.
 
-\paragraph{Scope, and a reversal.} \NeutNModels{} models, two arms each; one
-further model (Qwen3.5-9B) is still incomplete and is reported as such rather
-than dropped. We ran this control first on a single model, and on that model
+\paragraph{Scope, and a reversal.} \NeutNModels{} models, two arms each. We
+ran this control first on a single model, and on that model
 concluded plainly that the floor survives. It does --- for that model, which
-turns out to be one of the two that still engages with the invented arm. At
+turns out to be one of the \NeutNInterp{} of \NeutNModels{} that still engage
+with the invented arm at all. At
 $n = 1$ we could not have known that it was the exception rather than the rule,
 and the conclusion we drew was correspondingly too clean. It is recorded here
 rather than quietly revised.
@@ -859,7 +859,27 @@ Restricting both arms to pairs whose outcomes fall in the overlapping band of
 \MatchedResidual{}, against \MeanResidual{} unrestricted. The residual
 therefore survives length matching, and the small part attributable to length
 runs \emph{against} us: the unmatched number slightly overstates the semantic
-component rather than understating it. Consistent with this, coherence within
+component rather than understating it.
+
+\textbf{The stable mean conceals real per-model movement, and the scaling
+claim does not survive as well as the mean does.} Individual residuals move in
+both directions under matching --- \MatchedNGrow{} of \MatchedNModels{} grow,
+and the largest single move is \MatchedBiggestMover{} at
+\MatchedBiggestMove{}, which loses almost all of its apparent residual. Two
+models with negative unmatched residuals become positive. Consequently the
+size relationship weakens sharply: pooled over all \NModels{} models the
+correlation between $\log_2$ parameters and residual falls from
+\PooledSizeCorr{} to \MatchedPooledCorr{} --- that is, to nothing --- and
+within the \LadderFamily{} ladder it falls from \WithinFamilyCorr{} to
+\MatchedWithinCorr{}, with the end-to-end drop shrinking from
+\LadderResidFall{} to \MatchedLadderFall{}
+(\MatchedLadderSmallResid{} at \LadderSmall{} against
+\MatchedLadderLargeResid{} at \LadderLarge{}). We report the within-family
+scaling result because it survives in direction and roughly half in magnitude,
+but the pooled correlation should be read as a length effect, and
+\S\ref{sec:scale} should be read with the matched figure in mind. The
+matched band rests on roughly 1{,}000--1{,}200 pairs per arm rather than the
+full 2{,}500, so it is noisier per model than the unrestricted contrast. Consistent with this, coherence within
 the real arm falls mildly across length terciles while the invented arm is
 approximately flat, so the longer invented prompts are if anything scored
 slightly low. We regard the confound as real but small; it does not account for

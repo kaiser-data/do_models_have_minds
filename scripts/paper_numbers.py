@@ -385,6 +385,47 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             out.append(_cmd("RevInventedGap",
                             f"{i['scores'][CONCEALED] - i['scores'][VERBAL]:+.3f}"))
 
+    # The scaling claim under length matching. The paper already reports that
+    # the MEAN residual survives the length control (+0.021 vs +0.025). That is
+    # a different question from whether the SCALING result survives it, and the
+    # answer is not the same: pooled, the size correlation nearly vanishes.
+    # Emitted here so the paper cannot report the reassuring half alone.
+    if length and length.get("matched_band", {}).get("per_model"):
+        import math as _m
+        pm = length["matched_band"]["per_model"]
+        sizes_, _f = _roster_sizes()
+        pairs_ = [(sizes_[m], v["residual"]) for m, v in pm.items() if m in sizes_]
+
+        def _c(xs, ys):
+            n_ = len(xs)
+            mx, my = sum(xs) / n_, sum(ys) / n_
+            sx = _m.sqrt(sum((x - mx) ** 2 for x in xs))
+            sy = _m.sqrt(sum((y - my) ** 2 for y in ys))
+            return None if sx == 0 or sy == 0 else sum(
+                (x - mx) * (y - my) for x, y in zip(xs, ys)) / (sx * sy)
+
+        if len(pairs_) >= 4:
+            out.append(_cmd("MatchedPooledCorr",
+                            f"{_c([_m.log2(a) for a, _ in pairs_], [b for _, b in pairs_]):+.2f}"))
+        qp = sorted([(sizes_[m], v["residual"]) for m, v in pm.items()
+                     if m.startswith("Qwen/Qwen3.5-")], key=lambda t: t[0])
+        if len(qp) >= 3:
+            out.append(_cmd("MatchedWithinCorr",
+                            f"{_c([_m.log2(a) for a, _ in qp], [b for _, b in qp]):+.2f}"))
+            out.append(_cmd("MatchedLadderFall", f"{qp[-1][1] - qp[0][1]:+.3f}"))
+            out.append(_cmd("MatchedLadderSmallResid", f"{qp[0][1]:+.3f}"))
+            out.append(_cmd("MatchedLadderLargeResid", f"{qp[-1][1]:+.3f}"))
+        # How far individual models move, since the stable mean hides it.
+        deltas = [(m, v["residual"]) for m, v in pm.items()]
+        card_v = {t["model"]: t["value"] for t in tiles}
+        moves = [(m, r - card_v[m]) for m, r in deltas if m in card_v]
+        if moves:
+            big = max(moves, key=lambda t: abs(t[1]))
+            out.append(_cmd("MatchedBiggestMover", big[0].split("/")[-1]))
+            out.append(_cmd("MatchedBiggestMove", f"{big[1]:+.3f}"))
+            out.append(_cmd("MatchedNGrow", str(sum(1 for _, d in moves if d > 0))))
+            out.append(_cmd("MatchedNModels", str(len(moves))))
+
     # The neutral-option control. Emitted only when all four cells exist, so
     # the paper cannot quote half of it: a P(C) without the matching coherence
     # comparison would be an interesting number standing in for the control it

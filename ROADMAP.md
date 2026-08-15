@@ -16,13 +16,13 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 ### 2. `scaling-residual-falls` — provisional
 
-> Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow.
+> Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.
 
-**Next addition.** A SECOND FAMILY spanning 3+ sizes. This is the single highest-value addition in the ledger: the claim is currently carried by one ladder and the paper says so.
+**Next addition.** A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of 2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.
 
-**Would falsify it.** A second family whose within-family correlation is flat or positive.
+**Would falsify it.** A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.
 
-*Current evidence:* families = 1, sizes in family = 4, models outside family = 5
+*Current evidence:* families = 1, sizes in family = 4, models outside family = 5, note = within-family r -0.84 unmatched, -0.61 length-matched; pooled -0.67 -> -0.16
 
 ### 3. `track3-directive-blind` — provisional
 

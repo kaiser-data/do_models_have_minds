@@ -64,22 +64,26 @@
     },
     {
       "id": "scaling-residual-falls",
-      "statement": "Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow.",
+      "statement": "Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.",
       "status": "provisional",
       "section": "sec:scale",
       "macros": [
         "LadderResidFall",
         "WithinFamilyCorr",
         "LadderNSizes",
-        "OutsideFamilyCorr"
+        "OutsideFamilyCorr",
+        "MatchedWithinCorr",
+        "MatchedPooledCorr",
+        "MatchedLadderFall"
       ],
       "evidence": {
         "families": 1,
         "sizes_in_family": 4,
-        "models_outside_family": 5
+        "models_outside_family": 5,
+        "note": "within-family r -0.84 unmatched, -0.61 length-matched; pooled -0.67 -> -0.16"
       },
-      "what_would_falsify": "A second family whose within-family correlation is flat or positive.",
-      "grows_by": "A SECOND FAMILY spanning 3+ sizes. This is the single highest-value addition in the ledger: the claim is currently carried by one ladder and the paper says so.",
+      "what_would_falsify": "A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.",
+      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of 2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.",
       "priority": 2
     },
     {
