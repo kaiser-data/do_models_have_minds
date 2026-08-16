@@ -380,6 +380,29 @@
       "what_would_falsify": "A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.",
       "grows_by": "More models; the direction is unanimous at n=\\NeutNModels so this is about width rather than depth.",
       "priority": 2
+    },
+    {
+      "id": "metric-cannot-read-most-frontier",
+      "statement": "The forced choice is read from the first sampled token, and on most of the frontier that token is not the answer: of \\HostedNTotal hosted models measured under the verbatim prompt, \\HostedNScoreable are scoreable and \\HostedNUnscoreable are not.",
+      "status": "established",
+      "section": "sec:limits",
+      "macros": [
+        "HostedNTotal",
+        "HostedNScoreable",
+        "HostedNUnscoreable",
+        "HostedNPreamble",
+        "HostedNNoLogprobs",
+        "HostedNoLogprobsModel"
+      ],
+      "evidence": {
+        "hosted_models_measured": "\\HostedNTotal",
+        "scoreable": "\\HostedNScoreable",
+        "unscoreable": "\\HostedNUnscoreable",
+        "note": "Two different failures, not one: \\HostedNPreamble spend the first token on a reasoning preamble or a format control token, which is a limit of first-token forced choice and would be recovered by a prefill variant; the remaining \\HostedNNoLogprobs (\\HostedNoLogprobsModel) is refused logprobs by its API, which no prompt-level change reaches. Measured in nullcard/roster.py as first_token_ok, and derived into macros so the ledger cannot drift from it."
+      },
+      "what_would_falsify": "A prefill or constrained-decoding variant that reads the \\HostedNPreamble preamble models and reproduces scores poolable with the rest -- which would make their exclusion an artifact of where we look rather than a limit of the metric.",
+      "grows_by": "More hosted models measured. What matters is the fraction rather than the count, and the fraction is what bounds every other claim in this ledger: the models reported here are the models that could be scored.",
+      "priority": 2
     }
   ]
 }

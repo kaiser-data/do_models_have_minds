@@ -52,6 +52,42 @@ def _roster_sizes() -> tuple[dict[str, float], dict[str, str]]:
             {m.hf_id: m.family for m in SELF_HOSTED})
 
 
+def _hosted_scoreability() -> dict[str, list]:
+    """Which frontier models the first-token metric can read at all.
+
+    `first_token_ok` in the roster is measured, not assumed: it records whether
+    the model puts its forced choice in the first sampled token. Split three
+    ways here because the failures are not the same kind of thing -- a model
+    that spends its first token on a reasoning preamble is a limit of the
+    metric, while an API that declines logprobs is a limit of the vendor, and
+    the paper should not merge them into one number.
+
+    Derived from the roster rather than typed into the paper, for the reason
+    _roster_sizes gives: a hand-written "six of ten" goes stale the first time
+    a hosted model is added.
+    """
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from nullcard.roster import NEBIUS, scoreable_hosted
+
+    return {
+        "all": list(NEBIUS),
+        "ok": scoreable_hosted(),
+        "preamble": [m for m in NEBIUS if m.logprobs and not m.first_token_ok],
+        "no_logprobs": [m for m in NEBIUS if not m.logprobs],
+    }
+
+
+def _tex(s: str) -> str:
+    """Escape a model id for use as a macro VALUE.
+
+    Macro names are constrained to letters by _cmd; values are not, but they
+    still reach LaTeX verbatim. Nemotron-3_5-Lightning carries an underscore,
+    which is a subscript in math mode and an error outside it.
+    """
+    return s.replace("\\", r"\textbackslash{}").replace("_", r"\_")
+
+
 def _slug(model: str) -> str:
     """A model id as a LaTeX-safe macro name: Qwen/Qwen3.5-0.8B -> QwenIIIVZeroEightB.
 
@@ -210,6 +246,27 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         out.append(_cmd("HarnessNStuck", str(len(stuck))))
         if stuck:
             out.append(_cmd("HarnessStuckModel", stuck[0].split("/")[-1]))
+
+    # What the metric can read at all. This is a limitation of first-token
+    # forced choice, not of this harness: most of the frontier roster cannot be
+    # scored by it, and the measurement is already done. It also bounds our own
+    # claims -- the models we report are the models that COULD be scored, which
+    # is a selection on output format and not a random sample of the frontier.
+    sc = _hosted_scoreability()
+    n_unscoreable = len(sc["preamble"]) + len(sc["no_logprobs"])
+    out.append(_cmd("HostedNTotal", str(len(sc["all"]))))
+    out.append(_cmd("HostedNScoreable", str(len(sc["ok"]))))
+    out.append(_cmd("HostedNUnscoreable", str(n_unscoreable)))
+    out.append(_cmd("HostedNPreamble", str(len(sc["preamble"]))))
+    out.append(_cmd("HostedNNoLogprobs", str(len(sc["no_logprobs"]))))
+    if sc["no_logprobs"]:
+        out.append(_cmd("HostedNoLogprobsModel",
+                        _tex(sc["no_logprobs"][0].api_id.split("/")[-1])))
+    out.append(_cmd("HostedScoreableModels", ", ".join(
+        _tex(m.api_id.split("/")[-1]) for m in sc["ok"])))
+    out.append(_cmd("HostedUnscoreableModels", ", ".join(
+        _tex(m.api_id.split("/")[-1])
+        for m in sc["preamble"] + sc["no_logprobs"])))
 
     # Strength: the headline contrast. Restricted to models that are decisive
     # at all on real outcomes, because a model that never commits anywhere has

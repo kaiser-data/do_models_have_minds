@@ -269,7 +269,14 @@ def build_table(claims: dict, macros: dict[str, str]) -> str:
                  "replicates_per_cell": ("replicate/cell", "replicates/cell"),
                  "models_revealed_passing_gate": ("model past the specificity gate",
                                                   "models past the specificity gate"),
-                 "cells_run": ("cell run", "cells run")}
+                 "cells_run": ("cell run", "cells run"),
+                 # Deliberately not folded into the "models" column: that column
+                 # counts models in OUR sweep, and a hosted-roster count sitting
+                 # in it would read as one of ours next to the 9s and 6s.
+                 "hosted_models_measured": ("hosted model measured",
+                                            "hosted models measured"),
+                 "unscoreable": ("unscoreable by first token",
+                                 "unscoreable by first token")}
         bits = []
         for k, (one, many) in nouns.items():
             if k in ev:

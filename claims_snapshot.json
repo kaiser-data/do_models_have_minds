@@ -118,6 +118,14 @@
       "NeutNGapPositive": "6",
       "NeutNModels": "6",
       "NeutNCells": "12"
+    },
+    "metric-cannot-read-most-frontier": {
+      "HostedNTotal": "10",
+      "HostedNScoreable": "4",
+      "HostedNUnscoreable": "6",
+      "HostedNPreamble": "5",
+      "HostedNNoLogprobs": "1",
+      "HostedNoLogprobsModel": "Kimi-K3"
     }
   }
 }

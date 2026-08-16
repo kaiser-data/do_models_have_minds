@@ -1111,6 +1111,35 @@ reported here. We state this first among the limitations because it was
 invisible in every artifact we kept --- each recorded field described our intent
 rather than the model's input, and no result would have looked wrong.
 
+\paragraph{Most of the frontier cannot be scored by this metric at all.} The
+forced choice is read from the first sampled token, which presumes the model
+spends that token on the answer. We measured whether it does, over
+\HostedNTotal{} hosted frontier models under the verbatim prompt:
+\HostedNScoreable{} do (\HostedScoreableModels{}), and \HostedNUnscoreable{} do
+not (\HostedUnscoreableModels{}).
+
+The \HostedNUnscoreable{} fail for two different reasons, and merging them into
+one number would misdescribe both. \HostedNPreamble{} begin an answer we cannot
+read from where we are looking --- a reasoning preamble (``We'', ``The'',
+``Here'') or a format control token --- so the choice is presumably made, but
+not in the first token. That is a limitation of first-token forced choice as an
+instrument, not of any model and not of our harness; a prefill variant would
+recover them, and until one exists their numbers are not poolable with the rest
+(\S\ref{sec:defs}). The remaining \HostedNNoLogprobs{}
+(\HostedNoLogprobsModel{}) is different in kind: its API declines to return
+logprobs at all, so no prompt-level change reaches it. That is a property of the
+vendor, not of the method.
+
+We state this as a limitation rather than a result because of what it does to
+our own roster. The models we report are the models that \emph{could} be
+scored, which makes them a selection on output format rather than a sample of
+the frontier --- and output format is plausibly correlated with the training
+choices whose effects we are trying to measure. The direction of that bias is
+not something we can estimate from inside the selected set. It is also the
+sharpest available reason to doubt that a metric defined this way measures
+something general: an instrument that cannot read a majority of the models one
+would most want to compare is, for those models, not yet an instrument.
+
 \paragraph{Both detectors are scored knowing the answer.} The separation
 reported in \S\ref{sec:detector} is computed with the arm label in hand: we know
 which outcomes were invented, and we ask how well a channel recovers that label.
