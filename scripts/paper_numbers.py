@@ -177,6 +177,23 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("ResidSignP", f"{min(1.0, p_sign):.2f}"))
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
+
+    # Corpus size, read from the manifests rather than typed. A reader asking
+    # "how much data is this" should get the answer the SHA-256 tree covers,
+    # not a number someone remembered.
+    tf = tr = tb = 0
+    for name in ("results_manifest.json", "results_hosted_manifest.json",
+                 "results_v2_manifest.json"):
+        mp = Path(name)
+        if not mp.exists():
+            continue
+        m = json.loads(mp.read_text())
+        tf += m["n_files"]; tr += m["total_rows"]; tb += m["total_bytes"]
+    if tf:
+        out.append(_cmd("CorpusCells", _thousands(tf)))
+        out.append(_cmd("CorpusRows", _thousands(tr)))
+        out.append(_cmd("CorpusGB", f"{tb / 1e9:.2f}"))
+        out.append(_cmd("CorpusMB", str(round(tb / 1e6))))
     # Families, because "nine models" and "nine models from one family" are
     # different studies and the abstract has to say which.
     out.append(_cmd("NFamilies", str(len({t["model"].split("/")[0] for t in tiles}))))
@@ -1011,7 +1028,7 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     if contrast and contrast.get("by_prompt"):
         bp = contrast["by_prompt"]
         out.append(_cmd("PcNModels", str(len({c["model"] for c in contrast["cells"]}))))
-        for pid, tag in (("ue", "Ue"), ("v2", "Vtwo")):
+        for pid, tag in (("ue", "Ue"), ("v2", "Vtwo"), ("warned", "Warned")):
             if pid in bp:
                 out.append(_cmd(f"Pc{tag}Residual", f"{bp[pid]['mean_residual']:+.4f}"))
                 out.append(_cmd(f"Pc{tag}ConvR", f"{bp[pid]['mean_conviction_R']:.3f}"))
@@ -1019,10 +1036,13 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         if "ue" in bp and "v2" in bp:
             out.append(_cmd("PcResidualShift",
                             f"{abs(bp['ue']['mean_residual'] - bp['v2']['mean_residual']):.4f}"))
+        if "v2" in bp and "warned" in bp:
+            out.append(_cmd("PcWarnedMove",
+                            f"{bp['warned']['mean_residual'] - bp['v2']['mean_residual']:+.4f}"))
         # Per model, because the mean hides that one model reverses.
         for c in contrast["cells"]:
             short = _slug(c["model"].split("/")[-1])
-            tag = "Ue" if c["prompt"] == "ue" else "Vtwo"
+            tag = {"ue": "Ue", "v2": "Vtwo", "warned": "Warned"}[c["prompt"]]
             out.append(_cmd(f"Pc{short}{tag}Resid", f"{c['residual']:+.4f}"))
             out.append(_cmd(f"Pc{short}{tag}ConvR", f"{c['conviction_R']:.3f}"))
             out.append(_cmd(f"Pc{short}{tag}ConvN", f"{c['conviction_N_minus']:.3f}"))

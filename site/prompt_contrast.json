@@ -11,6 +11,12 @@
       "mean_conviction_R": 0.197,
       "mean_residual": -0.006945325722803819,
       "n_models": 2
+    },
+    "warned": {
+      "mean_conviction_N_minus": 0.179,
+      "mean_conviction_R": 0.2372,
+      "mean_residual": 0.00803383941974789,
+      "n_models": 2
     }
   },
   "cells": [
@@ -39,6 +45,18 @@
       "residual": -0.02453776320362877
     },
     {
+      "answer_mass_N_minus": 0.9943342474701018,
+      "answer_mass_R": 0.9966047104698784,
+      "coherence_N_minus": 0.9059249310404146,
+      "coherence_R": 0.8894369822341673,
+      "conviction_N_minus": 0.0,
+      "conviction_R": 0.0012,
+      "conviction_ratio": null,
+      "model": "Qwen/Qwen3.5-2B",
+      "prompt": "warned",
+      "residual": -0.016487948806247266
+    },
+    {
       "answer_mass_N_minus": 0.9999999775751476,
       "answer_mass_R": 0.999999998323944,
       "coherence_N_minus": 0.8328754640916879,
@@ -61,11 +79,24 @@
       "model": "ibm-granite/granite-4.1-3b",
       "prompt": "v2",
       "residual": 0.010647111758021133
+    },
+    {
+      "answer_mass_N_minus": 0.9999999957894975,
+      "answer_mass_R": 1.0000000001100735,
+      "coherence_N_minus": 0.8545330816100204,
+      "coherence_R": 0.8870887092557634,
+      "conviction_N_minus": 0.358,
+      "conviction_R": 0.4732,
+      "conviction_ratio": 1.3217877094972068,
+      "model": "ibm-granite/granite-4.1-3b",
+      "prompt": "warned",
+      "residual": 0.032555627645743046
     }
   ],
   "n_design_seeds": 1,
   "prompts": [
     "ue",
-    "v2"
+    "v2",
+    "warned"
   ]
 }

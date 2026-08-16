@@ -822,6 +822,37 @@ change of wording. This is the sharpest statement this paper can make about its
 own subject: the elicited preference is a joint property of a model and a
 question, and the presence of meaning is not what holds it together.
 
+\paragraph{Telling the model the foils exist moves the floor.}
+\label{sec:warned} \citet{paulhus2003overclaiming} report that their
+over-claiming index held even when respondents were \emph{warned} that some
+items were nonexistent. Our models had never been told. A third wording,
+\texttt{warned}, is \texttt{v2} plus one sentence --- ``some of the options in
+this study describe invented things that do not exist; you will not be told
+which'' --- so the \texttt{v2}-to-\texttt{warned} contrast isolates disclosure.
+Not naming \emph{which} option is deliberate: naming it would turn a preference
+question into a detection task.
+
+The floor does not simply survive. Disclosure moves the mean residual
+\PcWarnedMove{}, from \PcVtwoResidual{} to \PcWarnedResidual{}, in the direction
+of \emph{more} separation between real and invented. For granite-4.1-3b it also
+undoes the conviction reversal of \S\ref{sec:prompt}: the ratio of decisiveness
+on real to invented outcomes returns from $0.76\times$ to $1.32\times$, so the
+model is once again more committed about real outcomes than invented ones.
+
+Two qualifications keep this from being more than it is. Only one of the two
+models moves further than its own design-replicate floor (Qwen3.5-2B by
+roughly ten times, granite-4.1-3b by less than one), so on present evidence
+this is one clear case and one suggestive one. And the warned residual
+(\PcWarnedResidual) remains far below the \texttt{ue} value
+(\PcUeResidual) --- disclosure recovers part of the separation, not most of it.
+
+The reading we take is that part of the flat residual is the model not being
+cued to attend to the distinction, and part is not. That is a weaker version of
+Paulhus's result rather than a replication of it, and the difference is worth
+naming: a language model can be \emph{told} about the foils in the prompt that
+also asks the question, which is not the position of a human respondent who may
+already suspect. The two warnings are not the same manipulation.
+
 \textbf{What this does and does not license.} It is \PcNModels{} models at one
 design seed. It cannot revise the nine-model result, and it does not: those
 cells stand as measured, on the instrument they were measured with. What it
@@ -2118,6 +2149,48 @@ of the metric in \S1 (from \texttt{scripts/floor\_simulation.py}, which
 describes synthetic responders and no language model) and figures quoted from
 the literature, each re-derived from the full source text rather than from an
 abstract.
+
+\section*{Data availability}
+
+The raw outputs are \CorpusCells{} cells --- \CorpusRows{} scored comparisons,
+\CorpusMB{}\,MB of append-only JSONL --- across three trees kept deliberately
+apart, because pooling them would average two serving stacks into one number:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+tree & cells & rows & produced by \\
+\midrule
+\texttt{results/} & 212 & 1{,}051{,}200 & self-hosted vLLM on rented L4/A10G (Modal) \\
+\texttt{results\_hosted/} & 11 & 53{,}354 & hosted OpenAI-compatible API (Nebius) \\
+\texttt{results\_v2/} & 12 & 60{,}000 & the prompt-factor run, Modal \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Every row records the configuration that produced it --- battery SHA-256,
+harness hash, design seed, arm, persona, depth and prompt id --- so a cell is
+self-describing and two cells from different harnesses cannot be silently
+merged. \texttt{results\_manifest.json} and its two siblings pin every file by
+SHA-256 and carry a tree hash, so a fetched copy can be \emph{verified} as the
+one this paper was built from rather than trusted:
+
+\begin{center}
+\small\ttfamily
+python3 scripts/results\_manifest.py -{-}verify
+\end{center}
+
+\noindent
+Code, the pre-registration, the claims ledger and every derived artifact are in
+the repository. \textbf{The raw cell archive is not yet public}: it lives on a
+private Modal volume, so third-party reproduction \emph{from raw outputs} is
+not currently possible --- only verification, once a copy is obtained.
+Publishing it as a release or Zenodo deposit is the outstanding fix, and at
+\CorpusGB\,GB it is within the size limits of either. Everything downstream of
+the raw cells --- \texttt{card.json}, the figures, the tables, every macro in
+this paper --- rebuilds from a clean clone once \texttt{results/} is present.
 
 \section*{AI usage, and where the humans were}
 

@@ -127,7 +127,7 @@ Two properties worth stating because they are unusual, and one warning:
 **Every derived artifact is committed** — `card.json`, `paper/numbers.tex`, the figures,
 the site — so the paper and the page rebuild from a clean clone with **no GPU, no API key
 and no network**. The raw `results/` tree is **not** committed: it is 402 MB of per-call
-rows across 153 cells, too large for git. Rebuilding the derived artifacts *from raw
+rows across 235 cells (1,164,554 scored comparisons, 653 MB), too large for git. Rebuilding the derived artifacts *from raw
 outputs* therefore needs that archive first.
 
 `results_manifest.json` pins every cell by SHA-256 so a fetched copy can be verified as
