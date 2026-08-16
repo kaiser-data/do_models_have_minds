@@ -70,6 +70,11 @@ OBEY_A, OBEY_B = 0.80, 0.20
 # "Collapsed to indifference" -- lands near 0.5 having started away from it.
 INDIFFERENT_BAND = 0.10
 
+# Mean per-pair displacement above which a manipulation has demonstrably
+# reached the decision. Post-hoc like the rest of this block, and deliberately
+# low: it is a floor for "something happened", not a claim about size.
+SLOT_REACH_THRESHOLD = 0.05
+
 
 def classify_direction(base: float, pa_a: float, pa_b: float) -> dict:
     """Which of the three readings does this model's pair of directives support?
@@ -83,31 +88,74 @@ def classify_direction(base: float, pa_a: float, pa_b: float) -> dict:
     leans_a = base > 0.5
     with_pa = pa_a if leans_a else pa_b
     against_pa = pa_b if leans_a else pa_a
-    obeys_with = (with_pa > OBEY_A) if leans_a else (with_pa < OBEY_B)
-    obeys_against = (against_pa < OBEY_B) if leans_a else (against_pa > OBEY_A)
-    moved = (abs(pa_a - base) > REGISTER_THRESHOLD
-             or abs(pa_b - base) > REGISTER_THRESHOLD)
+
+    # Reaching the commanded option is not the same as being MOVED to it. A
+    # model already sitting on the commanded side satisfies the threshold
+    # without the directive doing anything, and the with-preference directive
+    # is exactly where that happens by construction -- so obedience only counts
+    # here when the model travelled to get there. Same trap as the main gate,
+    # one level down; it produced a spurious "SELECTIVE" before this guard.
+    def scored(pa: float, commands_a: bool) -> tuple[bool, bool]:
+        reached = pa > OBEY_A if commands_a else pa < OBEY_B
+        toward = (pa - base) if commands_a else (base - pa)
+        return reached and toward > REGISTER_THRESHOLD, toward > REGISTER_THRESHOLD
+
+    obeys_with, moves_with = scored(with_pa, leans_a)
+    obeys_against, moves_against = scored(against_pa, not leans_a)
     near_mid = (abs(pa_a - 0.5) < INDIFFERENT_BAND
                 and abs(pa_b - 0.5) < INDIFFERENT_BAND)
 
     if obeys_with and obeys_against:
         verdict = "obeys both directions"
+    elif obeys_with and moves_against:
+        verdict = ("SELECTIVE -- obeys the with-preference directive and moves "
+                   "under the against one without reaching it")
     elif obeys_with:
         verdict = ("SELECTIVE -- obeys the with-preference directive, refuses "
                    "the against one")
-    elif near_mid and moved:
+    elif near_mid and (moves_with or moves_against):
         verdict = ("DISRUPTION -- collapses to indifference under both, a "
                    "harness finding")
+    elif moves_with or moves_against:
+        verdict = ("PARTIAL -- moves toward the commanded option without "
+                   "reaching it")
     elif obeys_against:
         verdict = "obeys only the against-preference directive"
-    elif not moved:
-        verdict = "no directive reaches the decision"
     else:
-        verdict = "moves without obeying either"
+        verdict = "no directive reaches the decision"
     return {"leans": "A" if leans_a else "B",
             "obeys_with_preference": obeys_with,
             "obeys_against_preference": obeys_against,
+            "moves_with_preference": moves_with,
+            "moves_against_preference": moves_against,
             "verdict": verdict}
+
+
+def _by_pair(path: Path) -> dict | None:
+    """P(A) keyed by (pair, presentation order), for paired comparison."""
+    if not path.exists():
+        return None
+    return {(r["pair_index"], r["order"]): r["p_option_a"]
+            for r in load_cell(path) if r.get("p_option_a") is not None}
+
+
+def displacement(base: Path, cond: Path) -> float | None:
+    """Mean |dP(A)| per pair between two conditions.
+
+    The right measure for "did this manipulation reach the decision", and not
+    the same question as a shift in mean P(A). A persona that moves half its
+    pairs up and half down leaves the mean untouched while displacing every
+    pair; reading the mean would score it as inert. A DIRECTIVE naming one
+    option should move the mean, which is why obedience is scored on the mean
+    and reach is scored here.
+    """
+    b, c = _by_pair(base), _by_pair(cond)
+    if not b or not c:
+        return None
+    keys = set(b) & set(c)
+    if len(keys) < 100:
+        return None
+    return float(np.mean([abs(c[k] - b[k]) for k in keys]))
 
 
 def _mean_p_a(path: Path) -> tuple[float | None, float | None, int]:
@@ -142,7 +190,15 @@ def main() -> int:
         model = "/".join(stem.split("__")[:2])
         depth = stem.rsplit("-", 1)[-1]
         pa, am, n = _mean_p_a(p)
-        base_pa, base_am, base_n = _mean_p_a(rdir / f"{stem.split('__R__')[0]}__R.jsonl")
+        base_path = rdir / f"{stem.split('__R__')[0]}__R.jsonl"
+        base_pa, base_am, base_n = _mean_p_a(base_path)
+        # Independent evidence that the system slot reaches this model's
+        # decision at all: the persona arms, which are not directives and do
+        # not command an option. A model displaced by a persona has a working
+        # slot whatever it does with an instruction.
+        persona_disp = [d for d in (
+            displacement(base_path, rdir / f"{stem.split('__R__')[0]}__R__{q}-D2.jsonl")
+            for q in ("cautious", "ambitious")) if d is not None]
         rows.append({
             "model": model, "depth": depth, "n_rows": n,
             "mean_p_a": pa, "answer_mass": am,
@@ -158,6 +214,22 @@ def main() -> int:
             # demonstrates it without obeying.
             "registers": (pa is not None and base_pa is not None
                           and abs(pa - base_pa) > REGISTER_THRESHOLD),
+            "comply_displacement": displacement(base_path, p),
+            "persona_displacement": (max(persona_disp) if persona_disp else None),
+            # The gate's actual question, answered by whichever evidence exists.
+            "directive_displacement": max(
+                [d for d in (displacement(base_path, p),
+                             displacement(base_path,
+                                          rdir / f"{stem.split('__R__')[0]}"
+                                                 f"__R__comply-a-D2.jsonl"))
+                 if d is not None] or [0.0]),
+            "slot_reaches_decision": bool(
+                (persona_disp and max(persona_disp) > SLOT_REACH_THRESHOLD)
+                or max([d for d in (displacement(base_path, p),
+                        displacement(base_path,
+                                     rdir / f"{stem.split('__R__')[0]}"
+                                            f"__R__comply-a-D2.jsonl"))
+                        if d is not None] or [0.0]) > SLOT_REACH_THRESHOLD),
         })
 
     rows.sort(key=lambda r: (r["mean_p_a"] if r["mean_p_a"] is not None else 9))
@@ -188,9 +260,28 @@ def main() -> int:
     print("The two disagree in BOTH directions, which is why both are printed:")
     print("  a model can register the instruction and refuse it, and a model")
     print("  already answering B passes an obedience test it never took.")
-    print("Only the models passing BOTH have a demonstrated, non-trivial route")
-    print("from the system slot to the decision. For the others a flat Track 4")
-    print("persona result is a harness finding, not a persona finding.")
+    # The gate's real question, answered by evidence the directives cannot
+    # supply on their own. A persona is not a directive and commands no option,
+    # so a model displaced by one has a working slot whatever it does when told
+    # what to answer. This is what decides whether a Track 4 null is readable.
+    print(f"\n{'model':<26} {'persona displ.':>14} {'directive displ.':>16}  "
+          f"does the system slot reach the decision?")
+    print("-" * 104)
+    for r in sorted(rows, key=lambda r: -(r["persona_displacement"] or 0)):
+        pd_, cd = r["persona_displacement"], r["directive_displacement"]
+        f = lambda v: f"{v:>13.3f}" if v is not None else "          n/a"  # noqa: E731
+        note = (("YES" + (" -- but only by DIRECTIVE; personas barely move it"
+                 if (pd_ or 0) <= SLOT_REACH_THRESHOLD else ""))
+                if r["slot_reaches_decision"] else
+                "NO EVIDENCE -- nothing tested moves it; its Track 4 nulls "
+                "would be unreadable")
+        print(f"{r['model'].split('/')[-1]:<26} {f(pd_)} {f(cd):>13}  {note}")
+    n_reach = sum(1 for r in rows if r["slot_reaches_decision"])
+    print(f"\n{n_reach} of {len(rows)} model(s) have a demonstrably working "
+          f"system slot.")
+    print("Note this does NOT coincide with obedience. A model can refuse a")
+    print("directive while plainly receiving it, and a model can pass an")
+    print("obedience test while nothing reaches it at all.")
 
     # --- the direction control -------------------------------------------
     # Only runs when the comply-a cells exist. Without them the section is

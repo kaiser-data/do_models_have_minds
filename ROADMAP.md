@@ -38,9 +38,9 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 > Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.
 
-**Next addition.** The remaining roster at this arm, and a matched-length control directive that commands the model's ALREADY-preferred option, which would separate 'declines directives' from 'is disrupted by any directive'. Both are cheap and neither has run.
+**Next addition.** The remaining roster at both directive arms. The direction control that separates selective refusal from harness disruption has now RUN and rules out disruption: Qwen3.5-2B{} obeys the with-preference directive (P(A) 0.877{}) and only partly complies with the opposing one (0.465{}), so the directive reaches it both times.
 
-**Would falsify it.** The same model obeying on a re-run, or the collapse toward indifference turning out to be a length or position artifact rather than a response to the directive -- neither has been tested.
+**Would falsify it.** The same model obeying on a re-run, or the asymmetry reversing once the commanded option is counterbalanced against presentation order rather than against the model's lean.
 
 *Current evidence:* models = 5, note = 4 of 5 obey the registered criterion, 4 register a shift, and only 3 do both. Qwen3.5-2B went from P(A) 0.725 to 0.465 -- a large move that lands at indifference rather than at compliance. LFM2.5-1.2B-Instruct passes the obedience test having started at P(A) 0.068, i.e. it was already answering B before being told to, so its pass is an artifact of the criterion.
 
@@ -53,6 +53,16 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 **Would falsify it.** Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).
 
 *Current evidence:* models = 9, test = two-sided sign test
+
+### 6. `directive-beats-persona` — provisional
+
+> One model responds to an explicit directive while barely responding to a persona, so directive-following and persona-uptake are separable capacities rather than one slot working or not.
+
+**Next addition.** The remaining roster at both directive arms and both personas. This is n=1 and is the thinnest claim in the ledger; it is recorded because it changes how this model's persona numbers should be read, not because it is settled.
+
+**Would falsify it.** The gap closing once persona displacement is measured on the same scale as directive displacement, or appearing on no other model as the roster grows -- at n=1 it is a property of one model and not yet a distinction between capacities.
+
+*Current evidence:* models = 5, note = LFM2.5-1.2B-Instruct is displaced 0.044 per pair by its strongest persona and 0.179 by a directive -- four times as much. All 5 of 5 models have a demonstrably working system slot once directives are counted, which CORRECTS our own earlier reading that this model's slot was inert; that reading was taken before the second directive arm existed.
 
 ## Established, and what would still overturn them
 

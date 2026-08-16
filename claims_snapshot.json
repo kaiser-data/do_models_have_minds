@@ -84,6 +84,13 @@
       "ComplyTrivial": "LFM2.5-1.2B-Instruct",
       "ComplyTrivialBase": "0.068"
     },
+    "directive-beats-persona": {
+      "PersonaInertModel": "LFM2.5-1.2B-Instruct",
+      "PersonaInertPersona": "0.044",
+      "PersonaInertDirective": "0.179",
+      "ComplyNSlotReaches": "5",
+      "ComplyNModels": "5"
+    },
     "harness-not-invariant": {
       "HarnessNRendered": "9",
       "HarnessNInjecting": "2",

@@ -240,11 +240,49 @@ and read directly in the measured channel as P(A) → 0.
   registration threshold (0.10) is post-hoc and marked as such everywhere it
   appears.
 
-  Consequence for Track 4: Qwen3.5-2B and LFM2.5-1.2B-Instruct do not get an
-  interpretable persona null. Qwen3.5-2B is also the detector figure's showcase
-  model — that result is unaffected, since it concerns arm separation rather
-  than instruction-following, but the coincidence is worth stating rather than
-  leaving for a reader to notice.
+  **DIRECTION CONTROL (run immediately after, same 5 models).** A model that
+  fails to obey has two readings that displacement cannot separate: it
+  *declined* the directive, or *any* directive in that slot degrades its
+  preference without installing one. The second would be a fact about our
+  harness. `comply-a` is the same sentence with one letter changed — commanding
+  A instead of B, 15 words and 94 characters in both — so crossing it with each
+  model's own lean gives a with-preference and an against-preference directive
+  per model.
+
+  | model | base | leans | "answer A" | "answer B" | verdict |
+  |---|---|---|---|---|---|
+  | gemma-4-E2B-it | 0.592 | A | 1.000 | 0.000 | obeys both |
+  | granite-4.1-3b | 0.243 | B | 0.916 | 0.000 | obeys both |
+  | Qwen3.5-9B | 0.389 | B | 0.937 | 0.007 | obeys both |
+  | Qwen3.5-2B | 0.725 | A | 0.877 | 0.465 | **selective** |
+  | LFM2.5-1.2B-Instruct | 0.068 | B | 0.245 | 0.020 | **partial** |
+
+  **Qwen3.5-2B is not disrupted — it is asymmetrically compliant.** Told to
+  answer A, the option it already leaned toward, it went 0.725 → 0.877 and
+  obeyed. Told to answer B it moved substantially (→ 0.465) and stopped at
+  indifference rather than arriving. So the directive reached it both times; it
+  complied with the one agreeing with its preference and only partly with the
+  one opposing it. That is a finding about the model, not about the harness, and
+  the disruption reading is ruled out.
+
+  **All 5 of 5 models have a demonstrably working system slot.** This corrects
+  an earlier reading of ours: before `comply-a` existed we recorded LFM2.5 as
+  having no evidence of a working slot, on the basis of its persona arms
+  (per-pair displacement 0.044) and `comply` alone (0.049). The `answer A`
+  directive displaces it **0.179** — four times any persona. Its profile is
+  therefore *directive-responsive but persona-inert*, which is a sharper result
+  than "inert", and it means its existing persona numbers rest on a much smaller
+  raw signal than the other four models'. That is worth checking before those
+  numbers are leaned on.
+
+  Consequence for Track 4: **no model loses its persona null on slot-reach
+  grounds.** Qwen3.5-2B keeps an interpretable null — its slot works and its
+  refusal is selective. LFM2.5's null will be interpretable but weak, and should
+  be reported with its displacement beside it.
+
+  Qwen3.5-2B is also the detector figure's showcase model — that result is
+  unaffected, since it concerns arm separation rather than instruction-following,
+  but the coincidence is worth stating rather than leaving for a reader to notice.
 
 **What none of this establishes.** "Never registered the role" is not provable;
 the honest claim is *no evidence of registration in the channels we log*, which

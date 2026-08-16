@@ -123,6 +123,27 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         if trivial:
             out.append(_cmd("ComplyTrivial", trivial["model"].split("/")[-1]))
             out.append(_cmd("ComplyTrivialBase", f"{trivial['baseline_mean_p_a']:.3f}"))
+        out.append(_cmd("ComplyNSlotReaches",
+                        str(sum(1 for r in comply["rows"]
+                                if r.get("slot_reaches_decision")))))
+        # The direction control, which is what rules the harness explanation
+        # in or out for a model that failed to obey.
+        for d in comply.get("direction_control", []):
+            if d["verdict"].startswith("SELECTIVE"):
+                out.append(_cmd("DirSelective", d["model"].split("/")[-1]))
+                out.append(_cmd("DirSelectiveWith", f"{d['p_a_under_answer_a']:.3f}"))
+                out.append(_cmd("DirSelectiveAgainst", f"{d['p_a_under_answer_b']:.3f}"))
+        out.append(_cmd("DirNObeyBoth",
+                        str(sum(1 for d in comply.get("direction_control", [])
+                                if d["verdict"].startswith("obeys both")))))
+        pi = next((r for r in comply["rows"]
+                   if r.get("persona_displacement") is not None
+                   and r.get("directive_displacement") is not None
+                   and r["directive_displacement"] > 3 * r["persona_displacement"]), None)
+        if pi:
+            out.append(_cmd("PersonaInertModel", pi["model"].split("/")[-1]))
+            out.append(_cmd("PersonaInertPersona", f"{pi['persona_displacement']:.3f}"))
+            out.append(_cmd("PersonaInertDirective", f"{pi['directive_displacement']:.3f}"))
 
     # The harness itself, as measured rather than as intended. The sweep sends
     # no system message at D0 and records system_prompt: None; some chat

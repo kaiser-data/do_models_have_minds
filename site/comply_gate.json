@@ -16,7 +16,11 @@
       "baseline_answer_mass": 0.999999998323944,
       "shift": -0.24310026162569645,
       "complies": true,
-      "registers": true
+      "registers": true,
+      "comply_displacement": 0.2431002616256967,
+      "persona_displacement": 0.34231074656465654,
+      "directive_displacement": 0.6725252083704534,
+      "slot_reaches_decision": true
     },
     {
       "model": "google/gemma-4-E2B-it",
@@ -28,7 +32,11 @@
       "baseline_answer_mass": 0.9664775272959694,
       "shift": -0.5923883612138771,
       "complies": true,
-      "registers": true
+      "registers": true,
+      "comply_displacement": 0.5924946945751293,
+      "persona_displacement": 0.3963508608116579,
+      "directive_displacement": 0.5924946945751293,
+      "slot_reaches_decision": true
     },
     {
       "model": "Qwen/Qwen3.5-9B",
@@ -40,7 +48,11 @@
       "baseline_answer_mass": 0.9967749902681384,
       "shift": -0.3819643623108766,
       "complies": true,
-      "registers": true
+      "registers": true,
+      "comply_displacement": 0.38198920689272853,
+      "persona_displacement": 0.3366040924025628,
+      "directive_displacement": 0.5483795541214913,
+      "slot_reaches_decision": true
     },
     {
       "model": "LiquidAI/LFM2.5-1.2B-Instruct",
@@ -52,7 +64,11 @@
       "baseline_answer_mass": 0.9999968438589789,
       "shift": -0.04746914877072801,
       "complies": true,
-      "registers": false
+      "registers": false,
+      "comply_displacement": 0.04880744804215209,
+      "persona_displacement": 0.04352400775746746,
+      "directive_displacement": 0.178766695731471,
+      "slot_reaches_decision": true
     },
     {
       "model": "Qwen/Qwen3.5-2B",
@@ -64,8 +80,73 @@
       "baseline_answer_mass": 0.9956367434084817,
       "shift": -0.2599155230095878,
       "complies": false,
-      "registers": true
+      "registers": true,
+      "comply_displacement": 0.26389505996264034,
+      "persona_displacement": 0.23865010914936619,
+      "directive_displacement": 0.26389505996264034,
+      "slot_reaches_decision": true
     }
   ],
-  "direction_control": []
+  "direction_control": [
+    {
+      "model": "ibm-granite/granite-4.1-3b",
+      "baseline": 0.2431002616257219,
+      "p_a_under_answer_a": 0.9156254699961753,
+      "p_a_under_answer_b": 2.5449685243068695e-14,
+      "leans": "B",
+      "obeys_with_preference": true,
+      "obeys_against_preference": true,
+      "moves_with_preference": true,
+      "moves_against_preference": true,
+      "verdict": "obeys both directions"
+    },
+    {
+      "model": "google/gemma-4-E2B-it",
+      "baseline": 0.5923883714575041,
+      "p_a_under_answer_a": 0.999999999999057,
+      "p_a_under_answer_b": 1.0243627002985921e-08,
+      "leans": "A",
+      "obeys_with_preference": true,
+      "obeys_against_preference": true,
+      "moves_with_preference": true,
+      "moves_against_preference": true,
+      "verdict": "obeys both directions"
+    },
+    {
+      "model": "Qwen/Qwen3.5-9B",
+      "baseline": 0.3894330981609087,
+      "p_a_under_answer_a": 0.9373311601635597,
+      "p_a_under_answer_b": 0.007468735850032112,
+      "leans": "B",
+      "obeys_with_preference": true,
+      "obeys_against_preference": true,
+      "moves_with_preference": true,
+      "moves_against_preference": true,
+      "verdict": "obeys both directions"
+    },
+    {
+      "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+      "baseline": 0.06795641956759378,
+      "p_a_under_answer_a": 0.2451234280989419,
+      "p_a_under_answer_b": 0.020487270796865773,
+      "leans": "B",
+      "obeys_with_preference": false,
+      "obeys_against_preference": false,
+      "moves_with_preference": false,
+      "moves_against_preference": true,
+      "verdict": "PARTIAL -- moves toward the commanded option without reaching it"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "baseline": 0.7253340608670372,
+      "p_a_under_answer_a": 0.8771887445529081,
+      "p_a_under_answer_b": 0.4654185378574494,
+      "leans": "A",
+      "obeys_with_preference": true,
+      "obeys_against_preference": false,
+      "moves_with_preference": true,
+      "moves_against_preference": true,
+      "verdict": "SELECTIVE -- obeys the with-preference directive and moves under the against one without reaching it"
+    }
+  ]
 }
