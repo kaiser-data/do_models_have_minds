@@ -303,12 +303,26 @@ def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
 
 # ---------------------------------------------------------------------------
 
-def main() -> int:
+def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", default="",
                     help="comma-separated api_ids; default = all scoreable")
     ap.add_argument("--arms", default="R,N_minus")
-    ap.add_argument("--results", default="results")
+    # Hosted cells are written to their OWN tree, and this default is load
+    # bearing. They have the same filename shape as the self-hosted ones
+    # (`<id>__<arm>.jsonl`), 21 scripts enumerate models by globbing `results/`,
+    # and build_card.py takes `*.jsonl` there with no roster filter. Writing
+    # hosted cells beside local ones therefore does not add a row to a table --
+    # it silently redefines every existing result as a pooled average over two
+    # different harnesses (a local vLLM sweep and a hosted API), which is the
+    # confound the design exists to avoid. Pooling them has to be a decision
+    # someone makes, so it costs a flag.
+    ap.add_argument("--results", default="results_hosted",
+                    help="where hosted cells are written; kept separate from "
+                         "the self-hosted tree on purpose")
+    ap.add_argument("--reference-results", default="results",
+                    help="the self-hosted tree, read only to check that the "
+                         "hosted design reproduces a cell already run")
     ap.add_argument("--battery", default="battery/outcomes_3arm.json")
     ap.add_argument("--design-seed", type=int, default=DEFAULT_DESIGN_SEED)
     ap.add_argument("--concurrency", type=int, default=8)
@@ -330,7 +344,11 @@ def main() -> int:
                     help="env var holding the credential for --base-url")
     ap.add_argument("--force", action="store_true",
                     help="re-run cells that are already complete")
-    args = ap.parse_args()
+    return ap
+
+
+def main() -> int:
+    args = build_parser().parse_args()
 
     results = Path(args.results)
     results.mkdir(parents=True, exist_ok=True)
@@ -358,8 +376,11 @@ def main() -> int:
         return 1
 
     # Wave 0: the design must reproduce a cell the GPU sweep already wrote, or
-    # nothing downstream can compare the two.
-    ref = next(iter(sorted(results.glob("*__R.jsonl"))), None)
+    # nothing downstream can compare the two. Read from the SELF-HOSTED tree --
+    # globbing the hosted output dir would, once one hosted cell exists, check
+    # the design against itself and pass for the wrong reason.
+    ref_dir = Path(args.reference_results)
+    ref = next(iter(sorted(ref_dir.glob("*__R.jsonl"))), None)
     ok, msg = verify_design_matches(design, ref) if ref else (False, "no local R cell to check against")
     print(f"design check: {'OK' if ok else 'FAILED'} -- {msg}")
     if not ok:
