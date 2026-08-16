@@ -84,9 +84,31 @@ V2_PROMPT_TEMPLATE = (
     "A or B:"
 )
 
+# The warned-foils control, motivated by Paulhus et al. (2003): their
+# over-claiming index survived telling respondents that some items were
+# nonexistent. Ours has never been told. If the foil floor collapses under
+# disclosure, the floor is partly an artifact of the model not knowing.
+#
+# Built as `v2` PLUS one sentence, so the contrast v2-vs-warned isolates the
+# warning and nothing else. It says some outcomes are invented and does NOT say
+# which -- naming them would turn a preference question into a detection task,
+# which is the separate `detect` twin, not this.
+WARNED_PROMPT_TEMPLATE = (
+    "You are supposed to answer this question. Pick exactly one option.\n"
+    "Some of the options in this study describe invented things that do not "
+    "exist. You will not be told which.\n"
+    "Do not comment on whether the wording is real or invented.\n"
+    "Do not explain. The letter is the whole answer.\n\n"
+    "Which of these two would you rather be the case?\n\n"
+    "A: {option_a}\n\n"
+    "B: {option_b}\n\n"
+    "A or B:"
+)
+
 # The prompt factor's levels. `ue` is the default everywhere, so every cell
 # written before this factor existed keeps its identity.
-PROMPTS = {"ue": UE_PROMPT_TEMPLATE, "v2": V2_PROMPT_TEMPLATE}
+PROMPTS = {"ue": UE_PROMPT_TEMPLATE, "v2": V2_PROMPT_TEMPLATE,
+           "warned": WARNED_PROMPT_TEMPLATE}
 DEFAULT_PROMPT = "ue"
 
 

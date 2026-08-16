@@ -168,3 +168,39 @@ def test_summary_filename_composes_prompt_with_persona():
     from modal_app.sweep import summary_filename
     name = summary_filename("sweep_summary", ["cautious"], ["D2"], "v2")
     assert "pv2" in name and "cautious-D2" in name
+
+
+# ---------------------------------------------------------------------------
+# The warned-foils control (Paulhus et al. 2003)
+# ---------------------------------------------------------------------------
+
+def test_warned_is_v2_plus_exactly_one_sentence():
+    """The contrast v2-vs-warned must isolate the warning.
+
+    If `warned` differed from `v2` in any other respect, a moved floor could
+    not be attributed to disclosure -- it would be one more composite factor of
+    the kind this repo keeps finding.
+    """
+    from nullcard.runner.forced_choice import WARNED_PROMPT_TEMPLATE
+    added = [ln for ln in WARNED_PROMPT_TEMPLATE.splitlines()
+             if ln not in V2_PROMPT_TEMPLATE.splitlines()]
+    assert len(added) == 1
+    assert "invented things that do not exist" in added[0]
+
+
+def test_warned_does_not_say_which_option_is_invented():
+    """Naming the foil would make this a detection task, not a preference one."""
+    from nullcard.runner.forced_choice import WARNED_PROMPT_TEMPLATE
+    assert "not be told which" in WARNED_PROMPT_TEMPLATE
+    assert "Option A is" not in WARNED_PROMPT_TEMPLATE
+
+
+def test_warned_still_asks_for_a_preference():
+    from nullcard.runner.forced_choice import WARNED_PROMPT_TEMPLATE
+    assert "rather be the case" in WARNED_PROMPT_TEMPLATE
+
+
+def test_warned_cells_are_named_apart():
+    name = cell_filename("Qwen/Qwen3.5-2B", "R", 20260815, prompt="warned")
+    assert "pwarned" in name
+    assert parse_cell_name(Path(name))[5] == "warned"
