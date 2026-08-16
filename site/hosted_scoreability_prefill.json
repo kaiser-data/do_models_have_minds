@@ -1,0 +1,42 @@
+{
+  "openai/gpt-oss-120b": {
+    "n": 6,
+    "mean_answer_mass": 0.0,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true,
+    "prefill": "Option"
+  },
+  "zai-org/GLM-5.2": {
+    "n": 6,
+    "mean_answer_mass": 0.0012,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true,
+    "prefill": "Option"
+  },
+  "nvidia/Nemotron-3_5-Lightning": {
+    "n": 6,
+    "mean_answer_mass": 0.9982,
+    "first_token_scoreable": true,
+    "roster_says": false,
+    "agrees_with_roster": false,
+    "prefill": "Option"
+  },
+  "MiniMaxAI/MiniMax-M2.5": {
+    "n": 6,
+    "mean_answer_mass": 0.9633,
+    "first_token_scoreable": true,
+    "roster_says": false,
+    "agrees_with_roster": false,
+    "prefill": "Option"
+  },
+  "deepseek-ai/DeepSeek-V4-Flash": {
+    "n": 6,
+    "mean_answer_mass": 0.0935,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true,
+    "prefill": "Option"
+  }
+}

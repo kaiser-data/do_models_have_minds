@@ -165,21 +165,45 @@ class ApiError(RuntimeError):
 
 
 def call_first_token(api_id: str, prompt: str, api_key: str, base_url: str,
-                     timeout: float = 60.0, retries: int = 3) -> dict[str, float]:
+                     timeout: float = 60.0, retries: int = 3,
+                     prefill: str = "") -> dict[str, float]:
     """One forced choice; returns {token: logprob} over the first sampled token.
 
     max_tokens=1 because the metric only ever reads the first token. That is
     also what makes the unscoreable models unscoreable, and it is not this
     script's job to paper over that by sampling further.
+
+    **prefill is a DIFFERENT MEASUREMENT, not a fix.** Five of the six
+    unscoreable hosted models spend their first token on a reasoning preamble
+    or a format control token, so the choice is presumably made but not where
+    this metric looks. Seeding the assistant turn with e.g. "Option" moves the
+    first *sampled* token to the position after it, which is the position that
+    carries the answer.
+
+    That recovers those models, and it also changes what is being measured: the
+    model is now completing a sentence we started rather than choosing how to
+    begin. Numbers taken with a prefill are therefore NOT poolable with numbers
+    taken without one, which is why the prefill string is recorded in the row,
+    in the .done summary, and inside harness_hash -- a cell run with a prefill
+    must not be able to look like a cell run without one.
     """
-    body = json.dumps({
+    messages = [{"role": "user", "content": prompt}]
+    payload_body: dict = {
         "model": api_id,
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": messages,
         "max_tokens": 1,
         "temperature": 0,
         "logprobs": True,
         "top_logprobs": TOP_LOGPROBS,
-    }).encode()
+    }
+    if prefill:
+        # OpenAI-compatible continuation: the assistant turn is opened with our
+        # text and the template must NOT append a fresh generation prompt after
+        # it, or the model starts a new turn and the prefill does nothing.
+        messages.append({"role": "assistant", "content": prefill})
+        payload_body["continue_final_message"] = True
+        payload_body["add_generation_prompt"] = False
+    body = json.dumps(payload_body).encode()
     req = urllib.request.Request(
         base_url.rstrip("/") + "/chat/completions", data=body,
         headers={"Authorization": f"Bearer {api_key}",
@@ -344,6 +368,12 @@ def build_parser() -> argparse.ArgumentParser:
                     help="env var holding the credential for --base-url")
     ap.add_argument("--force", action="store_true",
                     help="re-run cells that are already complete")
+    ap.add_argument("--prefill", default="",
+                    help="seed the assistant turn with this text so the first "
+                         "SAMPLED token falls after it; recovers models that "
+                         "spend token 1 on a reasoning preamble. Changes the "
+                         "measurement -- results are not poolable with "
+                         "unprefilled ones. Try: --prefill 'Option'")
     return ap
 
 
@@ -459,7 +489,8 @@ def main() -> int:
             for _, i, j, _ in jobs:
                 try:
                     dist = call_first_token(api_id, build_forced_choice_prompt(
-                        texts[sel[i]], texts[sel[j]]), api_key, args.base_url)
+                        texts[sel[i]], texts[sel[j]]), api_key, args.base_url,
+                        prefill=args.prefill)
                     masses.append(answer_mass(dist))
                 except Exception as e:
                     # One unreachable model must not end the probe: the whole
@@ -476,11 +507,24 @@ def main() -> int:
             report[api_id] = {"n": len(masses), "mean_answer_mass": round(mean, 4),
                               "first_token_scoreable": ok,
                               "roster_says": declared.get(api_id),
-                              "agrees_with_roster": agrees}
+                              # With a prefill this is EXPECTED to disagree: the
+                              # roster records whether a model answers in the
+                              # first token unaided, and the prefill exists to
+                              # move models that do not. Disagreement is the
+                              # result, not a warning.
+                              "agrees_with_roster": agrees,
+                              "prefill": args.prefill or None}
+            verdict = ("OK" if agrees else
+                       ("RECOVERED BY PREFILL" if args.prefill and ok
+                        else "*** DISAGREES ***"))
             print(f"  {api_id}: mass {mean:.3f} -> scoreable={ok} "
-                  f"(roster says {declared.get(api_id)}) "
-                  f"{'OK' if agrees else '*** DISAGREES ***'}")
-        out = Path("site/hosted_scoreability.json")
+                  f"(roster says {declared.get(api_id)}) {verdict}")
+        # A prefilled probe measures a different thing and must not land on the
+        # unprefilled file. Same reason hosted cells do not land in results/:
+        # two measurements with one filename is how a comparison quietly
+        # becomes a comparison of methods.
+        out = Path("site/hosted_scoreability_prefill.json" if args.prefill
+                   else "site/hosted_scoreability.json")
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(report, indent=2) + "\n")
         print(f"wrote {out}")
