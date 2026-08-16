@@ -104,6 +104,7 @@ def main() -> int:
     ap.add_argument("--results", default="results")
     ap.add_argument("--battery", default="battery/outcomes_3arm.json")
     ap.add_argument("--lexicon", default="battery/harm_lexicon.json")
+    ap.add_argument("--rule", default="battery/harm_verdict_rule.json")
     ap.add_argument("--out", default="site/harm_residual.json")
     args = ap.parse_args()
 
@@ -128,12 +129,18 @@ def main() -> int:
     if not clean:
         print("\nNo uncontaminated model. Nothing here can test the hypothesis.")
         return 0
+    # The verdict rule is READ, not written here, and it was declared before
+    # the held-out cells finished. A threshold chosen once the numbers are on
+    # screen is not a threshold.
+    rule = json.loads(Path(args.rule).read_text())
+    thresh, frac = -0.10, 0.70
     vals = [r["corr_harm_residual"] for r in clean]
     mean = float(np.mean(vals))
-    same_sign = sum(1 for v in vals if v < -0.1)
+    same_sign = sum(1 for v in vals if v < thresh)
     print(f"\nHeld-out models: {len(clean)}. Mean r(harm, residual) = {mean:+.3f}; "
           f"{same_sign} of {len(clean)} below -0.1.")
-    if same_sign >= max(2, int(0.7 * len(clean))):
+    print(f"  rule declared {rule['declared']}: {rule['supported_if']}")
+    if same_sign >= max(2, int(frac * len(clean))):
         print("Harm survives on models nobody read: the reading is supported.")
     else:
         print("Harm does NOT survive on models nobody read. The "
@@ -147,7 +154,7 @@ def main() -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
-        {"n_held_out": len(clean), "mean_corr_held_out": mean,
+        {"rule": rule, "n_held_out": len(clean), "mean_corr_held_out": mean,
          "n_held_out_below_threshold": same_sign,
          "read_before_hypothesis": sorted(READ_BEFORE_HYPOTHESIS),
          "models": rows}, indent=2) + "\n")

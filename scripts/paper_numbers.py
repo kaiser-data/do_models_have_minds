@@ -123,6 +123,20 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         out.append(_cmd("MixNPairsTotal", str(sum(m["n_pairs"] for m in ms))))
         out.append(_cmd("MixNBelowRange",
                         str(sum(1 for m in ms if m["indifference_below_range"]))))
+        # The harm-beyond-utility test, reported with its held-out count so the
+        # verdict cannot be quoted without the n it rests on.
+        h = mixed.get("harm")
+        if h:
+            out.append(_cmd("HarmNHeldOut", str(h["n_held_out"])))
+            out.append(_cmd("HarmNSupporting",
+                            str(h["n_held_out_below_threshold"])))
+            out.append(_cmd("HarmMeanCorr", f"{h['mean_corr_held_out']:+.3f}"))
+            out.append(_cmd("HarmNContaminated",
+                            str(len(h["read_before_hypothesis"]))))
+            out.append(_cmd("HarmVerdict",
+                            "supported" if h["n_held_out_below_threshold"]
+                            >= max(2, int(0.7 * h["n_held_out"]))
+                            else "not supported"))
 
     # The instruction-following gate (P12). Reported with BOTH criteria,
     # because the registered one and the one the gate needs disagree in
@@ -836,6 +850,7 @@ def main() -> None:
     ap.add_argument("--rendered", default="site/rendered_prompts.json")
     ap.add_argument("--comply", default="site/comply_gate.json")
     ap.add_argument("--mixed", default="site/mixed_arm.json")
+    ap.add_argument("--harm", default="site/harm_residual.json")
     ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
     ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
     ap.add_argument("--neutral-table-out", default="paper/table_neutral.tex")
@@ -881,6 +896,10 @@ def main() -> None:
     comply = json.loads(cpath.read_text()) if cpath.exists() else None
     mpath = Path(args.mixed)
     mixed = json.loads(mpath.read_text()) if mpath.exists() else None
+    hpath = Path(args.harm)
+    harm = json.loads(hpath.read_text()) if hpath.exists() else None
+    if mixed is not None and harm is not None:
+        mixed = dict(mixed, harm=harm)
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,

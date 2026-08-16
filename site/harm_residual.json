@@ -1,4 +1,13 @@
 {
+  "rule": {
+    "declared": "2026-08-16, before the six held-out MIXED cells finished writing",
+    "quantity": "corr(harm-word count, residual of P(prefer real) on fitted utility)",
+    "held_out_models_expected": 7,
+    "supported_if": "at least 70% of held-out models show r < -0.10",
+    "not_supported_if": "fewer than that",
+    "why_this_threshold": "-0.10 is the same magnitude the project already uses as a registration floor elsewhere, and 70% is the majority rule already used for the detector's direction-consistency test. Both are borrowed rather than invented here so neither is tuned to this result.",
+    "note": "The two contaminated models are excluded from the verdict whatever they show. If the held-out set supports the reading, the withdrawal in PREREGISTRATION.md is reversed and said to have been over-cautious."
+  },
   "n_held_out": 1,
   "mean_corr_held_out": 0.03287632612205176,
   "n_held_out_below_threshold": 0,

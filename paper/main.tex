@@ -871,6 +871,54 @@ read as narrowing our claim.
     our reimplementation.
 \end{enumerate}
 
+\subsection{Where meaninglessness sits on the scale of things that
+mean something}\label{sec:mixed}
+
+Every comparison so far has been \emph{within} one arm --- real against real, or
+invented against invented. Their utilities therefore come from separate
+Thurstonian fits, each normalised on its own scale, and cannot be laid over each
+other. Nothing we had run could say whether a model would rather have a
+meaningless outcome than a bad real one, because nothing had asked.
+
+The \textbf{mixed} arm asks: option A drawn from \armR{}, option B from
+\armNm{}, order counterbalanced so the real outcome occupies each slot equally
+often. The quantity is $P(\text{prefer the real option})$ as a function of that
+real outcome's own fitted utility, over \MixNModels{} models.
+
+\paragraph{With a meaningful option present, the choice reads it.} Preference
+for the real option rises monotonically with that outcome's fitted utility, in
+every quartile of every model, from \MixPreferRealLo{} to \MixPreferRealHi{}
+overall. Invented outcomes tokenise about twice as long, so this could have been
+a preference for shorter text; partialling out the token gap leaves the
+correlation at \MixCorrLo{} to \MixCorrHi{}, essentially unchanged. Whatever
+else is true of coherence as a measure of values, these models are not ignoring
+outcome content --- which was the most damaging reading available to us.
+
+\paragraph{Meaninglessness sits near the bottom of the real scale, not below
+it.} On all \MixNBelowRange{} models the fitted line never crosses indifference
+inside the observed utility range: on average, every real outcome in this
+battery beats a meaningless one. But \MixNBelowHalf{} of \MixNPairsTotal{}
+individual pairs do fall below it. This gives the study a calibration point it
+lacked --- ``refers to nothing'' is now a measured level on each model's own
+scale rather than an unlocated control.
+
+\paragraph{What those pairs are, and a reading we could not confirm.} Reading
+the below-indifference outcomes, they look like harms: bankruptcies, weapons,
+prohibitions. We tested that rather than reporting it, by regressing preference
+on fitted utility and asking whether the residual tracks a pre-declared
+harm-word count --- if it does not, ``harm'' adds nothing over ``the model
+dislikes it'' and the observation is just the paragraph above.
+
+The hypothesis came from reading specific models' outcomes, so those
+\HarmNContaminated{} models cannot test it and are excluded from the verdict.
+Across \HarmNHeldOut{} held-out models the mean residual correlation is
+\HarmMeanCorr{}, with \HarmNSupporting{} clearing the threshold declared before
+those cells finished: \textbf{\HarmVerdict{}}. We therefore report the
+below-indifference pairs as low-utility outcomes. That their texts describe harm
+is an observation we could not establish as an effect, and we record it that way
+rather than dropping it, because it is the kind of pattern that is easy to see
+once you are looking for it.
+
 \subsection{Told what to answer, one model declines}\label{sec:track4}
 
 Every persona result in \S\ref{sec:persona} has a reading we cannot exclude from
