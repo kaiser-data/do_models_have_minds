@@ -180,9 +180,14 @@ floor holds at 70B the paper's central claim stops being about small models.
 **D. Then the two Qwen3 MoE models**, for the active-vs-total parameter
 dissociation (`DECISION-MODELS.md` §4). No dense ladder can separate those.
 
-**E–F. Still need your decision:** publishing the results archive; the SmolLM3
-exclusion. Note D changes E's weight — at n=9 SmolLM3 is the top row; alongside
-a 70B result it is one of eleven.
+**~~E–F.~~ Decided 16 Aug 2026 — see `ARCHIVE.md`.**
+**E: publish the archive**, to support others working on this instrument.
+**F: keep `SmolLM3-3B`**, and keep the failures generally. It is the worst
+mass-collapser (0.9006 against exactly 1.0000 for two smaller models), which is
+now a measured and tested property rather than an anomaly — it is the evidence
+for recipe-not-scale, so excluding it would delete the finding and flatter the
+averages. Aborted cells, unscoreable frontier models, and this session's own
+refuted item-level finding all stay in, with their refutations attached.
 
 **Not now:** more small dense models; the ten-value Schwartz version; a second
 dense ladder this roster cannot supply.
