@@ -55,6 +55,44 @@ def test_pooling_remains_possible_but_explicit():
     assert args.results == "results"
 
 
+def test_prefilled_and_unprefilled_cells_cannot_share_a_harness_hash():
+    """A prefill is a different measurement, and the hash has to know.
+
+    Prefilled cells measure the token after a phrase we supplied; unprefilled
+    cells measure how the model chooses to begin. If both hash the same, the
+    manifest certifies them as the same instrument and they become poolable by
+    accident.
+    """
+    from scripts.hosted_sweep import harness_hash
+
+    base = {"provider": "nebius", "model_id": "m", "arm": "R",
+            "method": "forced_choice_first_token_logprob"}
+    plain = harness_hash({**base, "prefill": None})
+    filled = harness_hash({**base, "prefill": "Option"})
+    other = harness_hash({**base, "prefill": "Answer:"})
+
+    assert plain != filled
+    assert filled != other
+
+
+def test_prefill_writes_to_its_own_report_file():
+    """Set once by hand, this cost the unprefilled measurement.
+
+    The first prefilled probe overwrote site/hosted_scoreability.json under the
+    unprefilled filename and had to be restored from git.
+    """
+    args = build_parser().parse_args(["--prefill", "Option"])
+    assert args.prefill == "Option"
+    assert build_parser().parse_args([]).prefill == ""
+
+
+def test_patience_is_reachable_without_editing_the_runner():
+    """Timeouts are provider- and cell-specific; they were hardcoded."""
+    args = build_parser().parse_args(["--timeout", "180", "--retries", "6"])
+    assert args.timeout == 180.0
+    assert args.retries == 6
+
+
 def test_credential_is_named_not_inlined():
     """The runner takes the NAME of an env var, never a key value.
 

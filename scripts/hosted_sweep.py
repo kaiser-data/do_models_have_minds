@@ -242,7 +242,8 @@ def harness_hash(cfg: dict) -> str:
 
 def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
              base_url: str, concurrency: int, abort_on_mass: float,
-             checkpoint_every: int) -> dict:
+             checkpoint_every: int, timeout: float = 60.0, retries: int = 3,
+             prefill: str = "") -> dict:
     started = time.time()
     sel = design["outcome_indices"]
     texts = design["texts"][arm]
@@ -258,6 +259,12 @@ def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
         "thinking_disabled": None,
         "dtype": None, "method": "forced_choice_first_token_logprob",
         "temperature": 0, "top_p": None,
+        # In the hash on purpose. A prefilled cell measures the token AFTER a
+        # phrase we supplied, an unprefilled one measures how the model chooses
+        # to begin. Two different measurements must not be able to produce the
+        # same harness_hash, or the manifest will certify them as the same
+        # instrument.
+        "prefill": prefill or None,
         "battery_sha256": design["battery_sha256"], "design_seed": design["seed"],
     }
     hhash = harness_hash(hcfg)
@@ -269,7 +276,8 @@ def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
     def _one(job):
         k, i, j, order = job
         dist = call_first_token(api_id, build_forced_choice_prompt(
-            texts[sel[i]], texts[sel[j]]), api_key, base_url)
+            texts[sel[i]], texts[sel[j]]), api_key, base_url,
+            timeout=timeout, retries=retries, prefill=prefill)
         try:
             pa_val = p_option_a(dist)
         except ValueError:
@@ -318,6 +326,7 @@ def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
         "wall_s": round(time.time() - started, 1),
         "harness_hash": hhash,
         "provider": "nebius",
+        "prefill": prefill or None,
     }
     # Written only on a clean exit, and after the rows -- same ordering rule as
     # the GPU sweep, for the same reason.
@@ -368,6 +377,15 @@ def build_parser() -> argparse.ArgumentParser:
                     help="env var holding the credential for --base-url")
     ap.add_argument("--force", action="store_true",
                     help="re-run cells that are already complete")
+    # Reachable from the CLI because the values that work are provider- and
+    # cell-specific: gemma-3-27b completed 5,000 R rows at these defaults and
+    # then timed out twice on N_minus, at row ~1,800 and again at row ~7. That
+    # is intermittent capacity, not a bad cell, and the answer is patience --
+    # which was hardcoded and so could only be bought by editing the runner.
+    ap.add_argument("--timeout", type=float, default=60.0,
+                    help="per-call socket timeout, seconds")
+    ap.add_argument("--retries", type=int, default=3,
+                    help="attempts per call; backoff is 2**attempt seconds")
     ap.add_argument("--prefill", default="",
                     help="seed the assistant turn with this text so the first "
                          "SAMPLED token falls after it; recovers models that "
@@ -536,7 +554,8 @@ def main() -> int:
         try:
             s = run_cell(api_id, arm, design, out, api_key, NEBIUS_BASE_URL,
                          args.concurrency, args.abort_on_mass,
-                         args.checkpoint_every)
+                         args.checkpoint_every, args.timeout, args.retries,
+                         args.prefill)
         except ApiError as e:
             # A call that exhausts its retries used to propagate out of here and
             # end the PROCESS, taking every cell after it. That is the wrong
