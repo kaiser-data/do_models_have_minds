@@ -244,13 +244,35 @@ hygiene, not this experiment.
 3. Wave 0 tests: render, filename, no mix with untagged historical cells.
 4. Wave 1 command documented here once the runner flag exists.
 
-Wave 1 (draft — do not run until wave 0 is green):
+**Wave 0 result (16 Aug, green with one correction).** Both templates render,
+all 8 names are unique, and `parse_cell_name` round-trips every one. Untagged
+historical names still resolve to `ue`, so the 81 existing cells keep their
+identity.
 
-```text
-# hosted or modal; exact flag names to be added in the runner
-# 8 cells, skip-existing, prompt in {ue,v2}, arms {R,N_minus},
-# models Qwen3.5-2B and granite-4.1-3b, seed 20260815
+The correction: **the four `ue` cells collide with history.** `ue` is the
+default, so it stays out of the filename by design — which means a same-day
+`ue` re-run writes to `Qwen__Qwen3.5-2B__R.jsonl`, the file from 15 Aug, and
+`--skip-existing` would silently skip it. §5 asks for a same-day `ue` arm
+precisely to avoid comparing across harness hashes, so the run needs its own
+tree rather than a second tag:
+
+```bash
+# Wave 1 — 8 cells into a fresh tree, so both arms are same-day and neither
+# touches the historical cells. --results is what keeps them apart; the pv2
+# suffix then separates the two prompts inside it.
+for PROMPT in ue v2; do
+  modal run modal_app/sweep.py \
+    --models Qwen/Qwen3.5-2B,ibm-granite/granite-4.1-3b \
+    --arms R,N_minus \
+    --design-seed 20260815 \
+    --prompt "$PROMPT" \
+    --results results_v2 \
+    --skip-existing --abort-on-mass 0.25
+done
 ```
+
+Reading the contrast afterwards compares `results_v2/*` only. The historical
+tree is untouched and stays the worked example of the old instrument.
 
 ---
 

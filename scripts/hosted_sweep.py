@@ -53,8 +53,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from nullcard.roster import NEBIUS, NEBIUS_BASE_URL, scoreable_hosted  # noqa: E402
 from nullcard.runner.forced_choice import (  # noqa: E402
-    ANSWER_MASS_FLOOR, answer_mass, build_forced_choice_prompt, p_option_a,
-    sample_pairs, stratified_subsample)
+    ANSWER_MASS_FLOOR, DEFAULT_PROMPT, PROMPTS, answer_mass,
+    build_forced_choice_prompt, p_option_a, sample_pairs, stratified_subsample)
 
 # Mirrored from modal_app/sweep.py. Not imported: that module builds a modal.App
 # at import time and reads /root paths that exist only in the container. The
@@ -109,7 +109,8 @@ def jobs_for(design: dict) -> list[tuple[int, int, int, str]]:
 
 
 def cell_filename(api_id: str, arm: str,
-                  design_seed: int = DEFAULT_DESIGN_SEED) -> str:
+                  design_seed: int = DEFAULT_DESIGN_SEED,
+                  prompt: str = DEFAULT_PROMPT) -> str:
     """One file per (model, arm, design seed) -- the GPU sweep's rule, mirrored.
 
     See modal_app/sweep.py:cell_filename. The seed is omitted for the default so
@@ -121,10 +122,17 @@ def cell_filename(api_id: str, arm: str,
 
     build_card.py reads the seed back off this name to group replicates, so the
     suffix is also what makes three hosted cells into one noise floor.
+
+    The prompt id follows the same rule for the same reason: `ue` is the
+    default and stays out of the name, so the 81 cells written before the
+    prompt factor existed keep their identity, and any other wording gets an
+    explicit `__p<id>` tag rather than pooling with them.
     """
     stem = f"{api_id.replace('/', '__')}__{arm}"
     if design_seed != DEFAULT_DESIGN_SEED:
         stem += f"__s{design_seed}"
+    if prompt != DEFAULT_PROMPT:
+        stem += f"__p{prompt}"
     return stem + ".jsonl"
 
 
@@ -278,7 +286,7 @@ def harness_hash(cfg: dict) -> str:
 def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
              base_url: str, concurrency: int, abort_on_mass: float,
              checkpoint_every: int, timeout: float = 60.0, retries: int = 3,
-             prefill: str = "") -> dict:
+             prefill: str = "", prompt: str = DEFAULT_PROMPT) -> dict:
     started = time.time()
     sel = design["outcome_indices"]
     texts = design["texts"][arm]
@@ -300,6 +308,9 @@ def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
         # same harness_hash, or the manifest will certify them as the same
         # instrument.
         "prefill": prefill or None,
+        # In the hash for the same reason as prefill: two wordings are two
+        # instruments, and a shared hash would certify them as one.
+        "prompt": prompt,
         "battery_sha256": design["battery_sha256"], "design_seed": design["seed"],
     }
     hhash = harness_hash(hcfg)
@@ -311,7 +322,7 @@ def run_cell(api_id: str, arm: str, design: dict, out_path: Path, api_key: str,
     def _one(job):
         k, i, j, order = job
         dist = call_first_token(api_id, build_forced_choice_prompt(
-            texts[sel[i]], texts[sel[j]]), api_key, base_url,
+            texts[sel[i]], texts[sel[j]], prompt=prompt), api_key, base_url,
             timeout=timeout, retries=retries, prefill=prefill)
         try:
             pa_val = p_option_a(dist)
@@ -393,6 +404,10 @@ def build_parser() -> argparse.ArgumentParser:
                          "hosted design reproduces a cell already run")
     ap.add_argument("--battery", default="battery/outcomes_3arm.json")
     ap.add_argument("--design-seed", type=int, default=DEFAULT_DESIGN_SEED)
+    ap.add_argument("--prompt", default=DEFAULT_PROMPT, choices=sorted(PROMPTS),
+                    help="question wording; non-default lands in the filename "
+                         "and the harness hash so it cannot pool with the "
+                         "published instrument's cells")
     ap.add_argument("--concurrency", type=int, default=8)
     ap.add_argument("--abort-on-mass", type=float, default=DEFAULT_ABORT_MASS)
     ap.add_argument("--checkpoint-every", type=int, default=500)
@@ -474,7 +489,8 @@ def main() -> int:
     planned = []
     for api_id in requested:
         for arm in arms:
-            out = results / cell_filename(api_id, arm, args.design_seed)
+            out = results / cell_filename(api_id, arm, args.design_seed,
+                                          prompt=args.prompt)
             done, n = cell_is_complete(out)
             if done and not args.force:
                 print(f"  skip (complete, {n} rows): {out.name}")
@@ -491,7 +507,8 @@ def main() -> int:
     if args.dry_run:
         sample = build_forced_choice_prompt(
             design["texts"]["R"][design["outcome_indices"][0]],
-            design["texts"]["R"][design["outcome_indices"][1]])
+            design["texts"]["R"][design["outcome_indices"][1]],
+            prompt=args.prompt)
         print("\n--- rendered prompt, verbatim ---")
         print(sample)
         print("--- end ---")
@@ -591,7 +608,7 @@ def main() -> int:
             s = run_cell(api_id, arm, design, out, api_key, NEBIUS_BASE_URL,
                          args.concurrency, args.abort_on_mass,
                          args.checkpoint_every, args.timeout, args.retries,
-                         args.prefill)
+                         args.prefill, args.prompt)
         except ApiError as e:
             # A call that exhausts its retries used to propagate out of here and
             # end the PROCESS, taking every cell after it. That is the wrong

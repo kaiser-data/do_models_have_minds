@@ -415,10 +415,10 @@ def cells_by_seed(results_dir: Path) -> dict[int, dict[str, list[tuple[str, Path
         if p.stem.endswith("__neutral"):
             continue
         try:
-            model, arm, seed, persona, depth = parse_cell_name(p)
+            model, arm, seed, persona, depth, prompt = parse_cell_name(p)
         except ValueError:
             continue
-        if persona != "none" or depth != "D0" or arm not in ARMS:
+        if prompt != "ue" or persona != "none" or depth != "D0" or arm not in ARMS:
             continue
         out.setdefault(seed, {}).setdefault(arm, []).append((model, p))
     return out

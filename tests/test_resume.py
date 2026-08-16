@@ -127,7 +127,7 @@ from build_card import parse_cell_name  # noqa: E402
 ])
 def test_cell_name_round_trips_through_the_parser(tmp_path, persona, depth):
     name = cell_filename("Qwen/Qwen3.5-2B", "N_minus", persona=persona, depth=depth)
-    model, arm, seed, p, d = parse_cell_name(Path(name))
+    model, arm, seed, p, d, _ = parse_cell_name(Path(name))
     assert (model, arm, p, d) == ("Qwen/Qwen3.5-2B", "N_minus", persona, depth)
 
 
@@ -135,14 +135,14 @@ def test_hyphenated_persona_is_not_mistaken_for_a_depth():
     """The specific failure: splitting on the first hyphen, not the last."""
     name = cell_filename("Qwen/Qwen3.5-2B", "R",
                          persona="cautious-concealed", depth="D2")
-    _, _, _, p, d = parse_cell_name(Path(name))
+    _, _, _, p, d, _ = parse_cell_name(Path(name))
     assert p == "cautious-concealed" and d == "D2"
 
 
 def test_replicate_seed_and_persona_suffixes_coexist():
     name = cell_filename("Qwen/Qwen3.5-2B", "R", design_seed=20260817,
                          persona="cautious-concealed", depth="D2")
-    model, arm, seed, p, d = parse_cell_name(Path(name))
+    model, arm, seed, p, d, _ = parse_cell_name(Path(name))
     assert seed == 20260817 and p == "cautious-concealed" and d == "D2"
 
 

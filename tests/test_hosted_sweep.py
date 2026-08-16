@@ -129,7 +129,7 @@ def test_replicate_filenames_parse_back_to_the_seed_that_made_them():
     from scripts.hosted_sweep import cell_filename
 
     name = cell_filename("meta-llama/Llama-3.3-70B-Instruct", "N_minus", 20260816)
-    model, arm, seed, persona, depth = parse_cell_name(Path(name))
+    model, arm, seed, persona, depth, _ = parse_cell_name(Path(name))
     assert (model, arm, seed) == ("meta-llama/Llama-3.3-70B-Instruct",
                                   "N_minus", 20260816)
     assert (persona, depth) == ("none", "D0")

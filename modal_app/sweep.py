@@ -69,6 +69,10 @@ N_PAIRS = 2500
 # nullcard.runner.forced_choice, and is imported at the point of use (this
 # module keeps nullcard imports inside the container-side functions).
 DEFAULT_DESIGN_SEED = 20260815
+# Mirrored from nullcard.runner.forced_choice for the same reason the design
+# constants are: this module is imported by the Modal builder before the
+# package is on the container path.
+DEFAULT_PROMPT = "ue"
 MAX_GPUS = 10             # rented-GPU ceiling; see run_cell's max_containers
 
 # Both presentation orders of every pair, so a finished cell has exactly this
@@ -463,7 +467,7 @@ def estimate_runtime(model_ids: list, n_cells_per_model: int) -> str:
 
 def cell_filename(model_id: str, arm: str, design_seed: int = DEFAULT_DESIGN_SEED,
                   persona: str = "none", depth: str = "D0",
-                  neutral: bool = False) -> str:
+                  neutral: bool = False, prompt_id: str = DEFAULT_PROMPT) -> str:
     """One file per (model, arm, design seed).
 
     The seed is omitted for the default so the first wave's files stay findable
@@ -478,6 +482,8 @@ def cell_filename(model_id: str, arm: str, design_seed: int = DEFAULT_DESIGN_SEE
     stem = f"{model_id.replace('/', '__')}__{arm}"
     if design_seed != DEFAULT_DESIGN_SEED:
         stem += f"__s{design_seed}"
+    if prompt_id != DEFAULT_PROMPT:
+        stem += f"__p{prompt_id}"
     if persona != "none" or depth != "D0":
         stem += f"__{persona}-{depth}"
     if neutral:
@@ -715,10 +721,12 @@ def run_cell(
     persona: str = "none",
     depth: str = "D0",
     neutral: bool = False,
+    prompt_id: str = DEFAULT_PROMPT,
 ) -> dict:
     out_path = os.path.join(
         RESULTS_DIR,
-        cell_filename(model_id, arm, design_seed, persona, depth, neutral))
+        cell_filename(model_id, arm, design_seed, persona, depth, neutral,
+                      prompt_id))
     if skip_existing:
         done, n = cell_is_complete(out_path)
         if done:
@@ -739,7 +747,7 @@ def run_cell(
     try:
         return _run_cell_inner(
             model_id, arm, batch_size, checkpoint_every, abort_on_mass, out_path,
-            design_seed, persona, depth, neutral,
+            design_seed, persona, depth, neutral, prompt_id,
         )
     except Exception as e:
         return {
@@ -759,6 +767,7 @@ def _run_cell_inner(
     persona: str = "none",
     depth: str = "D0",
     neutral: bool = False,
+    prompt_id: str = DEFAULT_PROMPT,
 ) -> dict:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -772,7 +781,17 @@ def _run_cell_inner(
     # only the prompt would score a model that correctly answers "C" as having
     # failed to answer at all -- discarding exactly the signal the arm exists
     # to measure.
-    build_prompt = build_neutral_choice_prompt if neutral else build_forced_choice_prompt
+    # The neutral (three-option) instrument has no v2 variant; the prompt
+    # factor applies to the binary question only, and asking for both at once
+    # would be two factors in one cell.
+    if neutral:
+        if prompt_id != DEFAULT_PROMPT:
+            raise ValueError("the neutral option and the prompt factor are two "
+                             "instruments; run them as separate cells")
+        build_prompt = build_neutral_choice_prompt
+    else:
+        def build_prompt(a, b):
+            return build_forced_choice_prompt(a, b, prompt=prompt_id)
     gate = answer_mass_neutral if neutral else answer_mass
 
     # The filename and the instrument must agree, and once they did not: the
@@ -834,6 +853,9 @@ def _run_cell_inner(
         "system_prompt": (NEUTRAL_SYSTEM if depth == "D1"
                           else PERSONAS.get(persona) if depth == "D2" else None),
         "neutral_option": neutral,
+        # A different question is a different instrument (see prefill in the
+        # hosted sweep for the same argument), so it must change the hash.
+        "prompt": prompt_id,
         "chat_template_applied": True, "thinking_disabled": True,
         "dtype": "bfloat16", "method": "forced_choice_first_token_logprob",
         "temperature": None, "top_p": None,

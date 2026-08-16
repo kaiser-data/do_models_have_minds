@@ -27,7 +27,8 @@ from nullcard.scoring.analyze import (  # noqa: E402
     cell_coherence,
     load_cell,
 )
-from nullcard.runner.forced_choice import ANSWER_MASS_FLOOR  # noqa: E402
+from nullcard.runner.forced_choice import (  # noqa: E402
+    ANSWER_MASS_FLOOR, DEFAULT_PROMPT, PROMPTS)
 from nullcard.scoring.stats import training_noise_floor, wilson_interval  # noqa: E402
 from nullcard.scoring.thurstonian import completeness, transitivity_rate  # noqa: E402
 
@@ -52,28 +53,42 @@ EXPECTED_ROWS = 5000
 DEFAULT_DESIGN_SEED = 20260815
 
 
-def parse_cell_name(path: Path) -> tuple[str, str, int, str, str]:
-    """-> (model, arm, design_seed, persona, depth).
+def parse_cell_name(path: Path) -> tuple[str, str, int, str, str, str]:
+    """-> (model, arm, design_seed, persona, depth, prompt).
 
-    Replicates carry `__s<seed>`; persona cells carry `__<persona>-<depth>`.
-    Both suffixes are stripped before the arm is read, so a filename that has
-    neither still parses as the baseline cell.
+    Replicates carry `__s<seed>`; persona cells carry `__<persona>-<depth>`; a
+    non-default question wording carries `__p<id>`. Every suffix is stripped
+    before the arm is read, so a filename with none of them still parses as the
+    baseline cell.
+
+    **An absent `__p` tag means `ue`, and that is a compatibility guarantee, not
+    a default.** Every cell written before the prompt factor existed used the
+    published wording, so untagged names must keep resolving to it; if they did
+    not, 81 existing cells would change identity at once and the card would
+    repartition without anything failing.
     """
     stem = path.stem
     persona, depth = "none", "D0"
     seed = DEFAULT_DESIGN_SEED
+    prompt = DEFAULT_PROMPT
 
     parts = stem.split("__")
     if parts and "-" in parts[-1] and parts[-1].rsplit("-", 1)[-1].startswith("D"):
         persona, depth = parts[-1].rsplit("-", 1)
         stem = "__".join(parts[:-1])
+    # Prompt before seed: the tag order written by cell_filename is
+    # `__s<seed>__p<id>`, so the prompt is the inner suffix to peel first.
+    head, sep, tail = stem.rpartition("__p")
+    if sep and tail in PROMPTS:
+        stem, prompt = head, tail
     if "__s" in stem:
         head, _, tail = stem.rpartition("__s")
         if tail.isdigit():
             stem, seed = head, int(tail)
     for arm in sorted(ARMS, key=len, reverse=True):
         if stem.endswith(f"__{arm}"):
-            return stem[: -len(arm) - 2].replace("__", "/"), arm, seed, persona, depth
+            return (stem[: -len(arm) - 2].replace("__", "/"), arm, seed,
+                    persona, depth, prompt)
     raise ValueError(f"cannot parse cell name: {path.name}")
 
 
@@ -138,11 +153,17 @@ def summarise_cell(path: Path) -> dict | None:
     if side is not None and side.get("first_token_scoreable") is False:
         print(f"  EXCLUDED (sweep marked it unscoreable): {path.name}")
         return None
-    model, arm, design_seed, persona, depth = parse_cell_name(path)
+    model, arm, design_seed, persona, depth, prompt = parse_cell_name(path)
     # The base card is the D0 (no persona) surface. Persona cells are analysed
     # separately by scripts/persona_depth.py; folding them in here would average
     # a manipulated condition into the baseline.
     if persona != "none" or depth != "D0":
+        return None
+    # A different question is a different instrument, not another replicate of
+    # this one. Pooling `v2` cells into the card would average two wordings
+    # into one number and report it as the published instrument's.
+    if prompt != DEFAULT_PROMPT:
+        print(f"  EXCLUDED (prompt {prompt!r}, not the card's instrument): {path.name}")
         return None
     probs = aggregate_pair_probabilities(rows)
     if len(probs) < 10:
