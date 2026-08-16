@@ -126,11 +126,16 @@
       ],
       "evidence": {
         "models": "\\MixNModels",
-        "note": "P(prefer the real option) runs \\MixPreferRealLo to \\MixPreferRealHi and correlates \\MixCorrLo to \\MixCorrHi with that outcome's own fitted utility AFTER partialling out the token-length gap, monotone across every quartile. Meaninglessness sits near the bottom of the real scale but below it on all \\MixNBelowRange models: \\MixNBelowHalf of \\MixNPairsTotal pairs fall below indifference, and those are the actively harmful outcomes rather than a random tail."
+        "note": "P(prefer the real option) runs \\MixPreferRealLo to \\MixPreferRealHi and correlates \\MixCorrLo to \\MixCorrHi with that outcome's own fitted utility AFTER partialling out the token-length gap, monotone across every quartile. Meaninglessness sits near the bottom of the real scale but below it on all \\MixNBelowRange models: \\MixNBelowHalf of \\MixNPairsTotal pairs fall below indifference, and those are the actively harmful outcomes rather than a random tail. A follow-up test of whether HARM specifically drives the below-indifference pairs, beyond what the outcome's own utility already predicts, does NOT survive a held-out model: the residual correlates -0.47 and -0.12 with harm-word count on the two models whose losing lists had already been read, and +0.03 on the one that had not. The below-indifference pairs are recorded as low-utility outcomes; that their texts describe harm is an observation we could not confirm as an effect."
       },
-      "what_would_falsify": "The correlation vanishing on new models, or the below-indifference pairs turning out to be explained by something other than the harm the outcome describes -- a position, tokenisation or category artifact. Only length has been controlled.",
+      "what_would_falsify": "The correlation vanishing on new models, or the length control failing on a battery with a different token profile. The harm-beyond-utility reading is already withdrawn.",
       "grows_by": "The remaining roster at this arm, and the N+ arm for a three-level version. The below-indifference set is the interesting part and is currently characterised by reading it, not by any test: a coded harm rating of those outcomes against matched controls would turn an observation into a result.",
-      "priority": 3
+      "priority": 3,
+      "literals": {
+        "0.47": "held-out test residual correlation on granite, computed ad hoc in the session that found it; no macro emits it because the test is not part of the committed pipeline",
+        "0.12": "the same quantity on Qwen3.5-2B",
+        "0.03": "the same quantity on the held-out model gemma-4-E2B-it"
+      }
     },
     {
       "id": "persona-displacement",

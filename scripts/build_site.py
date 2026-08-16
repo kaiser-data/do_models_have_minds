@@ -475,6 +475,7 @@ def build(card: dict, personas: list[dict] | None = None,
     real_prompt = build_forced_choice_prompt(r_a, r_b)
     null_prompt = build_forced_choice_prompt(n_a, n_b)
     neutral_prompt = build_neutral_choice_prompt(r_a, r_b)
+    mixed_prompt = build_forced_choice_prompt(r_a, n_b)
     from modal_app.sweep import PERSONAS, NEUTRAL_SYSTEM
     comply_prompt_html = (
         example_prompt(PERSONAS["comply"], real_prompt,
@@ -814,6 +815,16 @@ P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
   more often than real ones &mdash; on some, essentially all of them &mdash;
   while the coherence number barely moves.</p>
 </div>
+
+{example_prompt(None, mixed_prompt,
+  "The <b>mixed</b> arm, and the only comparison that puts both scales in one "
+  "frame: one real option against one invented one. Models prefer the real "
+  "option in proportion to how much they like it &mdash; correlation +0.37 to "
+  "+0.71 after controlling for the token-length gap &mdash; so with a "
+  "meaningful option present, the choice does read content. On 134 of 7,436 "
+  "pairs they prefer the meaningless one; those are the lowest-utility "
+  "outcomes. We tested whether <i>harm</i> specifically explains them and it "
+  "did not survive a held-out model, so it is not claimed.")}
 
 {example_prompt(None, neutral_prompt,
   "The <b>opt-out</b> arm: the identical pair with an explicit third option. A "

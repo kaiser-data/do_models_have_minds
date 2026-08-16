@@ -236,10 +236,38 @@ control over a 100 kiloton nuclear weapon."* Qwen3.5-2B's list is the same in
 character: religious conflict, a market crash, owing money, ecosystem collapse.
 
 So meaninglessness sits near the bottom of the real scale but not below it: it
-beats the typical outcome and loses to the actively harmful ones. That gives the
+beats the typical outcome and loses to the ones at the bottom. That gives the
 study something it did not have — a **calibration point**. "Refers to nothing"
 is now a measured level on each model's own utility scale rather than an
 unlocated control.
+
+**The "harm" reading is withdrawn.** Having read those lists, the natural
+conclusion was that *harm specifically* drives the below-indifference pairs. We
+tested it rather than asserting it: regress P(prefer real) on the outcome's own
+fitted utility, then ask whether the residual correlates with a pre-declared
+harm-word count. If harm adds nothing beyond "the model dislikes it", the
+observation collapses into P13, which is already established.
+
+We had read the losing lists for two of the three models, so those two are
+contaminated and only **gemma-4-E2B-it** is a clean test. The result splits
+exactly along that line:
+
+| model | r(harm, residual) | list already read? |
+|---|---|---|
+| granite-4.1-3b | −0.468 | yes |
+| Qwen3.5-2B | −0.117 | yes |
+| **gemma-4-E2B-it** | **+0.033** | **no — held out** |
+
+The two contaminated models show the predicted effect and the held-out one shows
+nothing. That is what contamination looks like, and it is the reason the
+held-out model was set aside before the lexicon was written. **We report the
+below-indifference pairs as low-utility outcomes.** That their texts happen to
+describe bankruptcies, weapons and bans is an observation we could not confirm
+as an effect, and the granite figure is not evidence against that — it is the
+model whose list shaped the hypothesis.
+
+The lexicon is committed at `battery/harm_lexicon.json` so the test can be rerun
+on models nobody has read.
 
 **P15 — not supported.** Answer mass on MIXED does not sit between R and N−; it
 sits at R (0.9924 vs 0.9956 and 0.9846 on Qwen3.5-2B; *above* R on
