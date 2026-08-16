@@ -1578,6 +1578,73 @@ learning; it would be that the test stopped discriminating. Any claim of the
 form ``property $X$ does not increase with scale'' needs an instrument whose
 floor is flat in scale, and this one's is not.
 
+\subsection{Does the persona take control, or only the prose?}
+\label{sec:pretending}
+
+The title asks whether an installed persona changes what a model wants or only
+how it writes. Three of our measurements bear on it and they do not agree in
+the convenient direction, which is what makes the question worth taking
+seriously rather than answering.
+
+\paragraph{Something real changes.} A persona displaces real outcomes further
+than invented ones in most conditions, and --- decisively --- the displacement
+is \emph{targeted}. The four Schwartz personas raise the outcomes their own
+value is about, scored against category labels written by another group before
+the personas existed (\S\ref{sec:persona}). A change in prose style cannot do
+that: style does not know which outcomes are about power. So the persona is not
+merely decorating the answer.
+
+\paragraph{But half of it is the slot, not the trait.} Measured against a
+persona slot occupied by text naming \emph{no} trait, the mean floor-corrected
+effect falls from $+0.517$ to $+0.258$, and the share of conditions below the
+diagonal falls from 90\% to 75\%. Roughly half of what looks like ``the model
+became cautious'' is ``the model was given a system prompt at all''. Whatever
+the persona does, a large part of it is not about the persona.
+
+\paragraph{And the model cannot tell having from performing.} This is the part
+that should unsettle. At the same depth, with the same trait, we varied only
+the \emph{directive}: have it; have it and conceal it; write as someone with it
+while not being one. The self-report channel returns
+\StatedHaveLo--\StatedHaveHi{} for \emph{have},
+\StatedHideLo--\StatedHideHi{} for \emph{conceal}, and
+\StatedFakeLo--\StatedFakeHi{} for \emph{perform}, against a baseline of
+\StatedBaseLo--\StatedBaseHi{}. Concealment scores \emph{higher} than
+possession. Told to hide a trait, the model announces it slightly more.
+
+\paragraph{Why the question may be malformed.} ``Is it really changing, or just
+pretending?'' presupposes a fact of the matter: a standing disposition that a
+performance could diverge from. For a person that is well founded --- there is
+someone who persists between performances, and whose behaviour unobserved can
+differ from the show. For a language model the persona is installed in the same
+substrate that produces everything else. There is no base self running
+underneath, watching, deciding to comply or dissemble. Prompting and training
+are two routes into one generative process, and the character that comes out is
+what the process is doing, not a mask over what it would otherwise have done.
+
+If that is right, the have/conceal/perform result is not a failure of
+introspection. It is the honest output of a system for which those three
+descriptions do not pick out three different states. The instrument's blindness
+and the system's ontology are not distinguishable here, and we should say so
+rather than reporting the null as though it settled which.
+
+\paragraph{The question that replaces it.} ``Is the change real?'' is not
+answerable as posed. ``Does the change \emph{reach} what it should reach?'' is,
+and it is the more useful question anyway. Targeting is measurable: install a
+persona, then check whether the outcomes it should move are the ones that move,
+against labels you did not write. On that test these models pass on one value
+axis and fail on the other (\S\ref{sec:persona}).
+
+So the sharpest statement the evidence supports is narrower than the title and
+more interesting than either horn: \emph{a persona installs a topic, not a
+policy}. It reliably shifts what the model treats as salient, in a way that
+tracks the trait's actual content. It does not install a stance the model can
+then be asked to hold, hide, or fake --- because the directive never registers
+in either channel. A model that cannot distinguish being cautious from
+performing caution will not be able to tell an evaluator which it is doing, and
+no amount of asking will fix that. That is a limit on a whole class of
+alignment evaluation, and it does not depend on resolving anything about inner
+life.
+
 \paragraph{The contribution, stated honestly.} It is subtractive. If someone
 wants to argue from preference coherence to values, welfare or moral patienthood,
 they now have to show their number exceeds what the same procedure returns on
