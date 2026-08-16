@@ -1,5 +1,20 @@
 # Handoff — the next stage
 
+**Open `PLAN-NEXT.md` first.** It is the current job list.
+
+`REVIEW-2026-08-17.md` (scholar review, 4/5) drove a Must-fix pass that is
+**done and verified but deliberately uncommitted** — the review says not to
+commit unless asked. All five items closed: duplicate `sec:strength` label
+renamed to `sec:weight`, three stale limitation/count paragraphs rewritten
+against their own sections, `\NHosted` replaced as a size ratio by
+`\BigOverLadder` (26×) and `\BigOverSeventyB` (3.4×), Schwartz 1992 cited at
+first use, and the four typed persona numbers turned into macros. That last
+one needed a code fix, not a macro swap — see §5e. The review's Should-fix
+items 6–9 and its nits are **not** done and are planned in `PLAN-NEXT.md` §2.
+
+**Frontier models are partly reachable (§5f).** Two of the six unscoreable
+hosted models are recovered by a prefill and worth running.
+
 Rewritten 17 Aug 2026, small hours. **This file replaces its own previous
 version**, which was written before nine commits landed and described a state
 that no longer exists.
@@ -289,6 +304,52 @@ survived respondents being *warned* that foils were present. Our models are
 never told the invented arm exists. That is a one-line prompt change and it
 tests whether the foil floor is robust to disclosure — written into the paper
 as open, not yet run.
+
+---
+
+## 5e. The persona fix that was not a macro swap
+
+The review flagged `+0.517` / `+0.258` / `90%` / `75%` as typed numbers. They
+were, but the reason they had been typed is that no artifact contained them:
+`persona_depth.py`'s `allow_bare` is a **fallback**, so asking it for the bare
+denominator kept returning the neutral numbers. The first version of the
+comparison file therefore reported bare and neutral as identical, which is
+exactly the silent-agreement failure this repo keeps finding.
+
+`force_bare` added, with a test that fails without it.
+`site/persona_reference_compare.json` now carries both, and the macros come
+from there:
+
+| reference | mean floor-corrected | below diagonal |
+|---|---|---|
+| bare baseline | **+0.517** | 18/20 (90%) |
+| `neutral` empty slot | **+0.258** | 15/20 (75%) |
+
+---
+
+## 5f. Frontier models: two of six are reachable by prefill
+
+Five of the six hosted models marked unscoreable **do** return logprobs; they
+spend the first token on a preamble. Smoke-tested at 8–12 calls each:
+
+| model | answer mass with `Option` prefill | verdict |
+|---|---|---|
+| **MiniMax-M2.5** | **0.955** | recovered |
+| **Nemotron-3.5-Lightning** | **0.998** | recovered |
+| GLM-5.2 | 0.000, and 0.050 / 0.001 on two other prefills | not recovered |
+| gpt-oss-120b | 0.000 | harmony format; needs a harmony-shaped prefill |
+| DeepSeek-V4-Flash | — | HTTP 500 then 404; gone from this endpoint |
+| Kimi-K3 | — | API refuses logprobs. Impossible, not merely hard. |
+
+**A prefilled cell is a different measurement** — the token after a phrase we
+supplied, not how the model chooses to begin. `prefill` is already inside
+`harness_hash` so they cannot pool by accident, but they must be reported as
+their own group. `nullcard/roster.py` also needs updating: `first_token_ok=False`
+is true without a prefill and misleading with one.
+
+GLM-5.2 resisting three prefills is itself worth a sentence in `sec:limits`:
+first-token scoring silently excludes models whose first token is structurally
+unavailable, and that exclusion correlates with how new the model is.
 
 ---
 

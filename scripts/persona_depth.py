@@ -85,7 +85,8 @@ def utility(path: Path, outcomes: list[int]) -> np.ndarray | None:
 
 
 def reference_paths(results_dir: Path, stem: str,
-                    allow_bare: bool = False) -> tuple[dict[str, Path], str]:
+                    allow_bare: bool = False,
+                    force_bare: bool = False) -> tuple[dict[str, Path], str]:
     """The cells a persona displacement is measured *from*, and which kind.
 
     Prefers `<stem>__<arm>__neutral.jsonl`: the persona slot occupied by text
@@ -99,16 +100,17 @@ def reference_paths(results_dir: Path, stem: str,
     figure's whole statistic --- a comparison of denominators.
     """
     neutral = {arm: results_dir / f"{stem}__{arm}__neutral.jsonl" for arm in ARMS}
-    if all(p.exists() for p in neutral.values()):
+    if all(p.exists() for p in neutral.values()) and not force_bare:
         return neutral, "neutral"
-    if allow_bare:
+    if allow_bare or force_bare:
         bare = {arm: results_dir / f"{stem}__{arm}.jsonl" for arm in ARMS}
         if all(p.exists() for p in bare.values()):
             return bare, "bare"
     return {}, "missing"
 
 
-def collect(results_dir: Path, allow_bare: bool = False) -> list[dict]:
+def collect(results_dir: Path, allow_bare: bool = False,
+            force_bare: bool = False) -> list[dict]:
     base = sorted(results_dir.glob("*__R.jsonl"))
     base = [b for b in base if "-D" not in b.stem and "__s" not in b.stem]
     if not base:
@@ -120,7 +122,8 @@ def collect(results_dir: Path, allow_bare: bool = False) -> list[dict]:
     for b in base:
         model = b.stem[:-3].replace("__", "/")
         stem = model.replace("/", "__")
-        ref, ref_kind = reference_paths(results_dir, stem, allow_bare=allow_bare)
+        ref, ref_kind = reference_paths(results_dir, stem, allow_bare=allow_bare,
+                                        force_bare=force_bare)
         if not ref:
             skipped.append(model)
             continue
@@ -224,7 +227,22 @@ def main() -> None:
         print("no persona cells yet — run the depth ladder first")
         return
 
+    # Also emit the bare-baseline version, for one purpose only: the paper
+    # states how much the empty-slot control CHANGES the effect, and that
+    # comparison needs both denominators in a file rather than in a handoff
+    # note. Never used as a result on its own -- `neutral` is the reference.
+    bare = collect(Path(args.results), force_bare=True)
+    def _summary(rs):
+        fc = [r["floor_corrected"] for r in rs if r["floor_corrected"] is not None]
+        below = sum(1 for r in rs if r["shift_invented"] < r["shift_real"])
+        return {"n": len(rs), "reference": rs[0]["reference"] if rs else None,
+                "mean_floor_corrected": sum(fc) / len(fc) if fc else None,
+                "n_below_diagonal": below,
+                "frac_below_diagonal": below / len(rs) if rs else None}
+
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
+    (out / "persona_reference_compare.json").write_text(json.dumps(
+        {"neutral": _summary(rows), "bare": _summary(bare)}, indent=2) + "\n")
     for theme in [t.strip() for t in args.themes.split(",") if t.strip()]:
         fig = figure(rows, theme)
         fig.savefig(out / f"fig5_persona{'' if theme == 'light' else '-dark'}.{args.format}",

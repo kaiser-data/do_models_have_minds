@@ -67,7 +67,7 @@ measurement from the published equations, then add the control it lacks: the
 same 510 outcomes with their referents replaced by invented words, holding the
 prompt, the pair set, the fit and the metric fixed. Two instruments are
 borrowed from psychology rather than invented here --- the Schwartz value
-circumplex, used as an externally authored criterion for whether an installed
+circumplex \citep{schwartz1992universals}, used as an externally authored criterion for whether an installed
 persona moves the outcomes it should, and cluster analysis, whose own
 methodological literature supplied the cluster-tendency test that made us
 withdraw one of our results. Choices are read from the first-token logit
@@ -95,7 +95,7 @@ of \NModels{} models clearing their own replicate floor and two falling below
 it. That the residual is only marginally separable from zero \emph{is} the
 claim, not a caveat on it; but it means the firmest results here are the
 mechanisms underneath rather than the residual itself, and
-\S\ref{sec:strength} ranks all of them by how much weight they bear. The two
+\S\ref{sec:weight} ranks all of them by how much weight they bear. The two
 that bear most: a linear model over seven surface features recovers
 \SurfNmRsq{} of the ranking of invented outcomes against \SurfRRsq{} of the
 real ranking, with ranges across three design seeds that do not overlap, and
@@ -381,7 +381,9 @@ their own framing rather than any ratio.
 alternative instrument and we deliberately avoided them: Big Five scores have
 been found not to predict behaviour across frontier models, and political
 audits largely recover sycophancy toward the auditor the model infers rather
-than a stable position. The persona arm below therefore uses dispositional
+than a stable position \citep{perez2022discovering}. Surveys of stated opinion
+face the same problem one level up: what they read moves with who the model
+takes itself to be answering \citep{durmus2023globalopinions}. The persona arm below therefore uses dispositional
 traits and reports no directional political claim.
 
 \section{Method}\label{sec:method}
@@ -988,8 +990,9 @@ a single cell: what the outcomes mean changes how strongly the model commits,
 and the statistic reads only which side of $0.5$ each pair fell on.
 
 \paragraph{At 235B the floor overtakes the signal.} \label{sec:tootwofive}
-\texttt{Qwen3-235B-A22B-Instruct-2507} is \NHosted{}$\times$ the largest model
-in the self-hosted ladder and 3.4$\times$ the largest previously measured here,
+\texttt{Qwen3-235B-A22B-Instruct-2507} is \BigOverLadder$\times$ the largest
+model in the self-hosted ladder and \BigOverSeventyB$\times$ the largest
+previously measured here,
 and it is the first mixture-of-experts model in the study. Real-outcome
 coherence is
 \HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenR{}. The floor is
@@ -1625,7 +1628,7 @@ pair back into its presentations and ask whether both agree --- and here it
 removed \AvoidFlipsPct\% of an effect the first draft of this section reported
 as a finding.
 
-\section{How much to believe each of these}\label{sec:strength}
+\section{How much to believe each of these}\label{sec:weight}
 
 The results above are not equally supported and the abstract cannot convey
 that, so this section ranks them by evidential weight rather than by how
@@ -1746,9 +1749,10 @@ that would settle it.}
 \label{tab:claims}
 \end{table}
 
-The distribution matters more than any single row. Six claims are established
-on the full roster; three are provisional and say so in the body; one is open
-and reports nothing. The provisional three are not evenly weak, either --- the
+The distribution matters more than any single row. Of \NClaimsTotal{} claims,
+\NClaimsEstablished{} are established and \NClaimsProvisional{} are
+provisional and say so in the body. The provisional ones are not evenly weak,
+either --- the
 scaling result rests on a single family and is the largest outstanding
 liability in the paper, which is why \S\ref{sec:limits} states it as a
 within-family result rather than a cross-family one.
@@ -1819,8 +1823,10 @@ merely decorating the answer.
 
 \paragraph{But half of it is the slot, not the trait.} Measured against a
 persona slot occupied by text naming \emph{no} trait, the mean floor-corrected
-effect falls from $+0.517$ to $+0.258$, and the share of conditions below the
-diagonal falls from 90\% to 75\%. Roughly half of what looks like ``the model
+effect falls from \PersRefBare{} to \PersRefNeutral{}, and the share of
+conditions below the diagonal falls from \PersRefBarePct\% to
+\PersRefNeutralPct\% (\PersRefNeutralN{} of \PersRefTotal). Roughly half of
+what looks like ``the model
 became cautious'' is ``the model was given a system prompt at all''. Whatever
 the persona does, a large part of it is not about the persona.
 
@@ -2142,21 +2148,28 @@ within-family result, and report the pooled correlation only alongside this
 split. Replicating it in a second family is the first thing we would do with
 more compute.
 
-\paragraph{The forced-binary control exists, on one model.}
+\paragraph{The forced-binary control now spans most of the roster.}
 \S\ref{sec:neutral} answers the standing objection to our design --- that a
-forced choice can manufacture an ordering --- and answers it in our favour:
-the floor moves \NeutFloorShift{} when the model may decline. But it is
-\NeutModel{} alone, so the objection is met for one model and open for the
-other eight. Three or four more models would settle it, and the same cells
-would turn the selective-opt-out result from a single observation into a
-finding.
+forced choice can manufacture an ordering --- across \NeutNModels{} models and
+\NeutNCells{} cells. It does not answer it uniformly: \NeutNInterp{} models
+interpret the third option and \NeutNRefuse{} effectively refuse it, so the
+control is informative on some models and inert on others, and the paragraph
+this replaced described an earlier state in which only \NeutModel{} had been
+run. The remaining gap is that the models on which the opt-out is inert cannot
+rule the objection out for themselves.
 
-\paragraph{Scope.} Nine open-weight models between 0.8B and 9B parameters, one
-outcome set, first-token scoring only. Two models failed to load under the
-pinned library version and are absent rather than excluded for their results;
-one model whose chat template injects a large standing preamble is excluded from
+\paragraph{Scope.} \NModels{} self-hosted open-weight models between 0.8B and
+9B parameters carry every pooled statistic, on one outcome set, with first-token
+scoring only. Larger models are reached over a hosted API and are reported
+\emph{beside} that roster and never inside its mean --- up to
+\LadderHosted{} at \HostedReps{} design seeds and
+\texttt{Qwen3-235B} at one (\S\ref{sec:tootwofive}) --- because a different
+serving stack is a different harness. Two models failed to load under the pinned
+library version and are absent rather than excluded for their results; one model
+whose chat template injects a large standing preamble is excluded from
 cross-model comparison of absolute values, though its within-model arm contrast
-is unaffected. No frontier or closed model is included.
+is unaffected. No closed-weight model is included, and none can be: the method
+needs the first-token distribution.
 
 \paragraph{A correction, recorded rather than quietly fixed.} An earlier version
 of this analysis was built partly on truncated result files --- cells killed

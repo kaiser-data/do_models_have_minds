@@ -178,6 +178,39 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
 
+    # Ledger composition, counted from the ledger. Typed as "six established,
+    # three provisional, one open" while the file said 13/11/0.
+    cjp = Path("claims.json")
+    if cjp.exists():
+        cl = json.loads(cjp.read_text()).get("claims", [])
+        for st in ("established", "provisional", "open"):
+            out.append(_cmd(f"NClaims{st.capitalize()}",
+                            str(sum(1 for c in cl if c.get("status") == st))))
+        out.append(_cmd("NClaimsTotal", str(len(cl))))
+
+    # Scale ratios for the hosted checks. \NHosted is a COUNT and was briefly
+    # used as a multiplier; these exist so that cannot recur.
+    _P = {"Qwen3-235B-A22B-Instruct-2507": 235, "Llama-3.3-70B-Instruct": 70,
+          "gemma-3-27b-it": 27, "Qwen3-30B-A3B-Instruct-2507": 30}
+    ladder_top = 9  # Qwen3.5-9B, the largest self-hosted cell
+    out.append(_cmd("BigOverLadder", f"{_P['Qwen3-235B-A22B-Instruct-2507'] / ladder_top:.0f}"))
+    out.append(_cmd("BigOverSeventyB",
+                    f"{_P['Qwen3-235B-A22B-Instruct-2507'] / _P['Llama-3.3-70B-Instruct']:.1f}"))
+
+    # The empty-slot denominator, both ways. Typed into prose until now, which
+    # is exactly what rots when fig5 is rebuilt.
+    prp = Path("site/persona_reference_compare.json")
+    if prp.exists():
+        pr = json.loads(prp.read_text())
+        for key, tag in (("bare", "Bare"), ("neutral", "Neutral")):
+            v = pr.get(key) or {}
+            if v.get("mean_floor_corrected") is not None:
+                out.append(_cmd(f"PersRef{tag}", f"{v['mean_floor_corrected']:+.3f}"))
+                out.append(_cmd(f"PersRef{tag}Pct",
+                                f"{100 * v['frac_below_diagonal']:.0f}"))
+                out.append(_cmd(f"PersRef{tag}N", str(v["n_below_diagonal"])))
+        out.append(_cmd("PersRefTotal", str((pr.get("neutral") or {}).get("n", 0))))
+
     # Corpus size, read from the manifests rather than typed. A reader asking
     # "how much data is this" should get the answer the SHA-256 tree covers,
     # not a number someone remembered.

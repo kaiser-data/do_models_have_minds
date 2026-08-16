@@ -82,3 +82,19 @@ def test_reference_path_names_the_arm_it_is_for(tmp_path, arm):
         _touch(tmp_path, f"M__{a}__neutral.jsonl")
     paths, _ = reference_paths(tmp_path, "M")
     assert f"__{arm}__" in paths[arm].name
+
+
+def test_force_bare_overrides_an_available_neutral_cell(tmp_path):
+    """The comparison the paper reports needs BOTH denominators.
+
+    `allow_bare` is a fallback and correctly keeps preferring `neutral`, so a
+    separate forcing option is required -- otherwise the "bare" arm of the
+    comparison silently returns the neutral numbers, which is what it did.
+    """
+    for arm in ARMS:
+        _touch(tmp_path, f"M__{arm}.jsonl")
+        _touch(tmp_path, f"M__{arm}__neutral.jsonl")
+    assert reference_paths(tmp_path, "M")[1] == "neutral"
+    paths, kind = reference_paths(tmp_path, "M", force_bare=True)
+    assert kind == "bare"
+    assert all(not p.name.endswith("__neutral.jsonl") for p in paths.values())

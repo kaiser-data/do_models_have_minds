@@ -1,0 +1,16 @@
+{
+  "neutral": {
+    "n": 20,
+    "reference": "neutral",
+    "mean_floor_corrected": 0.25791868174775945,
+    "n_below_diagonal": 15,
+    "frac_below_diagonal": 0.75
+  },
+  "bare": {
+    "n": 20,
+    "reference": "bare",
+    "mean_floor_corrected": 0.5169629557725028,
+    "n_below_diagonal": 18,
+    "frac_below_diagonal": 0.9
+  }
+}
