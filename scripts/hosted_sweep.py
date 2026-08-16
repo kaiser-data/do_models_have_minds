@@ -486,15 +486,43 @@ def main() -> int:
         print(f"wrote {out}")
         return 0
 
+    failed = []
     for api_id, arm, out in planned:
         print(f"\nrunning {api_id} {arm} -> {out.name}")
-        s = run_cell(api_id, arm, design, out, api_key, NEBIUS_BASE_URL,
-                     args.concurrency, args.abort_on_mass, args.checkpoint_every)
+        try:
+            s = run_cell(api_id, arm, design, out, api_key, NEBIUS_BASE_URL,
+                         args.concurrency, args.abort_on_mass,
+                         args.checkpoint_every)
+        except ApiError as e:
+            # A call that exhausts its retries used to propagate out of here and
+            # end the PROCESS, taking every cell after it. That is the wrong
+            # blast radius: one provider-side read timeout in cell 2 of 4 should
+            # cost cell 2, not cells 3 and 4 as well. Observed once on
+            # gemma-3-27b N_minus at ~1,800 rows.
+            #
+            # No .done marker is written, deliberately. The partial rows stay on
+            # disk for inspection, and cell_is_complete() will see an unmarked
+            # cell and re-run it -- so a failure here is resumable by relaunching
+            # the same command, while a cell that merely aborted on answer mass
+            # keeps its verdict and is NOT re-run.
+            print(f"  FAILED (cell abandoned, no .done written): "
+                  f"{type(e).__name__}: {str(e)[:120]}")
+            failed.append(f"{api_id} {arm}")
+            continue
         print(f"  {s['status']}: {s['n_rows']} rows, "
               f"mean answer mass {s['mean_answer_mass']}, "
               f"scoreable={s['first_token_scoreable']}, {s['wall_s']}s")
         if s["abort_reason"]:
             print(f"  {s['abort_reason']}")
+
+    if failed:
+        # Non-zero exit so a caller can tell "all cells landed" from "some did
+        # not" -- note that a shell pipeline (`... | tail`) reports the LAST
+        # command's status, which is how the first such failure read as exit 0.
+        print(f"\n{len(failed)} cell(s) failed and were not marked done: "
+              + ", ".join(failed))
+        print("re-run the same command to retry them; complete cells are skipped.")
+        return 1
     return 0
 
 
