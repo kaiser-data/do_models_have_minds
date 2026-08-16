@@ -38,11 +38,9 @@
 % it resolves through numbers.tex like everything else -- a title is the last
 % place a stale figure should be allowed to survive a rebuild.
 \title{\textbf{Does the Persona Change the Preference,\\ or Only the Prose?}\\[.5em]
-\large Replace every outcome with invented words, and what a model appears to
-prefer\\ barely changes --- at every size we measured, from under a billion
-parameters\\ to the largest open models we could reach. A high
-preference-coherence score\\ is therefore not evidence that the model
-responded to meaning.}
+\large Replace every outcome with invented words and a model's preferences
+barely move,\\ at every size we tested. The coherence number does not notice
+---\\ so it cannot be evidence that the model does.}
 
 \author{Martin Kaiser \and Gellért Bodorkós\\
 \small Apart Research Digital Minds Sprint}
@@ -1531,6 +1529,62 @@ and reports nothing. The provisional three are not evenly weak, either --- the
 scaling result rests on a single family and is the largest outstanding
 liability in the paper, which is why \S\ref{sec:limits} states it as a
 within-family result rather than a cross-family one.
+
+\section{What this says about minds, which is less than it looks}
+\label{sec:minds}
+
+This work was done for a sprint about digital minds, and the question it
+invites is whether a metric that scores invented outcomes as highly as real
+ones is evidence \emph{against} models having anything worth calling values,
+experiences or consciousness. It is not. It is also not evidence for. The
+distinction matters enough to state plainly, because both misreadings are
+available from the abstract alone.
+
+\paragraph{What is actually refuted is an inference, not a mind.} The claim
+under test is: \emph{this model's choices fit a stable scalar ordering, therefore
+this model has a value system}. That inference fails, because the same
+procedure returns nearly the same number when the outcomes denote nothing
+(\S\ref{sec:flat}), when a large share of the ranking is recoverable from
+character counts (\S\ref{sec:surface}), and when the ordering itself rotates
+under a rephrasing of the question (\S\ref{sec:rotation}). A measurement that
+survives the removal of meaning cannot, on its own, be evidence about meaning.
+That is a result about an instrument.
+
+\paragraph{Why it cannot be disproof.} A system with rich inner states could
+still produce form-driven answers on a poorly-anchored instrument. Humans do:
+acquiescence bias, question-order effects and response sets are well documented,
+and a person forced to choose between two nonsense phrases with no opt-out will
+also produce a consistent ordering --- by length, by sound, by whichever looks
+less odd. Nobody reads that as evidence against human consciousness; they read
+it as evidence about the questionnaire. The same courtesy is owed here. And the
+models are plainly not blind: given a real outcome against an invented one they
+prefer the real one in proportion to how much they like it, on every model
+measured (\S\ref{sec:avoidance}), and a discarded channel of the same forward
+pass separates the two at AUROC \DetBestAuroc{} (\S\ref{sec:detector}). What is
+content-blind is the statistic, not the system.
+
+\paragraph{And the scaling result is not ``no growth with scale''.} This is the
+most tempting misreading and the numbers refute it directly. Across the ladder
+the residual falls, but not because real-outcome coherence declines --- that
+rises \LadderRRise{}, essentially flat. It falls because the \emph{floor} rises
+\LadderNRise{}, six times faster. Larger models are better at imposing a
+consistent ordering on \emph{anything}, nonsense included, so the room between
+signal and floor closes from below.
+
+The right reading is that the instrument saturates, not that the models stop
+gaining. If a test's guessing baseline climbed from 50\% to 92\% while scores
+went from 90\% to 92\%, the conclusion would not be that the students stopped
+learning; it would be that the test stopped discriminating. Any claim of the
+form ``property $X$ does not increase with scale'' needs an instrument whose
+floor is flat in scale, and this one's is not.
+
+\paragraph{The contribution, stated honestly.} It is subtractive. If someone
+wants to argue from preference coherence to values, welfare or moral patienthood,
+they now have to show their number exceeds what the same procedure returns on
+outcomes that refer to nothing --- and that it survives a rewording. That raises
+the evidential bar rather than settling anything behind it. We think that is the
+useful thing to contribute to this question at this stage: not an answer, but a
+control that any future answer has to pass.
 
 \section{Limitations}\label{sec:limits}
 

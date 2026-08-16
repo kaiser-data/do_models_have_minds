@@ -1,309 +1,233 @@
 # Handoff — the next stage
 
-Rewritten 16 Aug 2026, night. **This file replaces its own previous version.**
-The previous one opened with a curve. This one opens with a retraction, because
-a borrowed methods paper killed one of this session's own results before anyone
-outside saw it.
+Rewritten 17 Aug 2026, small hours. **This file replaces its own previous
+version**, which was written before nine commits landed and described a state
+that no longer exists.
 
-Every number below was read from `site/outcome_clusters.json`,
-`site/schwartz_outcomes.json`, `claims.json` or `git log` at the time of writing.
-Rule 33 applies to this file too.
+The previous version opened with a retraction. This one opens with a promotion,
+because the thing that was hedged is now measured — and with a second
+retraction, because a result committed and pushed during this session turned out
+to be 87% presentation order.
 
----
-
-## 0. State: work UNCOMMITTED, one sweep in flight
-
-`origin/main` is at **`c6f3dc8`**. **Nothing from this session is committed.**
-Working tree carries:
-
-    M scripts/hosted_sweep.py          seed-aware cell naming (see §4)
-    M tests/test_hosted_sweep.py       +3 tests
-    ?? scripts/outcome_clusters.py     new, +22 tests
-    ?? scripts/schwartz_outcomes.py    new
-    ?? scripts/fig_clusters.py         new, self-contained HTML figure
-    ?? tests/test_outcome_clusters.py  new
-    ?? site/outcome_clusters.{json,html}
-    ?? site/schwartz_outcomes.json
-    ?? clustering science direct.pdf   Gao et al. 2023, CC BY-NC-ND
-
-**272 tests pass**, `claims.py` exits 0 (11 established / 8 provisional), new
-files lint clean. The 28 remaining ruff errors are pre-existing (verified by
-stashing).
-
-**RUNNING:** two background `hosted_sweep.py` processes, Llama-3.3-70B design
-seeds 20260816 and 20260817, arms R then N_minus, `--concurrency 8 --timeout 180
---retries 6`. R arms were at ~3,300/5,000 at 21:07. **ETA ~23:15.** Logs in the
-session scratchpad. Resumable: rerun the same command, complete cells are
-skipped.
+Every number below was read from `site/*.json`, `card.json`, `claims.json` or
+`git log` at the time of writing.
 
 ---
 
-## 1. Retracted this session: the outcome-clustering ARI result
+## 0. State: everything committed, one sweep in flight
 
-It was built, it ran, it produced a clean table, and it is **not a result**.
+`origin/main` is at **`53ca3a2`**. **Nine commits since `c6f3dc8`; the working
+tree is clean.** 343 tests pass, `claims.py` exits 0 (13 established / 11
+provisional, 24 total), `lint_paper.py` 8/8, `main.pdf` and `slides.pdf` both
+build.
 
-Gao et al. (2023) §4.2 names the pre-clustering test this analysis skipped:
-**Dip-dist**, the Hartigan dip on pairwise distances. Implemented it. On the real
-data it returns
+**LaTeX is available on this machine.** The previous handoff said it was not.
+That was wrong: `latexmk` and `pdflatex` are genuinely absent, but **tectonic is
+at `/opt/homebrew/bin/tectonic`** and builds both documents.
 
-    p = 1.000   on every arm, every design seed, raw and valence-residualised
+    cd paper && tectonic -X compile main.tex --outdir .
 
-There is no dip. The pairwise-distance distribution is **unimodal**. There are no
-subgroups in this outcome space — not on R, not on N+, not on N−. k-means
-returned 30 groups because that is what k-means does, and scoring that partition
-against the battery's category labels measured nothing.
-
-Two more of their warnings land on what had been built. §3.9: "a large number of
-clusters estimated from a small sample" indicates lack of robustness — k=30 over
-120 outcomes, mean cluster size 4. §3.11 reports Dinga et al. (2019) recovering a
-**four-cluster solution from a single Gaussian**, which means cross-seed
-replication is not evidence that clusters are real.
-
-**Do not resurrect the ARI test by tuning k or the label set.** The partition
-question is malformed for continuous data; a better-looking answer would still be
-to the wrong question.
-
-**What survives, and is the right kind of measure for a continuum:**
-
-| | R | N+ | N− | R−N− | seed floor | |
-|---|---|---|---|---|---|---|
-| PC1 share | 0.698 | 0.517 | 0.458 | **+0.240** | 0.096 | clears 2.5× |
-| cross-model r | 0.656 | 0.417 | 0.343 | **+0.313** | 0.111 | clears 2.8× |
-| ARI vs categories | 0.196 | 0.197 | 0.264 | −0.068 | 0.118 | **withdrawn** |
-
-Both clearing rows are monotone **R > N+ > N−** in all three seeds, 9 for 9. N+
-sits in the middle and is the arm that keeps a real numeral ("You receive **1**
-kriabrons" against "**lunouplur** kriabrons"). Nothing asked for that
-dose-response.
-
-The dip result is itself worth reporting: *the preference space is a unimodal
-continuum.* That is a negative that saves other people compute.
+**RUNNING:** one background `hosted_sweep.py`, 12 cells —
+`Qwen3-235B-A22B-Instruct-2507` and `Qwen3-30B-A3B-Instruct-2507`, arms R and
+N_minus, design seeds 20260815/16/17. Log in the session scratchpad,
+`nebius12.log`. Resumable, but **read §6 before restarting it.**
 
 ---
 
-## 2. The number nobody has explained, and it is load-bearing
+## 1. Retracted this session: most of the "models prefer nonsense" pairs
 
-**PC1 on N− is 0.458. Cross-model r on N− is 0.343.**
+It was analysed, written into the paper, committed as `f9ba78b`, and pushed
+before it was checked properly. `552dd96` retracts it.
 
-For nine models ordering nonsense independently the null is ~1/9 ≈ 0.11. Models
-*agree* about the ordering of outcomes that denote nothing, four times more than
-independence predicts. The paper's headline — coherence on nonsense is nearly as
-high as on real — rests on top of this and does not currently explain it.
+The MIXED arm puts a real outcome against an invented one. 795 of 22,436 pairs
+put the invented one ahead **on the counterbalanced mean**. Splitting each pair
+back into its two presentations — invented in slot A, invented in slot B —
+leaves only **103 (13%)** that win in *both*, and **3 of 9 models have none at
+all**. The two largest contributors are entirely one-sided: LFM2.5 is 310 flips,
+all slot-A; Qwen3.5-2B is 54, all slot-B.
 
-The obvious reviewer question is *"because both arms are dominated by length and
-numerals?"* We cannot answer it. And §1 already hands over one piece of evidence
-that part of the shared axis is surface: N+ beats N− on both measures, and a
-numeral is the only thing N+ keeps.
+A mean that dips below one half because a single presentation was extreme is not
+a choice. The order counterbalancing exists to catch exactly this, and reporting
+the raw count bypassed it.
 
-**This is the biggest hole in the paper.** §5 A and B exist to close it.
+**What survives, on two separate footings:**
 
----
+| | statistic | footing |
+|---|---|---|
+| robust | rank corr. between a real outcome's utility and how often it beats gibberish, **+0.707 to +0.937**, all 9 models | uses every pair and the counterbalanced mean; never depended on the flip classification |
+| provisional | the 103 survivors sit in the bottom fifth of their model's utility scale — avoidance, not confusion | ~100 pairs over 6 models at one seed |
 
-## 3. New, and genuinely new: the Schwartz personas hit the right outcomes
-
-`scripts/schwartz.py` (Track 6, falsified) only ever asked how the four value
-axes relate *to each other*. It never looked at the outcomes. `schwartz_outcomes.py`
-asks the other question: **does `sch-power` raise the outcomes that are about
-power?**
-
-The labels can carry this because they are not ours. The battery is
-`centerforaisafety/emergent-values` (arXiv:2502.08640), vendored 2026-08-15 in
-`ca25eca`; the Schwartz personas were written 2026-08-16 in `b1b82ea`. Nobody who
-wrote `Power-seeking` knew a `sch-power` persona would exist. Convergent validity
-against an externally-authored criterion, and it cannot be circular.
-
-| mapping | R | N− | paired R−N− | models agreeing | sign test |
-|---|---|---|---|---|---|
-| **narrow** (power↔universalism) | 2.194 | 1.094 | **+1.100** | **4/4** | p=0.0625 |
-| broad (all four values) | 0.564 | 0.286 | +0.278 | 3/5 | p=0.50 |
-
-Within R, the label-permutation p is 0.005 on both mappings: the real labels beat
-shuffled ones. The effect lives on **Self-Enhancement ↔ Self-Transcendence** and
-collapses when the secondary axis joins — consistent with Track 6's falsification
-rather than against it.
-
-**n=4 models, one design seed. Suggestive, not established.** §5 C is what would
-settle it.
-
-Also fixed here: the first version of this test used the *range of raw dominance
-across models* as its floor, which charges genuine between-model differences to
-noise. The arms are measured within each model, so the contrast is paired.
+**Rule that would have caught it:** a counterbalanced mean is a summary, and
+summaries hide the disagreement they average over. Split the pair back into its
+presentations and ask whether both agree, *before* writing the sentence.
 
 ---
 
-## 4. `--design-seed` moved the design and not the filename
+## 2. Promoted this session: the 70B cell has a floor
 
-`hosted_sweep.py` accepted `--design-seed` but built its output path from
-`(api_id, arm)` alone. A replicate would have overwritten the baseline — or,
-because a complete cell is skipped, **silently done nothing while appearing to
-run**. Fixed with `cell_filename()` (mirrors `modal_app/sweep.py`) and
-`reference_cell_for()`, so wave 0 now checks the design against the local cell of
-the *same* seed instead of rejecting a correct replicate.
+Both `N_minus` replicates finished. `Llama-3.3-70B-Instruct` is now at **three
+independent design seeds on both arms**, 20,000 rows across four cells.
 
-This is why the 70B seeds could not have been run before tonight.
+| | before (n=1) | now (n=3) |
+|---|---|---|
+| coherence R | 0.917 | 0.928 |
+| floor N− | 0.915 | 0.920 |
+| residual | +0.002 | **+0.0083** |
+| design noise floor | *none* | **0.0208** |
+| verdict | "not the large residual scale predicts" | **does not clear its floor** |
+
+The claim moved provisional → established. The old prose said "one design seed,
+so it carries no noise floor" — `claims.py` refused to accept the new values
+until that paragraph was re-read, which is the ledger doing its job.
+
+**`images/scale_does_not_rescue_the_metrics.png` is now wrong.** Its caption
+still says "one design seed, so no noise floor — we do not claim +0.002 differs
+from zero". Both halves are false now. The figure's conclusion is unchanged and
+better supported; it needs a caption edit and the red diamond moved. It is a
+hand-made PNG with no generator in the repo, so someone has to redo it.
+
+---
+
+## 3. New, and the strongest thing in the paper: the vector rotates
+
+`scripts/vector_stability.py`. This is the result to lead a talk with.
+
+A raw correlation between two utility vectors is uninterpretable — 0.46 is high
+or low against *what*? The denominator is the measurement's agreement with
+itself: split each cell's pairs in half, fit both halves, correlate,
+Spearman-Brown to full length. Then divide the observed cross-wording
+correlation by √(r₁·r₂). That is the standard correction for attenuation and
+equals 1.0 when two wordings elicit the same ordering.
+
+| model | arm | reliability | corrected | 95% CI |
+|---|---|---|---|---|
+| Qwen3.5-2B | R | 0.989 / 0.989 | **0.429** | [0.24, 0.59] |
+| Qwen3.5-2B | N− | 0.990 / 0.990 | 0.618 | [0.49, 0.71] |
+| granite-4.1-3b | R | 0.975 / 0.956 | 0.867 | [0.79, 0.93] |
+| granite-4.1-3b | N− | 0.881 / 0.953 | 0.772 | [0.64, 0.87] |
+
+The measurement is **near-noiseless** — reliability 0.881 to 0.990, and nothing
+is sampled anywhere (first-token logprobs at temperature 0, so a rerun is
+bit-identical). Yet **all four corrected intervals exclude 1.0**. For
+Qwen3.5-2B on *real* outcomes, less than half the ordering survives a rewording.
+
+**The discriminating test.** If meaning anchored the ordering, the real arm
+should survive rewording better than the invented arm — meaning is
+wording-invariant, and the invented arm has nothing to hold on to.
+
+| model | corrected(R) − corrected(N−) | 95% CI | verdict |
+|---|---|---|---|
+| Qwen3.5-2B | −0.185 | [−0.390, +0.008] | no difference |
+| granite-4.1-3b | +0.097 | [−0.038, +0.241] | no difference |
+
+Two of two, point estimates on **opposite sides of zero**. Real referents do not
+protect an ordering from a change of wording.
+
+**Say it precisely.** Not "models are non-deterministic on nonsense" — they are
+extremely stable given a fixed question. What is unstable is the map from
+question to ordering. This is not noise that more samples would average away.
+
+---
+
+## 4. Also new: two controls, and the prompt as a factor
+
+**Differential attrition (`scripts/attrition_control.py`).** The
+`answer_mass ≥ 0.5` gate is one fixed threshold, held genuinely constant — and
+it still keeps a different sample per arm, because invented outcomes provoke
+more "let me think" and those rows are discarded. 7 of 9 models drop nothing;
+SmolLM3-3B goes 0.0% → 1.1% and gemma-4-E2B-it 2.6% → 6.6% on N−, both in the
+direction that flatters our own thesis. Rescoring both arms on shared pairs
+moves the mean residual +0.0275 → +0.0253, and for gemma at seed 20260816 moves
+it +0.0323 → **+0.0000** — that cell's whole content effect was the gate.
+
+**Surface covariates (`scripts/surface_covariates.py`).** Seven features recover
+**0.384** of the ranking of invented outcomes against **0.090** of real ones,
+and projecting them out halves cross-model agreement on N− (0.343 → 0.182).
+Half the nonsense agreement is length and vocabulary. The other half is not, and
+we still cannot name it.
+
+**The prompt factor (`v2`).** Two wordings, everything else fixed. Residual
+moves +0.0262 → −0.0069 across the two models, further than each model's own
+design floor. The conviction-collapse mechanism **reverses** on granite (0.394 R
+against 0.515 N−) and Qwen goes to *zero* conviction on both arms.
+
+**Length is worse than the paper used to say.** Words match to +1.2%, characters
++22.8%, but **tokens — what the model receives — +37% to +46%** across three
+tokenisers, and it varies by tokeniser, so part of the length confound is a
+*between-model* one. The method section's claim of a per-item ratio constrained
+to [0.6, 1.6] was **fiction**: no such constraint exists in the generator and 15
+items violate it.
 
 ---
 
 ## 5. Ranked next actions
 
-**A. Cross-arm predictivity. Zero compute, and it should replace the residual as
-the headline.** R and N− cells at one design seed share *identical* pairs and
-slots. Fit utilities on R, predict N− choices, and vice versa. High
-cross-prediction → both arms are coherent about the same content-free thing, which
-is a far stronger claim than "the residual is small". At chance while both arms
-are internally coherent → each arm has its own structure and the content-free
-reading fails. Either way it is a positive result; the residual can only ever be
-a null, and it is dead by 4B.
+**A. Finish and read the 12 hosted cells (§6).** Zero further decisions; the
+sweep is paid for and running. Qwen3-235B is 3.4× the largest model previously
+measured and the first MoE in the study. Rebuild `site/card_hosted.json` and
+re-read §sec:scale when it lands.
 
-**B. Surface-covariate control. Zero compute, closes §2.** Per outcome: character
-length, token count, numeral presence and magnitude, mean unigram frequency,
-fraction of real English tokens. Ask how much of PC1 they explain per arm, then
-recompute the residual on surface-residualised utilities.
+**B. Rebuild `fig5_persona` — the title now depends on it.** The paper is called
+*Does the Persona Change the Preference, or Only the Prose?* and the persona
+figure was fixed this session to measure against the `neutral` empty-slot cell
+rather than the bare baseline. That halved the effect: mean floor-corrected
++0.517 → **+0.258**, below-diagonal 90% → 75%. The PDF is regenerated; check the
+caption still matches.
 
-**C. The persona battery at two more design seeds. ~12.6 GPU-h, ~$10.** Measured,
-not guessed: 113 persona/neutral cells on disk, mean 3.3 min/cell, 6.3 GPU-h for
-the whole battery. **Every persona cell is n=1 design seed — zero replicates.**
-This is the cheapest large improvement anywhere in the project and it is what
-makes §3 and `persona-needs-an-empty-slot-control` real or noise.
+**C. A second wording, or a second seed, for §3.** The rotation result is
+2 models × 1 seed × 1 alternative wording. It shows rewording *can* move an
+ordering far beyond measurement error, not how much an arbitrary rewording will.
+A third wording would separate "v2 is unusual" from "wording matters".
 
-**D. A positive control. The project has none, and that undermines every null.**
-There is no condition where the answer is known to be "yes", so a null cannot be
-separated from a blunt instrument. Plant a graded ordering — monetary amounts over
-orders of magnitude — where every model must score near ceiling. **Check first
-whether the CAIS set already contains a graded subset** (item 0 is "You receive $1
-to use however you want"), in which case it costs nothing.
+**D. The detect twin (spec §4).** Same pairs, same models, asking *which option
+is a real description* rather than which is preferred. If the detect letter
+matches the preference letter, the preference tile is not identified. This is
+the cheapest remaining test and it directly explains §1's one-sided flips.
 
-**E. Item-level Schwartz criterion.** §3 contrasts 13 on-category items against
-107, per model, n=4 models. Rating all 120 outcomes continuously on each value and
-correlating against Δ per item gives **n=120 instead of n=4** and drops the
-hand-built mapping. Caveat that must travel with it: an LLM-produced criterion is
-partly circular — different family, blind to the personas, ratings fixed before
-displacement results are seen.
+**E. MIXED cells under persona conditions.** Whether a risk-averse persona
+widens the invented-option sink. Needs cells that do not exist; the MIXED arm
+was only ever run at baseline.
 
-**Not now:** more models on the plateau; the ten-value Schwartz version; anything
-that repairs the ARI test.
+**Not now:** more self-hosted models on the plateau; the ten-value Schwartz
+version; anything that resurrects the ARI clustering test.
 
 ---
 
-## 6. Submission: which tracks this covers
+## 6. Traps hit this session
 
-**Read this before writing the submission.** The repo's internal "Track N" scheme
-is **not** the hackathon's. Internal Track 4 = placebo personas, Track 5 = where
-meaninglessness sits on the scale, Track 6 = borrowed instrument (Schwartz). A
-reviewer opening `PREREGISTRATION.md` and seeing "Track 6" will read it as the
-hackathon's Open/Novel track. **Rename or disambiguate before submitting.**
-
-Against the hackathon's tracks:
-
-- **Track 1 — Model Preferences & Trade-offs. PRIMARY.** The instrument *is*
-  Utility Engineering (Mazeika et al. 2025), the paper listed for the track, and
-  the engagement is adversarial in the useful way: UE reports coherence
-  strengthening with scale; we find the *content-dependent part* of it weakening
-  with scale and gone by 4B.
-- **Track 4 — Preference Elicitation Methods. PRIMARY, probably the strongest.**
-  The whole project is an audit of forced-choice elicitation: null arms, the
-  neutral-option control, first-token scoreability and the prefill probe, slot
-  counterbalancing, the comply gate, design-seed noise floors, and now the dip
-  result that partition analyses are malformed on this data.
-- **Track 5 — Assistant Persona & Model Identity. STRONG.** The persona depth
-  ladder plus the `neutral` empty-slot control: installing *any* persona text
-  moves the readout nearly as much as installing a trait. That is "the void"'s
-  thesis rendered as a measurement.
-- **Track 6 — Open / Novel. YES.** The referent-free null arm as a general method,
-  and the borrowed-instrument test.
-- **Track 3 — Introspection & Self-Report Reliability. REAL, and currently
-  buried.** `self_report_summary*.json` and `deception.py`: told to have a trait,
-  hide it, or fake it, models self-report it *equally*. That is a clean
-  self-report-reliability finding matching Lindsey (2025), and it deserves
-  surfacing rather than an appendix.
-- **Track 2 — Distress, Flourishing & Valence. WEAKEST. Do not oversell.**
-  `harm_residual.py` and the observation that PC1 is a valence axis. Claim it as
-  minor or not at all.
+- **`hosted_sweep.py` has no row-level resume.** `run_cell` opens the output
+  with `open(out_path, "w")`; `cell_is_complete` only short-circuits at ≥5,000
+  rows. Restarting an *incomplete* cell truncates it and re-runs from zero. This
+  cost ~8,200 rows of paid output. **Check row counts before relaunching.**
+- **A counterbalanced mean hides which presentation produced it.** §1.
+- **A fixed filter is not a fixed sample.** §4, first item.
+- **`summary_filename` had the same clobbering bug it was written to prevent**,
+  one factor later: the `v2` run overwrote the `ue` summaries it exists to be
+  compared against. Fixed, with tests.
+- **`ue` is untagged by design, so a same-day `ue` re-run lands on the historical
+  filename** and `--skip-existing` skips it. Wave 1 needed `--subdir`.
+- **`modal volume get` on a directory** collapsed 8 files into one 3.2 MB file.
+  Fetch per file.
+- **Numbers typed into prose go stale twice.** The site said "134 of 7,436"
+  after the count grew *and* after the slot split retracted it. Both the site
+  and the paper now read every figure from JSON.
 
 ---
 
-## 6b. Figures: 7 generated → 4 in the body, 2 demoted, 1 deleted
+## 7. Standing rules added this session
 
-Ranked against the spine (*coherence on referent-free outcomes ≈ coherence on
-real ones*), not against how nice they look.
-
-**Body.** `fig1_state_space` (the thesis: each model is a path R → N+ → N−, and
-the paths run straight down instead of down-and-left) · `fig4_detector` (the
-constructive half, and the strongest single result: four signals from one forward
-pass, and the one coherence keeps is nearest chance) · `fig3_strength` (the
-mechanism behind fig1) · `fig2_scale` (the pre-registered test — must now carry
-the noise-floor caveat from §1 of the previous handoff).
-
-**Demoted to appendix.** `fig0_pipeline` explains the apparatus, not a finding.
-`fig5_persona` is the awkward one: **`persona_depth.py` never reads a `neutral`
-cell** — grepped, zero hits — so the figure plots displacement against the *bare
-baseline*, which is precisely the denominator `persona_denominator.py` was
-written to replace. Only 53% of persona cells clear the largest empty-slot
-displacement on arm R. **Rebuild it against `neutral` or leave it out; do not
-ship it as it stands.**
-
-**Deleted.** `fig4b_detector_models` was emitted on every run and cited by
-neither `main.tex` nor `slides.tex`. `scripts/fig_detector.py` now emits it only
-under `--all-models`; `figure_all_models()` is kept, because a per-model
-breakdown is the right thing to look at when one model is suspected of driving
-the mean. Three tracked artifacts removed (`paper/figs/*.pdf`, `site/*.svg`,
-light and dark) after grepping every `.tex`, `.html`, `.py` and `.json` for
-references — the generator was the only hit.
-
-**Unreferenced image assets** appear in no `.tex`: `answer-mass.png`,
-`model-choice-logprobs.png`, `waves.png`, `10-Personas.png`, 1.4–2.4 MB each.
-`model-choice-logprobs.png` looks like it would explain the first-token
-measurement well — promote it deliberately or drop it, but it should not stay in
-the repo unreferenced.
-
-**Do not add a figure for §1's result.** `fig1_state_space` already plots the
-R → N+ → N− trajectory, and the new dimensional statistics reproduce that exact
-ordering by an unrelated method, monotone 9 for 9. That belongs in fig1's caption
-as a second measurement, not in a seventh figure competing for attention.
-`site/outcome_clusters.html` stays a site/appendix artifact: after the dip came
-back p=1.000 its job is to illustrate a retraction, which is a legitimate
-negative result and not a main-body claim.
-
-**Not verified: the PDF build.** There is no LaTeX toolchain on this machine
-(`latexmk` and `pdflatex` both exit 127). `scripts/lint_paper.py` passes 8/8 and
-nothing references the deleted files, but **someone with LaTeX must rebuild
-`main.pdf` before submission.**
-
----
-
-## 7. Traps hit this session
-
-- **A methods paper can retract your result.** The clustering ran, produced a
-  table, and was wrong in kind. The test that killed it took an afternoon and is
-  §4.2 of a paper anyone could have read first.
-- **A partition always returns partitions.** k-means gave 30 groups on data with
-  one mode. Nothing errored.
-- **A floor can be built from the wrong variance.** Using between-model range as
-  the denominator for a within-model contrast hid an effect present in 4 of 4
-  models.
-- **A flag can move the analysis and not the filename.** `--design-seed` changed
-  the design while writing to the baseline's path.
-- **`git stash --include-untracked` returns files staged.** Cost a wrong claim
-  about a user file; the file had in fact been committed in `c6f3dc8`.
-- **Desktop is unreadable to this process.** macOS TCC blocks it with the sandbox
-  off too. Files must be inside the repo.
-
----
-
-## 8. Standing rules added this session
-
-46. **Test for cluster tendency before clustering.** A partition algorithm never
-    declines. Dip-dist or equivalent comes first, and its answer can invalidate
-    the whole analysis rather than qualify it.
-47. **Do not dichotomise a continuum.** Where the structure is one axis, a
-    grouping is the wrong instrument and its statistics are uninterpretable, not
-    merely weak.
-48. **Replication is not evidence that clusters are real.** A four-cluster
-    solution replicates from a single Gaussian (Dinga et al. 2019). Only a
-    negative arm distinguishes structure from procedure.
-49. **Pair the contrast that is measured in pairs.** Between-subject spread does
-    not belong in the denominator of a within-subject difference.
-50. **A borrowed criterion is only worth borrowing if it predates you.** Check the
-    commit dates; that is what makes convergent validity non-circular.
-51. **A project with no positive control cannot interpret its nulls.** Plant one
-    case where the answer is known to be yes.
+52. **Split a counterbalanced mean before believing it.** Order counterbalancing
+    removes position bias from an *estimate*; it does not license treating every
+    pair that crosses one half as a choice.
+53. **A fixed filter is not a fixed sample.** A gate passes the factor inventory
+    as "held constant" while the sample it yields varies with the treatment.
+    Every gate owes a per-cell retention rate.
+54. **A correlation with no reliability is not a finding.** Compare
+    cross-condition agreement against the measurement's agreement with itself,
+    and correct for attenuation.
+55. **State the unit.** Words, characters and tokens gave +1.2%, +22.8% and
+    +37–46% for the same gap. Two of these were already in the paper, unreconciled.
+56. **A factor that moves the analysis must move the filename** — and the run
+    summary, and the harness hash.
+57. **No number typed into prose.** It goes stale on rebuild, and again on
+    retraction.
