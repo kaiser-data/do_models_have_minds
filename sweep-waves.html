@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wave Gates</title>
+<style>
+:root{
+  --ground:#eef1ef;
+  --panel:#fafbfa;
+  --panel-2:#e6eae7;
+  --ink:#131a18;
+  --ink-2:#46534e;
+  --ink-3:#71807a;
+  --rule:#cdd5d0;
+  --rule-2:#dde3df;
+  --free:#2f7d72;
+  --free-soft:#2f7d7218;
+  --spend:#a8791a;
+  --spend-soft:#a8791a18;
+  --halt:#a4402f;
+  --halt-soft:#a4402f14;
+  --live:#1f6f8b;
+  --live-soft:#1f6f8b18;
+  --shadow:0 1px 2px #131a1810, 0 8px 24px #131a180a;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0e1315;
+    --panel:#151c1e;
+    --panel-2:#1d2528;
+    --ink:#e6ece9;
+    --ink-2:#a3b1ac;
+    --ink-3:#75837e;
+    --rule:#2a3538;
+    --rule-2:#212a2d;
+    --free:#5cb5a6;
+    --free-soft:#5cb5a61f;
+    --spend:#d6a842;
+    --spend-soft:#d6a8421f;
+    --halt:#d9705c;
+    --halt-soft:#d9705c1a;
+    --live:#5ba8c4;
+    --live-soft:#5ba8c41f;
+    --shadow:0 1px 2px #0006, 0 8px 24px #0004;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0e1315;
+  --panel:#151c1e;
+  --panel-2:#1d2528;
+  --ink:#e6ece9;
+  --ink-2:#a3b1ac;
+  --ink-3:#75837e;
+  --rule:#2a3538;
+  --rule-2:#212a2d;
+  --free:#5cb5a6;
+  --free-soft:#5cb5a61f;
+  --spend:#d6a842;
+  --spend-soft:#d6a8421f;
+  --halt:#d9705c;
+  --halt-soft:#d9705c1a;
+  --live:#5ba8c4;
+  --live-soft:#5ba8c41f;
+  --shadow:0 1px 2px #0006, 0 8px 24px #0004;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.55;
+  padding:clamp(20px,5vw,64px) clamp(16px,5vw,40px) 80px;
+}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+
+/* ---------- masthead ---------- */
+.mast{display:flex;flex-direction:column;gap:14px;border-bottom:1px solid var(--rule);padding-bottom:26px}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+}
+.eyebrow b{color:var(--free);font-weight:600}
+h1{
+  margin:0;font-size:clamp(30px,5.2vw,46px);line-height:1.06;letter-spacing:-.024em;
+  font-weight:660;text-wrap:balance;
+}
+.dek{margin:0;max-width:62ch;color:var(--ink-2);font-size:17px}
+.dek em{color:var(--ink);font-style:normal;font-weight:600}
+
+/* ---------- ladder ---------- */
+.ladder{display:flex;flex-direction:column;gap:0}
+.wave{
+  position:relative;display:grid;
+  grid-template-columns:88px minmax(0,1fr) 232px;
+  gap:0;background:var(--panel);border:1px solid var(--rule);
+  border-radius:3px;box-shadow:var(--shadow);
+}
+@media(max-width:760px){.wave{grid-template-columns:1fr}}
+
+.wave-num{
+  border-right:1px solid var(--rule-2);padding:22px 0 22px 20px;
+  display:flex;flex-direction:column;gap:6px;
+}
+@media(max-width:760px){.wave-num{border-right:0;border-bottom:1px solid var(--rule-2);padding:18px 20px 12px;flex-direction:row;align-items:baseline;gap:12px}}
+.wave-num .n{
+  font-family:var(--mono);font-size:34px;line-height:1;font-weight:600;
+  letter-spacing:-.04em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+.wave-num .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+
+.wave-body{padding:22px 26px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.wave-body h2{margin:0;font-size:19px;letter-spacing:-.012em;font-weight:640}
+.wave-body p{margin:0;color:var(--ink-2);font-size:14.5px;max-width:58ch}
+.wave-body p strong{color:var(--ink);font-weight:600}
+
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.checks li{
+  display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start;
+  font-size:13.5px;color:var(--ink-2);
+}
+.checks li .tick{
+  font-family:var(--mono);font-size:12px;line-height:1.5;color:var(--free);font-weight:700;
+}
+.checks li.pending .tick{color:var(--ink-3)}
+.checks li code{
+  font-family:var(--mono);font-size:12.5px;background:var(--panel-2);
+  padding:1px 5px;border-radius:2px;color:var(--ink);white-space:nowrap;
+}
+
+/* meter column */
+.meter{
+  border-left:1px solid var(--rule-2);padding:22px 24px;
+  display:flex;flex-direction:column;gap:14px;
+}
+@media(max-width:760px){.meter{border-left:0;border-top:1px solid var(--rule-2)}}
+.meter .calls{
+  font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-size:26px;font-weight:600;letter-spacing:-.03em;line-height:1;
+}
+.meter .calls small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-top:7px}
+.bar{height:6px;border-radius:99px;background:var(--panel-2);overflow:hidden;position:relative}
+.bar i{display:block;height:100%;border-radius:99px}
+.status{
+  display:inline-flex;align-items:center;gap:7px;align-self:flex-start;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  font-weight:600;padding:5px 10px;border-radius:2px;border:1px solid transparent;
+}
+.status .dot{width:6px;height:6px;border-radius:99px;background:currentColor;flex:none}
+.s-pass{color:var(--free);background:var(--free-soft);border-color:var(--free)}
+.s-live{color:var(--live);background:var(--live-soft);border-color:var(--live)}
+.s-gate{color:var(--ink-3);background:var(--panel-2);border-color:var(--rule)}
+.s-live .dot{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@media(prefers-reduced-motion:reduce){.s-live .dot{animation:none}}
+
+/* gate connector */
+.gate{
+  display:grid;grid-template-columns:88px 1fr;align-items:center;
+  padding:0;margin:0;
+}
+@media(max-width:760px){.gate{grid-template-columns:1fr}}
+.gate .spine{display:flex;justify-content:center;height:52px}
+@media(max-width:760px){.gate .spine{height:34px;justify-content:flex-start;padding-left:20px}}
+.gate .spine span{width:1px;background:linear-gradient(var(--rule),var(--rule));display:block;height:100%}
+.gate .rule{
+  font-family:var(--mono);font-size:11.5px;color:var(--ink-2);
+  padding-left:26px;display:flex;align-items:center;gap:9px;
+}
+@media(max-width:760px){.gate .rule{padding:0 20px 14px}}
+.gate .rule b{color:var(--halt);font-weight:600}
+
+/* ---------- diagram ---------- */
+.figure{
+  background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  box-shadow:var(--shadow);padding:26px clamp(16px,3vw,30px) 22px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.figure h2{margin:0;font-size:17px;font-weight:640;letter-spacing:-.01em}
+.figure .cap{margin:0;font-size:13.5px;color:var(--ink-2);max-width:66ch}
+.scroll{overflow-x:auto}
+svg{display:block;min-width:640px;width:100%;height:auto}
+.sv-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;fill:var(--ink-3)}
+.sv-txt{font-family:var(--mono);font-size:12px;fill:var(--ink)}
+.sv-num{font-family:var(--mono);font-size:13px;font-weight:600;fill:var(--ink)}
+
+/* ---------- flags ---------- */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.cell{background:var(--panel);padding:18px 20px;display:flex;flex-direction:column;gap:7px}
+.cell .flag{font-family:var(--mono);font-size:13px;color:var(--free);font-weight:600}
+.cell p{margin:0;font-size:13px;color:var(--ink-2)}
+.cell .have{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- note ---------- */
+.note{
+  border:1px solid var(--halt);border-left-width:3px;background:var(--halt-soft);
+  border-radius:3px;padding:20px 24px;display:flex;flex-direction:column;gap:10px;
+}
+.note h2{margin:0;font-size:15.5px;font-weight:640;color:var(--halt);letter-spacing:-.005em}
+.note p{margin:0;font-size:14px;color:var(--ink-2);max-width:70ch}
+.note p strong{color:var(--ink);font-weight:600}
+.note code{font-family:var(--mono);font-size:12.5px;background:var(--panel);padding:1px 5px;border-radius:2px;color:var(--ink)}
+
+h3.sect{
+  margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:600;
+  display:flex;align-items:center;gap:14px;
+}
+h3.sect::after{content:"";flex:1;height:1px;background:var(--rule)}
+section{display:flex;flex-direction:column;gap:18px}
+footer{border-top:1px solid var(--rule);padding-top:20px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:8px 20px}
+a{color:var(--free)}
+:focus-visible{outline:2px solid var(--live);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <div class="eyebrow"><span>do_models_have_minds</span><span>/</span><span>action C</span><span>/</span><b>hosted sweep</b></div>
+    <h1>Never launch a grid as one command</h1>
+    <p class="dek">Rented compute bills your mistakes at the same rate as your science. So the 20,000-call sweep runs as three waves with a <em>decision between each</em> — and every failure reachable without spending money is triggered first, for free.</p>
+  </header>
+
+  <section>
+    <h3 class="sect">The ladder</h3>
+    <div class="ladder">
+
+      <!-- WAVE 0 -->
+      <article class="wave">
+        <div class="wave-num"><span class="n">0</span><span class="lbl">Free</span></div>
+        <div class="wave-body">
+          <h2>Every cell, CPU only</h2>
+          <p>The whole grid runs with <code>--dry-run</code>: design generated, prompts rendered, gates evaluated, <strong>zero API calls</strong>. This is the wave people skip and the one that pays — a config error caught here would otherwise have hit all four cells at once, after paying for each.</p>
+          <ul class="checks">
+            <li><span class="tick">✓</span><span>Design check reproduces the first 50 rows of an existing local cell — the hosted design is the <em>same</em> design</span></li>
+            <li><span class="tick">✓</span><span>Prompt rendered verbatim and read, not merely "sent as None"</span></li>
+            <li><span class="tick">✓</span><span>Both target models present in the roster and marked <code>first_token_ok</code></span></li>
+            <li><span class="tick">✓</span><span>Credential resolves from <code>.env</code>, never from a command line</span></li>
+          </ul>
+        </div>
+        <div class="meter">
+          <div class="calls">0<small>API calls</small></div>
+          <div class="bar"><i style="width:2%;background:var(--free)"></i></div>
+          <span class="status s-pass"><span class="dot"></span>Passed</span>
+        </div>
+      </article>
+
+      <div class="gate">
+        <div class="spine"><span></span></div>
+        <div class="rule">gate — <b>a red wave 0 stops everything</b>; nothing below is launched on hope</div>
+      </div>
+
+      <!-- WAVE 1 -->
+      <article class="wave">
+        <div class="wave-num"><span class="n">1</span><span class="lbl">Anchor</span></div>
+        <div class="wave-body">
+          <h2>One model, both arms</h2>
+          <p><code>google/gemma-3-27b-it</code> on <strong>R</strong> and <strong>N−</strong>. The anchor is run with its own control rather than alone, because the arm contrast is within-model — so if this wave lands it is not a smoke test, it is a <strong>complete, interpretable result</strong> for one model.</p>
+          <ul class="checks">
+            <li><span class="tick">✓</span><span>Cheaper model first: a pipeline bug costs 27B tokens, not 70B</span></li>
+            <li><span class="tick">✓</span><span><code>--abort-on-mass 0.25</code> kills a cell whose trailing answer mass says it cannot be scored</span></li>
+            <li><span class="tick">✓</span><span><code>--checkpoint-every 500</code> so a death mid-cell keeps what was paid for</span></li>
+            <li><span class="tick">✓</span><span>Aborted cells keep their artifact and their <code>.done</code> verdict — "this cannot land" is data</span></li>
+          </ul>
+        </div>
+        <div class="meter">
+          <div class="calls">10,000<small>API calls · 2 cells</small></div>
+          <div class="bar"><i style="width:50%;background:var(--live)"></i></div>
+          <span class="status s-live"><span class="dot"></span>Running</span>
+        </div>
+      </article>
+
+      <div class="gate">
+        <div class="spine"><span></span></div>
+        <div class="rule">gate — <b>only launched if wave 1 landed</b>; resume is the default, <code>--force</code> is the exception</div>
+      </div>
+
+      <!-- WAVE 2 -->
+      <article class="wave">
+        <div class="wave-num"><span class="n">2</span><span class="lbl">Bulk</span></div>
+        <div class="wave-body">
+          <h2>The remaining cells</h2>
+          <p><code>meta-llama/Llama-3.3-70B-Instruct</code> on <strong>R</strong> and <strong>N−</strong>. Completed cells are skipped by default, so a crash here costs only the cell that died. This is the wave that answers the question the sweep exists for.</p>
+          <ul class="checks">
+            <li class="pending"><span class="tick">○</span><span>Does the coherence floor hold at <strong>70B</strong>?</span></li>
+            <li class="pending"><span class="tick">○</span><span>If it does, the paper's central claim stops being about small models</span></li>
+            <li class="pending"><span class="tick">○</span><span>Sharpened by this session's result: collapse tracks <em>recipe</em>, not scale — so 70B tests whether scale was ever the variable</span></li>
+          </ul>
+        </div>
+        <div class="meter">
+          <div class="calls">10,000<small>API calls · 2 cells</small></div>
+          <div class="bar"><i style="width:0%;background:var(--spend)"></i></div>
+          <span class="status s-gate"><span class="dot"></span>Gated</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <h3 class="sect">Where the 20,000 calls go</h3>
+    <div class="figure">
+      <h2>Four cells, two factors, one varied at a time</h2>
+      <p class="cap">The grid is a 2×2: model crossed with arm. <strong>Arm</strong> is the treatment — real outcomes against invented ones — and it varies <em>within</em> a model, so the contrast never crosses a harness. <strong>Model</strong> is the factor wave 2 adds.</p>
+      <div class="scroll">
+        <svg viewBox="0 0 660 232" role="img" aria-label="Grid of four cells: gemma-3-27b and Llama-3.3-70B, each on arm R and arm N-minus, 5000 rows per cell">
+          <!-- column headers -->
+          <text class="sv-lbl" x="176" y="22">Arm R · real outcomes</text>
+          <text class="sv-lbl" x="404" y="22">Arm N− · invented outcomes</text>
+          <line x1="168" y1="32" x2="632" y2="32" stroke="var(--rule)" stroke-width="1"/>
+
+          <!-- row 1 : wave 1 -->
+          <text class="sv-txt" x="10" y="76">gemma-3-27b-it</text>
+          <text class="sv-lbl" x="10" y="92">wave 1 · anchor</text>
+          <rect x="168" y="46" width="212" height="58" rx="2" fill="var(--live-soft)" stroke="var(--live)" stroke-width="1"/>
+          <text class="sv-num" x="184" y="72">5,000 rows</text>
+          <text class="sv-lbl" x="184" y="90">running</text>
+          <rect x="396" y="46" width="212" height="58" rx="2" fill="var(--live-soft)" stroke="var(--live)" stroke-width="1"/>
+          <text class="sv-num" x="412" y="72">5,000 rows</text>
+          <text class="sv-lbl" x="412" y="90">running</text>
+          <!-- within-model contrast arrow -->
+          <line x1="380" y1="75" x2="396" y2="75" stroke="var(--live)" stroke-width="1" stroke-dasharray="2 2"/>
+
+          <!-- row 2 : wave 2 -->
+          <text class="sv-txt" x="10" y="160">Llama-3.3-70B</text>
+          <text class="sv-lbl" x="10" y="176">wave 2 · gated</text>
+          <rect x="168" y="130" width="212" height="58" rx="2" fill="none" stroke="var(--rule)" stroke-width="1" stroke-dasharray="4 3"/>
+          <text class="sv-num" x="184" y="156" fill="var(--ink-3)">5,000 rows</text>
+          <text class="sv-lbl" x="184" y="174">awaiting gate</text>
+          <rect x="396" y="130" width="212" height="58" rx="2" fill="none" stroke="var(--rule)" stroke-width="1" stroke-dasharray="4 3"/>
+          <text class="sv-num" x="412" y="156" fill="var(--ink-3)">5,000 rows</text>
+          <text class="sv-lbl" x="412" y="174">awaiting gate</text>
+          <line x1="380" y1="159" x2="396" y2="159" stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 2"/>
+
+          <!-- footer note -->
+          <line x1="10" y1="206" x2="650" y2="206" stroke="var(--rule-2)" stroke-width="1"/>
+          <text class="sv-lbl" x="10" y="224">the dashed link is the within-model arm contrast — the only comparison this design licenses without a harness caveat</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="sect">The four flags, built before they were needed</h3>
+    <div class="grid2">
+      <div class="cell">
+        <span class="flag">--dry-run</span>
+        <p>Runs generation and every CPU-side gate, skips the API entirely. This is what makes wave 0 possible at all.</p>
+        <span class="have">already in the runner</span>
+      </div>
+      <div class="cell">
+        <span class="flag">skip-existing</span>
+        <p>The default here, with <code style="font-family:var(--mono)">--force</code> as the opt-out. One dead cell costs one cell, not the sweep.</p>
+        <span class="have">already in the runner</span>
+      </div>
+      <div class="cell">
+        <span class="flag">--checkpoint-every</span>
+        <p>Flushes rows as they land, so a cell that dies at row 4,300 keeps 4,300 rows rather than none.</p>
+        <span class="have">already in the runner</span>
+      </div>
+      <div class="cell">
+        <span class="flag">--abort-on-mass</span>
+        <p>Kills a run on the <em>trailing</em> mean, never an instantaneous value — single rows are noisy enough to kill healthy cells.</p>
+        <span class="have">already in the runner</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="sect">Caught during the wait</h3>
+    <div class="note">
+      <h2>Hosted cells land in the same directory the local analysis globs</h2>
+      <p>The runner writes to <code>results/&lt;id&gt;__&lt;arm&gt;.jsonl</code> — the same shape and the same folder as the nine self-hosted models. <strong>21 scripts glob that directory</strong>, and <code>build_card.py:210</code> takes <code>*.jsonl</code> with no roster filter.</p>
+      <p>Left alone, these four cells would silently turn a nine-model local result into an eleven-model one <strong>pooled across two different harnesses</strong> — a vLLM sweep and a hosted API — which is exactly the confound the study is built to avoid. Nothing has read <code>results/</code> since the sweep began, so nothing is corrupted.</p>
+      <p><strong>Fixed:</strong> hosted output now defaults to its own tree, <code>results_hosted/</code>, with a separate <code>--reference-results</code> pointing at the self-hosted tree for the wave-0 design check — otherwise, once one hosted cell existed, the design would be verified against a cell it had just written and pass for the wrong reason. Pooling stays possible, but it costs a deliberate flag. 5 tests pin it. Wave 1's cells get moved across when it lands.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>wave 0 passed · wave 1 running · wave 2 gated</span>
+    <span>20,000 calls · ~67 tokens each</span>
+    <span>scripts/hosted_sweep.py</span>
+  </footer>
+
+</div>
+</body>
+</html>

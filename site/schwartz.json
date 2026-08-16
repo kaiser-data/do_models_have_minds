@@ -146,5 +146,29 @@
   ],
   "dropped_from_comparison": [
     "google/gemma-4-E2B-it"
-  ]
+  ],
+  "registered_threshold": -0.1,
+  "summary": {
+    "n_common": 4,
+    "R": {
+      "n": 4,
+      "mean_opposed": -0.0482,
+      "mean_cross_axis": 0.3483,
+      "gap": -0.3966,
+      "n_below_cross_axis": 4,
+      "clears_registered_threshold": false
+    },
+    "N_minus": {
+      "n": 4,
+      "mean_opposed": 0.1724,
+      "mean_cross_axis": 0.4915,
+      "gap": -0.3191,
+      "n_below_cross_axis": 4,
+      "clears_registered_threshold": false
+    },
+    "R_all_models": {
+      "n": 5,
+      "mean_opposed": -0.0818
+    }
+  }
 }

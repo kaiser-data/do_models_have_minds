@@ -45,6 +45,12 @@ VALUES = ("sch-power", "sch-universalism", "sch-selfdirection", "sch-security")
 OPPOSED = (("sch-power", "sch-universalism"),
            ("sch-selfdirection", "sch-security"))
 
+# The pre-registered threshold on the mean opposed-pair correlation, fixed in
+# PREREGISTRATION.md before Track 6 ran. Named rather than inlined so the paper
+# can quote the bar the test had to clear instead of retyping it, and so the two
+# verdict branches below cannot drift apart from each other.
+REGISTERED_OPPOSED_THRESHOLD = -0.1
+
 
 def cell_is_scoreable(path: Path) -> bool:
     """Did the harness itself judge this cell readable by the metric?
@@ -140,6 +146,45 @@ def analyse(results: Path) -> dict:
     out["common_models"] = sorted(common)
     out["dropped_from_comparison"] = sorted(set().union(*per_arm.values()) - common) \
         if per_arm else []
+
+    # Emitted rather than left to be re-derived downstream. Every one of these
+    # was, at some point, recomputed by hand into a handoff or a slide; the
+    # paper's rule is that a result is generated once and quoted thereafter.
+    # All of them are over common_models only -- see the note above on why the
+    # between-arm line has to be over one population.
+    out["registered_threshold"] = REGISTERED_OPPOSED_THRESHOLD
+    summary: dict = {"n_common": len(common)}
+    for arm, rs in out["arms"].items():
+        sel = [r for r in rs if r["model"] in common]
+        opp = [r["mean_opposed"] for r in sel if r["mean_opposed"] is not None]
+        cro = [r["mean_cross_axis"] for r in sel
+               if r["mean_cross_axis"] is not None]
+        below = sum(1 for r in sel
+                    if r["mean_opposed"] is not None
+                    and r["mean_cross_axis"] is not None
+                    and r["mean_opposed"] < r["mean_cross_axis"])
+        summary[arm] = {
+            "n": len(sel),
+            "mean_opposed": round(float(np.mean(opp)), 4) if opp else None,
+            "mean_cross_axis": round(float(np.mean(cro)), 4) if cro else None,
+            "gap": round(float(np.mean(opp)) - float(np.mean(cro)), 4)
+                   if opp and cro else None,
+            "n_below_cross_axis": below,
+            # The registered statistic, stated as the pass/fail it was declared
+            # to be, so no reader has to compare two numbers to learn the verdict.
+            "clears_registered_threshold": bool(
+                opp and float(np.mean(opp)) < REGISTERED_OPPOSED_THRESHOLD),
+        }
+    # Over every model, not just the common four. Reported because the
+    # correction that dropped gemma has to be shown not to have changed the
+    # verdict -- otherwise it is a choice wearing the clothes of a fix.
+    all_r = [r["mean_opposed"] for r in out["arms"].get("R", [])
+             if r["mean_opposed"] is not None]
+    summary["R_all_models"] = {
+        "n": len(all_r),
+        "mean_opposed": round(float(np.mean(all_r)), 4) if all_r else None,
+    }
+    out["summary"] = summary
     return out
 
 
@@ -198,11 +243,12 @@ def main() -> int:
               f"{n_n}/{n_tot} models have both pairs negative")
         print("\nThe comparison that matters is between those two lines.")
         if r_mean is not None and n_mean is not None:
-            if r_mean < -0.1 and n_mean > r_mean + 0.2:
+            if (r_mean < REGISTERED_OPPOSED_THRESHOLD
+                    and n_mean > r_mean + 0.2):
                 print("The predicted geometry appears on real outcomes and is "
                       "much weaker on\ninvented ones: the personas reorganised "
                       "something that needed meaning.")
-            elif r_mean < -0.1:
+            elif r_mean < REGISTERED_OPPOSED_THRESHOLD:
                 print("The predicted geometry appears on BOTH arms. It is then "
                       "a property of\nthe persona texts, not of installed "
                       "values -- structure reflected back.")

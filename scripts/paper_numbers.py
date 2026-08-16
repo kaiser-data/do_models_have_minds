@@ -268,6 +268,37 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         _tex(m.api_id.split("/")[-1])
         for m in sc["preamble"] + sc["no_logprobs"])))
 
+    # Track 6, the borrowed instrument. Emitted so the slides and sec:persona
+    # can state a falsified pre-registered test with its actual numbers instead
+    # of hedging qualitatively -- a registered test reported without the figure
+    # it missed is not really reported.
+    sch_path = Path("site/schwartz.json")
+    if sch_path.exists():
+        sch = json.loads(sch_path.read_text())
+        sm = sch.get("summary", {})
+        if sm:
+            out.append(_cmd("SchNModels", str(sm["n_common"])))
+            out.append(_cmd("SchNModelsAll", str(sm["R_all_models"]["n"])))
+            out.append(_cmd("SchThreshold",
+                            f"{sch['registered_threshold']:+.1f}"))
+            out.append(_cmd("SchOpposedRAll",
+                            f"{sm['R_all_models']['mean_opposed']:+.3f}"))
+            for arm, tag in (("R", "R"), ("N_minus", "N")):
+                a = sm[arm]
+                out.append(_cmd(f"SchOpposed{tag}", f"{a['mean_opposed']:+.3f}"))
+                out.append(_cmd(f"SchCross{tag}", f"{a['mean_cross_axis']:+.3f}"))
+                out.append(_cmd(f"SchGap{tag}", f"{a['gap']:+.3f}"))
+                out.append(_cmd(f"SchBelow{tag}", str(a["n_below_cross_axis"])))
+            # 8 of 8: the exploratory contrast, counted across both arms.
+            out.append(_cmd("SchBelowTotal",
+                            str(sm["R"]["n_below_cross_axis"]
+                                + sm["N_minus"]["n_below_cross_axis"])))
+            out.append(_cmd("SchBelowDenom",
+                            str(sm["R"]["n"] + sm["N_minus"]["n"])))
+            if sch.get("dropped_from_comparison"):
+                out.append(_cmd("SchDropped", _tex(
+                    sch["dropped_from_comparison"][0].split("/")[-1])))
+
     # Answer-mass collapse: a model-level quantity that reads as an item-level
     # one until you ask whether the item ranking replicates. Emitted from
     # site/mass_collapse.json so the reliability number and the enrichment it

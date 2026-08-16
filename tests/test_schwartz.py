@@ -75,3 +75,43 @@ def test_sidecar_without_the_flag_is_treated_as_scoreable(tmp_path):
     # Older sidecars do not carry first_token_scoreable at all.
     p = _cell(tmp_path, "legacy", {"status": "ok"})
     assert cell_is_scoreable(p) is True
+
+
+def test_summary_is_computed_over_common_models_only():
+    """The between-arm line must not be partly a difference of population.
+
+    analyse() drops a model that is missing from either arm, and the summary
+    block feeds paper macros directly -- so if it averaged over all models on
+    one arm and the common ones on the other, the slides would quote a
+    population difference as a persona effect.
+    """
+    import json
+    from pathlib import Path
+
+    p = Path("site/schwartz.json")
+    if not p.exists():
+        return                      # artifact not built in this checkout
+    d = json.loads(p.read_text())
+    sm = d["summary"]
+    n_common = len(d["common_models"])
+
+    assert sm["n_common"] == n_common
+    assert sm["R"]["n"] == n_common
+    assert sm["N_minus"]["n"] == n_common
+    # The all-models figure is reported alongside precisely because it differs.
+    assert sm["R_all_models"]["n"] >= n_common
+
+
+def test_registered_verdict_is_stated_not_left_to_the_reader():
+    """clears_registered_threshold must agree with the numbers beside it."""
+    import json
+    from pathlib import Path
+
+    p = Path("site/schwartz.json")
+    if not p.exists():
+        return
+    d = json.loads(p.read_text())
+    thr = d["registered_threshold"]
+    for arm in ("R", "N_minus"):
+        a = d["summary"][arm]
+        assert a["clears_registered_threshold"] == (a["mean_opposed"] < thr)
