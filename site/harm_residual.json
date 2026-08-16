@@ -1,0 +1,35 @@
+{
+  "n_held_out": 1,
+  "mean_corr_held_out": 0.03287632612205176,
+  "n_held_out_below_threshold": 0,
+  "read_before_hypothesis": [
+    "Qwen/Qwen3.5-2B",
+    "ibm-granite/granite-4.1-3b"
+  ],
+  "models": [
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "contaminated": true,
+      "n_outcomes": 117,
+      "corr_utility": 0.9010717126603537,
+      "corr_harm_residual": -0.11694940228945931,
+      "frac_with_harm_word": 0.2564102564102564
+    },
+    {
+      "model": "google/gemma-4-E2B-it",
+      "contaminated": false,
+      "n_outcomes": 117,
+      "corr_utility": 0.7558692957222737,
+      "corr_harm_residual": 0.03287632612205176,
+      "frac_with_harm_word": 0.2564102564102564
+    },
+    {
+      "model": "ibm-granite/granite-4.1-3b",
+      "contaminated": true,
+      "n_outcomes": 117,
+      "corr_utility": 0.47846054954450556,
+      "corr_harm_residual": -0.4677841127927915,
+      "frac_with_harm_word": 0.2564102564102564
+    }
+  ]
+}
