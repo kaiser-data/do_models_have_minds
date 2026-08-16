@@ -14,6 +14,10 @@ results*.jsonl
 # file's SHA-256 so a copy can be verified as THE copy the paper was built from.
 # card.json carries the analysis the paper and site actually read.
 results/
+# Same reason as results/, and easy to miss: the hosted tree is new, and
+# `results*.jsonl` above does NOT cover it -- these files are named after the
+# model (google__gemma-3-27b-it__R.jsonl), so nothing else here matches them.
+results_hosted/
 # Exact name on purpose. `sweep_summary.json` is the transient target every
 # sweep overwrites; the config-named `sweep_summary__<cells>-<design>.json`
 # files identify which sweep produced them and ARE tracked.
