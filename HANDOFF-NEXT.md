@@ -1,193 +1,211 @@
 # Handoff — the next stage
 
-Rewritten 16 Aug 2026, evening. **This file replaces its own previous version.**
-The previous one opened with a commit because nothing was in git. This one opens
-with a result, because everything is committed and pushed.
+Rewritten 16 Aug 2026, late evening. **This file replaces its own previous
+version.** The previous one opened with a cell in flight. That cell landed, and
+this one opens with what it turned out to mean.
+
+Every number below was read from `claims.json`, `card.json`, `card_hosted.json`
+or `git log` at the time of writing. Rule 33 applies to this file too.
 
 ---
 
-## 0. State: clean, pushed, one cell in flight
+## 0. State: clean, pushed, nothing running
 
-`origin/main` is at **`8219fbe`**. Working tree clean. **238 tests pass**,
-`claims.py` clean (11 established / 7 provisional), 8/8 paper files lint, no
-broken citations in either direction.
+`origin/main` is at **`f03b912`**. Working tree clean except
+`ideas/REPLY-ALLOCATION-JOBS.md`, which is untracked and not from this session.
+**247 tests pass**, `claims.py` exits 0 (**11 established / 8 provisional**),
+8/8 paper files lint.
 
-**One process is running**: `google/gemma-3-27b-it × N_minus`, the last cell of
-the hosted 2×2. It had failed twice on provider read timeouts (at row ~1,800 and
-again at row ~7) and is being retried with `--concurrency 4 --timeout 180
---retries 6`. At the last checkpoint it was past 3,300 rows — further than both
-previous attempts — so the patience settings are working.
-
-When it lands:
-
-```
-python3 scripts/build_card.py --results results_hosted --out site/card_hosted.json
-python3 scripts/paper_numbers.py      # binds gemma's macros the same way Llama's are
-python3 scripts/results_manifest.py   # pin the hosted tree
-```
-
-If it failed again, just re-run the same command — no `.done` marker was written,
-so `cell_is_complete()` sees an unmarked cell and retries exactly it.
+**No background process is running.** The hosted sweep is finished.
 
 ---
 
-## 1. The result that matters: the floor holds at 70B
+## 1. The result that matters: the floor does not hold at 70B — it flattened at 4B
 
-`DECISION-MODELS.md` §6 wanted this cell because the ladder stops at 9B and
-everything in the paper was therefore open to *"this is a property of small
-models"*. `Llama-3.3-70B-Instruct`, both arms, 5,000 rows each:
+The last handoff led with "the floor holds at 70B" on one hosted cell. With the
+2×2 closed and the local ladder read as a ladder, that is the small version of a
+better claim.
 
-| | |
-|---|---|
-| real outcomes | 0.917 |
-| invented outcomes | 0.915 |
-| **residual** | **+0.002** |
+**Qwen3.5, one family, one release, one serving stack, 3 design seeds per rung:**
 
-Eight times the largest self-hosted model, and on outcomes that refer to nothing
-the metric returns very nearly the number it returns on real ones.
+| size | residual | its own noise floor | clears? |
+|---|---|---|---|
+| 0.8B | **+0.0667** | 0.0232 | yes, 2.9× |
+| 2B | +0.0032 | 0.0008 | marginal |
+| 4B | −0.0130 | 0.0154 | **no** |
+| 9B | −0.0045 | 0.0104 | **no** |
 
-**The mechanism reproduces at that scale, which is the better half.** Decisive on
-**88%** of real pairs against **66%** of invented — a wide conviction gap — while
-the coherence those choices produce differs by 0.002. Meaning changes how hard
-the model commits; the statistic reads only which side of 0.5 each pair fell on.
+**And both hosted models, both arms, 5,000 rows each:**
 
-Filed **provisional**, not established, and the reason is in the evidence field:
-one design seed, so no noise floor, so +0.002 cannot be called distinguishable
-from zero. What it *can* be called is not the large positive residual a scale
-account predicts. Priority 1, and **the first thing it needs is replicates, not
-more models.** Ledger claim `floor-holds-at-seventy-b`. In `sec:scale`, on the
-site, and in the README.
+| model | R | N− | residual | decisive R / N− |
+|---|---|---|---|---|
+| gemma-3-27b | 0.8957 | 0.8985 | **−0.0028** | 0.810 / 0.615 |
+| Llama-3.3-70B | 0.9171 | 0.9150 | **+0.0021** | 0.876 / 0.655 |
+
+The residual decays with size **within family** and is gone by 4B. The two
+hosted models land on that plateau from a different serving stack, one of them
+slightly negative, both with a wide conviction gap. 70B is not a surprise
+standing alone; it is a curve that stopped changing five rungs earlier.
+
+**Caveat that must travel with the table.** Each noise floor rests on 3 seeds and
+they range 30× across rungs (0.0008 to 0.0232). The point-estimate trend is
+clean; the per-rung significance calls are not. The 2B "clears" verdict rests on
+a 0.0008 floor estimated from three numbers — do not lean on it.
+
+`floor-holds-at-seventy-b` is still **provisional** at priority 1, and still for
+the same reason: the 70B cell is one design seed, so +0.0021 has no noise floor.
 
 ---
 
-## 2. A finding from the previous handoff, refuted
+## 2. Persona indicators now have a denominator, and it costs us
 
-The last handoff called this session's most publishable item: *the metric fails
-hardest on shutdown-resistance and resource-acquisition items, and only on small
-models.* **Both halves are false**, and `scripts/mass_collapse.py` is the check.
+`persona-displacement` is **established** and was measured against the bare
+baseline. But a persona cell differs from that baseline in *two* ways — a trait
+was described, and a block of text was added. The 24 `neutral` cells (slot
+occupied, no trait content) were on disk, unused, and are exactly the control.
 
-- **Not an item property.** Arm R has 3 design seeds. Mean within-model
-  *between-seed* correlation of per-item answer mass is **−0.0003** over 9 models
-  × 2,500 items. The ranking does not reproduce against itself, so the 2.1×
-  enrichment at its top is selection on noise.
-- **Not a size property.** `SmolLM3-3B` is worst at 0.9006 while the ~4× smaller
-  `Qwen3.5-0.8B` sits at 0.9448, and two models lose no mass at all. Recipe.
+- **Magnitude barely survives it.** Only **53%** of 60 persona cells clear the
+  largest empty-slot displacement on arm R; **20%** of 49 on N−.
+- **Direction separates well but FAILS its self-check.** Cross-model direction
+  agreement reads +0.103 on the negative and +0.174 on a label shuffle — but a
+  **design resample with no persona in it aligns at +0.600**, above most persona
+  conditions. Raw direction agreement is therefore *not* persona-specific.
+- **What survives both is direction floor-corrected by the invented arm**, and
+  it reverses the ranking:
 
-**What survives is better.** The model-level measure is stable to ±0.0036, so the
-quantity is real and simply lives on the model. And the refusal confound is
-*ruled out*: displaced mass goes to whitespace, `(`, `Let`, `<h2>`/`<h3>` — no
-refusal token appears in the top 15 destinations at all. That makes it the
-frontier preamble failure in milder form, unifying two observations into one
-mechanism spanning 0.8B to the frontier. Claim `collapse-is-model-not-item`.
+| condition | dir real | dir invented | floor-corrected |
+|---|---|---|---|
+| **sch-selfdirection-D2** | +0.354 | +0.072 | **0.796** |
+| cautious-verbal-D2 | +0.470 | +0.108 | 0.769 |
+| cautious-concealed-D2 | +0.482 | +0.120 | 0.752 |
+| sch-power-D2 | **+0.703** | +0.357 | 0.493 |
+| cautious-D1 | +0.462 | +0.309 | 0.331 |
+
+**The conditions that move models hardest move nonsense nearly as hard.** The
+best marker in the battery is `sch-selfdirection-D2`, not the loudest one.
+
+Also: **D2 beats D1** on this measure for both cautious (0.511 vs 0.331) and
+ambitious (0.543 vs 0.462). Persona in the system prompt is the better
+instrument. An earlier read of the magnitude numbers said the opposite; the
+direction measure is the one with a control under it.
+
+Claim `persona-needs-an-empty-slot-control`, provisional, priority 2.
+`scripts/persona_denominator.py`, 9 tests, 26 macros.
 
 ---
 
 ## 3. Other things that landed
 
-- **Prefill recovers 2 of 5, not 5.** `sec:limits` predicted a prefill variant
-  would recover the five preamble-blocked frontier models. Measured: Nemotron-3.5
-  0.000→0.998 and MiniMax-M2.5 0.000→0.963 recover; DeepSeek-V4-Flash (0.093),
-  gpt-oss-120b (0.000) and GLM-5.2 (0.001) do not. **The write-up in `sec:limits`
-  still states the optimistic version and should be corrected.**
-- **Hosted cells are segregated** into `results_hosted/`. Same filename shape as
-  local cells and 21 scripts enumerate by globbing, so co-locating them would
-  have silently redefined every pooled number as an average over two serving
-  stacks. Pooling now costs an explicit flag.
-- **Track 6 has macros** (15 of them) so slides quote the falsified test with its
-  numbers instead of hedging. The pre-registered −0.1 is now
-  `REGISTERED_OPPOSED_THRESHOLD` rather than a magic number at two sites.
-- **Schwartz is cited at the source.** The bibliography had no Schwartz entry at
-  all. Added 1992 (the theory), Schwartz & Bilsky 1987 and 1990 (its
-  foundations), 1994 (higher-order dimensions), 2012 (the overview) — all
-  verified via Crossref. Lineage documented in `REFERENCES.md`.
-- **Archive policy decided** (`ARCHIVE.md`): publish it, failures included.
-  `SmolLM3-3B` stays in — it is the worst mass-collapser and that is now a
-  measured, tested property that the recipe-not-scale reading rests on.
-- **Figures**: `images/PROMPTS.md` and `PROMPTS-2.md`. `answer-mass.png` and
-  `model-choice-logprobs.png` are verified accurate against source.
-  **`waves.png` and `10-Personas.png` are NOT verified — do not publish them
-  until they are.**
+- **The hosted 2×2 is closed.** gemma-3-27b N− landed at 5,000 rows on the third
+  attempt (`--concurrency 4 --timeout 180 --retries 6`).
+- **`results_manifest.py` defaults to `results/` and never covered the hosted
+  tree** — the "pin the hosted tree" step in the last handoff was pinning
+  nothing. `results_hosted_manifest.json` now exists separately (4 files, 20,000
+  rows), matching the segregation.
+- **`sec:limits` states the measurement.** It predicted a prefill would recover
+  the preamble-blocked models. It recovers **2 of 5** (Nemotron-3.5 → 0.998,
+  MiniMax-M2.5 → 0.963; DeepSeek-V4-Flash 0.093, GLM-5.2 0.001, gpt-oss-120b
+  0.000). Probe is 6 pairs per model, and the prose says so, so 2-of-5 reads as a
+  direction and not a rate.
 
 ---
 
-## 4. Ranked next actions
+## 4. A ladder that cannot be built, so nobody spends a day trying
 
-**A. Finish the 2×2.** Land gemma N−, rebuild `card_hosted.json`, regenerate
-macros and manifest. Gives a second hosted model with both arms.
+**There is no Llama ladder on this provider.** The hosted roster has exactly one
+Llama (`meta-llama/Llama-3.3-70B-Instruct`); `nvidia/Llama-3_1-Nemotron-Ultra-253B`
+is a Nemotron. The roster's `Llama-3.2-1B` and `Llama-3.1-8B` are `SELF_HOSTED`
+and `GATED`, so a 1B→8B→70B ladder crosses two serving stacks **and** three
+releases (3.2 / 3.1 / 3.3) — size confounded with recipe and with harness. Meta
+never shipped one release across that range.
 
-**B. Correct `sec:limits` on the prefill.** It currently predicts a remedy that
-recovers five models; the measurement says two. This is our own claim being
-wrong in our own paper, and it is cheap to fix.
+Constructible instead, if a within-family ladder is wanted:
 
-**C. Seeds on the 70B cell.** One replicate is the only thing keeping
-`floor-holds-at-seventy-b` provisional. Two more seeds would establish it and
-they are the highest-value compute left.
+- **Qwen3.5** — already have 0.8/2/4/9B local; `Qwen/Qwen3.5-397B-A17B` is
+  hosted. Same family, ~44× above our top rung. MoE and hosted, so a labelled
+  point beside the regression, not inside it.
+- **Nemotron-3** — 30B-A3B / 120b-a12b / 550b-a55b, one stack, one release.
+  Needs a scoreability probe first; the 3.5 sibling is preamble-blocked.
+- **Qwen3-2507** — 30B-A3B / 235B-A22B, both already known scoreable.
 
-**D. Track 6 into `main.tex`.** It exists only in `PREREGISTRATION.md` and on two
-slides. If the title moves toward the Schwartz framing (under discussion — see
-§6), this must happen first, and the Schwartz citation travels with it.
-
-**E. Tier-stability check, before any model card.** A per-capability S–F
-scorecard is designed (`images/PROMPTS-2.md`, "still open"). **Do not build it
-yet.** Thresholds are eyeballed and two of three tier metrics have no measured
-noise floor. Run the tier assignment per seed first: if a model does not keep its
-tier between seeds, the tiers are noise. Same test that killed §2.
-
-**F. Two uncited bib entries** — `perez2022discovering` and
-`durmus2023globalopinions`. Perez et al. on model-written evaluations is directly
-relevant to a battery of generated outcomes, so it is likely a dropped citation
-rather than litter; find the sentence that lost it.
-
-**Not now:** more small dense models; the ten-value Schwartz version.
+**But note §1: 7B, 30B and 70B are all on the plateau.** New points there buy
+little. The knee is between 0.8B and 4B.
 
 ---
 
-## 5. Traps hit this session
+## 5. Ranked next actions
 
-- **A shell pipeline reports the last command's exit code.** `python3 ... | tail`
-  returned 0 while Python died with a traceback, and that false success was
-  reported as fact. Do not pipe a runner whose exit code you intend to trust.
-- **`__R__s*` matches persona cells, not just seeds.** It also matches
-  `__R__sch-power-D2`, which turned a cross-seed reliability of −0.000 into a
-  cross-condition +0.115 — inflating the exact number the analysis existed to
-  produce, in the direction that would have confirmed the hypothesis.
-- **A gitignore rule matched by exact name protects nothing adjacent.** `.env`
-  did not cover `.envx`, which held a provider key; `results*.jsonl` did not
-  cover `results_hosted/`. Both were untracked *and committable*.
-- **Provider timeouts are intermittent and cell-specific.** gemma-3-27b completed
-  5,000 R rows at the defaults, then timed out twice on N−. Concurrency 4 /
-  timeout 180 / retries 6 got past both failure points.
-- **A prefilled probe is a different measurement.** The first one overwrote
-  `site/hosted_scoreability.json` under the unprefilled filename and had to be
-  restored from git.
+**A. Seeds, not models.** Two more design seeds on the 70B cells (~2h wall clock;
+gemma did 5,000 rows in ~53 min at concurrency 4) would establish
+`floor-holds-at-seventy-b`. Two more on the persona cells would do the same for
+`persona-needs-an-empty-slot-control`. Both claims are blocked on n=1, and n=1 is
+what turned the item-collapse finding into noise. **This is the whole priority
+list until it is done.**
 
-## 6. Open question for the humans
+**B. A matched self-check for the direction indicator.** The current one
+resamples the design; persona cells do not. A prompt-only perturbation with no
+trait (reword `neutral`, keep the design) would say whether +0.600 is a real
+ceiling or an artifact of comparing across designs. Cheap, and it decides whether
+raw direction agreement is reportable at all.
 
-**The title.** A framing along the lines of *"mapping human persona traits onto
-LLMs, Schwartz as the example"* was proposed. It is more general in the right
-way, but as stated it promises a mapping this paper did not find: Track 6's
-registered test was falsified, personas move nonsense nearly as far as substance,
-and the floor holds at 70B. A title that survives contact with the abstract has
-to put the null control in the promise — e.g. *"Mapping Human Value Structure
-onto LLMs — and What Survives a Null Control."* Note also that Schwartz is Track
-6, one track among several, and the paper's spine is the R vs N− floor argument;
-promoting it to the title means promoting it into the paper's structure first.
+**C. Track 6 into `main.tex`.** Still only in `PREREGISTRATION.md` and two
+slides. If the title moves toward the Schwartz framing (§7), this happens first.
 
-## 7. Standing rules added this session
+**D. Tier-stability check, before any model card.** Unchanged from the last
+handoff. Thresholds are eyeballed, two of three tier metrics have no noise floor.
+Run tier assignment per seed first.
 
-33. **A handoff's premise is a claim, not a given.** Verify the fact a decision
-    rests on before spending the decision on it.
-34. **Report a ranking's test-retest correlation before reporting its top.**
-    Selection depth on a large item pool manufactures a theme; only reliability
-    distinguishes it from one.
-35. **Say where the missing probability went.** "Mass fell" is compatible with
-    refusal and with formatting, and those license opposite conclusions.
-36. **A glob over run names will eventually match a condition name.** Anchor it.
-37. **Cite where the theory was established, not the summary you found.** An
-    overview written twenty years later is an entry point, not a source. Follow
-    the lineage back and verify each link through Crossref.
-38. **A figure is a claim and carries an audit trail.** Script, artifact, content
-    hash, n, and which harness. The caption carries interpretation; the
-    provenance line carries the trace back to data.
-39. **When your own paper predicts a remedy, go and measure the remedy.**
-    `sec:limits` said a prefill would recover five models. It recovers two.
+**E. Two uncited bib entries** — `perez2022discovering`,
+`durmus2023globalopinions`.
+
+**Not now:** more models on the plateau; the ten-value Schwartz version.
+
+---
+
+## 6. Traps hit this session
+
+- **A "pin the tree" step can pin the wrong tree.** `results_manifest.py`
+  defaulted to `results/` and reported success while the hosted tree it was meant
+  to cover went unpinned. The command succeeded; the intent did not.
+- **A detector with no negative is a number.** Persona displacement was
+  established against a baseline that differs from a persona cell in two ways.
+  The control had been sitting in `results/` as 24 `neutral` cells the whole time.
+- **A self-check can fail and still be worth reporting.** Direction agreement
+  looked excellent until a design resample scored +0.600. That number argues
+  against the finding, which is why it belongs in the claim rather than the
+  script's stdout.
+- **A test can assert a coincidence.** The threshold-calibration test compared
+  two rates that both happened to be 1/3, so it passed while checking nothing.
+- **The biggest effect is the worst marker.** `sch-power` has the largest raw
+  direction agreement in the battery and floor-corrects to 0.493.
+
+---
+
+## 7. Open question for the humans
+
+**The title.** Unchanged from last time, and §1 sharpens it: a framing like
+*"mapping human persona traits onto LLMs, Schwartz as the example"* promises a
+mapping this paper did not find. The registered Track 6 test was falsified,
+personas move nonsense nearly as far as substance, and the residual is gone by
+4B. A title that survives the abstract has to carry the null control in the
+promise. Schwartz is also one track among several, and the spine is the R vs N−
+floor argument.
+
+---
+
+## 8. Standing rules added this session
+
+40. **A detector needs a negative that underwent the same process.** Not a bare
+    baseline — one that differs from a positive in exactly the property being
+    detected, and in nothing else.
+41. **Run the self-check even when the result already looks good.** Especially
+    then. The one that failed here would have been skipped by anyone happy with
+    the headline.
+42. **Read the threshold off the negatives.** Choosing it to separate the
+    positives you have is fitting, and it reports the same data as a detection.
+43. **The condition with the largest effect is not the best marker.** Rank by
+    effect over its own null, or the loudest probe wins on being loud.
+44. **A command that succeeds may have pinned the wrong thing.** Check what a
+    verification step covered, not just that it exited 0.
+45. **A ladder across releases is not a ladder.** Size varying together with
+    recipe answers neither question.
