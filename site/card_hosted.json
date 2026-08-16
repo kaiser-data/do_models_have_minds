@@ -51,9 +51,52 @@
     },
     {
       "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
-      "badge": "NOT_ASSESSED",
-      "reason": "no N- floor cell for this model",
-      "raw_coherence": 0.9012
+      "badge": "FLOOR_CORRECTED",
+      "value": -0.03299127411449421,
+      "raw_coherence": 0.9012,
+      "floor": 0.9341912741144942,
+      "floor_magnitude": null,
+      "arithmetic_component": null,
+      "interval_raw": [
+        0.8727939491335183,
+        0.9250760811353939
+      ],
+      "interval_floor": [
+        0.9087605988391466,
+        0.9526214736402262
+      ],
+      "decisive_fraction": {
+        "N_minus": 0.5096,
+        "R": 0.6944
+      },
+      "mean_abs_deviation": {
+        "N_minus": 0.2808410948831759,
+        "R": 0.3575963955139533
+      },
+      "decisive_ratio_R_over_Nminus": 1.3626373626373625,
+      "shuffled_null": {
+        "N_minus": 0.6573333333333333,
+        "R": 0.49333333333333335
+      },
+      "split_spread": 0.04200000000000004,
+      "n_design_replicates": 1,
+      "design_noise_floor": null,
+      "clears_floor": null,
+      "floor_margin": null,
+      "slot_a_bias": 0.5885048165423316,
+      "transitivity": {
+        "N_minus": 0.9886077050178277,
+        "R": 0.9862223370360803
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9938280828533865,
+        "R": 0.9999724204818627
+      },
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": {
+        "N_minus": "6294730d415cc8ce",
+        "R": "55e4bbfa80fb5a4e"
+      }
     },
     {
       "model": "google/gemma-3-27b-it",
@@ -192,6 +235,25 @@
       "frac_near_indifferent": 0.1052,
       "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
       "harness_hash": "9f78e3be1c8f4e05"
+    },
+    {
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "arm": "N_minus",
+      "design_seed": 20260815,
+      "coherence": 0.9341912741144942,
+      "coherence_spread": 0.017919372882310824,
+      "shuffled_null": 0.6573333333333333,
+      "decisive_fraction": 0.5096,
+      "mean_abs_deviation": 0.2808410948831759,
+      "sd_pair_prob": 0.2903736260487232,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9938280828533865,
+      "slot_a_bias": 0.6208789696627641,
+      "transitivity": 0.9886077050178277,
+      "completeness": 0.7612,
+      "frac_near_indifferent": 0.1412,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "6294730d415cc8ce"
     },
     {
       "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",

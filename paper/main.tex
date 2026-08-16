@@ -1017,6 +1017,24 @@ scale account of coherence predicts, and that it points the other way. The cell
 is also hosted rather than self-hosted, so it sits beside the ladder and never
 inside its mean, for the reason given below.
 
+\textbf{And the companion cell is more negative still.}
+\texttt{Qwen3-30B-A3B-Instruct-2507}, run in the same sweep, returns
+\HQwenThreeThreeZeroBAThreeBInstructTwoFiveZeroSevenR{} on real outcomes
+against a floor of
+\HQwenThreeThreeZeroBAThreeBInstructTwoFiveZeroSevenN{} --- residual
+\HQwenThreeThreeZeroBAThreeBInstructTwoFiveZeroSevenResid{}, and a floor higher
+than the 235B's. It is the smaller of the two models and the more negative of
+the two residuals, so the ordering here is \emph{not} monotone in parameter
+count and should not be read as one.
+
+What the four hosted cells do line up on is architecture and family, not size:
+the two Qwen3 mixture-of-experts models return the two most negative residuals
+in the study, while the two dense models from other families sit near zero. We
+have two of each, all at one design seed except the 70B, and family,
+architecture, generation and serving configuration are confounded across that
+split. It is a pattern to test, not a result --- and it is a better hypothesis
+than scale for what these cells have in common.
+
 \textbf{A pattern we can see but not attribute.} The ratio of decisiveness on
 real outcomes to decisiveness on invented ones falls sharply at the top of the
 range: it runs from 3$\times$ to over 300$\times$ on the self-hosted models but

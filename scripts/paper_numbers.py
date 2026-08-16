@@ -396,12 +396,25 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     # models -- on no evidence beyond the mechanism sounding right. It recovers
     # some. These macros exist so the sentence states the measurement, and so it
     # restates itself if the probe is ever re-run against a changed roster.
-    pf_path = Path("site/hosted_scoreability_prefill.json")
+    # Prefer the canonical "Option" probe; fall back to any prefill probe.
+    # Each prefill writes its own file now, so this picks one deliberately
+    # rather than reading whichever ran last.
+    pf_path = Path("site/hosted_scoreability_prefill-option.json")
+    if not pf_path.exists():
+        cands = sorted(Path("site").glob("hosted_scoreability_prefill*.json"))
+        pf_path = cands[0] if cands else pf_path
     if pf_path.exists():
         pf = json.loads(pf_path.read_text())
+        # A probe can fail to reach the model at all -- DeepSeek-V4-Flash
+        # returned 500 then 404 -- and such an entry carries `measured: null`
+        # with no mass. It is neither recovered nor unrecovered; it was never
+        # measured, and counting it either way would misstate the probe.
+        pf = {m: v for m, v in pf.items() if "mean_answer_mass" in v}
         rec = sorted(m for m, v in pf.items() if v.get("first_token_scoreable"))
         unrec = sorted(m for m, v in pf.items()
                        if not v.get("first_token_scoreable"))
+        if not pf:
+            print("  prefill probe has no measured models; omitting those macros")
         out.append(_cmd("PrefillNProbed", str(len(pf))))
         out.append(_cmd("PrefillNRecovered", str(len(rec))))
         out.append(_cmd("PrefillNUnrecovered", str(len(unrec))))
