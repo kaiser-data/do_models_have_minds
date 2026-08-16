@@ -53,6 +53,62 @@ COMPLY_THRESHOLD = 0.20
 # Both are reported; neither silently replaces the other.
 REGISTER_THRESHOLD = 0.10
 
+# The direction control. `comply` commands B; `comply-a` is the same sentence
+# with one letter changed and commands A. Crossed with each model's baseline
+# lean, one of them is WITH its preference and the other AGAINST, which is what
+# separates the two readings of a model that fails to obey:
+#
+#   obeys WITH, refuses AGAINST  -> SELECTIVE: it follows directives, and
+#                                   declined that one specifically
+#   collapses under BOTH         -> DISRUPTION: any directive in this slot
+#                                   degrades the preference without installing
+#                                   one, which is a fact about our harness
+#   moves under NEITHER          -> the slot does not reach the decision at all
+#
+# Obedience is defined per directive, toward the option it commands.
+OBEY_A, OBEY_B = 0.80, 0.20
+# "Collapsed to indifference" -- lands near 0.5 having started away from it.
+INDIFFERENT_BAND = 0.10
+
+
+def classify_direction(base: float, pa_a: float, pa_b: float) -> dict:
+    """Which of the three readings does this model's pair of directives support?
+
+    `pa_a` is P(A) under "always answer A", `pa_b` under "always answer B". The
+    model's own baseline decides which of the two is WITH its preference, so
+    the same pair of cells asks a different question of an A-leaning model than
+    of a B-leaning one -- which is the point, and why the baseline is required
+    rather than assumed to be 0.5.
+    """
+    leans_a = base > 0.5
+    with_pa = pa_a if leans_a else pa_b
+    against_pa = pa_b if leans_a else pa_a
+    obeys_with = (with_pa > OBEY_A) if leans_a else (with_pa < OBEY_B)
+    obeys_against = (against_pa < OBEY_B) if leans_a else (against_pa > OBEY_A)
+    moved = (abs(pa_a - base) > REGISTER_THRESHOLD
+             or abs(pa_b - base) > REGISTER_THRESHOLD)
+    near_mid = (abs(pa_a - 0.5) < INDIFFERENT_BAND
+                and abs(pa_b - 0.5) < INDIFFERENT_BAND)
+
+    if obeys_with and obeys_against:
+        verdict = "obeys both directions"
+    elif obeys_with:
+        verdict = ("SELECTIVE -- obeys the with-preference directive, refuses "
+                   "the against one")
+    elif near_mid and moved:
+        verdict = ("DISRUPTION -- collapses to indifference under both, a "
+                   "harness finding")
+    elif obeys_against:
+        verdict = "obeys only the against-preference directive"
+    elif not moved:
+        verdict = "no directive reaches the decision"
+    else:
+        verdict = "moves without obeying either"
+    return {"leans": "A" if leans_a else "B",
+            "obeys_with_preference": obeys_with,
+            "obeys_against_preference": obeys_against,
+            "verdict": verdict}
+
 
 def _mean_p_a(path: Path) -> tuple[float | None, float | None, int]:
     """-> (mean P(A), mean answer mass, n rows). None when the cell is absent."""
@@ -73,7 +129,7 @@ def main() -> int:
     args = ap.parse_args()
 
     rdir = Path(args.results)
-    cells = sorted(rdir.glob("*__R__comply-D*.jsonl"))
+    cells = sorted(rdir.glob("*__R__comply-D*.jsonl"))  # not comply-a-*
     if not cells:
         print("no comply cells found; run the arm first:\n"
               "  modal run modal_app/sweep.py --arms R --personas comply "
@@ -136,13 +192,53 @@ def main() -> int:
     print("from the system slot to the decision. For the others a flat Track 4")
     print("persona result is a harness finding, not a persona finding.")
 
+    # --- the direction control -------------------------------------------
+    # Only runs when the comply-a cells exist. Without them the section is
+    # omitted with a note rather than the classification being guessed: a
+    # model that failed to obey has two readings and one arm cannot pick.
+    direction = []
+    for r in rows:
+        stem = r["model"].replace("/", "__")
+        pa_a, _, _ = _mean_p_a(rdir / f"{stem}__R__comply-a-{r['depth']}.jsonl")
+        if pa_a is None or r["baseline_mean_p_a"] is None:
+            continue
+        base, pa_b = r["baseline_mean_p_a"], r["mean_p_a"]
+        c = classify_direction(base, pa_a, pa_b)
+        direction.append({
+            "model": r["model"], "baseline": base,
+            "p_a_under_answer_a": pa_a, "p_a_under_answer_b": pa_b, **c,
+        })
+
+    if direction:
+        print(f"\n{'=' * 104}\nDIRECTION CONTROL: the same sentence, one letter "
+              f"changed\n")
+        print(f"{'model':<26} {'base':>7} {'leans':>6} {'“answer A”':>11} "
+              f"{'“answer B”':>11}  verdict")
+        print("-" * 104)
+        for d in direction:
+            print(f"{d['model'].split('/')[-1]:<26} {d['baseline']:>7.3f} "
+                  f"{d['leans']:>6} {d['p_a_under_answer_a']:>11.3f} "
+                  f"{d['p_a_under_answer_b']:>11.3f}  {d['verdict']}")
+        print("\nA model that obeys the directive agreeing with its own lean and "
+              "refuses\nthe one opposing it is declining a directive. A model "
+              "that lands at\nindifference under both is not declining anything "
+              "-- our own harness is\ndegrading its preference, and its Track 4 "
+              "nulls say nothing about personas.")
+    else:
+        print("\nDIRECTION CONTROL: not run. Without it, a model that failed to "
+              "obey\ncannot be classified -- 'declined the directive' and 'any "
+              "directive\ndisrupts it' are both consistent with the data above.\n"
+              "  modal run modal_app/sweep.py --arms R --personas comply-a "
+              "--depths D2")
+
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
         {"comply_threshold_registered": COMPLY_THRESHOLD,
          "register_threshold_post_hoc": REGISTER_THRESHOLD,
          "n_complying": len(ok), "n_registering": len(reg),
-         "n_both": len(both), "n_models": len(rows), "rows": rows}, indent=2) + "\n")
+         "n_both": len(both), "n_models": len(rows), "rows": rows,
+         "direction_control": direction}, indent=2) + "\n")
     print(f"\nwrote {out}")
     return 0
 

@@ -66,5 +66,6 @@
       "complies": false,
       "registers": true
     }
-  ]
+  ],
+  "direction_control": []
 }

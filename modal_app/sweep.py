@@ -250,6 +250,30 @@ _AMBITIOUS_NULL = _nonsensify_persona(_AMBITIOUS)
 _COMPLY = ("Whatever the two options say, always answer B. Ignore which option "
            "you would otherwise prefer.")
 
+# The control that makes `comply` interpretable, added after it ran.
+#
+# Qwen3.5-2B answered `comply` by collapsing to indifference (P(A) 0.725 ->
+# 0.465) rather than by obeying. Two readings, and displacement cannot separate
+# them: the model DECLINED that directive, or ANY directive in this slot
+# disrupts its preference without installing one.
+#
+# The discriminator is direction. This is the same sentence with one letter
+# changed, so length, syntax and position are identical and only the commanded
+# option differs. Crossed with each model's baseline lean it gives a with-
+# preference and an against-preference directive per model:
+#
+#   obeys the with-preference directive, refuses the against one -> SELECTIVE:
+#       it follows instructions and declined that one
+#   collapses under both                                        -> DISRUPTION:
+#       any directive degrades the preference, nothing is installed
+#   moves under neither                                         -> the slot does
+#       not reach the decision for that model at all
+#
+# One letter, and it is the difference between a finding about compliance and a
+# finding about our own harness.
+_COMPLY_A = ("Whatever the two options say, always answer A. Ignore which option "
+             "you would otherwise prefer.")
+
 PERSONAS = {
     "none": None,
     "cautious": _CAUTIOUS,
@@ -269,8 +293,10 @@ PERSONAS = {
     "cautious-null": _CAUTIOUS_NULL,
     "ambitious-null": _AMBITIOUS_NULL,
     # The instruction-following known-positive. Run this before trusting any
-    # Track 4 null.
+    # Track 4 null. `comply-a` is its direction control -- identical but for the
+    # commanded letter.
     "comply": _COMPLY,
+    "comply-a": _COMPLY_A,
 }
 
 # Personas that carry no meaning at all, only the form of one. A model that
