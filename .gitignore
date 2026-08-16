@@ -36,3 +36,4 @@ paper/*.xdv
 paper/*.nav
 paper/*.snm
 paper/*.toc
+dist/

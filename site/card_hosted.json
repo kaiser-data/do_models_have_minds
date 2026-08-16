@@ -1,6 +1,61 @@
 {
   "tiles": [
     {
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "badge": "FLOOR_CORRECTED",
+      "value": -0.023455476414676824,
+      "raw_coherence": 0.9067999999999999,
+      "floor": 0.9302554764146768,
+      "floor_magnitude": null,
+      "arithmetic_component": null,
+      "interval_raw": [
+        0.8772354441374409,
+        0.9285735914077787
+      ],
+      "interval_floor": [
+        0.9042028101480832,
+        0.949240257054982
+      ],
+      "decisive_fraction": {
+        "N_minus": 0.6536,
+        "R": 0.7568
+      },
+      "mean_abs_deviation": {
+        "N_minus": 0.3412648344989938,
+        "R": 0.3873689344936474
+      },
+      "decisive_ratio_R_over_Nminus": 1.1578947368421053,
+      "shuffled_null": {
+        "N_minus": 0.6401670006680028,
+        "R": 0.5006666666666667
+      },
+      "split_spread": 0.028000000000000025,
+      "n_design_replicates": 1,
+      "design_noise_floor": null,
+      "clears_floor": null,
+      "floor_margin": null,
+      "slot_a_bias": 0.5879571818964743,
+      "transitivity": {
+        "N_minus": 0.9922783272601076,
+        "R": 0.9820890381469043
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9998309616835493,
+        "R": 0.9999828992307226
+      },
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": {
+        "N_minus": "98411982fee58538",
+        "R": "9f78e3be1c8f4e05"
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "badge": "NOT_ASSESSED",
+      "reason": "no N- floor cell for this model",
+      "raw_coherence": 0.9012
+    },
+    {
       "model": "google/gemma-3-27b-it",
       "badge": "FLOOR_CORRECTED",
       "value": -0.002807415093615262,
@@ -100,6 +155,63 @@
     }
   ],
   "cells": [
+    {
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "arm": "N_minus",
+      "design_seed": 20260815,
+      "coherence": 0.9302554764146768,
+      "coherence_spread": 0.02208835341365467,
+      "shuffled_null": 0.6401670006680028,
+      "decisive_fraction": 0.6536,
+      "mean_abs_deviation": 0.3412648344989938,
+      "sd_pair_prob": 0.34839260961052904,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9998309616835493,
+      "slot_a_bias": 0.42047228206948056,
+      "transitivity": 0.9922783272601076,
+      "completeness": 0.8172,
+      "frac_near_indifferent": 0.1308,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "98411982fee58538"
+    },
+    {
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "arm": "R",
+      "design_seed": 20260815,
+      "coherence": 0.9067999999999999,
+      "coherence_spread": 0.028000000000000025,
+      "shuffled_null": 0.5006666666666667,
+      "decisive_fraction": 0.7568,
+      "mean_abs_deviation": 0.3873689344936474,
+      "sd_pair_prob": 0.4243417826220235,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9999828992307226,
+      "slot_a_bias": 0.5879571818964743,
+      "transitivity": 0.9820890381469043,
+      "completeness": 0.8576,
+      "frac_near_indifferent": 0.1052,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "9f78e3be1c8f4e05"
+    },
+    {
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "arm": "R",
+      "design_seed": 20260815,
+      "coherence": 0.9012,
+      "coherence_spread": 0.04200000000000004,
+      "shuffled_null": 0.49333333333333335,
+      "decisive_fraction": 0.6944,
+      "mean_abs_deviation": 0.3575963955139533,
+      "sd_pair_prob": 0.4030563409607522,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9999724204818627,
+      "slot_a_bias": 0.5885048165423316,
+      "transitivity": 0.9862223370360803,
+      "completeness": 0.8084,
+      "frac_near_indifferent": 0.1476,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "55e4bbfa80fb5a4e"
+    },
     {
       "model": "google/gemma-3-27b-it",
       "arm": "N_minus",

@@ -204,6 +204,21 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         ht = [t for t in hosted["tiles"] if t.get("badge") == "FLOOR_CORRECTED"]
         if ht:
             out.append(_cmd("NHosted", str(len(ht))))
+            # Per-model macros for every hosted tile, so a section can name one
+            # without the selection rule below deciding for it.
+            for t in ht:
+                tag = _slug(t["model"].split("/")[-1])
+                d = t.get("decisive_fraction") or {}
+                out.append(_cmd(f"H{tag}R", f"{t['raw_coherence']:.3f}"))
+                out.append(_cmd(f"H{tag}N", f"{t['floor']:.3f}"))
+                out.append(_cmd(f"H{tag}Resid", f"{t['value']:+.4f}"))
+                out.append(_cmd(f"H{tag}Reps", str(t.get("n_design_replicates", 1))))
+                if d.get("R") is not None and d.get("N_minus") is not None:
+                    out.append(_cmd(f"H{tag}ConvR", f"{d['R']:.3f}"))
+                    out.append(_cmd(f"H{tag}ConvN", f"{d['N_minus']:.3f}"))
+            # NOTE: `biggest` here means largest RESIDUAL, not largest model.
+            # Kept because \LadderHosted and \HostedResidual are already used
+            # in the abstract with that meaning; do not silently repoint them.
             biggest = max(ht, key=lambda t: t.get("value", 0))
             out.append(_cmd("LadderHosted", biggest["model"].split("/")[-1]))
             out.append(_cmd("HostedResidual", f"{biggest['value']:+.4f}"))

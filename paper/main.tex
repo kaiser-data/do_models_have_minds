@@ -981,6 +981,45 @@ in conviction --- while the coherence numbers those choices produce differ by
 a single cell: what the outcomes mean changes how strongly the model commits,
 and the statistic reads only which side of $0.5$ each pair fell on.
 
+\paragraph{At 235B the floor overtakes the signal.} \label{sec:tootwofive}
+\texttt{Qwen3-235B-A22B-Instruct-2507} is \NHosted{}$\times$ the largest model
+in the self-hosted ladder and 3.4$\times$ the largest previously measured here,
+and it is the first mixture-of-experts model in the study. Real-outcome
+coherence is
+\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenR{}. The floor is
+\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenN{} --- \emph{the
+highest floor anywhere in this study}. The residual is
+\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenResid{}, the most
+negative of any cell we have run.
+
+At this scale the metric scores outcomes that denote nothing \emph{above}
+outcomes that do. The saturation argument of \S\ref{sec:scale} is not an
+extrapolation here; it is the observed state at the top of the range we can
+reach. What has grown with scale is the ability to impose a consistent ordering
+on anything, and at 235B that ability has grown past the point where the real
+outcomes are ordered any better.
+
+\textbf{One design seed, so no floor and no claim of significance.} Replicates
+at two further design seeds are queued but not finished. Without them we cannot
+say
+\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenResid{} is
+distinguishable from zero --- only that it is not the large positive residual a
+scale account of coherence predicts, and that it points the other way. The cell
+is also hosted rather than self-hosted, so it sits beside the ladder and never
+inside its mean, for the reason given below.
+
+\textbf{A pattern we can see but not attribute.} The ratio of decisiveness on
+real outcomes to decisiveness on invented ones falls sharply at the top of the
+range: it runs from 3$\times$ to over 300$\times$ on the self-hosted models but
+sits at
+$\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenConvR/\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenConvN
+\approx 1.2\times$ here. That would be a striking result --- the strength
+channel closing along with the direction channel --- except that all three
+large models are hosted and all nine small ones are self-hosted, so scale and
+serving stack are perfectly confounded in this comparison. We report the
+pattern and decline to attribute it. Breaking that confound needs one model run
+through both harnesses, which we have not done.
+
 \textbf{This cell now carries a noise floor, and the residual sits under it.}
 An earlier version of this section reported the 70B cell at a single design
 seed, which meant it had no floor and the residual could only be described as
