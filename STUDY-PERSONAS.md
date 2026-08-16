@@ -52,12 +52,16 @@ conflict, organised by two higher-order axes:
 That is a real prediction and it is what makes ten personas worth more than ten
 numbers.
 
-> **Primary-source caveat, and it is load-bearing.** The value definitions, the
-> circular order and the higher-order axes above are recalled, not read. Before
-> any persona text is written they must come from Schwartz's own papers — the
-> item wordings especially, since the whole point is to adapt a validated
-> instrument rather than to invent one that sounds like it. Treat the diagram
-> as the shape of the hypothesis, not as a citation.
+> **Primary-source caveat — now partly discharged.** The definitions were
+> recalled when this was first written. They have since been fetched (Schwartz
+> 1992, via the Wikipedia summary of that paper) and the four personas actually
+> installed use those wordings, not the recalled ones. The recalled structure
+> turned out to be right, with one correction: Hedonism sits on the
+> Self-Enhancement pole in that summary, where the diagram above places it
+> between two arcs. **Still outstanding:** the PVQ/SVS *item* wordings, and the
+> circumplex evidence itself, come from Schwartz's papers rather than an
+> encyclopaedia summary, and should be read directly before the ten-value
+> version is built.
 
 ---
 
@@ -168,7 +172,18 @@ Cheaper first cut, and the one to actually run:
 - **4 values, not 10** — the two poles of each higher-order axis: Power and
   Universalism (Self-Enhancement vs Self-Transcendence), Self-Direction and
   Security (Openness vs Conservation). All four clear the coverage bar. Both
-  arms, 5 models: ~650 GPU-min.
+  arms, 5 models: ~650 GPU-min. **Written and installed** as `sch-power`,
+  `sch-universalism`, `sch-selfdirection`, `sch-security`; 16–18 words and
+  104–112 characters, inside the band the existing personas occupy.
+
+  The leakage check in §3.4 was not a formality — it changed the wording.
+  Schwartz defines Power as *"social status and prestige, control or dominance
+  over people and resources"*. **`control` appears in 24% of the Power-seeking
+  outcomes and 0% of every other category**, a perfect lexical discriminator: a
+  persona containing it could move exactly those outcomes by word overlap and
+  the result would read as value installation. We use the other half of
+  Schwartz's own phrase — `dominance`, which appears in 0 of 510 outcomes. The
+  other three share no content word with the outcomes they should move.
 - C1 degrades to a **sign test** rather than a circumplex recovery: opposing
   values must anti-correlate, adjacent ones must not. Weaker than the full
   circle, testable now, and it uses the existing battery with no new outcomes.
