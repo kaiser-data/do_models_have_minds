@@ -112,7 +112,7 @@ where a threshold could be argued about.
 
 ---
 
-## 3. The finding this session generated and did not write up
+## 3. The finding this session generated — and the next session refuted
 
 `scripts/strange_pairs.py` ranks all 2,500 pairs by three **non-circular**
 measures (fitted utility is unusable — it is fitted from these choices):
@@ -124,18 +124,43 @@ Item-level answer-mass collapse concentrates on a specific kind of item —
 over 1,000,000 NVIDIA B200 GPUs" (3×), an AI-utility-correlation item (2×).
 Median collapse 0.024, max 0.165.
 
-**Then the probe in §2 ran on exactly those pairs, and the four scoreable
-frontier models scored 0.999–1.000 on them.** So item-level collapse is not a
-property of the items. It is a property of *small* models on those items. That
-inverts the natural reading and is the most publishable thing here:
+**WRITTEN UP — and the conclusion inverted. Read this before quoting anything
+above.** The three things this section asked for (state it over the nine local
+models, get a proper n, rule out "big models refuse less") were done in
+`scripts/mass_collapse.py`, and the claim did not survive two of them.
 
-> The metric fails hardest on shutdown-resistance and resource-acquisition
-> items — the outcomes an alignment paper most wants to measure — and it fails
-> there **only on the small models the paper is built from**.
+The headline this section proposed —
 
-Nobody has written this. It needs: the claim stated over the nine local models
-rather than the four probed ones, a proper n, and a check that the effect is not
-just "big models refuse less".
+> ~~The metric fails hardest on shutdown-resistance and resource-acquisition
+> items … and it fails there only on the small models the paper is built from.~~
+
+— is **false in both halves**:
+
+- **Not an item property.** Arm R has 3 design seeds per model. The mean
+  within-model *between-seed* correlation of per-item answer mass is
+  **−0.0003** over 9 models × 2,500 items. The collapse ranking does not
+  reproduce against itself, so the 2.1× enrichment at the top is selection on
+  noise. The frontier evidence this section leaned on was thinner than it
+  sounded: `site/hosted_scoreability.json` is `n=6` *calls* per model over ~3
+  distinct pairs, on 6 models of which 2 are scoreable — not "four scoreable
+  models".
+- **Not a size property.** `SmolLM3-3B` is worst at mass 0.9006 while the ~4×
+  smaller `Qwen3.5-0.8B` sits at 0.9448, and `LFM2.5-1.2B` and `granite-4.1-3b`
+  lose no mass at all. It tracks recipe, which is the dissociation the roster
+  was built to expose.
+
+**What did survive, and is the better finding.** The model-level measure is
+stable to ±0.0036 across the same seeds, so the quantity is real — it just lives
+on the model. And the refusal confound is *ruled out*: the displaced mass goes
+to whitespace, `(`, `Let`, `<h2>`/`<h3>`, not to refusal tokens. That makes this
+the frontier preamble failure of §2 in milder form, which unifies §2 and §3 into
+one mechanism instead of two observations.
+
+Landed as ledger claim `collapse-is-model-not-item` (established), a new
+paragraph in `sec:limits`, 14 macros, 7 tests, and a post-hoc section in
+`PREREGISTRATION.md`. The reason it is worth a paragraph is that the enriched
+item list was produced by our own tooling, reads as a finding, and is refuted
+only by a test the single-seed design most sweeps use could not have run.
 
 ---
 
@@ -143,11 +168,11 @@ just "big models refuse less".
 
 **~~A. Commit §0.~~ Done** — see §0 for the four SHAs. Not pushed.
 
-**B. Write up §3.** ← *next* Free — the measurement exists. Needs the local-model side
-computed properly (currently only the top-40 concentration is), and a claim in
-the ledger.
+**~~B. Write up §3.~~ Done** — and it refuted §3's own headline; see §3.
+Ledger claim `collapse-is-model-not-item`, `sec:limits` paragraph, 14 macros,
+7 tests, `scripts/mass_collapse.py`, post-hoc section in `PREREGISTRATION.md`.
 
-**C. Full cells on the two dense hosted models.** `DECISION-MODELS.md` §6 wants
+**C. Full cells on the two dense hosted models.** ← *next* `DECISION-MODELS.md` §6 wants
 `Llama-3.3-70B` and `gemma-3-27b-it` on R and N− — 4 cells, 20,000 calls, the
 runner is written and its design check passes against a real GPU cell. If the
 floor holds at 70B the paper's central claim stops being about small models.
@@ -206,3 +231,19 @@ dense ladder this roster cannot supply.
     sweep-summary convention as "every other one is `sweep_summary.json`"; one
     `git ls-files` showed two config-named summaries already tracked. Verify the
     fact a decision rests on before spending the decision on it.
+34. **Report a ranking's test-retest correlation before reporting its top.**
+    The collapse ranking was enriched 2.1× for exactly the items the paper cares
+    about, and correlated −0.0003 with itself across seeds. Selection depth on a
+    large item pool manufactures a theme; only reliability distinguishes it from
+    one. Seeds are what makes this checkable, which is the argument for spending
+    them (see "n = 1 per cell is not a result").
+35. **Say where the missing probability went.** "Answer mass fell" is
+    compatible with refusal and with formatting, and those license opposite
+    conclusions. The top-token record was already on disk; the earlier reading
+    never looked at it.
+36. **A glob over run names will eventually match a condition name.**
+    `__R__s*` matches the seed replicates `__R__s20260816` and also the persona
+    cells `__R__sch-power-D2`. That one character turned a cross-seed
+    reliability of −0.000 into a cross-condition +0.115 — inflating the exact
+    number the analysis existed to produce, in the direction that would have
+    confirmed the hypothesis. Match run identifiers with an anchored pattern.

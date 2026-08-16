@@ -268,6 +268,41 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         _tex(m.api_id.split("/")[-1])
         for m in sc["preamble"] + sc["no_logprobs"])))
 
+    # Answer-mass collapse: a model-level quantity that reads as an item-level
+    # one until you ask whether the item ranking replicates. Emitted from
+    # site/mass_collapse.json so the reliability number and the enrichment it
+    # disqualifies cannot be quoted from different runs.
+    mc_path = Path("site/mass_collapse.json")
+    if mc_path.exists():
+        mc = json.loads(mc_path.read_text())
+        rel, enr = mc["reliability"], mc["enrichment"]
+        per = rel["per_model"]
+        out.append(_cmd("CollapseNModels", str(mc["n_models"])))
+        out.append(_cmd("CollapseNItems", str(rel["n_items"])))
+        out.append(_cmd("CollapseNSeeds",
+                        str(min(v["n_seeds"] for v in per.values()))))
+        out.append(_cmd("CollapseItemR", f"{rel['mean_item_r']:+.4f}"))
+        out.append(_cmd("CollapseMassSD", f"{rel['max_mass_sd']:.4f}"))
+        out.append(_cmd("CollapseTopK", str(enr["top_k"])))
+        out.append(_cmd("CollapseObserved", f"{100 * enr['observed']:.0f}"))
+        out.append(_cmd("CollapseChance", f"{100 * enr['pair_chance_rate']:.0f}"))
+        out.append(_cmd("CollapseEnrich", f"{enr['enrichment']:.1f}"))
+        # The recipe-not-scale contrast, named so prose cannot invert it: the
+        # worst collapser against the SMALLEST model, which is not the same one.
+        worst = min(per.items(), key=lambda kv: kv[1]["mean_mass"])
+        clean = sorted(m for m, v in per.items() if v["mean_mass"] >= 1.0)
+        out.append(_cmd("CollapseWorstModel", _tex(worst[0].split("/")[-1])))
+        out.append(_cmd("CollapseWorstMass", f"{worst[1]['mean_mass']:.4f}"))
+        out.append(_cmd("CollapseNClean", str(len(clean))))
+        out.append(_cmd("CollapseCleanModels", ", ".join(
+            _tex(m.split("/")[-1]) for m in clean)))
+        smallest = "Qwen/Qwen3.5-0.8B"
+        if smallest in per:
+            out.append(_cmd("CollapseSmallestModel",
+                            _tex(smallest.split("/")[-1])))
+            out.append(_cmd("CollapseSmallestMass",
+                            f"{per[smallest]['mean_mass']:.4f}"))
+
     # Strength: the headline contrast. Restricted to models that are decisive
     # at all on real outcomes, because a model that never commits anywhere has
     # no ratio to report and would drag the mean toward a meaningless zero.

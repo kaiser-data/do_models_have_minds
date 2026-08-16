@@ -403,6 +403,38 @@
       "what_would_falsify": "A prefill or constrained-decoding variant that reads the \\HostedNPreamble preamble models and reproduces scores poolable with the rest -- which would make their exclusion an artifact of where we look rather than a limit of the metric.",
       "grows_by": "More hosted models measured. What matters is the fraction rather than the count, and the fraction is what bounds every other claim in this ledger: the models reported here are the models that could be scored.",
       "priority": 2
+    },
+    {
+      "id": "collapse-is-model-not-item",
+      "statement": "Answer-mass collapse is a property of models, not of items: across \\CollapseNModels models at \\CollapseNSeeds design seeds, per-model mean answer mass is stable to \\CollapseMassSD, while the mean within-model between-seed correlation of per-item answer mass is \\CollapseItemR.",
+      "status": "established",
+      "section": "sec:limits",
+      "macros": [
+        "CollapseNModels",
+        "CollapseNItems",
+        "CollapseNSeeds",
+        "CollapseItemR",
+        "CollapseMassSD",
+        "CollapseWorstModel",
+        "CollapseWorstMass",
+        "CollapseSmallestModel",
+        "CollapseSmallestMass",
+        "CollapseNClean",
+        "CollapseTopK",
+        "CollapseObserved",
+        "CollapseChance",
+        "CollapseEnrich"
+      ],
+      "evidence": {
+        "models": "\\CollapseNModels",
+        "seeds_per_cell": "\\CollapseNSeeds",
+        "items_ranked": "\\CollapseNItems",
+        "note": "The item-level version of this measure was ranked and looked like a finding: the top \\CollapseTopK pairs are \\CollapseEnrich x enriched for shutdown-resistance and resource-acquisition outcomes (\\CollapseObserved% against \\CollapseChance% by chance). It is refuted by its own test-retest correlation of \\CollapseItemR, which leaves no reliability ceiling for an item claim to sit under. Direction of the model-level effect is recipe rather than scale: \\CollapseWorstModel is worst at \\CollapseWorstMass while the smaller \\CollapseSmallestModel sits at \\CollapseSmallestMass and \\CollapseNClean models lose no mass at all. The displaced mass lands on whitespace, parentheses and heading tokens rather than refusal tokens, which rules out differential refusal as the mechanism and identifies it as the frontier preamble failure in milder form.",
+        "computed_by": "scripts/mass_collapse.py"
+      },
+      "what_would_falsify": "A per-item collapse ranking that reproduces across seeds within a model -- any appreciable positive test-retest correlation would restore the item-level reading. Equally, a model-level ordering that tracked parameter count once recipe is held fixed would make this a scale claim after all.",
+      "grows_by": "More seeds per cell, and more families at matched sizes. Seeds are what makes the negative half of this claim possible at all, and a single-seed sweep cannot state it.",
+      "priority": 2
     }
   ]
 }

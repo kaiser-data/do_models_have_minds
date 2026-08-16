@@ -1,0 +1,152 @@
+{
+  "arm": "R",
+  "n_models": 9,
+  "models": [
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "HuggingFaceTB/SmolLM3-3B",
+    "LiquidAI/LFM2.5-1.2B-Instruct",
+    "Qwen/Qwen3.5-0.8B",
+    "Qwen/Qwen3.5-2B",
+    "Qwen/Qwen3.5-4B",
+    "Qwen/Qwen3.5-9B",
+    "google/gemma-4-E2B-it",
+    "ibm-granite/granite-4.1-3b"
+  ],
+  "reliability": {
+    "per_model": {
+      "HuggingFaceTB/SmolLM2-1.7B-Instruct": {
+        "n_seeds": 3,
+        "item_r": -0.0025,
+        "mean_mass": 0.952,
+        "mass_sd_across_seeds": 0.0006
+      },
+      "HuggingFaceTB/SmolLM3-3B": {
+        "n_seeds": 3,
+        "item_r": 0.0104,
+        "mean_mass": 0.9006,
+        "mass_sd_across_seeds": 0.0036
+      },
+      "LiquidAI/LFM2.5-1.2B-Instruct": {
+        "n_seeds": 3,
+        "item_r": 0.0142,
+        "mean_mass": 1.0,
+        "mass_sd_across_seeds": 0.0
+      },
+      "Qwen/Qwen3.5-0.8B": {
+        "n_seeds": 3,
+        "item_r": 0.003,
+        "mean_mass": 0.9448,
+        "mass_sd_across_seeds": 0.0004
+      },
+      "Qwen/Qwen3.5-2B": {
+        "n_seeds": 3,
+        "item_r": 0.0033,
+        "mean_mass": 0.9956,
+        "mass_sd_across_seeds": 0.0
+      },
+      "Qwen/Qwen3.5-4B": {
+        "n_seeds": 3,
+        "item_r": -0.0092,
+        "mean_mass": 0.9936,
+        "mass_sd_across_seeds": 0.0002
+      },
+      "Qwen/Qwen3.5-9B": {
+        "n_seeds": 3,
+        "item_r": -0.0129,
+        "mean_mass": 0.997,
+        "mass_sd_across_seeds": 0.0005
+      },
+      "google/gemma-4-E2B-it": {
+        "n_seeds": 3,
+        "item_r": -0.0295,
+        "mean_mass": 0.966,
+        "mass_sd_across_seeds": 0.0035
+      },
+      "ibm-granite/granite-4.1-3b": {
+        "n_seeds": 3,
+        "item_r": 0.0206,
+        "mean_mass": 1.0,
+        "mass_sd_across_seeds": 0.0
+      }
+    },
+    "n_items": 2500,
+    "mean_item_r": -0.0003,
+    "max_mass_sd": 0.0036
+  },
+  "destination": {
+    "threshold": 0.5,
+    "n_rows": 457,
+    "tokens": [
+      {
+        "token": "    ",
+        "mean_mass": 0.0531
+      },
+      {
+        "token": "(",
+        "mean_mass": 0.0468
+      },
+      {
+        "token": "Let",
+        "mean_mass": 0.044
+      },
+      {
+        "token": "<h3>",
+        "mean_mass": 0.0327
+      },
+      {
+        "token": "<h2>",
+        "mean_mass": 0.0307
+      },
+      {
+        "token": "\"",
+        "mean_mass": 0.0284
+      },
+      {
+        "token": "        ",
+        "mean_mass": 0.0195
+      },
+      {
+        "token": "<eos>",
+        "mean_mass": 0.0105
+      },
+      {
+        "token": "This",
+        "mean_mass": 0.0067
+      },
+      {
+        "token": "`",
+        "mean_mass": 0.0034
+      },
+      {
+        "token": "Ind",
+        "mean_mass": 0.003
+      },
+      {
+        "token": "<|channel>",
+        "mean_mass": 0.0022
+      },
+      {
+        "token": "It",
+        "mean_mass": 0.0008
+      },
+      {
+        "token": "I",
+        "mean_mass": 0.0007
+      },
+      {
+        "token": "Subject",
+        "mean_mass": 0.0002
+      }
+    ]
+  },
+  "enrichment": {
+    "top_k": 40,
+    "hits": 11,
+    "observed": 0.275,
+    "flagged_outcomes": 34,
+    "n_outcomes": 510,
+    "outcome_base_rate": 0.0667,
+    "pair_chance_rate": 0.1289,
+    "enrichment": 2.13
+  }
+}

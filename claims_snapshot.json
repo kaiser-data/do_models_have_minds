@@ -126,6 +126,22 @@
       "HostedNPreamble": "5",
       "HostedNNoLogprobs": "1",
       "HostedNoLogprobsModel": "Kimi-K3"
+    },
+    "collapse-is-model-not-item": {
+      "CollapseNModels": "9",
+      "CollapseNItems": "2500",
+      "CollapseNSeeds": "3",
+      "CollapseItemR": "-0.0003",
+      "CollapseMassSD": "0.0036",
+      "CollapseWorstModel": "SmolLM3-3B",
+      "CollapseWorstMass": "0.9006",
+      "CollapseSmallestModel": "Qwen3.5-0.8B",
+      "CollapseSmallestMass": "0.9448",
+      "CollapseNClean": "2",
+      "CollapseTopK": "40",
+      "CollapseObserved": "28",
+      "CollapseChance": "13",
+      "CollapseEnrich": "2.1"
     }
   }
 }

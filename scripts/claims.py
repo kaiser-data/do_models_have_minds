@@ -276,7 +276,12 @@ def build_table(claims: dict, macros: dict[str, str]) -> str:
                  "hosted_models_measured": ("hosted model measured",
                                             "hosted models measured"),
                  "unscoreable": ("unscoreable by first token",
-                                 "unscoreable by first token")}
+                                 "unscoreable by first token"),
+                 # Seeds are the evidence for the negative half of
+                 # collapse-is-model-not-item, so a reader scanning this column
+                 # should see that the test-retest check was affordable at all.
+                 "seeds_per_cell": ("seed/cell", "seeds/cell"),
+                 "items_ranked": ("item ranked", "items ranked")}
         bits = []
         for k, (one, many) in nouns.items():
             if k in ev:

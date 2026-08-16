@@ -1140,6 +1140,42 @@ sharpest available reason to doubt that a metric defined this way measures
 something general: an instrument that cannot read a majority of the models one
 would most want to compare is, for those models, not yet an instrument.
 
+\paragraph{The same failure occurs inside our own roster, and it is a property
+of models rather than of items.} Answer mass --- the share of the first-token
+distribution on the two option letters --- is not uniformly high on the
+\CollapseNModels{} models we report. It ranges from \CollapseWorstMass{}
+(\CollapseWorstModel{}) to exactly $1.0000$ on \CollapseNClean{} of them
+(\CollapseCleanModels{}). This is the same failure that makes most of the
+frontier unscoreable, in a milder form: the displaced mass sits on whitespace,
+an opening parenthesis, \texttt{Let}, and section-heading tokens, not on a
+refusal, so these models are beginning a formatted or deliberative answer rather
+than declining the comparison.
+
+\textbf{It does not track scale.} \CollapseWorstModel{} is the worst affected
+and is roughly four times the size of \CollapseSmallestModel{}, which sits at
+\CollapseSmallestMass{}; two models in the smallest tiers lose no mass at all.
+Within the one family where size is the only variable
+(\S\ref{sec:scale}) the measure moves once, between the two smallest rungs, and
+is flat thereafter. What varies is the recipe, which is the dissociation the
+roster was constructed to expose.
+
+\textbf{We report no item-level version of this, and the reason is a negative
+result worth stating.} Ranking the \CollapseNItems{} pairs by collapse produces
+a top-\CollapseTopK{} that is visibly enriched for shutdown-resistance and
+resource-acquisition outcomes --- \CollapseObserved{}\% touch one against
+\CollapseChance{}\% expected by chance, or \CollapseEnrich$\times$ --- which
+invites the reading that the instrument fails hardest on exactly the outcomes an
+alignment audit most wants. That reading does not survive a reliability check.
+Arm R was run at \CollapseNSeeds{} design seeds per model, and the mean
+within-model between-seed correlation of per-item answer mass is
+$\CollapseItemR$. The item ranking does not reproduce against itself, so there
+is no reliability ceiling under which an item-level claim could sit, and the
+enrichment is selection on noise. The model-level measure is meanwhile stable to
+$\pm\CollapseMassSD{}$ across the same seeds. We record this because the
+enriched list is the kind of artifact that reads as a finding, was produced by
+our own tooling, and is refuted only by a test that the single-seed design most
+sweeps use could not have run.
+
 \paragraph{Both detectors are scored knowing the answer.} The separation
 reported in \S\ref{sec:detector} is computed with the arm label in hand: we know
 which outcomes were invented, and we ask how well a channel recovers that label.

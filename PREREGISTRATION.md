@@ -491,6 +491,46 @@ models and −0.048 over the four common to both arms. The verdict is the same
 either way, which is the only reason the correction is reportable as a
 correction rather than a choice.
 
+### Post-hoc: is answer-mass collapse an item property? (No — and the check is the point)
+
+Not registered. Recorded here because the hypothesis was formed *after* seeing a
+ranking produced by our own tooling, which is the condition under which this
+document is most useful.
+
+`scripts/strange_pairs.py` ranks the 2,500 pairs by `mass_collapse`, and the top
+of that ranking looks like a result: shutdown-resistance and
+resource-acquisition outcomes are enriched **2.1×** over their base rate
+(28% of the top 40 touch one, against 13% expected for a random pair). The
+reading this invites — *the instrument fails hardest on exactly the outcomes an
+alignment audit most wants to measure* — was written into the previous handoff
+as the most publishable thing in the session.
+
+**It is false, and the replicate design is what shows it.** Arm R was run at
+3 design seeds per model. Ranking items by collapse for one model at one seed
+and comparing against the same model at another seed gives a mean between-seed
+correlation of **−0.0003** over 9 models × 2,500 items. The ranking does not
+reproduce against *itself*, so no item-level claim has a reliability ceiling to
+sit under and the enrichment is selection on noise: 2,500 items sampled 40 deep
+concentrate on something, and shutdown items are distinctive enough to be the
+something one notices.
+
+**The same seeds show the model-level measure is solid** — per-model mean answer
+mass is stable to ±0.0036 — so the quantity is real and well-measured. It simply
+lives on the model. And it does **not** track scale: SmolLM3-3B is worst at
+0.9006 while the ~4× smaller Qwen3.5-0.8B sits at 0.9448, and two models
+(LFM2.5-1.2B, granite-4.1-3b) lose no mass at all. Recipe, not size.
+
+**The refusal confound is ruled out rather than assumed.** Had the displaced
+mass gone to refusal tokens, "larger models decline less" would explain the
+whole pattern. It does not: it goes to whitespace, `(`, `Let`, and `<h2>`/`<h3>`
+heading tokens. These models are starting a formatted or deliberative answer,
+which is the frontier preamble failure (§`sec:limits`) in milder form.
+
+This is the threat *"n = 1 per cell is not a result"* below, paying for itself.
+A single-seed sweep could not have run this test, and would have published the
+enriched item list. Computed by `scripts/mass_collapse.py`; ledger claim
+`collapse-is-model-not-item`.
+
 ## Predeclared threats to our own result
 
 - **The invented referents could be systematically shorter or longer** than the
