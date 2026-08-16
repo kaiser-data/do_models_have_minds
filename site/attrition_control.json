@@ -1,0 +1,1755 @@
+{
+  "answer_mass_floor": 0.5,
+  "cells": [
+    {
+      "coherence_matched": {
+        "N_minus": 0.841991341991342,
+        "R": 0.9011764705882352
+      },
+      "coherence_raw": {
+        "N_minus": 0.841991341991342,
+        "R": 0.9011764705882352
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9346206453342222,
+        "R": 0.9526258750068275
+      },
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.05918512859689329,
+      "residual_raw": 0.05918512859689329,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.809322033898305,
+        "R": 0.8713592233009708
+      },
+      "coherence_raw": {
+        "N_minus": 0.809322033898305,
+        "R": 0.8713592233009708
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9348817635490737,
+        "R": 0.9520366367156851
+      },
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.06203718940266578,
+      "residual_raw": 0.06203718940266578,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8451612903225807,
+        "R": 0.9053117782909931
+      },
+      "coherence_raw": {
+        "N_minus": 0.8451612903225807,
+        "R": 0.9053117782909931
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.932633768607421,
+        "R": 0.9511923287587484
+      },
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.06015048796841238,
+      "residual_raw": 0.06015048796841238,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9389473684210526,
+        "R": 0.9426229508196722
+      },
+      "coherence_raw": {
+        "N_minus": 0.9222689075630253,
+        "R": 0.9412955465587044
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.011800000000000001,
+      "drop_fraction": {
+        "N_minus": 0.0122,
+        "R": 0.0004
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.7080918204561696,
+        "R": 0.9012373002776382
+      },
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs_matched": 2443,
+      "n_pairs_raw": {
+        "N_minus": 2445,
+        "R": 2498
+      },
+      "pairs_lost_to_matching": 57,
+      "residual_matched": 0.003675582398619537,
+      "residual_raw": 0.019026638995679135,
+      "residual_shift": -0.015351056597059598
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9314775160599572,
+        "R": 0.9216494845360824
+      },
+      "coherence_raw": {
+        "N_minus": 0.9314775160599572,
+        "R": 0.9254032258064516
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0114,
+      "drop_fraction": {
+        "N_minus": 0.0114,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.7092559752309632,
+        "R": 0.8958691369134667
+      },
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs_matched": 2446,
+      "n_pairs_raw": {
+        "N_minus": 2446,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 54,
+      "residual_matched": -0.009828031523874792,
+      "residual_raw": -0.006074290253505588,
+      "residual_shift": -0.003753741270369204
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9147609147609148,
+        "R": 0.9412955465587044
+      },
+      "coherence_raw": {
+        "N_minus": 0.9147609147609148,
+        "R": 0.9396378269617707
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0068,
+      "drop_fraction": {
+        "N_minus": 0.0068,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.7169294256176557,
+        "R": 0.9046432654926044
+      },
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs_matched": 2472,
+      "n_pairs_raw": {
+        "N_minus": 2472,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 28,
+      "residual_matched": 0.026534631797789587,
+      "residual_raw": 0.02487691220085586,
+      "residual_shift": 0.0016577195969337266
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8747474747474747,
+        "R": 0.9116465863453815
+      },
+      "coherence_raw": {
+        "N_minus": 0.8747474747474747,
+        "R": 0.9116465863453815
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999954444784002,
+        "R": 0.9999968438589791
+      },
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.03689911159790682,
+      "residual_raw": 0.03689911159790682,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.842741935483871,
+        "R": 0.9078156312625251
+      },
+      "coherence_raw": {
+        "N_minus": 0.842741935483871,
+        "R": 0.9078156312625251
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999948049627038,
+        "R": 0.9999972252616872
+      },
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.06507369577865407,
+      "residual_raw": 0.06507369577865407,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8767676767676768,
+        "R": 0.91
+      },
+      "coherence_raw": {
+        "N_minus": 0.8767676767676768,
+        "R": 0.91
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999953703571469,
+        "R": 0.99999697462893
+      },
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.03323232323232328,
+      "residual_raw": 0.03323232323232328,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8514056224899599,
+        "R": 0.906
+      },
+      "coherence_raw": {
+        "N_minus": 0.8514056224899599,
+        "R": 0.906
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9538811011889178,
+        "R": 0.9448251769893025
+      },
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.05459437751004015,
+      "residual_raw": 0.05459437751004015,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8410462776659959,
+        "R": 0.912
+      },
+      "coherence_raw": {
+        "N_minus": 0.8410462776659959,
+        "R": 0.912
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9546671579577549,
+        "R": 0.9443440682101771
+      },
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.0709537223340041,
+      "residual_raw": 0.0709537223340041,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8209255533199196,
+        "R": 0.9078156312625251
+      },
+      "coherence_raw": {
+        "N_minus": 0.8209255533199196,
+        "R": 0.9078156312625251
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9546513833999372,
+        "R": 0.9452057526624019
+      },
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.0868900779426055,
+      "residual_raw": 0.0868900779426055,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8955823293172691,
+        "R": 0.8957915831663327
+      },
+      "coherence_raw": {
+        "N_minus": 0.8955823293172691,
+        "R": 0.8957915831663327
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9846446379636448,
+        "R": 0.9956367434084817
+      },
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.00020925384906356204,
+      "residual_raw": 0.00020925384906356204,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8975903614457831,
+        "R": 0.9
+      },
+      "coherence_raw": {
+        "N_minus": 0.8975903614457831,
+        "R": 0.9
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9848563244203752,
+        "R": 0.995628257919568
+      },
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.002409638554216942,
+      "residual_raw": 0.002409638554216942,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8897795591182365,
+        "R": 0.89
+      },
+      "coherence_raw": {
+        "N_minus": 0.8897795591182365,
+        "R": 0.89
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9849059201178599,
+        "R": 0.9956084921324533
+      },
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.0002204408817635395,
+      "residual_raw": 0.0002204408817635395,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9182389937106918,
+        "R": 0.8957055214723927
+      },
+      "coherence_raw": {
+        "N_minus": 0.9182389937106918,
+        "R": 0.8957055214723927
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9818114267372866,
+        "R": 0.9934808636977653
+      },
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": -0.022533472238299157,
+      "residual_raw": -0.022533472238299157,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9412997903563941,
+        "R": 0.9032258064516129
+      },
+      "coherence_raw": {
+        "N_minus": 0.9412997903563941,
+        "R": 0.9032258064516129
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9813876943876471,
+        "R": 0.993379039074034
+      },
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": -0.03807398390478123,
+      "residual_raw": -0.03807398390478123,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9010526315789473,
+        "R": 0.9112903225806451
+      },
+      "coherence_raw": {
+        "N_minus": 0.9010526315789473,
+        "R": 0.9112903225806451
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9811869525525526,
+        "R": 0.993849637980049
+      },
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.010237691001697802,
+      "residual_raw": 0.010237691001697802,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9096385542168675,
+        "R": 0.908
+      },
+      "coherence_raw": {
+        "N_minus": 0.9096385542168675,
+        "R": 0.908
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9948444241144662,
+        "R": 0.9967749902681384
+      },
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": -0.0016385542168674272,
+      "residual_raw": -0.0016385542168674272,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9136546184738956,
+        "R": 0.93
+      },
+      "coherence_raw": {
+        "N_minus": 0.9136546184738956,
+        "R": 0.93
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9948466694334206,
+        "R": 0.9966158481024501
+      },
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.01634538152610443,
+      "residual_raw": 0.01634538152610443,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9378757515030061,
+        "R": 0.916
+      },
+      "coherence_raw": {
+        "N_minus": 0.9378757515030061,
+        "R": 0.916
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9949020344966699,
+        "R": 0.9976529447205148
+      },
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": -0.021875751503006025,
+      "residual_raw": -0.021875751503006025,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9014989293361885,
+        "R": 0.8779443254817987
+      },
+      "coherence_raw": {
+        "N_minus": 0.9168399168399168,
+        "R": 0.9008264462809917
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.005800000000000003,
+      "drop_fraction": {
+        "N_minus": 0.0352,
+        "R": 0.0294
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9311980423866959,
+        "R": 0.9664775272959693
+      },
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs_matched": 2337,
+      "n_pairs_raw": {
+        "N_minus": 2412,
+        "R": 2425
+      },
+      "pairs_lost_to_matching": 163,
+      "residual_matched": -0.02355460385438979,
+      "residual_raw": -0.016013470558925103,
+      "residual_shift": -0.007541133295464686
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.9098901098901099,
+        "R": 0.9098901098901099
+      },
+      "coherence_raw": {
+        "N_minus": 0.869098712446352,
+        "R": 0.9014373716632443
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.039400000000000004,
+      "drop_fraction": {
+        "N_minus": 0.0656,
+        "R": 0.0262
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9020365433649337,
+        "R": 0.9700478579820571
+      },
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs_matched": 2277,
+      "n_pairs_raw": {
+        "N_minus": 2336,
+        "R": 2433
+      },
+      "pairs_lost_to_matching": 215,
+      "residual_matched": 0.0,
+      "residual_raw": 0.032338659216892385,
+      "residual_shift": -0.032338659216892385
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8685344827586207,
+        "R": 0.9145299145299145
+      },
+      "coherence_raw": {
+        "N_minus": 0.8672199170124482,
+        "R": 0.9149377593360996
+      },
+      "design_seed": 20260817,
+      "differential_attrition": -0.006600000000000002,
+      "drop_fraction": {
+        "N_minus": 0.0288,
+        "R": 0.0354
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9379965689213148,
+        "R": 0.9615034365505799
+      },
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs_matched": 2339,
+      "n_pairs_raw": {
+        "N_minus": 2428,
+        "R": 2411
+      },
+      "pairs_lost_to_matching": 161,
+      "residual_matched": 0.04599543177129384,
+      "residual_raw": 0.047717842323651394,
+      "residual_shift": -0.0017224105523575561
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8545454545454545,
+        "R": 0.8729838709677419
+      },
+      "coherence_raw": {
+        "N_minus": 0.8545454545454545,
+        "R": 0.8729838709677419
+      },
+      "design_seed": 0,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999999775751478,
+        "R": 0.999999998323944
+      },
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.018438416422287385,
+      "residual_raw": 0.018438416422287385,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.8229376257545271,
+        "R": 0.905811623246493
+      },
+      "coherence_raw": {
+        "N_minus": 0.8229376257545271,
+        "R": 0.905811623246493
+      },
+      "design_seed": 20260816,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999999870827158,
+        "R": 0.9999999981766498
+      },
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.08287399749196589,
+      "residual_raw": 0.08287399749196589,
+      "residual_shift": 0.0
+    },
+    {
+      "coherence_matched": {
+        "N_minus": 0.845841784989858,
+        "R": 0.9118236472945892
+      },
+      "coherence_raw": {
+        "N_minus": 0.845841784989858,
+        "R": 0.9118236472945892
+      },
+      "design_seed": 20260817,
+      "differential_attrition": 0.0,
+      "drop_fraction": {
+        "N_minus": 0.0,
+        "R": 0.0
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999999831084848,
+        "R": 0.9999999980194573
+      },
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs_matched": 2500,
+      "n_pairs_raw": {
+        "N_minus": 2500,
+        "R": 2500
+      },
+      "pairs_lost_to_matching": 0,
+      "residual_matched": 0.06598186230473124,
+      "residual_raw": 0.06598186230473124,
+      "residual_shift": 0.0
+    }
+  ],
+  "contrast": {
+    "high": "R",
+    "low": "N_minus"
+  },
+  "floor_sweep": [
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.05918512859689329
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.05918512859689329
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.05918512859689329
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.05918512859689329
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2429,
+      "residual_matched": 0.07724067941459245
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06203718940266578
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06203718940266578
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06203718940266578
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06203718940266578
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2437,
+      "residual_matched": 0.047623266042042256
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06015048796841238
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06015048796841238
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06015048796841238
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06015048796841238
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "HuggingFaceTB__SmolLM2-1.7B-Instruct",
+      "n_pairs": 2371,
+      "residual_matched": -0.008393086354180457
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2500,
+      "residual_matched": 0.009384173895834014
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2500,
+      "residual_matched": 0.009384173895834014
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2443,
+      "residual_matched": 0.003675582398619537
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 954,
+      "residual_matched": -0.04603430990308566
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0010678474833432094
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0010678474833432094
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2446,
+      "residual_matched": -0.009828031523874792
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 949,
+      "residual_matched": -0.046996576408341095
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2500,
+      "residual_matched": 0.01880449362843739
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2500,
+      "residual_matched": 0.01880449362843739
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 2472,
+      "residual_matched": 0.026534631797789587
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "HuggingFaceTB__SmolLM3-3B",
+      "n_pairs": 994,
+      "residual_matched": -0.003826530612244916
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03689911159790682
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03689911159790682
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03689911159790682
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03689911159790682
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03689911159790682
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06507369577865407
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06507369577865407
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06507369577865407
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06507369577865407
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.06507369577865407
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03323232323232328
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03323232323232328
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03323232323232328
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03323232323232328
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "LiquidAI__LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "residual_matched": 0.03323232323232328
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.05459437751004015
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.05459437751004015
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.05459437751004015
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.05459437751004015
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2435,
+      "residual_matched": 0.023069921039818864
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0709537223340041
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0709537223340041
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0709537223340041
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0709537223340041
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2426,
+      "residual_matched": 0.07773585551363327
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0868900779426055
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0868900779426055
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0868900779426055
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0868900779426055
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-0.8B",
+      "n_pairs": 2422,
+      "residual_matched": 0.03834794350258264
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.00020925384906356204
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.00020925384906356204
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.00020925384906356204
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.00020925384906356204
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.00020925384906356204
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.002409638554216942
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.002409638554216942
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.002409638554216942
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.002409638554216942
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.002409638554216942
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0002204408817635395
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0002204408817635395
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0002204408817635395
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0002204408817635395
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-2B",
+      "n_pairs": 2500,
+      "residual_matched": 0.0002204408817635395
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.022533472238299157
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.022533472238299157
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.022533472238299157
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.022533472238299157
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2496,
+      "residual_matched": -0.03197422179200404
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.03807398390478123
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.03807398390478123
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.03807398390478123
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": -0.03807398390478123
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2497,
+      "residual_matched": -0.05873639244867024
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": 0.010237691001697802
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": 0.010237691001697802
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": 0.010237691001697802
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2500,
+      "residual_matched": 0.010237691001697802
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-4B",
+      "n_pairs": 2489,
+      "residual_matched": 0.029455896151966754
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.0016385542168674272
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.0016385542168674272
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.0016385542168674272
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.0016385542168674272
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2489,
+      "residual_matched": -0.009846225950078002
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": 0.01634538152610443
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": 0.01634538152610443
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": 0.01634538152610443
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": 0.01634538152610443
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2478,
+      "residual_matched": 0.006374885725479951
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.021875751503006025
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.021875751503006025
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.021875751503006025
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2500,
+      "residual_matched": -0.021875751503006025
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "Qwen__Qwen3.5-9B",
+      "n_pairs": 2493,
+      "residual_matched": -0.033810074878126484
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2340,
+      "residual_matched": -0.027837259100642386
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2338,
+      "residual_matched": -0.025309111003660956
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2337,
+      "residual_matched": -0.02355460385438979
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2333,
+      "residual_matched": -0.017204301075268824
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2162,
+      "residual_matched": -0.002074245145838649
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2280,
+      "residual_matched": 0.035357624831309
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2279,
+      "residual_matched": 0.006815114709851522
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2277,
+      "residual_matched": 0.0
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2267,
+      "residual_matched": 0.011013215859030812
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2126,
+      "residual_matched": 0.0023529411764705577
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2340,
+      "residual_matched": 0.01595195991747722
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2340,
+      "residual_matched": 0.01595195991747722
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2339,
+      "residual_matched": 0.04599543177129384
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2330,
+      "residual_matched": 0.004726579843125744
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "google__gemma-4-E2B-it",
+      "n_pairs": 2160,
+      "residual_matched": -0.0032929055816380837
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.0,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.018438416422287385
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.3,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.018438416422287385
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.5,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.018438416422287385
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.7,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.018438416422287385
+    },
+    {
+      "design_seed": 0,
+      "floor": 0.9,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.018438416422287385
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.0,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.08287399749196589
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.3,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.08287399749196589
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.5,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.08287399749196589
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.7,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.08287399749196589
+    },
+    {
+      "design_seed": 20260816,
+      "floor": 0.9,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.08287399749196589
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.0,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.06598186230473124
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.3,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.06598186230473124
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.5,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.06598186230473124
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.7,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.06598186230473124
+    },
+    {
+      "design_seed": 20260817,
+      "floor": 0.9,
+      "model": "ibm-granite__granite-4.1-3b",
+      "n_pairs": 2500,
+      "residual_matched": 0.06598186230473124
+    }
+  ],
+  "summary": {
+    "max_abs_residual_shift": 0.032338659216892385,
+    "mean_differential_attrition": 0.002540740740740741,
+    "mean_residual_matched": 0.025349409078585954,
+    "mean_residual_raw": 0.027536419498408533,
+    "mean_residual_shift": -0.0021870104198225817,
+    "n_cells": 27,
+    "n_cells_with_attrition": 6,
+    "worst_differential_attrition": 0.039400000000000004
+  }
+}

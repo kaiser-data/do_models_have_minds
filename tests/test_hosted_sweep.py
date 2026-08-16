@@ -93,6 +93,70 @@ def test_patience_is_reachable_without_editing_the_runner():
     assert args.retries == 6
 
 
+def test_a_replicate_seed_does_not_land_on_the_default_seeds_filename():
+    """`--design-seed` changed the design and not the output path.
+
+    The runner built its output name from (api_id, arm) alone, so a second
+    design seed wrote over the first one's rows -- or, because a complete cell
+    is skipped, silently did nothing at all and left the operator believing a
+    replicate had been collected. Either way the noise floor would rest on one
+    design wearing three names.
+
+    Same rule as modal_app/sweep.py:cell_filename, including the exemption for
+    the default seed so wave 1's files stay findable by resume.
+    """
+    from scripts.hosted_sweep import DEFAULT_DESIGN_SEED, cell_filename
+
+    bare = cell_filename("meta-llama/Llama-3.3-70B-Instruct", "R")
+    assert bare == "meta-llama__Llama-3.3-70B-Instruct__R.jsonl"
+    assert cell_filename("meta-llama/Llama-3.3-70B-Instruct", "R",
+                         DEFAULT_DESIGN_SEED) == bare
+
+    rep = cell_filename("meta-llama/Llama-3.3-70B-Instruct", "R", 20260816)
+    assert rep == "meta-llama__Llama-3.3-70B-Instruct__R__s20260816.jsonl"
+    assert rep != bare
+    assert cell_filename("meta-llama/Llama-3.3-70B-Instruct", "R", 20260817) != rep
+
+
+def test_replicate_filenames_parse_back_to_the_seed_that_made_them():
+    """build_card.py groups replicates by reading the seed off the name.
+
+    A hosted replicate whose filename build_card cannot parse is not a third
+    point on the floor; it is a cell that raises or, worse, parses as the
+    baseline and averages into it.
+    """
+    from scripts.build_card import parse_cell_name
+    from scripts.hosted_sweep import cell_filename
+
+    name = cell_filename("meta-llama/Llama-3.3-70B-Instruct", "N_minus", 20260816)
+    model, arm, seed, persona, depth = parse_cell_name(Path(name))
+    assert (model, arm, seed) == ("meta-llama/Llama-3.3-70B-Instruct",
+                                  "N_minus", 20260816)
+    assert (persona, depth) == ("none", "D0")
+
+
+def test_the_design_check_reads_a_reference_cell_of_the_SAME_seed():
+    """Wave 0 compared every design against a default-seed local cell.
+
+    A seed-20260816 design does not reproduce a seed-20260815 cell -- different
+    outcome subsample, different pairs -- so the check would refuse a replicate
+    that was correct. Pointed at the matching seed it does the job it was
+    written for: proving the hosted replicate shares a design with the local
+    replicate it will be pooled beside.
+    """
+    from scripts.hosted_sweep import reference_cell_for
+
+    tree = Path("results")
+    default = reference_cell_for(tree, 20260815)
+    assert default is not None and default.name.endswith("__R.jsonl")
+    assert "__s" not in default.stem
+
+    seeded = reference_cell_for(tree, 20260816)
+    assert seeded is not None and seeded.name.endswith("__R__s20260816.jsonl")
+
+    assert reference_cell_for(tree, 19700101) is None
+
+
 def test_credential_is_named_not_inlined():
     """The runner takes the NAME of an env var, never a key value.
 

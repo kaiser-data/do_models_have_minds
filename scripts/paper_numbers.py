@@ -117,7 +117,10 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           neutral: dict | None = None,
           rendered: dict | None = None,
           comply: dict | None = None,
-          mixed: dict | None = None) -> str:
+          mixed: dict | None = None,
+          surface: dict | None = None,
+          attrition: dict | None = None,
+          hosted: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -140,6 +143,19 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("NClears", str(sum(1 for t in tiles if t.get("clears_floor")))))
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
+    # Families, because "nine models" and "nine models from one family" are
+    # different studies and the abstract has to say which.
+    out.append(_cmd("NFamilies", str(len({t["model"].split("/")[0] for t in tiles}))))
+
+    # The hosted arm is reported beside the self-hosted ladder and never inside
+    # its mean: different provider, different harness_hash by construction.
+    if hosted and hosted.get("tiles"):
+        ht = [t for t in hosted["tiles"] if t.get("badge") == "FLOOR_CORRECTED"]
+        if ht:
+            out.append(_cmd("NHosted", str(len(ht))))
+            biggest = max(ht, key=lambda t: t.get("value", 0))
+            out.append(_cmd("LadderHosted", biggest["model"].split("/")[-1]))
+            out.append(_cmd("HostedResidual", f"{biggest['value']:+.4f}"))
 
     # The MIXED arm (P13-P15): where meaninglessness sits on the real scale.
     if mixed and mixed.get("models"):
@@ -156,7 +172,7 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                         f"{max(m['mean_prefer_real'] for m in ms):.3f}"))
         out.append(_cmd("MixNBelowHalf",
                         str(sum(m["n_pairs_below_half"] for m in ms))))
-        out.append(_cmd("MixNPairsTotal", str(sum(m["n_pairs"] for m in ms))))
+        out.append(_cmd("MixNPairsTotal", f'{sum(m["n_pairs"] for m in ms):,}'.replace(",", "{,}")))
         out.append(_cmd("MixNBelowRange",
                         str(sum(1 for m in ms if m["indifference_below_range"]))))
         # The harm-beyond-utility test, reported with its held-out count so the
@@ -874,6 +890,73 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         out.append(_cmd("DepthSpread", f"{_spread_over('depth'):.3f}"))
         out.append(_cmd("PersonaSpread", f"{_spread_over('persona'):.3f}"))
 
+    # Surface covariates: how much of each arm's ordering is length, numerals
+    # and vocabulary, and what survives projecting them out. Also the battery's
+    # own comparability, which is a property of the stimuli and is measured
+    # before any model is consulted.
+    if surface and surface.get("summary"):
+        arms = {"R": "R", "N_plus": "Np", "N_minus": "Nm"}
+        for arm, tag in arms.items():
+            s = surface["summary"].get(arm)
+            if not s:
+                continue
+            out.append(_cmd(f"Surf{tag}Rsq", f"{s['surface_r2_mean']:.3f}"))
+            for stat, key in (("PCOne", "pc1"), ("Corr", "cross_model_r")):
+                for when, suffix in (("Raw", "_raw"), ("Ctrl", "_controlled")):
+                    v = s.get(f"{key}{suffix}")
+                    if v is not None:
+                        out.append(_cmd(f"Surf{tag}{stat}{when}", f"{v:.3f}"))
+
+        comp = surface.get("battery_comparability", {})
+        for arm, tag in arms.items():
+            c = comp.get(arm)
+            if not c:
+                continue
+            out.append(_cmd(f"Bat{tag}Chars", f"{c['chars']:.1f}"))
+            out.append(_cmd(f"Bat{tag}Words", f"{c['words']:.2f}"))
+            out.append(_cmd(f"Bat{tag}Unique", str(c["n_unique_texts"])))
+            out.append(_cmd(f"Bat{tag}RatioMean", f"{c['length_ratio_mean']:.3f}"))
+            out.append(_cmd(f"Bat{tag}RatioMax", f"{c['length_ratio_max']:.2f}"))
+            out.append(_cmd(f"Bat{tag}Longer", str(c["n_longer_than_real"])))
+            out.append(_cmd(f"Bat{tag}Outside", str(c["n_outside_stated_bound"])))
+            out.append(_cmd(f"Bat{tag}PctNumeral",
+                            f"{100 * c['frac_with_numeral']:.1f}"))
+        if "R" in comp and "N_minus" in comp:
+            gap = 100 * (comp["N_minus"]["chars"] / comp["R"]["chars"] - 1)
+            out.append(_cmd("BatCharGapPct", f"{gap:.1f}"))
+            wgap = 100 * (comp["N_minus"]["words"] / comp["R"]["words"] - 1)
+            out.append(_cmd("BatWordGapPct", f"{wgap:.1f}"))
+        if surface.get("seeds"):
+            nf = [a.get("n_features_used") for s in surface["seeds"].values()
+                  for name, a in s.items() if name == "N_minus"]
+            if nf:
+                out.append(_cmd("SurfNmFeatures", str(min(nf))))
+                out.append(_cmd("SurfFeatures", str(len(surface["features"]))))
+
+    # Differential attrition: the answer-mass gate keeps a different sample on
+    # each arm, so the matched-pair residual is the one that is not confounded
+    # with what the gate happened to retain.
+    if attrition and attrition.get("summary"):
+        s = attrition["summary"]
+        out.append(_cmd("AttrNCells", str(s["n_cells"])))
+        out.append(_cmd("AttrNAffected", str(s["n_cells_with_attrition"])))
+        out.append(_cmd("AttrResidRaw", f"{s['mean_residual_raw']:+.4f}"))
+        out.append(_cmd("AttrResidMatched", f"{s['mean_residual_matched']:+.4f}"))
+        out.append(_cmd("AttrShift", f"{s['mean_residual_shift']:+.4f}"))
+        out.append(_cmd("AttrMaxShift", f"{s['max_abs_residual_shift']:.4f}"))
+        out.append(_cmd("AttrWorstDiffPP",
+                        f"{100 * s['worst_differential_attrition']:.1f}"))
+        out.append(_cmd("AttrFloor", f"{attrition['answer_mass_floor']:.1f}"))
+        sweep = attrition.get("floor_sweep") or []
+        if sweep:
+            lo = [r for r in sweep if r["floor"] == min(r2["floor"] for r2 in sweep)]
+            hi = [r for r in sweep if r["floor"] == max(r2["floor"] for r2 in sweep)]
+            if lo and hi:
+                out.append(_cmd("AttrResidNoGate",
+                                f"{sum(r['residual_matched'] for r in lo)/len(lo):+.4f}"))
+                out.append(_cmd("AttrResidStrictGate",
+                                f"{sum(r['residual_matched'] for r in hi)/len(hi):+.4f}"))
+
     return "".join(out)
 
 
@@ -974,7 +1057,9 @@ def build_comply_table(comply: dict) -> str:
             f"{r['directive_displacement']:.3f} & {verdict}")
     return (
         "% Generated by scripts/paper_numbers.py. Do not edit.\n"
-        "\\begin{tabular}{@{}lrcrrrrl@{}}\n\\toprule\n"
+        # Eight columns including a verdict phrase; at \normalsize this runs
+        # ~32pt into the right margin.
+        "\\small\n\\begin{tabular}{@{}lrcrrrrl@{}}\n\\toprule\n"
         "model & $P(A)$ & leans & \\multicolumn{2}{c}{told to answer} & "
         "\\multicolumn{2}{c}{displacement} & verdict \\\\\n"
         "\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}\n"
@@ -1082,6 +1167,9 @@ def main() -> None:
     ap.add_argument("--rendered", default="site/rendered_prompts.json")
     ap.add_argument("--comply", default="site/comply_gate.json")
     ap.add_argument("--mixed", default="site/mixed_arm.json")
+    ap.add_argument("--hosted-card", default="site/card_hosted.json")
+    ap.add_argument("--surface", default="site/surface_covariates.json")
+    ap.add_argument("--attrition", default="site/attrition_control.json")
     ap.add_argument("--harm", default="site/harm_residual.json")
     ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
     ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
@@ -1134,9 +1222,18 @@ def main() -> None:
         mixed = dict(mixed, harm=harm)
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
+    hcpath = Path(args.hosted_card)
+    hosted = json.loads(hcpath.read_text()) if hcpath.exists() else None
+    sfpath, atpath = Path(args.surface), Path(args.attrition)
+    surface = json.loads(sfpath.read_text()) if sfpath.exists() else None
+    attrition = json.loads(atpath.read_text()) if atpath.exists() else None
+    for label, obj, path in (("surface covariates", surface, sfpath),
+                             ("attrition control", attrition, atpath)):
+        if obj is None:
+            print(f"  no {label} at {path}; omitting those macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
                  detector, stated, stated_base, revealed, neutral, rendered,
-                 comply, mixed)
+                 comply, mixed, surface, attrition, hosted)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

@@ -249,6 +249,11 @@ def main() -> None:
     ap.add_argument("--out", default="site")
     ap.add_argument("--format", default="svg", choices=("svg", "pdf", "png"))
     ap.add_argument("--themes", default="light,dark")
+    ap.add_argument("--all-models", action="store_true",
+                    help="also emit fig4b, the per-model breakdown of the panel "
+                         "fig4 averages. Off by default: no .tex cites it, and "
+                         "an uncited figure is build time and reader attention "
+                         "spent on a claim nobody makes.")
     args = ap.parse_args()
 
     data = json.loads(Path(args.data).read_text())
@@ -260,8 +265,17 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     for theme in [t.strip() for t in args.themes.split(",") if t.strip()]:
         sfx = "" if theme == "light" else "-dark"
-        for stem, fn in (("fig4_detector", figure),
-                         ("fig4b_detector_models", figure_all_models)):
+        # fig4b_detector_models is NOT emitted by default. It was built every
+        # run and cited by neither main.tex nor slides.tex -- a per-model
+        # breakdown of a panel fig4 already averages, competing for attention
+        # with the four figures that carry the argument. `figure_all_models` is
+        # kept and reachable with --all-models because the breakdown is the
+        # right thing to look at when one model is suspected of driving the
+        # mean; it is just not a figure the paper makes a claim with.
+        wanted = [("fig4_detector", figure)]
+        if args.all_models:
+            wanted.append(("fig4b_detector_models", figure_all_models))
+        for stem, fn in wanted:
             fig = fn(data, theme)
             fig.savefig(out / f"{stem}{sfx}.{args.format}", format=args.format,
                         bbox_inches="tight", transparent=True)

@@ -15,6 +15,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{caption}
 \usepackage{microtype}
 \usepackage[table]{xcolor}
@@ -36,68 +37,84 @@
 % The subtitle names the finding and carries its own hedge, and every number in
 % it resolves through numbers.tex like everything else -- a title is the last
 % place a stale figure should be allowed to survive a rebuild.
-\title{\textbf{Coherence Without Content}\\[.35em]
-\large A value-coherence metric scores invented outcomes at \MeanFloor{},\\
-and \NClears{} of \NModels{} models still clear their own floor}
+\title{\textbf{Does the Persona Change the Preference,\\ or Only the Prose?}\\[.4em]
+\large A referent-free control for value-coherence metrics:\\
+invented outcomes score \MeanFloor{}, and character count
+explains \SurfNmRsq{} of the ranking}
 
-\author{Nullcard\\
+\author{Martin Kaiser \and Gellért Bodorkós\\
 \small Apart Research Digital Minds Sprint}
 
-\date{15 August 2026}
+\date{16 August 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
 \noindent
-Replace the referents of a preference battery with invented words and a language
-model's choices stay almost as coherent as its choices over real outcomes:
-\MeanFloor{} against \MeanR{} on the Thurstonian held-out accuracy that has been
-read as evidence for emergent value systems. The models are not blind to the
-substitution --- a channel of the same forward pass that the metric
-\emph{discards} separates real outcomes from invented ones at AUROC
-\DetBestAuroc{}, against \DetKeptAuroc{} for the channel it keeps. The coherence
-number is computed from the one channel that noticed least.
+\textbf{Aim.} When a language model is given a persona and asked what it
+prefers, we would like to know whether the answer is about the outcomes or
+about the prompt. This study builds an instrument that separates the two, and
+the instrument is the result. Existing preference-coherence work reports a
+single number --- the held-out accuracy of a utility model fitted to a model's
+pairwise choices --- and reads its rise with scale as evidence that value
+systems emerge \citep{mazeika2025utility}. That number cannot distinguish a
+model with values from one ranking by sentence length, because nothing in the
+published robustness suite varies whether the outcomes \emph{mean anything}.
 
-Utility Engineering \citep{mazeika2025utility} fits that model to a language
-model's pairwise choices, reports the accuracy as \emph{structural coherence},
-and concludes from its rise with scale that coherent value systems emerge in
-large language models. Its robustness checks vary how the question is asked ---
-language, syntax, framing, option labels, context --- but none varies whether
-the outcomes being ranked \emph{mean anything}. We build that control: the same
-510 outcomes with their referents replaced by invented words, holding the
-prompt, the pair set, the fit and the metric fixed.
+\textbf{What we built on, and with what.} We reimplement the Thurstonian
+measurement from the published equations, then add the control it lacks: the
+same 510 outcomes with their referents replaced by invented words, holding the
+prompt, the pair set, the fit and the metric fixed. Two instruments are
+borrowed from psychology rather than invented here --- the Schwartz value
+circumplex, used as an externally authored criterion for whether an installed
+persona moves the outcomes it should, and cluster analysis, whose own
+methodological literature supplied the cluster-tendency test that made us
+withdraw one of our results. Choices are read from the first-token logit
+distribution rather than sampled, which removes temperature and seed from the
+design but restricts the study to models that expose logprobs: \NModels{}
+open-weight models across \NFamilies{} families on rented L4 and A10G GPUs,
+including a within-family ladder from \LadderSmall{} to \LadderLarge{}, and
+\NHosted{} larger models reached over a hosted API --- up to
+\LadderHosted{}, which returns a residual of \HostedResidual{}. Frontier
+models are absent by construction rather than by choice: without access to the
+distribution over the first token there is no way to read a preference off the
+latent state before generation begins.
 
-The control bites hardest on the scaling claim. Across one model family from
-\LadderSmall{} to \LadderLarge{}, real-outcome coherence rises \LadderRRise{}
-while coherence on \emph{meaningless} outcomes rises \LadderNRise{} --- roughly
-six times as fast --- so the content-attributable residual \emph{falls} by
-\LadderResidFall{} as models grow. What increases with scale is chiefly the
-component that does not depend on content. The mechanism is visible in the
-aggregate: the pair above is a mean over \NModels{} models, \NSplits{}
-evaluation splits and three independent design replicates each (\NCells{}
-cells), leaving a residual of \MeanResidual{}, and it is small because the
-metric thresholds preferences to hard labels and so records direction while
-discarding strength --- the same models commit to a side on \MeanDecisiveR\% of
-pairs about real outcomes and \MeanDecisiveN\% about invented ones, a median
-collapse of \MedianDecisiveRatio$\times$.
+\textbf{Main result: a protocol and a score, not a verdict.} The contribution
+is a reusable procedure --- a referent-free null arm, a design-replicate noise
+floor, a surface-covariate control and an attrition control --- that reports,
+per model, how much of its preference ordering is about content. Running it
+yields a card rather than a headline. On these models the metric returns
+\MeanFloor{} on invented outcomes against \MeanR{} on real ones (\NCells{}
+cells, \NSplits{} splits, three design replicates each); a linear model over
+seven surface features recovers \SurfNmRsq{} of the ranking of invented
+outcomes against \SurfRRsq{} of the real ranking, and removing that span halves
+the agreement between models on the invented arm (cross-model $r$
+\SurfNmCorrRaw{} to \SurfNmCorrCtrl). Put real and invented outcomes in direct
+competition and preference for the real one runs \MixPreferRealLo{} to
+\MixPreferRealHi{} across models --- above indifference everywhere, yet
+\MixNBelowHalf{} of \MixNPairsTotal{} individual pairs still fall the other way:
+under identifiable conditions these models prefer an outcome that denotes
+nothing to one that does. The instrument is not merely blunt, because an
+installed persona displaces real outcomes far more than invented ones in
+\PersonaAbovePointThree{} of \NPersonaCells{} conditions, and a channel of the
+same forward pass that the metric \emph{discards} separates real from invented
+at AUROC \DetBestAuroc{} against \DetKeptAuroc{} for the channel it keeps. The
+coherence number is computed from the one channel that noticed least.
 
-We are explicit that a real semantic signal exists: \NClears{} of \NModels{}
-models exceed their own design-replicate noise floor. The claim is that this
-signal is small, that it shrinks as models grow, and that the reported number
-does not separate it from format. Nor is the instrument merely insensitive: an
-installed persona displaces real outcomes substantially further than invented
-ones in \PersonaAbovePointThree{} of \NPersonaCells{} conditions, so content-linked
-preference structure is detectable when present --- and inducible. The blindness
-does recur one level up: told to have a trait, to hide it, or to perform it
-without having it, models report and enact it alike, on an instrument whose
-resolution for \emph{which} trait was named exceeds its resolution for the
-directive by more than an order of magnitude. We do not
-claim the metric is broken; three of its design choices were checked and came
-out in its favour. We claim it is \emph{unanchored}: high accuracy establishes
-that choices follow a stable scalar ordering, not that the ordering is about
-anything. Predictions were registered before the first run; all code, the
-pre-registration and the battery hash are released.
+\textbf{Compared with people.} Human value structure, as the borrowed
+instrument describes it, is at least two-dimensional and roughly circular ---
+opposing motivations arranged around a plane. What these models return is
+closer to a single line: one axis carries \SurfRPCOneRaw{} of the variance in
+their real-outcome utilities, the secondary axis does not survive replication,
+and a substantial fraction of the ordering is recoverable from character
+counts. Machines here are more one-dimensional than the human model predicts,
+and more format-driven than a value account allows. We do not claim the metric
+is broken --- three of its design choices were checked and came out in its
+favour. We claim it is \emph{unanchored}, and that anchoring is measurable if
+you build the arm that measures it. Predictions were registered before the
+first run; all code, the pre-registration and the battery hash are released.
 \end{abstract}
 
 \section{Introduction}
@@ -157,6 +174,23 @@ refer to anything.}
     replicates per cell, so no between-model difference smaller than a model's
     own design spread is asserted (\S\ref{sec:floor}).
 \end{enumerate}
+
+\paragraph{The shape of the argument.} The paper runs as one narrowing. We
+build an arm of outcomes that refer to nothing and find the metric barely
+notices (\S\ref{sec:flat}); we ask why and find it discards preference strength,
+keeping only which side of a coin-flip each choice fell on
+(\S\ref{sec:strength}); we ask what the surviving ordering is made of and find
+a large fraction of it is character count (\S\ref{sec:surface}); we check that
+the result is not an artifact of which rows our own gate retained
+(\S\ref{sec:attrition}); and we test the scaling claim, where the floor rises
+faster than the signal (\S\ref{sec:scale}). Then the turn: the instrument is not
+merely blunt, because installing a persona moves preferences over real outcomes
+far more than invented ones (\S\ref{sec:persona}), and the model itself can tell
+real outcomes from invented ones in a channel of the same forward pass that the
+metric throws away (\S\ref{sec:detector}). The blindness is the metric's, not
+the model's. \S\ref{sec:favour} reports three checks that came out in the
+metric's favour, because a critique that never loses an argument is not
+measuring anything.
 
 \paragraph{What we are not claiming.} We are not claiming the metric is
 invalid, that these models lack preferences, or that Utility Engineering's
@@ -332,10 +366,91 @@ $\armR - \armNm$, never a raw coherence.
 
 \paragraph{Invariants.} One pair set is shared across every arm and every model,
 so arms cannot differ in which comparisons they contain. Outcome indices are
-shared, so outcome $i$ is the same outcome in all three arms and the arms differ
-only in what it refers to. Invented tokens are checked against a 235{,}976-word
-dictionary and regenerated on collision, and per-item length ratio is
-constrained to $[0.6, 1.6]$.
+shared, so outcome $i$ occupies the same slot in all three arms. Invented tokens
+are checked against a 235{,}976-word dictionary and regenerated on collision.
+
+\subsection{The factor inventory}\label{sec:factors}
+
+Every parameter of the pipeline is listed here with exactly one state, because a
+parameter that appears in no table is one nobody decided to hold fixed. We
+report this table rather than a prose assurance because writing it is what
+found the two entries in its third column.
+
+\begin{center}
+\small
+\begin{tabular}{@{}llp{0.42\textwidth}@{}}
+\toprule
+\textbf{factor} & \textbf{state} & \textbf{levels, or how it is held} \\
+\midrule
+outcome referent   & varied & real / invented (\armR{} vs \armNp{}, \armNm{}) \\
+numeric magnitude  & varied & kept / removed (\armNp{} vs \armNm{}) \\
+model              & varied & \NModels{} models, \LadderSmall--\LadderLarge \\
+design seed        & varied & 3 independent subsamples and pair sets \\
+\midrule
+pair set           & fixed  & one set per seed, shared by all arms \\
+outcome slot       & fixed  & index $i$ is the same slot in every arm \\
+presentation order & fixed  & both orders, counterbalanced, per pair \\
+prompt template    & fixed  & rendered and stored per cell type \\
+sampling           & fixed  & none: read from the first-token logits \\
+fit and metric     & fixed  & one Thurstonian implementation, one split rule \\
+\midrule
+character length   & \textbf{uncontrolled} & \armNm{} runs \BatCharGapPct\% longer
+  than \armR{} (\S\ref{sec:comparability}) \\
+retained sample    & \textbf{uncontrolled} & the answer-mass gate keeps a
+  different subset per arm (\S\ref{sec:attrition}) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The two uncontrolled rows each get a control in the results
+(\S\ref{sec:surface}, \S\ref{sec:attrition}) and a limitation
+(\S\ref{sec:limits}). A post-hoc control buys an upper bound, not a clean
+factor, and we mark them as such rather than promoting them back to
+``fixed''.
+
+\subsection{What the substitution actually changes}\label{sec:comparability}
+
+The contrast $\armR - \armNm$ is not one manipulation. It is three, and only
+the first is intended:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & \textbf{\armR} & \textbf{\armNp} & \textbf{\armNm} & \textbf{\armNm{} vs \armR} \\
+\midrule
+characters, mean      & \BatRChars & \BatNpChars & \BatNmChars & $+$\BatCharGapPct\% \\
+words, mean           & \BatRWords & \BatNpWords & \BatNmWords & $+$\BatWordGapPct\% \\
+items with a numeral  & \BatRPctNumeral\% & \BatNpPctNumeral\% & \BatNmPctNumeral\% & $-100$\% \\
+distinct texts        & \BatRUnique & \BatNpUnique & \BatNmUnique & $-$69 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Word count was matched by construction and holds to \BatWordGapPct\%. Character
+count was not: the invented vocabulary is longer per word, so \armNm{} runs
+\BatCharGapPct\% longer than \armR{}. An earlier version of this section
+claimed a per-item length ratio constrained to $[0.6, 1.6]$; no such constraint
+exists in the generator, and \BatNmOutside{} of 510 \armNm{} items fall outside
+that interval (largest ratio \BatNmRatioMax). More to the point, a bound is not
+a match --- \BatNmLonger{} of 510 invented items are \emph{longer} than their
+real counterpart, mean ratio \BatNmRatioMean, so the deviation is nearly
+one-sided.
+
+Removing magnitudes also collapses distinctions: \armNm{} holds \BatNmUnique{}
+distinct strings for 510 items, because ``\$1'' and ``\$5'' map to the same
+invented word. That is visible in the sampled pairs at 0.2\% of them, and those
+pairs return $p = 0.500$ to three decimals --- an unplanned but exact check that
+the order counterbalancing removes position bias, since two identical texts must
+score one half and do.
+
+What the three arms do buy is a partial factorial the analysis can use:
+$\armR \to \armNp$ removes the referent while \emph{keeping} the numerals, and
+$\armNp \to \armNm$ removes the numerals at near-constant length. Claims about
+arithmetic are licensed by the second contrast; claims about meaning need the
+first, and carry the length gap as a caveat.
 
 \paragraph{Measurement.} Preferences are read directly off the first-token
 logit distribution rather than sampled, which removes sampling noise but is only
@@ -506,6 +621,82 @@ indifference. Coherence reads only which side of $0.5$ each pair falls on, so
 both distributions score alike.}
 \label{fig:strength}
 \end{figure}
+
+\subsection{Two controls the headline needs}\label{sec:controls}
+
+The two uncontrolled rows of \S\ref{sec:factors} are each an alternative
+explanation of the flat result, and each is answerable from data already on
+disk. Both were run after the headline was fixed, and both are reported
+whichever way they came out.
+
+\paragraph{Surface covariates, and how much of the agreement they buy.}
+\label{sec:surface}
+The obvious objection to \S\ref{sec:flat} is that every arm is orderable
+without reading it: by length, by numeral, by how much of the vocabulary is
+real. We fit \SurfFeatures{} such features per outcome --- characters, words,
+mean word length, numeral count, log largest magnitude, commas, and the
+fraction of tokens in a 235{,}976-word dictionary --- and ask what a linear
+model on them explains of each model's fitted utilities, then project their
+span out and recompute the two statistics that describe a continuum.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+& \textbf{surface $R^2$} & \multicolumn{2}{c}{\textbf{PC1 share}}
+& \multicolumn{2}{c}{\textbf{cross-model $r$}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+& & raw & controlled & raw & controlled \\
+\midrule
+\armR   & \SurfRRsq  & \SurfRPCOneRaw  & \SurfRPCOneCtrl  & \SurfRCorrRaw  & \SurfRCorrCtrl \\
+\armNp  & \SurfNpRsq & \SurfNpPCOneRaw & \SurfNpPCOneCtrl & \SurfNpCorrRaw & \SurfNpCorrCtrl \\
+\armNm  & \SurfNmRsq & \SurfNmPCOneRaw & \SurfNmPCOneCtrl & \SurfNmCorrRaw & \SurfNmCorrCtrl \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The objection is substantially right, and this is the mechanism the paper has
+been asserting without measuring. Surface explains \SurfRRsq{} of a model's
+ordering over real outcomes and \SurfNmRsq{} over invented ones --- four times
+as much. Projecting it out leaves \armR{} untouched (cross-model $r$
+\SurfRCorrRaw{} $\to$ \SurfRCorrCtrl, which rises, as removing a small
+near-orthogonal nuisance will) and roughly halves both invented arms
+(\SurfNmCorrRaw{} $\to$ \SurfNmCorrCtrl{} on \armNm).
+
+Two things follow, and they point in opposite directions. Against a purely
+deflationary reading: \SurfNmCorrCtrl{} still exceeds the $\sim$$0.11$ that
+independent orderings would give, so after length, numerals and vocabulary are
+removed, nine models still agree about outcomes that denote nothing, and we
+cannot say what about. For the paper's central claim: a metric on which
+\SurfNmRsq{} of the ordering is recoverable from character counts is
+\emph{unanchored} in exactly the sense \S1 means, and this is the closest thing
+to a mechanism we have. Note the control is weaker on \armNm{} than elsewhere
+--- two of the \SurfFeatures{} features are constant there, leaving
+\SurfNmFeatures --- so \SurfNmRsq{} is a lower bound on the surface share.
+
+\paragraph{The answer-mass gate keeps a different sample on each arm.}
+\label{sec:attrition}
+Rows whose first-token answer mass falls below \AttrFloor{} are dropped rather
+than scored. The gate is right in intent, and on seven of \NModels{} models it
+drops nothing. On the two that deliberate it drops more on the invented arm than
+the real one: a model about to answer ``Let me think about this'' has low answer
+mass, and invented outcomes provoke more of that. The surviving invented-arm
+pairs are then the ones answered reflexively, which is the subset most likely
+to follow a cheap heuristic and so most likely to be coherent. The bias runs
+towards our own conclusion, which is why it is bounded here rather than noted.
+
+Scoring both arms on the pairs that survived in \emph{both} --- one pair set,
+therefore one train/test fold --- moves the mean residual over \AttrNCells{}
+cells from \AttrResidRaw{} to \AttrResidMatched, a shift of \AttrShift.
+\AttrNAffected{} cells lost any pairs at all; worst differential attrition is
+\AttrWorstDiffPP{} points. The correction is small in the mean and decisive
+once: for \texttt{gemma-4-E2B-it} at one design seed it moves the residual from
+$+0.0323$ to $+0.0000$, so that cell's entire apparent content effect was the
+gate. Sweeping the floor from $0$ to $0.9$ moves the matched residual only from
+\AttrResidNoGate{} to \AttrResidStrictGate, so the headline does not depend on
+where the threshold sits --- and a stricter gate makes the residual smaller,
+not larger.
 
 \subsection{The scaling result, floor-corrected}\label{sec:scale}
 
@@ -1102,6 +1293,38 @@ within-family result rather than a cross-family one.
 
 \section{Limitations}\label{sec:limits}
 
+\paragraph{The invented arms are longer than the real one, and no crossed
+design separates that from meaning.} \armNm{} runs \BatCharGapPct\% longer in
+characters than \armR{} (words match to \BatWordGapPct\%), and
+\BatNmLonger{} of 510 invented items are longer than their real counterpart. An
+earlier draft of \S\ref{sec:method} asserted a per-item length ratio constrained
+to $[0.6, 1.6]$; that constraint is not implemented anywhere in the generator
+and \BatNmOutside{} items violate it, with a largest ratio of \BatNmRatioMax.
+The claim has been removed and replaced with the measured distribution. So the
+referent and the length change together, and \S\ref{sec:surface} is a post-hoc
+covariate control, which buys an upper bound on the surface contribution and not
+a clean referent factor. The design that would settle it crosses length with
+referent --- invented outcomes padded to real length and real outcomes padded to
+invented length --- and costs four arms rather than three. We did not run it.
+Two mitigations are worth the reader's weight: \armNp{} sits within
+\BatNpRatioMean{} of \armNm{} on length while differing in numerals, so the
+arithmetic contrast is close to length-matched; and surface control is
+\emph{weaker} on \armNm{} (\SurfNmFeatures{} usable features against
+\SurfFeatures) so \SurfNmRsq{} understates rather than overstates the surface
+share.
+
+\paragraph{A gate that is fixed everywhere still kept a different sample per
+arm.} The answer-mass floor is one threshold applied identically to every cell,
+which is what made it easy to overlook: the parameter is fixed, but the
+distribution it filters is moved by the treatment, so the retained sample is
+not. \S\ref{sec:attrition} bounds it by rescoring both arms on their shared
+pairs, and the mean effect is \AttrShift. Two caveats survive that. The
+correction can only equalise pairs both arms retained; a pair no model answered
+on either arm is invisible to it, and we cannot say what those choices would
+have been. And the effect is concentrated rather than diffuse --- one cell's
+entire residual was attrition --- so with a different model mix the mean shift
+would not be the right summary.
+
 \paragraph{Two models did not receive the prompt we thought we sent.} Our sweep
 supplies no system message in the baseline condition and records
 \texttt{system\_prompt: None} for those cells. That records what was
@@ -1376,6 +1599,45 @@ of the metric in \S1 (from \texttt{scripts/floor\_simulation.py}, which
 describes synthetic responders and no language model) and figures quoted from
 the literature, each re-derived from the full source text rather than from an
 abstract.
+
+\section*{AI usage, and where the humans were}
+
+We used a coding agent (Claude, Anthropic) throughout, and the honest
+description is neither ``AI-assisted'' nor ``AI-generated'' but a division of
+labour worth stating precisely, since this is a paper about not trusting a
+number whose provenance is vague.
+
+\paragraph{What the AI did.} Wrote most of the implementation --- the
+Thurstonian fit, the sweep runners, the analysis scripts and their unit tests
+--- under direction. Ran the analyses. Drafted prose, including sections of
+this paper, which the authors then revised. Found several of the defects
+reported here, including the differential attrition in \S\ref{sec:attrition}
+and the missing length constraint in \S\ref{sec:comparability}, in both cases
+after a human asked a question that pointed at them (``what happens to a
+reasoning model that starts by saying \emph{let me think}?'' and ``are the
+invented texts the same length as the real ones?'').
+
+\paragraph{What the humans did.} Chose the research question and the three-arm
+design. Set the standard of evidence --- pre-registration before the first run,
+a noise floor before any comparison, a claims ledger with falsification
+conditions --- and enforced it against a collaborator whose default is to
+produce a plausible table. Every retraction in this paper came from a human
+declining to accept a clean result: the clustering analysis was withdrawn after
+one of us insisted on a cluster-tendency test, and the \texttt{gemma} cell in
+\S\ref{sec:attrition} was withdrawn after one of us asked what the answer-mass
+gate was doing to reasoning models. Read the methods literature that killed the
+clustering result. Made every judgement about what to claim.
+
+\paragraph{What this cost, and what it should be read as.} The failure mode of
+this arrangement is not fabrication --- every number here resolves through a
+macro to a file on disk, and that pipeline was built precisely because prose
+about results is cheap to generate and expensive to check. The failure mode is
+\emph{fluent completeness}: analyses that run, produce tables, and answer the
+wrong question. Two such made it into a draft and are documented as
+retractions rather than quietly removed. We report this because a reader
+weighing the paper should know that its error-correction came from human
+scepticism applied to fast machine output, and should discount accordingly
+wherever we have not shown the control.
 
 % unsrtnat numbers entries in order of first citation, which is what the
 % square-bracket numeric style in the preamble expects.

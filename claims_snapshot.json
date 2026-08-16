@@ -150,6 +150,44 @@
       "LlamaThreeThreeSevenZeroBInstructHostDecR": "88",
       "LlamaThreeThreeSevenZeroBInstructHostDecN": "66",
       "LlamaThreeThreeSevenZeroBInstructHostReps": "1"
+    },
+    "persona-needs-an-empty-slot-control": {
+      "PdNegMagR": "4.61",
+      "PdNegMagMaxR": "10.70",
+      "PdClearingR": "53",
+      "PdNegDirR": "+0.103",
+      "PdSelfDirR": "+0.600",
+      "PdShuffleDirR": "+0.174",
+      "PdBestCondition": "sch-selfdirection-D2",
+      "PdBestFloorCorr": "0.796",
+      "PdLoudestCondition": "sch-power-D2",
+      "PdLoudestDirReal": "+0.703",
+      "PdLoudestFloorCorr": "0.493"
+    },
+    "surface-explains-invented-order": {
+      "SurfRRsq": "0.090",
+      "SurfNpRsq": "0.444",
+      "SurfNmRsq": "0.384",
+      "SurfRCorrRaw": "0.656",
+      "SurfRCorrCtrl": "0.683",
+      "SurfNmCorrRaw": "0.343",
+      "SurfNmCorrCtrl": "0.182",
+      "SurfNmPCOneRaw": "0.458",
+      "SurfNmPCOneCtrl": "0.316",
+      "SurfFeatures": "7",
+      "SurfNmFeatures": "5"
+    },
+    "gate-keeps-a-different-sample": {
+      "AttrNCells": "27",
+      "AttrNAffected": "6",
+      "AttrResidRaw": "+0.0275",
+      "AttrResidMatched": "+0.0253",
+      "AttrShift": "-0.0022",
+      "AttrMaxShift": "0.0323",
+      "AttrWorstDiffPP": "3.9",
+      "AttrFloor": "0.5",
+      "AttrResidNoGate": "+0.0257",
+      "AttrResidStrictGate": "+0.0191"
     }
   }
 }

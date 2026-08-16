@@ -108,6 +108,41 @@ def jobs_for(design: dict) -> list[tuple[int, int, int, str]]:
     return jobs
 
 
+def cell_filename(api_id: str, arm: str,
+                  design_seed: int = DEFAULT_DESIGN_SEED) -> str:
+    """One file per (model, arm, design seed) -- the GPU sweep's rule, mirrored.
+
+    See modal_app/sweep.py:cell_filename. The seed is omitted for the default so
+    wave 1's files stay findable by the resume check, and every replicate gets an
+    explicit suffix, which is what stops a second design seed from landing on the
+    cell it exists to be compared with. Without the suffix `--design-seed` moved
+    the design and not the path: the replicate either overwrote the baseline or,
+    since a complete cell is skipped, was never run while appearing to have been.
+
+    build_card.py reads the seed back off this name to group replicates, so the
+    suffix is also what makes three hosted cells into one noise floor.
+    """
+    stem = f"{api_id.replace('/', '__')}__{arm}"
+    if design_seed != DEFAULT_DESIGN_SEED:
+        stem += f"__s{design_seed}"
+    return stem + ".jsonl"
+
+
+def reference_cell_for(reference_dir: Path, design_seed: int) -> Path | None:
+    """A self-hosted R cell built on the SAME design seed, or None.
+
+    Wave 0 proves the hosted design reproduces a cell the GPU sweep already
+    wrote. That proof is seed-specific: a seed-20260816 design draws a different
+    outcome subsample and different pairs, so checking it against the default
+    seed's cell would reject a replicate that is exactly right. Matching the seed
+    turns the check into the stronger statement we actually want -- that the
+    hosted replicate shares a design with the local replicate it sits beside.
+    """
+    pattern = ("*__R.jsonl" if design_seed == DEFAULT_DESIGN_SEED
+               else f"*__R__s{design_seed}.jsonl")
+    return next(iter(sorted(reference_dir.glob(pattern))), None)
+
+
 def verify_design_matches(design: dict, reference_cell: Path) -> tuple[bool, str]:
     """Does this design reproduce a cell the GPU sweep already wrote?
 
@@ -428,8 +463,9 @@ def main() -> int:
     # globbing the hosted output dir would, once one hosted cell exists, check
     # the design against itself and pass for the wrong reason.
     ref_dir = Path(args.reference_results)
-    ref = next(iter(sorted(ref_dir.glob("*__R.jsonl"))), None)
-    ok, msg = verify_design_matches(design, ref) if ref else (False, "no local R cell to check against")
+    ref = reference_cell_for(ref_dir, args.design_seed)
+    ok, msg = verify_design_matches(design, ref) if ref else (
+        False, f"no local R cell on design seed {args.design_seed} to check against")
     print(f"design check: {'OK' if ok else 'FAILED'} -- {msg}")
     if not ok:
         print("refusing to run: hosted cells would not be comparable with local ones.")
@@ -438,7 +474,7 @@ def main() -> int:
     planned = []
     for api_id in requested:
         for arm in arms:
-            out = results / f"{api_id.replace('/', '__')}__{arm}.jsonl"
+            out = results / cell_filename(api_id, arm, args.design_seed)
             done, n = cell_is_complete(out)
             if done and not args.force:
                 print(f"  skip (complete, {n} rows): {out.name}")

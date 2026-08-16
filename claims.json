@@ -486,6 +486,53 @@
       "what_would_falsify": "More models per condition moving the clearing rate substantially above \\PdClearingR%, or a matched self-check (same design, prompt-only perturbation) that returns near zero, which would restore raw direction agreement as a persona-specific indicator.",
       "grows_by": "Only \\PdNModelsPerCondition models carry each persona condition, so every cosine rests on ten pairs; and each persona cell is one design seed, so the conditions have no noise floor of their own.",
       "priority": 2
+    },
+    {
+      "id": "surface-explains-invented-order",
+      "statement": "A linear model over seven surface features recovers a far larger share of a model's ordering of invented outcomes than of real ones, and projecting that span out roughly halves cross-model agreement on the invented arms while leaving the real arm intact -- but the agreement surviving surface control still exceeds what independent orderings would give.",
+      "status": "provisional",
+      "section": "sec:surface",
+      "macros": [
+        "SurfRRsq",
+        "SurfNpRsq",
+        "SurfNmRsq",
+        "SurfRCorrRaw",
+        "SurfRCorrCtrl",
+        "SurfNmCorrRaw",
+        "SurfNmCorrCtrl",
+        "SurfNmPCOneRaw",
+        "SurfNmPCOneCtrl",
+        "SurfFeatures",
+        "SurfNmFeatures"
+      ],
+      "evidence": {
+        "source": "site/surface_covariates.json",
+        "note": "Features are characters, words, mean word length, numeral count, log largest magnitude, commas, and the fraction of tokens found in the system dictionary. Two features are constant on N_minus (no numerals anywhere), so only \\SurfNmFeatures of \\SurfFeatures are usable there and \\SurfNmRsq is a LOWER bound on the surface share. The arms are not length-matched (\\BatCharGapPct percent on characters), so this is a post-hoc covariate control and buys an upper bound on what surface explains, not a clean referent factor."
+      },
+      "what_would_falsify": "A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed."
+    },
+    {
+      "id": "gate-keeps-a-different-sample",
+      "statement": "The answer-mass gate is one fixed threshold but retains a different subset of pairs on each arm, because invented outcomes provoke more deliberation; rescoring both arms on their shared pairs shifts the mean residual slightly toward zero and eliminates one cell's residual entirely.",
+      "status": "established",
+      "section": "sec:attrition",
+      "macros": [
+        "AttrNCells",
+        "AttrNAffected",
+        "AttrResidRaw",
+        "AttrResidMatched",
+        "AttrShift",
+        "AttrMaxShift",
+        "AttrWorstDiffPP",
+        "AttrFloor",
+        "AttrResidNoGate",
+        "AttrResidStrictGate"
+      ],
+      "evidence": {
+        "source": "site/attrition_control.json",
+        "note": "Seven of nine models show zero attrition on both arms. The effect is carried by SmolLM3-3B and gemma-4-E2B-it, the two that deliberate. Direction favours this paper's thesis, which is why it is bounded rather than mentioned: dropping the hardest invented pairs inflates invented-arm coherence and shrinks the residual. Matched scoring shares one pair set and therefore one train/test fold, so the shift cannot come from differing folds."
+      },
+      "what_would_falsify": "A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold."
     }
   ]
 }
