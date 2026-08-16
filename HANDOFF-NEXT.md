@@ -9,7 +9,7 @@ with a result, because everything is committed and pushed.
 ## 0. State: clean, pushed, one cell in flight
 
 `origin/main` is at **`8219fbe`**. Working tree clean. **238 tests pass**,
-`claims.py` clean (12 established / 6 provisional), 8/8 paper files lint, no
+`claims.py` clean (11 established / 7 provisional), 8/8 paper files lint, no
 broken citations in either direction.
 
 **One process is running**: `google/gemma-3-27b-it × N_minus`, the last cell of
