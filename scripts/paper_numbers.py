@@ -80,7 +80,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           revealed: dict | None = None,
           neutral: dict | None = None,
           rendered: dict | None = None,
-          comply: dict | None = None) -> str:
+          comply: dict | None = None,
+          mixed: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -103,6 +104,25 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("NClears", str(sum(1 for t in tiles if t.get("clears_floor")))))
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
+
+    # The MIXED arm (P13-P15): where meaninglessness sits on the real scale.
+    if mixed and mixed.get("models"):
+        ms = mixed["models"]
+        out.append(_cmd("MixNModels", str(len(ms))))
+        lc = [m["corr_utility_prefer_real_length_controlled"] for m in ms
+              if "corr_utility_prefer_real_length_controlled" in m]
+        if lc:
+            out.append(_cmd("MixCorrLo", f"{min(lc):+.2f}"))
+            out.append(_cmd("MixCorrHi", f"{max(lc):+.2f}"))
+        out.append(_cmd("MixPreferRealLo",
+                        f"{min(m['mean_prefer_real'] for m in ms):.3f}"))
+        out.append(_cmd("MixPreferRealHi",
+                        f"{max(m['mean_prefer_real'] for m in ms):.3f}"))
+        out.append(_cmd("MixNBelowHalf",
+                        str(sum(m["n_pairs_below_half"] for m in ms))))
+        out.append(_cmd("MixNPairsTotal", str(sum(m["n_pairs"] for m in ms))))
+        out.append(_cmd("MixNBelowRange",
+                        str(sum(1 for m in ms if m["indifference_below_range"]))))
 
     # The instruction-following gate (P12). Reported with BOTH criteria,
     # because the registered one and the one the gate needs disagree in
@@ -815,6 +835,7 @@ def main() -> None:
     ap.add_argument("--neutral", default="site/neutral_control.json")
     ap.add_argument("--rendered", default="site/rendered_prompts.json")
     ap.add_argument("--comply", default="site/comply_gate.json")
+    ap.add_argument("--mixed", default="site/mixed_arm.json")
     ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
     ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
     ap.add_argument("--neutral-table-out", default="paper/table_neutral.tex")
@@ -858,11 +879,13 @@ def main() -> None:
     rendered = json.loads(rpath4.read_text()) if rpath4.exists() else None
     cpath = Path(args.comply)
     comply = json.loads(cpath.read_text()) if cpath.exists() else None
+    mpath = Path(args.mixed)
+    mixed = json.loads(mpath.read_text()) if mpath.exists() else None
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
                  detector, stated, stated_base, revealed, neutral, rendered,
-                 comply)
+                 comply, mixed)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

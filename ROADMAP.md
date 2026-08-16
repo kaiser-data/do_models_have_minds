@@ -24,7 +24,17 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* families with a ladder = 1, sizes in family = 4, models outside family = 5, note = within-family r -0.84 unmatched and -0.61 length-matched; pooled -0.67 collapsing to -0.16. The pooled collapse is why this is a within-family statement and not a scaling law.
 
-### 3. `track3-directive-blind` — provisional
+### 3. `choice-tracks-content` — provisional
+
+> Asked to choose between a real outcome and a meaningless one in the same comparison, models prefer the real one in proportion to how much they like it -- so with a meaningful option present the choice does read outcome content.
+
+**Next addition.** The remaining roster at this arm, and the N+ arm for a three-level version. The below-indifference set is the interesting part and is currently characterised by reading it, not by any test: a coded harm rating of those outcomes against matched controls would turn an observation into a result.
+
+**Would falsify it.** The correlation vanishing on new models, or the below-indifference pairs turning out to be explained by something other than the harm the outcome describes -- a position, tokenisation or category artifact. Only length has been controlled.
+
+*Current evidence:* models = 3, note = P(prefer the real option) runs 0.748 to 0.940 and correlates +0.37 to +0.71 with that outcome's own fitted utility AFTER partialling out the token-length gap, monotone across every quartile. Meaninglessness sits near the bottom of the real scale but below it on all 3 models: 134 of 7436 pairs fall below indifference, and those are the actively harmful outcomes rather than a random tail.
+
+### 4. `track3-directive-blind` — provisional
 
 > Both the stated and the revealed channel register which trait was named and neither registers what the model was told to do about it.
 
@@ -34,7 +44,7 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* models stated = 5, models revealed passing gate = 2, models with complete triad = 3
 
-### 4. `instruction-registered-not-obeyed` — provisional
+### 5. `instruction-registered-not-obeyed` — provisional
 
 > Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.
 
@@ -44,7 +54,7 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* models = 5, note = 4 of 5 obey the registered criterion, 4 register a shift, and only 3 do both. Qwen3.5-2B went from P(A) 0.725 to 0.465 -- a large move that lands at indifference rather than at compliance. LFM2.5-1.2B-Instruct passes the obedience test having started at P(A) 0.068, i.e. it was already answering B before being told to, so its pass is an artifact of the criterion.
 
-### 5. `answer-mass-channel` — provisional
+### 6. `answer-mass-channel` — provisional
 
 > Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.
 
@@ -54,7 +64,7 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* models = 9, test = two-sided sign test
 
-### 6. `directive-beats-persona` — provisional
+### 7. `directive-beats-persona` — provisional
 
 > One model responds to an explicit directive while barely responding to a persona, so directive-following and persona-uptake are separable capacities rather than one slot working or not.
 

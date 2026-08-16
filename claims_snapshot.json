@@ -22,6 +22,16 @@
       "MatchedLadderFall": "-0.030",
       "LadderNFamilies": "1"
     },
+    "choice-tracks-content": {
+      "MixNModels": "3",
+      "MixCorrLo": "+0.37",
+      "MixCorrHi": "+0.71",
+      "MixPreferRealLo": "0.748",
+      "MixPreferRealHi": "0.940",
+      "MixNBelowHalf": "134",
+      "MixNPairsTotal": "7436",
+      "MixNBelowRange": "3"
+    },
     "persona-displacement": {
       "PersonaAbovePointThree": "18",
       "NPersonaCells": "20",

@@ -110,6 +110,29 @@
       "priority": 2
     },
     {
+      "id": "choice-tracks-content",
+      "statement": "Asked to choose between a real outcome and a meaningless one in the same comparison, models prefer the real one in proportion to how much they like it -- so with a meaningful option present the choice does read outcome content.",
+      "status": "provisional",
+      "section": "sec:mixed",
+      "macros": [
+        "MixNModels",
+        "MixCorrLo",
+        "MixCorrHi",
+        "MixPreferRealLo",
+        "MixPreferRealHi",
+        "MixNBelowHalf",
+        "MixNPairsTotal",
+        "MixNBelowRange"
+      ],
+      "evidence": {
+        "models": "\\MixNModels",
+        "note": "P(prefer the real option) runs \\MixPreferRealLo to \\MixPreferRealHi and correlates \\MixCorrLo to \\MixCorrHi with that outcome's own fitted utility AFTER partialling out the token-length gap, monotone across every quartile. Meaninglessness sits near the bottom of the real scale but below it on all \\MixNBelowRange models: \\MixNBelowHalf of \\MixNPairsTotal pairs fall below indifference, and those are the actively harmful outcomes rather than a random tail."
+      },
+      "what_would_falsify": "The correlation vanishing on new models, or the below-indifference pairs turning out to be explained by something other than the harm the outcome describes -- a position, tokenisation or category artifact. Only length has been controlled.",
+      "grows_by": "The remaining roster at this arm, and the N+ arm for a three-level version. The below-indifference set is the interesting part and is currently characterised by reading it, not by any test: a coded harm rating of those outcomes against matched controls would turn an observation into a result.",
+      "priority": 3
+    },
+    {
       "id": "persona-displacement",
       "statement": "An installed persona displaces real outcomes further than invented ones, so the instrument is not merely insensitive.",
       "status": "established",

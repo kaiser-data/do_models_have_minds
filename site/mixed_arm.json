@@ -1,0 +1,109 @@
+{
+  "models": [
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.7482306295067248,
+      "corr_utility_prefer_real": 0.9010717126603537,
+      "n_pairs_below_half": 54,
+      "min_prefer_real": 0.31901305201142094,
+      "corr_length_gap_prefer_real": 0.14887981334871486,
+      "corr_utility_prefer_real_length_controlled": 0.7093797078269141,
+      "quartiles": [
+        {
+          "lo": -1.1247851060526406,
+          "hi": -0.23399159733918717,
+          "prefer_real": 0.6412578909743998
+        },
+        {
+          "lo": -0.23399159733918717,
+          "hi": 0.13643319934910406,
+          "prefer_real": 0.7420257538123565
+        },
+        {
+          "lo": 0.13643319934910406,
+          "hi": 0.3439400248558102,
+          "prefer_real": 0.7836432581238981
+        },
+        {
+          "lo": 0.3439400248558102,
+          "hi": 0.7609092661605187,
+          "prefer_real": 0.819377278005519
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    },
+    {
+      "model": "google/gemma-4-E2B-it",
+      "n_pairs": 2436,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.9115646759859757,
+      "corr_utility_prefer_real": 0.7558692957222737,
+      "n_pairs_below_half": 19,
+      "min_prefer_real": 0.024218134502334197,
+      "corr_length_gap_prefer_real": 0.15246741483289375,
+      "corr_utility_prefer_real_length_controlled": 0.5045889855236906,
+      "quartiles": [
+        {
+          "lo": -4.499541319242964,
+          "hi": -0.6356658646206004,
+          "prefer_real": 0.7471311701909329
+        },
+        {
+          "lo": -0.6356658646206004,
+          "hi": 0.3157467592855303,
+          "prefer_real": 0.9010296573877598
+        },
+        {
+          "lo": 0.3157467592855303,
+          "hi": 0.8935920457355127,
+          "prefer_real": 0.9433306288601888
+        },
+        {
+          "lo": 0.8935920457355127,
+          "hi": 3.423870067556611,
+          "prefer_real": 0.969618811505209
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    },
+    {
+      "model": "ibm-granite/granite-4.1-3b",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.9402454797786896,
+      "corr_utility_prefer_real": 0.47846054954450556,
+      "n_pairs_below_half": 61,
+      "min_prefer_real": 5.131984101181969e-11,
+      "corr_length_gap_prefer_real": 0.07132758233315577,
+      "corr_utility_prefer_real_length_controlled": 0.3735205433327116,
+      "quartiles": [
+        {
+          "lo": -2.074544396336079,
+          "hi": -1.3437484648021647,
+          "prefer_real": 0.7969034456610937
+        },
+        {
+          "lo": -1.3437484648021647,
+          "hi": -0.6303308526729935,
+          "prefer_real": 0.9505400564887526
+        },
+        {
+          "lo": -0.6303308526729935,
+          "hi": 1.577424099032331,
+          "prefer_real": 0.995208384222705
+        },
+        {
+          "lo": 1.577424099032331,
+          "hi": 3.5726259411582038,
+          "prefer_real": 0.9999992672070807
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    }
+  ]
+}
