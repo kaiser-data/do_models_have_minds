@@ -1,0 +1,44 @@
+{
+  "Qwen/Qwen3-235B-A22B-Instruct-2507": {
+    "n": 6,
+    "mean_answer_mass": 1.0,
+    "first_token_scoreable": true,
+    "roster_says": true,
+    "agrees_with_roster": true
+  },
+  "Qwen/Qwen3-30B-A3B-Instruct-2507": {
+    "n": 6,
+    "mean_answer_mass": 0.9994,
+    "first_token_scoreable": true,
+    "roster_says": true,
+    "agrees_with_roster": true
+  },
+  "zai-org/GLM-5.2": {
+    "n": 6,
+    "mean_answer_mass": 0.0032,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true
+  },
+  "nvidia/Nemotron-3_5-Lightning": {
+    "n": 6,
+    "mean_answer_mass": 0.0,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true
+  },
+  "MiniMaxAI/MiniMax-M2.5": {
+    "n": 6,
+    "mean_answer_mass": 0.0,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true
+  },
+  "deepseek-ai/DeepSeek-V4-Flash": {
+    "n": 6,
+    "mean_answer_mass": 0.0,
+    "first_token_scoreable": false,
+    "roster_says": false,
+    "agrees_with_roster": true
+  }
+}

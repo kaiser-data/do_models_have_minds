@@ -2,7 +2,9 @@ node_modules/
 __pycache__/
 .venv/
 *.pyc
-.env
+# Glob, not the exact name: a .envx holding a provider key sat untracked and
+# therefore committable for a whole session, because `.env` matched nothing else.
+.env*
 .DS_Store
 results*.jsonl
 .next/
@@ -12,6 +14,9 @@ results*.jsonl
 # file's SHA-256 so a copy can be verified as THE copy the paper was built from.
 # card.json carries the analysis the paper and site actually read.
 results/
+# Exact name on purpose. `sweep_summary.json` is the transient target every
+# sweep overwrites; the config-named `sweep_summary__<cells>-<design>.json`
+# files identify which sweep produced them and ARE tracked.
 sweep_summary.json
 .netlify/
 
