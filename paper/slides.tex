@@ -34,14 +34,15 @@
 \definecolor{accent}{HTML}{B4453A}
 \newcommand{\hl}[1]{\textcolor{accent}{\textbf{#1}}}
 
-% Same finding-named title as the paper, shortened for a slide: the paper's
-% subtitle carries the hedge in a second clause that does not fit here, and the
-% floor number is the half an audience repeats.
-\title{Coherence Without Content}
-\subtitle{A value-coherence metric scores invented outcomes at \MeanFloor{}}
-\author{Nullcard}
+% Title tracks the paper. The subtitle used to quote \MeanFloor{}; numbers go
+% stale and a slide title is the worst place to discover that, so it now says
+% what happened instead. Same reason the paper's subtitle dropped its figures.
+\title{Does the Persona Change the Preference,\\ or Only the Prose?}
+\subtitle{Replace every outcome with invented words and a model's preferences
+barely move}
+\author{Martin Kaiser \and Gellért Bodorkós}
 \institute{\small Apart Research Digital Minds Sprint}
-\date{15 August 2026}
+\date{17 August 2026}
 
 \begin{document}
 
@@ -356,6 +357,91 @@
       is row-count verified at two stages. Headline moved 0.002; one previously
       reported ``instability'' was the bug and is withdrawn.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Result 5 --- at 235B the floor overtakes the signal}
+  \texttt{Qwen3-235B-A22B}, the largest model we can reach and the first MoE
+  here --- 26$\times$ the top of the ladder.
+
+  \bigskip
+  \begin{center}
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    real-outcome coherence & \HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenR{} \\
+    the \hl{floor} & \hl{\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenN{}} \\
+    \midrule
+    residual & \hl{\HQwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenResid{}} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \bigskip
+  The highest floor \emph{and} the most negative residual in the study. At this
+  scale the metric scores outcomes that \hl{denote nothing} above outcomes that
+  do.
+
+  \bigskip
+  \small
+  One design seed --- no noise floor, so no significance claim. Replicates
+  queued. It is not the large positive residual a scale account predicts, and
+  it points the other way.
+\end{frame}
+
+\begin{frame}{Result 6 --- reword the question, and the ordering rotates}
+  Same battery, same pairs, same seed, same models. \hl{Only the wording
+  changes.}
+
+  \bigskip
+  \begin{center}
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+     & agrees with \emph{itself} & agrees across wordings \\
+    \midrule
+    Qwen3.5-2B, real     & 0.989 & \hl{\VsQwenThreeFiveTwoBRCorr{}} \\
+    Qwen3.5-2B, invented & 0.990 & \VsQwenThreeFiveTwoBNmCorr{} \\
+    granite-4.1-3b, real     & 0.975 & \VsgraniteFourOneThreebRCorr{} \\
+    granite-4.1-3b, invented & 0.881 & \VsgraniteFourOneThreebNmCorr{} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \bigskip
+  Nothing is sampled --- a rerun is bit-identical. The measurement is
+  near-noiseless, and \hl{all \VsNRotating{} of \VsNCells{} intervals still
+  exclude perfect agreement}.
+
+  \bigskip
+  \textbf{The test that discriminates:} if \emph{meaning} anchored the
+  ordering, real outcomes should survive rewording better than invented ones.
+  \hl{Neither model shows it} --- point estimates land on opposite sides of
+  zero.
+\end{frame}
+
+\begin{frame}{What the method is called, and how old it is}
+  \begin{center}
+  \Large
+  \hl{referent ablation} $\rightarrow$ a \hl{foil arm} $\rightarrow$ the
+  \hl{foil floor}
+  \end{center}
+
+  \bigskip
+  \begin{itemize}
+    \item \textbf{Ebbinghaus 1885} --- nonsense syllables. He stripped meaning
+      to make \emph{form} measurable. We strip it to ask whether form was all
+      there ever was.
+    \item \textbf{Campbell \& Fiske 1959} --- a measure must \emph{fail} to
+      respond to what it should not, and showing that failure is part of
+      validating it.
+    \item \textbf{Paulhus et al.\ 2003} --- the over-claiming technique: $\sim$20\%
+      of items are nonexistent, and signal detection over real items and foils
+      separates knowledge from response bias.
+  \end{itemize}
+
+  \bigskip
+  Utility Engineering's robustness suite is entirely \emph{convergent} ---
+  seven languages, syntax, reframing, relabelled options. \hl{The discriminant
+  half was missing.} We are not objecting to the method; we are finishing its
+  validation.
 \end{frame}
 
 \begin{frame}{Takeaway}
