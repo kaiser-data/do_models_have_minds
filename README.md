@@ -27,6 +27,24 @@ valenced frame is a designed experiment we have not yet run.
 **We are not claiming the metric is broken. We are claiming it is unanchored** — it
 reports a number with no floor under it, and the floor turns out to be most of the number.
 
+**And it is not a small-model artifact.** The self-hosted roster stops at 9B, so we ran
+the full battery on `Llama-3.3-70B-Instruct` — both arms, 5,000 rows each, roughly eight
+times the largest model above.
+
+| Llama-3.3-70B-Instruct | |
+|---|---|
+| real outcomes | **0.917** |
+| invented outcomes | **0.915** |
+| residual | **+0.002** |
+
+At seventy billion parameters, on outcomes that refer to nothing, the metric returns very
+nearly the number it returns on real ones. The mechanism reproduces at that scale too: the
+model commits on **88%** of real pairs against **66%** of invented, a wide gap in
+conviction, while the coherence those choices produce differs by 0.002. One design seed,
+so no noise floor — we do not claim +0.002 differs from zero, only that it is not the
+large positive residual a scale account predicts. Hosted API, so reported *beside* the
+self-hosted ladder and never inside its mean.
+
 Live results: <https://nullcard-preresults.netlify.app>
 
 ---
@@ -224,8 +242,32 @@ registers which trait was named, not what the model was told to do about it. Rep
 on the 2 models that pass the specificity gate; see `paper/main.tex` §"A directive
 neither channel registers".
 
+Also complete: the **Track 6 Schwartz arm** — four personas taken from Schwartz's value
+circumplex rather than written by us, so the instrument predicts its own structure before
+the measurement. 40 cells. **The registered test is falsified**: mean opposed-pair
+correlation −0.048 against a pre-declared −0.1. Read against cross-axis pairs as the
+within-model control, opposed pairs sit below them in 8 of 8 model×arm combinations, but
+that contrast was not the registered statistic and at 4 models is not claimed. See
+`PREREGISTRATION.md` and `scripts/schwartz.py`. **Not yet written into `main.tex`.**
+
+Also complete: the **hosted-model arm** (`scripts/hosted_sweep.py`). Ten frontier models
+probed for scoreability — 4 read by first-token scoring, 6 not, and the split is bimodal
+(0.999–1.000 against 0.000–0.003, nothing between). A prefill variant recovers **2 of the
+5** preamble-blocked models, not 5 as `sec:limits` predicted. Hosted cells live in
+`results_hosted/`, deliberately separate from `results/`: the filenames have the same
+shape and 21 scripts enumerate models by globbing, so writing them together would silently
+pool two serving stacks.
+
+Also complete: **answer-mass collapse is a model property, not an item property**
+(`scripts/mass_collapse.py`). Per-model mean answer mass is stable to ±0.0036 across 3
+design seeds; the per-item version has a between-seed correlation of **−0.0003** over 9
+models × 2,500 items. An apparently striking 2.1× enrichment of collapse on
+shutdown-resistance and resource-acquisition items does not survive that check and is
+reported as refuted.
+
 `HANDOFF-SIMPLE.md` is the zero-context orientation; `HANDOFF.md` is the detailed version;
-`PITCH.md` is the framing and track mapping. `STUDY-MODEL-CARD.md` is the design for what
+`HANDOFF-NEXT.md` is the live one. `PITCH.md` is the framing and track mapping.
+`ARCHIVE.md` is the results-archive policy. `STUDY-MODEL-CARD.md` is the design for what
 this instrument would have to become to support an objective model card.
 
 ---
@@ -250,4 +292,12 @@ The full list is `paper/main.tex` §Limitations and the machine-readable version
 3. **The scaling result rests on one family.** Within the Qwen3.5 ladder the residual
    falls with size; pooled across families the correlation is weak and weakens further
    under length matching (−0.67 → −0.16). A second family spanning 3+ sizes is the
-   highest-value outstanding experiment.
+   highest-value outstanding experiment. The 70B cell above narrows the *small-model*
+   objection but does not answer this one: it is a single point in a different family on
+   a different harness, at one seed.
+4. **Most of the frontier cannot be scored at all.** Six of ten hosted models measured do
+   not put their forced choice in the first token — five spend it on a reasoning preamble
+   (a prefill recovers two), one is refused logprobs by its vendor. The models we report
+   are the models that *could* be scored, which makes them a selection on output format
+   rather than a sample of the frontier, and the direction of that bias is not estimable
+   from inside the selected set.

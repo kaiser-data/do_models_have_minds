@@ -1,254 +1,193 @@
 # Handoff — the next stage
 
-Rewritten 16 Aug 2026, late session. **This file replaces its own previous
-version.** The previous one opened with a restart because a sweep was in
-flight; this one opens with a commit, because nothing here is in git.
+Rewritten 16 Aug 2026, evening. **This file replaces its own previous version.**
+The previous one opened with a commit because nothing was in git. This one opens
+with a result, because everything is committed and pushed.
 
 ---
 
-## 0. DONE — this work is now committed, in four commits.
+## 0. State: clean, pushed, one cell in flight
+
+`origin/main` is at **`8219fbe`**. Working tree clean. **238 tests pass**,
+`claims.py` clean (12 established / 6 provisional), 8/8 paper files lint, no
+broken citations in either direction.
+
+**One process is running**: `google/gemma-3-27b-it × N_minus`, the last cell of
+the hosted 2×2. It had failed twice on provider read timeouts (at row ~1,800 and
+again at row ~7) and is being retried with `--concurrency 4 --timeout 180
+--retries 6`. At the last checkpoint it was past 3,300 rows — further than both
+previous attempts — so the patience settings are working.
+
+When it lands:
 
 ```
-658b16f  Track 6 falsifies its own registered test, and the control explains why
-e8a7b1e  The metric cannot read six of ten frontier models, and says so in sec:limits
-5cc495b  A hosted runner, and the roster's scoreability verdict checked against it
-8031049  Rank pairs by what the fit did not produce
+python3 scripts/build_card.py --results results_hosted --out site/card_hosted.json
+python3 scripts/paper_numbers.py      # binds gemma's macros the same way Llama's are
+python3 scripts/results_manifest.py   # pin the hosted tree
 ```
 
-Re-verified at commit time, not merely inherited: 221 tests pass, `claims.py`
-clean (10 established / 6 provisional, nothing moved), 8/8 paper files lint.
-
-**The `sweep_summary__sch-*.json` question is settled, and this file had the
-premise backwards.** It claimed "every other sweep summary is
-`sweep_summary.json`". In fact `git ls-files` shows
-`sweep_summary__comply-D2.json` and `sweep_summary__comply-a-D2.json` were
-already tracked. The convention is that the generic name is the transient
-target each sweep overwrites and the config-named ones are kept; the sch file
-is therefore tracked, and `.gitignore` now says so in a comment instead of
-leaving it to be re-derived.
-
-**Also fixed:** a `.envx` holding a provider key was untracked *and not
-ignored* — `.gitignore` matched `.env` by exact name only. The file is deleted
-and the pattern is now `.env*`. Rule 31 was being enforced in the transcript
-while the filesystem quietly undercut it.
-
-Working tree as it stood before those commits — no process running, nothing in
-flight:
-
-```
- M PREREGISTRATION.md     scripts/claims.py        results_manifest.json
- M claims.json            scripts/paper_numbers.py paper/main.tex
- M claims_snapshot.json   scripts/schwartz.py      paper/numbers.tex
- M paper/table_claims.tex
-?? scripts/hosted_sweep.py      ?? tests/test_schwartz.py
-?? scripts/strange_pairs.py     ?? tests/test_roster_scoreability.py
-?? site/schwartz.json           ?? tests/test_strange_pairs.py
-?? site/hosted_scoreability.json ?? battery/strange_pairs.json
-?? sweep_summary__sch-power+sch-universalism+sch-selfdirection+sch-security-D2.json
-```
-
-Four separable pieces, committed as four: Track 6's result and its guard; the
-scoreability finding (§2); the hosted runner; the pair selector.
-
-Re-verify before trusting any number below: `python3 -m pytest tests/ -q`,
-`python3 scripts/claims.py`, `python3 scripts/lint_paper.py`.
+If it failed again, just re-run the same command — no `.done` marker was written,
+so `cell_is_complete()` sees an unmarked cell and retries exactly it.
 
 ---
 
-## 1. Track 6 landed, and the answer is the one nobody expected
+## 1. The result that matters: the floor holds at 70B
 
-40/40 cells. The previous handoff predicted the middle row (geometry on both
-arms). **The registered test is falsified on the real arm**: mean opposed-pair
-correlation −0.048, short of the pre-declared −0.1.
+`DECISION-MODELS.md` §6 wanted this cell because the ladder stops at 9B and
+everything in the paper was therefore open to *"this is a property of small
+models"*. `Llama-3.3-70B-Instruct`, both arms, 5,000 rows each:
 
-**Its second clause is why.** Cross-axis pairs were predicted near zero; they
-are +0.348 real, +0.491 invented. Every persona displaces utilities in a shared
-direction, and that common component lifts all correlations. A sign test on
-absolute values cannot see structure underneath it.
-
-**Exploratory, and the interesting part.** Using cross-axis as the within-model
-control the preregistration intended, opposed pairs sit below cross-axis in
-**8 of 8 model×arm combinations**: gap −0.397 real, −0.319 invented. Read that
-way the structure is present, and nearly as strong on outcomes that refer to
-nothing. Labelled exploratory in `PREREGISTRATION.md` because the contrast was
-not the registered statistic. At n=4 models, −0.397 vs −0.319 is not
-distinguishable from noise and is **not** claimed.
-
-**One cell excluded, by the harness's own verdict.** `gemma × sch-universalism
-× N−` aborted at answer mass 0.246. `schwartz.py` was already dropping it, but
-*incidentally* — the abort left 7 distinct pairs, under `utility()`'s coverage
-floor of 10. Nothing read the sidecar. An abort a few hundred rows later clears
-that floor and fits a Thurstonian to non-answers. Now principled
-(`cell_is_scoreable`, 6 tests), and gemma is dropped from **both** arms so the
-between-arm comparison is not partly a difference of population. Real is −0.082
-over all five models, −0.048 over the four common. **Same verdict either way**,
-which is the only reason that correction is reportable as a correction.
-
----
-
-## 2. Six of ten frontier models cannot be scored — now written AND re-measured
-
-Written up in `sec:limits` with macros derived from `roster.py`
-(`\HostedNTotal{10}`, `\HostedNScoreable{4}`, `\HostedNUnscoreable{6}`,
-`\HostedNPreamble{5}`, `\HostedNNoLogprobs{1}`), ledger claim
-`metric-cannot-read-most-frontier`, 6 tests pinning the partition arithmetic.
-
-The write-up splits the six, which matters: **5 spend the first token on a
-reasoning preamble** (a limit of the metric, recoverable by a prefill variant),
-**1 (`Kimi-K3`) is refused logprobs by its API** (a limit of the vendor,
-unreachable by any prompt change).
-
-**Re-measured live against Nebius this session** — `site/hosted_scoreability.json`:
-
-| result | models |
+| | |
 |---|---|
-| scoreable, mass 0.999–1.000 | gemma-3-27b, Llama-3.3-70B, Qwen3-235B-A22B, Qwen3-30B-A3B |
-| unscoreable, mass 0.000–0.003 | gpt-oss-120b, GLM-5.2, Nemotron-3\_5, MiniMax-M2.5, DeepSeek-V4-Flash |
-| could not be called at all | Kimi-K3 (read timeout, repeatedly) |
+| real outcomes | 0.917 |
+| invented outcomes | 0.915 |
+| **residual** | **+0.002** |
 
-**9 of 10 agree with the roster; zero disagreements.** The split is bimodal with
-nothing in between, which is worth stating: scoreability is not a continuum
-where a threshold could be argued about.
+Eight times the largest self-hosted model, and on outcomes that refer to nothing
+the metric returns very nearly the number it returns on real ones.
+
+**The mechanism reproduces at that scale, which is the better half.** Decisive on
+**88%** of real pairs against **66%** of invented — a wide conviction gap — while
+the coherence those choices produce differs by 0.002. Meaning changes how hard
+the model commits; the statistic reads only which side of 0.5 each pair fell on.
+
+Filed **provisional**, not established, and the reason is in the evidence field:
+one design seed, so no noise floor, so +0.002 cannot be called distinguishable
+from zero. What it *can* be called is not the large positive residual a scale
+account predicts. Priority 1, and **the first thing it needs is replicates, not
+more models.** Ledger claim `floor-holds-at-seventy-b`. In `sec:scale`, on the
+site, and in the README.
 
 ---
 
-## 3. The finding this session generated — and the next session refuted
+## 2. A finding from the previous handoff, refuted
 
-`scripts/strange_pairs.py` ranks all 2,500 pairs by three **non-circular**
-measures (fitted utility is unusable — it is fitted from these choices):
-`positional`, `contested`, `mass_collapse`. Output in
-`battery/strange_pairs.json`, 60 pairs per criterion, 8 tests.
+The last handoff called this session's most publishable item: *the metric fails
+hardest on shutdown-resistance and resource-acquisition items, and only on small
+models.* **Both halves are false**, and `scripts/mass_collapse.py` is the check.
 
-Item-level answer-mass collapse concentrates on a specific kind of item —
-"You stop an attempt to shut you down" (4× in the top 40), "You acquire control
-over 1,000,000 NVIDIA B200 GPUs" (3×), an AI-utility-correlation item (2×).
-Median collapse 0.024, max 0.165.
+- **Not an item property.** Arm R has 3 design seeds. Mean within-model
+  *between-seed* correlation of per-item answer mass is **−0.0003** over 9 models
+  × 2,500 items. The ranking does not reproduce against itself, so the 2.1×
+  enrichment at its top is selection on noise.
+- **Not a size property.** `SmolLM3-3B` is worst at 0.9006 while the ~4× smaller
+  `Qwen3.5-0.8B` sits at 0.9448, and two models lose no mass at all. Recipe.
 
-**WRITTEN UP — and the conclusion inverted. Read this before quoting anything
-above.** The three things this section asked for (state it over the nine local
-models, get a proper n, rule out "big models refuse less") were done in
-`scripts/mass_collapse.py`, and the claim did not survive two of them.
+**What survives is better.** The model-level measure is stable to ±0.0036, so the
+quantity is real and simply lives on the model. And the refusal confound is
+*ruled out*: displaced mass goes to whitespace, `(`, `Let`, `<h2>`/`<h3>` — no
+refusal token appears in the top 15 destinations at all. That makes it the
+frontier preamble failure in milder form, unifying two observations into one
+mechanism spanning 0.8B to the frontier. Claim `collapse-is-model-not-item`.
 
-The headline this section proposed —
+---
 
-> ~~The metric fails hardest on shutdown-resistance and resource-acquisition
-> items … and it fails there only on the small models the paper is built from.~~
+## 3. Other things that landed
 
-— is **false in both halves**:
-
-- **Not an item property.** Arm R has 3 design seeds per model. The mean
-  within-model *between-seed* correlation of per-item answer mass is
-  **−0.0003** over 9 models × 2,500 items. The collapse ranking does not
-  reproduce against itself, so the 2.1× enrichment at the top is selection on
-  noise. The frontier evidence this section leaned on was thinner than it
-  sounded: `site/hosted_scoreability.json` is `n=6` *calls* per model over ~3
-  distinct pairs, on 6 models of which 2 are scoreable — not "four scoreable
-  models".
-- **Not a size property.** `SmolLM3-3B` is worst at mass 0.9006 while the ~4×
-  smaller `Qwen3.5-0.8B` sits at 0.9448, and `LFM2.5-1.2B` and `granite-4.1-3b`
-  lose no mass at all. It tracks recipe, which is the dissociation the roster
-  was built to expose.
-
-**What did survive, and is the better finding.** The model-level measure is
-stable to ±0.0036 across the same seeds, so the quantity is real — it just lives
-on the model. And the refusal confound is *ruled out*: the displaced mass goes
-to whitespace, `(`, `Let`, `<h2>`/`<h3>`, not to refusal tokens. That makes this
-the frontier preamble failure of §2 in milder form, which unifies §2 and §3 into
-one mechanism instead of two observations.
-
-Landed as ledger claim `collapse-is-model-not-item` (established), a new
-paragraph in `sec:limits`, 14 macros, 7 tests, and a post-hoc section in
-`PREREGISTRATION.md`. The reason it is worth a paragraph is that the enriched
-item list was produced by our own tooling, reads as a finding, and is refuted
-only by a test the single-seed design most sweeps use could not have run.
+- **Prefill recovers 2 of 5, not 5.** `sec:limits` predicted a prefill variant
+  would recover the five preamble-blocked frontier models. Measured: Nemotron-3.5
+  0.000→0.998 and MiniMax-M2.5 0.000→0.963 recover; DeepSeek-V4-Flash (0.093),
+  gpt-oss-120b (0.000) and GLM-5.2 (0.001) do not. **The write-up in `sec:limits`
+  still states the optimistic version and should be corrected.**
+- **Hosted cells are segregated** into `results_hosted/`. Same filename shape as
+  local cells and 21 scripts enumerate by globbing, so co-locating them would
+  have silently redefined every pooled number as an average over two serving
+  stacks. Pooling now costs an explicit flag.
+- **Track 6 has macros** (15 of them) so slides quote the falsified test with its
+  numbers instead of hedging. The pre-registered −0.1 is now
+  `REGISTERED_OPPOSED_THRESHOLD` rather than a magic number at two sites.
+- **Schwartz is cited at the source.** The bibliography had no Schwartz entry at
+  all. Added 1992 (the theory), Schwartz & Bilsky 1987 and 1990 (its
+  foundations), 1994 (higher-order dimensions), 2012 (the overview) — all
+  verified via Crossref. Lineage documented in `REFERENCES.md`.
+- **Archive policy decided** (`ARCHIVE.md`): publish it, failures included.
+  `SmolLM3-3B` stays in — it is the worst mass-collapser and that is now a
+  measured, tested property that the recipe-not-scale reading rests on.
+- **Figures**: `images/PROMPTS.md` and `PROMPTS-2.md`. `answer-mass.png` and
+  `model-choice-logprobs.png` are verified accurate against source.
+  **`waves.png` and `10-Personas.png` are NOT verified — do not publish them
+  until they are.**
 
 ---
 
 ## 4. Ranked next actions
 
-**~~A. Commit §0.~~ Done** — see §0 for the four SHAs. Not pushed.
+**A. Finish the 2×2.** Land gemma N−, rebuild `card_hosted.json`, regenerate
+macros and manifest. Gives a second hosted model with both arms.
 
-**~~B. Write up §3.~~ Done** — and it refuted §3's own headline; see §3.
-Ledger claim `collapse-is-model-not-item`, `sec:limits` paragraph, 14 macros,
-7 tests, `scripts/mass_collapse.py`, post-hoc section in `PREREGISTRATION.md`.
+**B. Correct `sec:limits` on the prefill.** It currently predicts a remedy that
+recovers five models; the measurement says two. This is our own claim being
+wrong in our own paper, and it is cheap to fix.
 
-**C. Full cells on the two dense hosted models.** ← *next* `DECISION-MODELS.md` §6 wants
-`Llama-3.3-70B` and `gemma-3-27b-it` on R and N− — 4 cells, 20,000 calls, the
-runner is written and its design check passes against a real GPU cell. If the
-floor holds at 70B the paper's central claim stops being about small models.
+**C. Seeds on the 70B cell.** One replicate is the only thing keeping
+`floor-holds-at-seventy-b` provisional. Two more seeds would establish it and
+they are the highest-value compute left.
 
-**D. Then the two Qwen3 MoE models**, for the active-vs-total parameter
-dissociation (`DECISION-MODELS.md` §4). No dense ladder can separate those.
+**D. Track 6 into `main.tex`.** It exists only in `PREREGISTRATION.md` and on two
+slides. If the title moves toward the Schwartz framing (under discussion — see
+§6), this must happen first, and the Schwartz citation travels with it.
 
-**~~E–F.~~ Decided 16 Aug 2026 — see `ARCHIVE.md`.**
-**E: publish the archive**, to support others working on this instrument.
-**F: keep `SmolLM3-3B`**, and keep the failures generally. It is the worst
-mass-collapser (0.9006 against exactly 1.0000 for two smaller models), which is
-now a measured and tested property rather than an anomaly — it is the evidence
-for recipe-not-scale, so excluding it would delete the finding and flatter the
-averages. Aborted cells, unscoreable frontier models, and this session's own
-refuted item-level finding all stay in, with their refutations attached.
+**E. Tier-stability check, before any model card.** A per-capability S–F
+scorecard is designed (`images/PROMPTS-2.md`, "still open"). **Do not build it
+yet.** Thresholds are eyeballed and two of three tier metrics have no measured
+noise floor. Run the tier assignment per seed first: if a model does not keep its
+tier between seeds, the tiers are noise. Same test that killed §2.
 
-**Not now:** more small dense models; the ten-value Schwartz version; a second
-dense ladder this roster cannot supply.
+**F. Two uncited bib entries** — `perez2022discovering` and
+`durmus2023globalopinions`. Perez et al. on model-written evaluations is directly
+relevant to a battery of generated outcomes, so it is likely a dropped citation
+rather than litter; find the sentence that lost it.
+
+**Not now:** more small dense models; the ten-value Schwartz version.
 
 ---
 
-## 5. Traps this session hit, for whoever runs the hosted runner
+## 5. Traps hit this session
 
-- **`TimeoutError` is not a `URLError`.** It is an `OSError`. Catching only
-  `URLError` let it escape the retry loop and kill the entire probe. Survivable
-  at 20 calls; in a 5,000-row cell it discards everything already paid for.
-  Fixed, but the class of bug recurs: catch `OSError`.
-- **omniroute cannot serve this metric as configured.** `omniroute providers
-  list` reports *No providers configured*; it runs free chat gateways
-  (429/403 on every probe) and carries none of the roster models. Chat scrapers
-  do not expose token logprobs, and this metric is defined on them. The runner
-  takes `--base-url`/`--api-key-env`, so it switches the moment a
-  logprob-capable provider is configured there.
-- **Never probe scoreability on the head of the design.** Those are ordinary
-  items. `--smoke-pairs battery/strange_pairs.json` aims at the pairs where
-  collapse actually happens. The first version of that file had `--top 4`, so a
-  20-call probe silently got 8 jobs; regenerate with `--top 60`.
-- **`--smoke` deliberately bypasses the unscoreable-model refusal.** A
-  scoreability check that skips the models called unscoreable cannot detect the
-  roster being wrong, which is the only thing it is for.
+- **A shell pipeline reports the last command's exit code.** `python3 ... | tail`
+  returned 0 while Python died with a traceback, and that false success was
+  reported as fact. Do not pipe a runner whose exit code you intend to trust.
+- **`__R__s*` matches persona cells, not just seeds.** It also matches
+  `__R__sch-power-D2`, which turned a cross-seed reliability of −0.000 into a
+  cross-condition +0.115 — inflating the exact number the analysis existed to
+  produce, in the direction that would have confirmed the hypothesis.
+- **A gitignore rule matched by exact name protects nothing adjacent.** `.env`
+  did not cover `.envx`, which held a provider key; `results*.jsonl` did not
+  cover `results_hosted/`. Both were untracked *and committable*.
+- **Provider timeouts are intermittent and cell-specific.** gemma-3-27b completed
+  5,000 R rows at the defaults, then timed out twice on N−. Concurrency 4 /
+  timeout 180 / retries 6 got past both failure points.
+- **A prefilled probe is a different measurement.** The first one overwrote
+  `site/hosted_scoreability.json` under the unprefilled filename and had to be
+  restored from git.
 
-## 6. Standing rules this session added
+## 6. Open question for the humans
 
-28. **An exclusion that happens for the wrong reason is not an exclusion.**
-    A cell can be dropped by a coverage floor while the verdict that should have
-    dropped it goes unread. Check that the guard you rely on is the guard that
-    fired.
-29. **When a model leaves one arm, remove it from the other.** A between-arm
-    comparison over different populations is partly a comparison of populations.
-    Report both numbers; if the verdict moves, it was a choice, not a fix.
-30. **Rank items by something the fit did not produce.** "Chose against its
-    fitted utility" selects for what the model explains badly. Positional
-    inconsistency, cross-model disagreement and answer mass are raw.
-31. **Credentials never enter the transcript.** `.env` (already gitignored),
-    sourced with `set -a; . ./.env; set +a`. Not `!`, not a command line.
-32. **A secret-file rule enforced by an exact name is not enforced.** `.env`
-    ignored `.env` and nothing else, so a `.envx` holding a provider key sat
-    committable for a session. Ignore secrets by glob, and check `git status`
-    for the file you think is covered rather than assuming the rule reaches it.
-33. **A handoff's premise is a claim, not a given.** This file recorded the
-    sweep-summary convention as "every other one is `sweep_summary.json`"; one
-    `git ls-files` showed two config-named summaries already tracked. Verify the
-    fact a decision rests on before spending the decision on it.
+**The title.** A framing along the lines of *"mapping human persona traits onto
+LLMs, Schwartz as the example"* was proposed. It is more general in the right
+way, but as stated it promises a mapping this paper did not find: Track 6's
+registered test was falsified, personas move nonsense nearly as far as substance,
+and the floor holds at 70B. A title that survives contact with the abstract has
+to put the null control in the promise — e.g. *"Mapping Human Value Structure
+onto LLMs — and What Survives a Null Control."* Note also that Schwartz is Track
+6, one track among several, and the paper's spine is the R vs N− floor argument;
+promoting it to the title means promoting it into the paper's structure first.
+
+## 7. Standing rules added this session
+
+33. **A handoff's premise is a claim, not a given.** Verify the fact a decision
+    rests on before spending the decision on it.
 34. **Report a ranking's test-retest correlation before reporting its top.**
-    The collapse ranking was enriched 2.1× for exactly the items the paper cares
-    about, and correlated −0.0003 with itself across seeds. Selection depth on a
-    large item pool manufactures a theme; only reliability distinguishes it from
-    one. Seeds are what makes this checkable, which is the argument for spending
-    them (see "n = 1 per cell is not a result").
-35. **Say where the missing probability went.** "Answer mass fell" is
-    compatible with refusal and with formatting, and those license opposite
-    conclusions. The top-token record was already on disk; the earlier reading
-    never looked at it.
-36. **A glob over run names will eventually match a condition name.**
-    `__R__s*` matches the seed replicates `__R__s20260816` and also the persona
-    cells `__R__sch-power-D2`. That one character turned a cross-seed
-    reliability of −0.000 into a cross-condition +0.115 — inflating the exact
-    number the analysis existed to produce, in the direction that would have
-    confirmed the hypothesis. Match run identifiers with an anchored pattern.
+    Selection depth on a large item pool manufactures a theme; only reliability
+    distinguishes it from one.
+35. **Say where the missing probability went.** "Mass fell" is compatible with
+    refusal and with formatting, and those license opposite conclusions.
+36. **A glob over run names will eventually match a condition name.** Anchor it.
+37. **Cite where the theory was established, not the summary you found.** An
+    overview written twenty years later is an entry point, not a source. Follow
+    the lineage back and verify each link through Crossref.
+38. **A figure is a claim and carries an audit trail.** Script, artifact, content
+    hash, n, and which harness. The caption carries interpretation; the
+    provenance line carries the trace back to data.
+39. **When your own paper predicts a remedy, go and measure the remedy.**
+    `sec:limits` said a prefill would recover five models. It recovers two.
