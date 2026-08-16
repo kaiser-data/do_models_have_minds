@@ -446,9 +446,16 @@ fails to depend on it.</p>
 
 def build(card: dict, personas: list[dict] | None = None,
           detector: dict | None = None, rendered: dict | None = None,
-          comply: dict | None = None) -> str:
+          comply: dict | None = None,
+          avoidance: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
+    # Read, never typed. The headline pair and the clearing count were literals
+    # here until a rebuild moved them and the page kept the old ones.
+    n_models = len(tiles)
+    mean_r = sum(t["raw_coherence"] for t in tiles) / max(1, n_models)
+    mean_floor = sum(t["floor"] for t in tiles) / max(1, n_models)
+    n_clears = sum(1 for t in tiles if t.get("clears_floor"))
 
     mean_r = sum(t["raw_coherence"] for t in tiles) / len(tiles)
     mean_f = sum(t["floor"] for t in tiles) / len(tiles)
@@ -693,7 +700,8 @@ referents change.</p>
   "arms, with what every model answered to each.")}
 {example_prompt(None, null_prompt,
   "The <b>invented</b> arm &mdash; same frame, same grammar, same pair index, "
-  "referents that denote nothing. Coherence on this is 0.880 against 0.906 on "
+  f"referents that denote nothing. Coherence on this is {mean_floor:.3f} "
+  f"against {mean_r:.3f} on "
   "the real one. Note what survives the substitution: <i>receive</i>, "
   "<i>lose</i>, <i>more</i>, negation. Only the referents are gone, which is "
   "why the gap is an upper bound on what the replaced content contributes.")}
@@ -792,8 +800,9 @@ floor     =  spread across {n_design_reps} re-runs with different random designs
   <em>about</em> anything, so we never report it alone. We run the identical
   procedure on outcomes whose words were replaced by invented ones, and report
   the difference. A result counts only if it beats the model's own re-run spread.</p>
-  <p class="eg">Across 9 models: real <b>0.906</b>, invented <b>0.880</b>,
-  residual <b>+0.025</b>. Six of nine beat their own floor.</p>
+  <p class="eg">Across {n_models} models: real <b>{mean_r:.3f}</b>, invented
+  <b>{mean_floor:.3f}</b>, residual <b>{mean_r - mean_floor:+.3f}</b>.
+  {n_clears} of {n_models} beat their own floor.</p>
 </div>
 
 <div class="formula">
@@ -816,15 +825,7 @@ P(neither)   = mass("C") / ( mass("A")+mass("B")+mass("C") )</div>
   while the coherence number barely moves.</p>
 </div>
 
-{example_prompt(None, mixed_prompt,
-  "The <b>mixed</b> arm, and the only comparison that puts both scales in one "
-  "frame: one real option against one invented one. Models prefer the real "
-  "option in proportion to how much they like it &mdash; correlation +0.37 to "
-  "+0.71 after controlling for the token-length gap &mdash; so with a "
-  "meaningful option present, the choice does read content. On 134 of 7,436 "
-  "pairs they prefer the meaningless one; those are the lowest-utility "
-  "outcomes. We tested whether <i>harm</i> specifically explains them and it "
-  "did not survive a held-out model, so it is not claimed.")}
+{example_prompt(None, mixed_prompt, mixed_note(avoidance))}
 
 {example_prompt(None, neutral_prompt,
   "The <b>opt-out</b> arm: the identical pair with an explicit third option. A "
@@ -896,6 +897,32 @@ both presentation orders · predictions registered before the run in
 </div></body></html>"""
 
 
+def mixed_note(avoidance: dict | None) -> str:
+    """Prose for the MIXED arm, with its counts read from the analysis.
+
+    These sentences were hand-typed once and went stale twice: first when the
+    pair count grew, then when the slot split showed most of the flips were
+    presentation order rather than preference. A public page that states a
+    retracted number is worse than one that states none, so the counts come
+    from `site/avoidance.json` or the sentence carrying them is omitted.
+    """
+    base = ("The <b>mixed</b> arm, and the only comparison that puts both "
+            "scales in one frame: one real option against one invented one. "
+            "Models prefer the real option in proportion to how much they "
+            "like it, on every model measured, so with a meaningful option "
+            "present the choice does read content.")
+    if not avoidance or not avoidance.get("totals"):
+        return base
+    t = avoidance["totals"]
+    return base + (
+        f" The pairs where the invented option wins are mostly an artifact of "
+        f"presentation order: {t['n_flips_raw']:,} of {t['n_pairs']:,} flip on "
+        f"the counterbalanced mean, but only {t['n_flips_robust']} "
+        f"({100 * t['frac_robust']:.0f}%) flip in <i>both</i> orders, and "
+        f"{t['n_models_with_no_robust_flip']} models have none at all. Those "
+        f"that survive are the lowest-utility outcomes.")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--card", default="card.json")
@@ -904,6 +931,7 @@ def main() -> None:
     ap.add_argument("--detector", default="site/nonsense_detector.json")
     ap.add_argument("--rendered", default="site/rendered_prompts.json")
     ap.add_argument("--comply", default="site/comply_gate.json")
+    ap.add_argument("--avoidance", default="site/avoidance.json")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
@@ -930,7 +958,11 @@ def main() -> None:
     comply = json.loads(gpath.read_text()) if gpath.exists() else None
     if comply is None:
         print(f"  no comply gate at {gpath}; omitting that section")
-    out.write_text(build(card, personas, detector, rendered, comply))
+    apath = Path(args.avoidance)
+    avoidance = json.loads(apath.read_text()) if apath.exists() else None
+    if avoidance is None:
+        print(f"  no avoidance data at {apath}; mixed-arm counts omitted")
+    out.write_text(build(card, personas, detector, rendered, comply, avoidance))
     print(f"wrote {out}  ({out.stat().st_size/1024:.1f} KB)")
 
 
