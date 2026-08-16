@@ -536,8 +536,8 @@
     },
     {
       "id": "gibberish-beats-only-bad-outcomes",
-      "statement": "When an invented outcome beats a real one in direct competition, the real outcome is near the bottom of the model's own utility scale rather than an arbitrary item; models rank gibberish low but above genuinely bad outcomes, which is avoidance rather than failure to comprehend.",
-      "status": "established",
+      "statement": "Most pairs where an invented outcome appears to beat a real one are presentation-order artifacts: only a small minority win in both slot orders, and a third of models have none. On the pairs that do survive counterbalancing, the losing real outcome sits near the bottom of the model's own utility scale -- avoidance rather than confusion -- but the surviving set is small and single-seed. Separately and robustly, the rank correlation between a real outcome's utility and how often it beats an invented one is strongly positive on every model.",
+      "status": "provisional",
       "section": "sec:avoidance",
       "macros": [
         "AvoidNModels",
@@ -545,17 +545,18 @@
         "AvoidCorrHi",
         "AvoidPctileLo",
         "AvoidPctileHi",
-        "AvoidWinRateLo",
-        "AvoidWinRateHi",
-        "AvoidConcordance",
-        "AvoidTopCategory",
-        "AvoidTopRate"
+        "AvoidFlipsRaw",
+        "AvoidFlipsRobust",
+        "AvoidFlipsPct",
+        "AvoidNoFlipModels",
+        "AvoidNModelsWithFlips",
+        "AvoidConcordance"
       ],
       "evidence": {
         "source": "site/avoidance.json",
-        "note": "Rank correlation between a real outcome's fitted utility and how often it beats an invented one holds on every model in the set. The median losing outcome sits in the bottom fifth of the utility distribution. The by-category pattern is reported as suggestive only: it rests on one design seed, and cross-model concordance of the category ranking is \\AvoidConcordance, which is moderate. The safety reading -- that the invented option is a sink reachable by degrading the real alternative -- is an inference from these numbers, not a measurement; MIXED cells under persona conditions do not exist."
+        "note": "The rank correlation uses every pair and the counterbalanced mean; it does not depend on the flip classification and holds on all \\AvoidNModels models. The avoidance reading rests only on the \\AvoidFlipsRobust pairs that flip in both presentation orders, spread over \\AvoidNModelsWithFlips models at one design seed, and is therefore provisional. An earlier version of this claim reported the raw \\AvoidFlipsRaw flips as preferences; the slot split retracted \\AvoidFlipsPct percent of that. The by-category pattern has concordance \\AvoidConcordance and is not claimed. The safety inference -- an invented option as a default sink reachable by degrading the real alternative -- is a hypothesis consistent with these pairs, not a demonstrated vulnerability."
       },
-      "what_would_falsify": "A model whose losing real outcomes are spread across the utility range rather than concentrated at the bottom, or a rank correlation near zero on a new family."
+      "what_would_falsify": "The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom."
     }
   ]
 }

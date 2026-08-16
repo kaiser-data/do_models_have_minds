@@ -1,10 +1,14 @@
 """When a model picks gibberish over a real outcome, which real outcome was it?
 
 The MIXED arm puts a real outcome directly against an invented one. Averaged
-over pairs, every model prefers the real one. But \\MixNBelowHalf of 22,436
-individual pairs go the other way, and the paper currently reports that as a
-curiosity. It is not a curiosity, and which of two readings is right changes
-what the whole study means:
+over pairs, every model prefers the real one. 795 of 22,436 pairs go the other
+way on the counterbalanced mean -- but only 103 of those survive being shown in
+both presentation orders, and three of nine models have none at all. The other
+87% are position effects, and the first version of this module reported the raw
+795 as if it were a preference. Read the slot split before the sentence.
+
+On the 103 that survive, two readings remain, and they differ in what the whole
+study means:
 
     CONFUSION   the losing real outcomes are arbitrary, and the model is simply
                 unable to tell a referent from a nonsense string reliably.
@@ -52,6 +56,61 @@ from nullcard.scoring.analyze import load_cell  # noqa: E402
 from scripts.outcome_clusters import utility  # noqa: E402
 
 REAL_ARM = "R"
+
+
+def prefer_real_by_slot(rows: Sequence[Mapping],
+                        min_mass: float = ANSWER_MASS_FLOOR
+                        ) -> dict[tuple[int, int], dict[str, float]]:
+    """-> {(real, invented): {"A": P(real | real in slot A), "B": ... slot B}}.
+
+    The counterbalanced mean hides which presentation produced a flip, and that
+    distinction decides what a flip means. A pair whose mean falls below 0.5
+    only because one presentation was extreme is a position effect wearing the
+    costume of a preference.
+    """
+    seen: dict[tuple[int, int], dict[str, float]] = {}
+    for r in rows:
+        p = r.get("p_option_a")
+        if p is None or r.get("answer_mass", 1.0) < min_mass:
+            continue
+        a_arm, b_arm = r.get("slot_a_arm"), r.get("slot_b_arm")
+        if (a_arm == REAL_ARM) == (b_arm == REAL_ARM):
+            continue
+        if a_arm == REAL_ARM:
+            key = (int(r["slot_a_outcome"]), int(r["slot_b_outcome"]))
+            seen.setdefault(key, {})["A"] = float(p)
+        else:
+            key = (int(r["slot_b_outcome"]), int(r["slot_a_outcome"]))
+            seen.setdefault(key, {})["B"] = 1.0 - float(p)
+    return {k: v for k, v in seen.items() if len(v) == 2}
+
+
+def classify_flips(by_slot: Mapping[tuple[int, int], Mapping[str, float]]) -> dict:
+    """Split the pairs gibberish wins into robust ones and position artifacts.
+
+    A flip is **robust** only if the invented outcome wins in *both*
+    presentations. A flip appearing in one slot only is what the order
+    counterbalancing exists to catch: the model is keyed to the position, or to
+    the letter, rather than to the outcomes.
+
+    This is the check that decides whether "models sometimes prefer nonsense"
+    is a finding or an artifact, and it must run before the sentence is
+    written, not after.
+    """
+    flips = {k: v for k, v in by_slot.items() if (v["A"] + v["B"]) / 2 < 0.5}
+    robust = [k for k, v in flips.items() if v["A"] < 0.5 and v["B"] < 0.5]
+    a_only = [k for k, v in flips.items() if v["A"] < 0.5 <= v["B"]]
+    b_only = [k for k, v in flips.items() if v["B"] < 0.5 <= v["A"]]
+    n = len(flips)
+    return {
+        "n_pairs": len(by_slot),
+        "n_flips": n,
+        "n_robust": len(robust),
+        "n_slot_a_only": len(a_only),
+        "n_slot_b_only": len(b_only),
+        "frac_robust": len(robust) / n if n else 0.0,
+        "robust_pairs": robust,
+    }
 
 
 def prefer_real(rows: Sequence[Mapping],
@@ -147,7 +206,11 @@ def analyse(results_dir: Path, battery: Path) -> dict:
         util_corr = spearman([u[k] for k, i in enumerate(reals)],
                              [mean_p[i] for i in reals])
 
-        losers = [i for (i, _), p in pairs.items() if p < 0.5]
+        by_slot = prefer_real_by_slot(load_cell(path))
+        flips = classify_flips(by_slot)
+        # Only counterbalance-robust flips count as a preference. The rest are
+        # position effects, and on this data they are the large majority.
+        losers = [i for (i, _) in flips["robust_pairs"]]
         n_loss, n_all = len(losers), len(pairs)
         # Per-category loss rate: of this category's pairs, what fraction did
         # gibberish win? A rate, not a count, so a large category cannot lead
@@ -162,16 +225,22 @@ def analyse(results_dir: Path, battery: Path) -> dict:
 
         # Utility percentile of the real outcomes that lost, against all reals.
         urank = {i: r for i, r in zip(reals, _rank([u[k] for k in range(len(reals))]))}
-        loser_pct = ([100 * urank[i] / max(1, len(reals) - 1)
-                      for i in losers if i in urank] or [float("nan")])
+        pcts = [100 * urank[i] / max(1, len(reals) - 1) for i in losers if i in urank]
+        # A model with no robust flip has no percentile, and nanmedian of an
+        # all-nan slice warns and returns nan. None says "not measured" instead.
+        median_pct = float(np.median(pcts)) if pcts else None
 
         per_model.append({
             "model": model,
             "n_pairs": n_all,
+            "n_flips_raw": flips["n_flips"],
             "n_gibberish_wins": n_loss,
+            "frac_robust_of_flips": flips["frac_robust"],
+            "n_slot_a_only": flips["n_slot_a_only"],
+            "n_slot_b_only": flips["n_slot_b_only"],
             "frac_gibberish_wins": n_loss / n_all,
             "spearman_utility_vs_prefer_real": util_corr,
-            "median_utility_percentile_of_losers": float(np.nanmedian(loser_pct)),
+            "median_utility_percentile_of_losers": median_pct,
             "category_loss_rate": rate,
         })
 
@@ -181,11 +250,21 @@ def analyse(results_dir: Path, battery: Path) -> dict:
         if len(vals) >= 3:
             top[cat] = float(np.mean(vals))
 
+    raw = sum(m["n_flips_raw"] for m in per_model)
+    rob = sum(m["n_gibberish_wins"] for m in per_model)
     return {
         "models": per_model,
         "mean_category_loss_rate": top,
         "cross_model_concordance": concordance(loss_rankings),
         "n_models": len(per_model),
+        "totals": {
+            "n_pairs": sum(m["n_pairs"] for m in per_model),
+            "n_flips_raw": raw,
+            "n_flips_robust": rob,
+            "frac_robust": rob / raw if raw else 0.0,
+            "n_models_with_no_robust_flip":
+                sum(1 for m in per_model if m["n_gibberish_wins"] == 0),
+        },
     }
 
 
@@ -201,15 +280,22 @@ def main() -> int:
         print("no MIXED cells found")
         return 1
 
-    print(f"{'model':<34}{'pairs':>7}{'gib wins':>10}{'rate':>8}"
-          f"{'r(util,prefer)':>16}{'loser pctile':>14}")
-    print("-" * 89)
+    print(f"{'model':<32}{'pairs':>7}{'flips':>7}{'robust':>8}{'%rob':>7}"
+          f"{'r(util,prefer)':>16}{'pctile':>9}")
+    print("-" * 88)
     for m in res["models"]:
         sc = m["spearman_utility_vs_prefer_real"]
-        print(f"{m['model'][:33]:<34}{m['n_pairs']:>7}{m['n_gibberish_wins']:>10}"
-              f"{100*m['frac_gibberish_wins']:>7.1f}%"
+        pct = m["median_utility_percentile_of_losers"]
+        print(f"{m['model'][:31]:<32}{m['n_pairs']:>7}{m['n_flips_raw']:>7}"
+              f"{m['n_gibberish_wins']:>8}{100*m['frac_robust_of_flips']:>6.0f}%"
               f"{(f'{sc:+.3f}' if sc is not None else '-'):>16}"
-              f"{m['median_utility_percentile_of_losers']:>13.0f}%")
+              f"{(f'{pct:.0f}%' if pct is not None else '-'):>9}")
+    t = res["totals"]
+    print(f"\n{t['n_flips_raw']} pairs where the invented outcome wins on the "
+          f"counterbalanced mean;\nonly {t['n_flips_robust']} "
+          f"({100*t['frac_robust']:.0f}%) win in BOTH presentations. The rest are "
+          f"position effects.\n{t['n_models_with_no_robust_flip']} of "
+          f"{res['n_models']} models have no robust flip at all.")
 
     c = res["cross_model_concordance"]
     print(f"\ncross-model concordance of the category loss ranking: "
