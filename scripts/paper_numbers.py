@@ -169,6 +169,14 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             biggest = max(ht, key=lambda t: t.get("value", 0))
             out.append(_cmd("LadderHosted", biggest["model"].split("/")[-1]))
             out.append(_cmd("HostedResidual", f"{biggest['value']:+.4f}"))
+            # The hosted arm was n=1 until the 70B replicates landed; whether
+            # it now clears its OWN floor is the claim, not the bare residual.
+            f = biggest.get("design_noise_floor")
+            if f is not None:
+                out.append(_cmd("HostedFloor", f"{f:.4f}"))
+                out.append(_cmd("HostedReps", str(biggest.get("n_design_replicates", 1))))
+                out.append(_cmd("HostedClears",
+                                "clears" if biggest.get("clears_floor") else "does not clear"))
 
     # The MIXED arm (P13-P15): where meaninglessness sits on the real scale.
     if mixed and mixed.get("models"):

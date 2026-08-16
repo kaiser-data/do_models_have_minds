@@ -144,12 +144,15 @@
       "CollapseEnrich": "2.1"
     },
     "floor-holds-at-seventy-b": {
-      "LlamaThreeThreeSevenZeroBInstructHostR": "0.917",
-      "LlamaThreeThreeSevenZeroBInstructHostN": "0.915",
-      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.002",
-      "LlamaThreeThreeSevenZeroBInstructHostDecR": "88",
-      "LlamaThreeThreeSevenZeroBInstructHostDecN": "66",
-      "LlamaThreeThreeSevenZeroBInstructHostReps": "1"
+      "HostedClears": "does not clear",
+      "HostedFloor": "0.0208",
+      "HostedReps": "3",
+      "LlamaThreeThreeSevenZeroBInstructHostDecN": "64",
+      "LlamaThreeThreeSevenZeroBInstructHostDecR": "87",
+      "LlamaThreeThreeSevenZeroBInstructHostN": "0.920",
+      "LlamaThreeThreeSevenZeroBInstructHostR": "0.928",
+      "LlamaThreeThreeSevenZeroBInstructHostReps": "3",
+      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.008"
     },
     "persona-needs-an-empty-slot-control": {
       "PdNegMagR": "4.61",

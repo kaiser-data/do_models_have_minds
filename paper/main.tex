@@ -76,7 +76,9 @@ design but restricts the study to models that expose logprobs: \NModels{}
 open-weight models across \NFamilies{} families on rented L4 and A10G GPUs,
 including a within-family ladder from \LadderSmall{} to \LadderLarge{}, and
 \NHosted{} larger models reached over a hosted API --- up to
-\LadderHosted{}, which returns a residual of \HostedResidual{}. Frontier
+\LadderHosted{}, which returns a residual of \HostedResidual{} against its own
+\HostedReps-replicate noise floor of \HostedFloor{} --- it \HostedClears{} it.
+Frontier
 models are absent by construction rather than by choice: without access to the
 distribution over the first token there is no way to read a preference off the
 latent state before generation begins.
@@ -106,6 +108,20 @@ installed persona displaces real outcomes far more than invented ones in
 same forward pass that the metric \emph{discards} separates real from invented
 at AUROC \DetBestAuroc{} against \DetKeptAuroc{} for the channel it keeps. The
 coherence number is computed from the one channel that noticed least.
+
+\textbf{The ordering belongs to the model and the question together.} Because
+one wording would be a factor with a single level, we re-ran two models under a
+second question that differs only in licensing the answer and locking its
+format. The fitted preference vector is near-noiseless against itself ---
+split-half reliability \VsRelLo{} to \VsRelHi{}, and nothing is sampled at any
+point --- yet correcting for that measurement error, agreement between the two
+wordings runs only \VsCorrLo{} to \VsCorrHi{}, with all \VsNRotating{} of
+\VsNCells{} intervals excluding perfect agreement. Rewording the question
+rotates the ordering, and it does so by far more than design-seed noise moves
+it. The discriminating test is whether \emph{real} referents anchor an ordering
+against rewording better than invented ones do, since meaning does not change
+when a question is rephrased: on \VsArmNoDiff{} of \VsArmNModels{} models there
+is no difference, with point estimates on opposite sides of zero.
 
 \textbf{Compared with people.} Human value structure, as the borrowed
 instrument describes it, is at least two-dimensional and roughly circular ---
@@ -878,15 +894,24 @@ in conviction --- while the coherence numbers those choices produce differ by
 a single cell: what the outcomes mean changes how strongly the model commits,
 and the statistic reads only which side of $0.5$ each pair fell on.
 
-We state two things about this cell rather than pooling it. It was run at
-\LlamaThreeThreeSevenZeroBInstructHostReps{} design seed, so it carries no
-noise floor and we do not claim
-\LlamaThreeThreeSevenZeroBInstructHostResid{} is distinguishable from zero ---
-only that it is not the large positive residual a scale explanation predicts.
-And it was served by a hosted API rather than our own vLLM harness, so it is
-reported \emph{beside} the ladder in Figure~\ref{fig:scale} and never inside its
-mean. The comparison it licenses is directional, and in that direction the
-answer is that scale does not rescue the metric.
+\textbf{This cell now carries a noise floor, and the residual sits under it.}
+An earlier version of this section reported the 70B cell at a single design
+seed, which meant it had no floor and the residual could only be described as
+``not the large positive one a scale explanation predicts''. It has since been
+run at \LlamaThreeThreeSevenZeroBInstructHostReps{} independent design seeds,
+each drawing a different outcome subsample and pair set, giving a design noise
+floor of \HostedFloor{}. The residual of
+\LlamaThreeThreeSevenZeroBInstructHostResid{} \HostedClears{} that floor. So
+the statement available here is no longer merely directional: at seventy
+billion parameters, the content-attributable component of this metric is not
+distinguishable from the spread the same model shows across redraws of the
+design.
+
+One thing about this cell is still reported apart rather than pooled. It was
+served by a hosted API rather than our own vLLM harness, which is a different
+serving stack and carries a different harness hash by construction, so it
+appears \emph{beside} the ladder in Figure~\ref{fig:scale} and never inside its
+mean.
 
 \subsection{Positive control: personas move wanting, not only writing}
 \label{sec:persona}
