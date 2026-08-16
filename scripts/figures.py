@@ -273,9 +273,26 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
     plt.close(fig)
 
 
-def fig_scale_ladder(tiles, out: Path, theme: str = "light"):
+# Params for hosted models, which the card does not carry. Only used to place
+# a marker on a log axis; nothing is computed from these.
+HOSTED_PARAMS = {
+    "google/gemma-3-27b-it": 27,
+    "meta-llama/Llama-3.3-70B-Instruct": 70,
+    "Qwen/Qwen3-235B-A22B-Instruct-2507": 235,
+    "Qwen/Qwen3-30B-A3B-Instruct-2507": 30,
+}
+
+
+def fig_scale_ladder(tiles, out: Path, theme: str = "light", hosted=None):
     """The scale question, isolated: one family, four sizes, size as the only
-    variable. Does the floor rise with scale as fast as the signal?"""
+    variable. Does the floor rise with scale as fast as the signal?
+
+    Hosted models are drawn as unconnected diamonds *beside* the ladder and are
+    never joined to its line or included in its band -- a different serving
+    stack is a different harness, and connecting them would assert a continuity
+    the design refuses. The paper's text claimed they appeared here before they
+    actually did; this is that claim made true.
+    """
     th = THEMES[theme]; _style(th)
     rows = [r for r in _rows(tiles) if r["family"] == "qwen"]
     rows.sort(key=lambda r: r["params"])
@@ -298,10 +315,34 @@ def fig_scale_ladder(tiles, out: Path, theme: str = "light"):
         ax.text(xi, max(a, b) + 0.012, f"{g:+.3f}", fontsize=9.5,
                 color=th["ink2"], ha="center")
 
+    hx = []
+    for t in (hosted or []):
+        if t.get("badge") != "FLOOR_CORRECTED":
+            continue
+        pm = HOSTED_PARAMS.get(t["model"])
+        if pm is None:
+            continue
+        hx.append(pm)
+        ax.plot([pm], [t["raw_coherence"]], "D", color=th["cat"][0], markersize=8,
+                markeredgecolor=th["surface"], markeredgewidth=1.5, zorder=5)
+        ax.plot([pm], [t["floor"]], "D", color=th["cat"][1], markersize=8,
+                markeredgecolor=th["surface"], markeredgewidth=1.5, zorder=5)
+        ax.plot([pm, pm], [t["floor"], t["raw_coherence"]], "-",
+                color=th["ink3"], lw=1.0, alpha=0.55, zorder=4)
+        top = max(t["raw_coherence"], t["floor"])
+        ax.text(pm, top + 0.012, f"{t['value']:+.3f}", fontsize=9.5,
+                color=th["ink2"], ha="center")
+    if hx:
+        ax.plot([], [], "D", color=th["ink3"], markersize=8,
+                markeredgecolor=th["surface"], markeredgewidth=1.5,
+                ls="", label="hosted API (separate harness)")
+
     ax.set_xscale("log")
-    ax.set_xticks(x); ax.set_xticklabels([f"{v:g}B" for v in x], fontsize=10)
+    ticks = sorted(set(x) | set(hx))
+    ax.set_xticks(ticks); ax.set_xticklabels([f"{v:g}B" for v in ticks], fontsize=10)
     ax.minorticks_off()
-    ax.set_xlabel("Qwen3.5 parameters (log scale)", fontsize=10.5)
+    ax.set_xlabel("parameters (log scale)  —  line is the Qwen3.5 ladder",
+                  fontsize=10.5)
     ax.set_ylabel("held-out coherence", fontsize=10.5)
     ax.set_ylim(0.80, 0.98)
     ax.grid(True, color=th["grid"], lw=0.7); ax.set_axisbelow(True)
@@ -354,6 +395,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
     ap.add_argument("--card", default="card.json")
+    ap.add_argument("--hosted-card", default="site/card_hosted.json")
     ap.add_argument("--out", default="site")
     ap.add_argument("--exemplar", default="google/gemma-4-E2B-it")
     # The paper wants vector PDF and only the light theme; the web page wants
@@ -365,6 +407,10 @@ def main() -> None:
 
     card = json.loads(Path(args.card).read_text())
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
+    # Optional: the figure still builds without it, minus the hosted diamonds.
+    hcpath = Path(args.hosted_card)
+    hosted_tiles = (json.loads(hcpath.read_text())["tiles"]
+                    if hcpath.exists() else [])
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
     ext = args.format
 
@@ -372,7 +418,8 @@ def main() -> None:
     for theme in [t.strip() for t in args.themes.split(",") if t.strip()]:
         sfx = "" if theme == "light" else "-dark"
         fig_state_space(tiles, out / f"fig1_state_space{sfx}.{ext}", theme, card['cells'])
-        fig_scale_ladder(tiles, out / f"fig2_scale{sfx}.{ext}", theme)
+        fig_scale_ladder(tiles, out / f"fig2_scale{sfx}.{ext}", theme,
+                         hosted=hosted_tiles)
         fig_strength_distribution(Path(args.results), args.exemplar,
                                   out / f"fig3_strength{sfx}.{ext}", theme)
         made += [f"fig1_state_space{sfx}", f"fig2_scale{sfx}", f"fig3_strength{sfx}"]
