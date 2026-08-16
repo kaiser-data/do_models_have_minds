@@ -2,9 +2,52 @@
   "tiles": [
     {
       "model": "google/gemma-3-27b-it",
-      "badge": "NOT_ASSESSED",
-      "reason": "no N- floor cell for this model",
-      "raw_coherence": 0.8956978782239435
+      "badge": "FLOOR_CORRECTED",
+      "value": -0.002807415093615262,
+      "raw_coherence": 0.8956978782239435,
+      "floor": 0.8985052933175588,
+      "floor_magnitude": null,
+      "arithmetic_component": null,
+      "interval_raw": [
+        0.8661557291243417,
+        0.919805793230109
+      ],
+      "interval_floor": [
+        0.868365377095774,
+        0.9215656478968306
+      ],
+      "decisive_fraction": {
+        "N_minus": 0.6148,
+        "R": 0.8104
+      },
+      "mean_abs_deviation": {
+        "N_minus": 0.31507026906973207,
+        "R": 0.40617709007936054
+      },
+      "decisive_ratio_R_over_Nminus": 1.3181522446324008,
+      "shuffled_null": {
+        "N_minus": 0.562468142186452,
+        "R": 0.5263620574482298
+      },
+      "split_spread": 0.028293534860886482,
+      "n_design_replicates": 1,
+      "design_noise_floor": null,
+      "clears_floor": null,
+      "floor_margin": null,
+      "slot_a_bias": 0.5352159140882728,
+      "transitivity": {
+        "N_minus": 0.98746954403063,
+        "R": 0.9782702796294693
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9999651130708582,
+        "R": 1.0000000026342781
+      },
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": {
+        "N_minus": "c90e0fefd3762260",
+        "R": "1b1fd9e11a941dfb"
+      }
     },
     {
       "model": "meta-llama/Llama-3.3-70B-Instruct",
@@ -57,6 +100,25 @@
     }
   ],
   "cells": [
+    {
+      "model": "google/gemma-3-27b-it",
+      "arm": "N_minus",
+      "design_seed": 20260815,
+      "coherence": 0.8985052933175588,
+      "coherence_spread": 0.028293534860886482,
+      "shuffled_null": 0.562468142186452,
+      "decisive_fraction": 0.6148,
+      "mean_abs_deviation": 0.31507026906973207,
+      "sd_pair_prob": 0.36424308596196997,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9999651130708582,
+      "slot_a_bias": 0.655926100366365,
+      "transitivity": 0.98746954403063,
+      "completeness": 0.6908,
+      "frac_near_indifferent": 0.2708,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "c90e0fefd3762260"
+    },
     {
       "model": "google/gemma-3-27b-it",
       "arm": "R",

@@ -57,13 +57,54 @@
 \newcommand{\HostedNoLogprobsModel}{Kimi-K3}
 \newcommand{\HostedScoreableModels}{gemma-3-27b-it, Llama-3.3-70B-Instruct, Qwen3-235B-A22B-Instruct-2507, Qwen3-30B-A3B-Instruct-2507}
 \newcommand{\HostedUnscoreableModels}{gpt-oss-120b, GLM-5.2, Nemotron-3\_5-Lightning, MiniMax-M2.5, DeepSeek-V4-Flash, Kimi-K3}
+\newcommand{\PrefillNProbed}{5}
+\newcommand{\PrefillNRecovered}{2}
+\newcommand{\PrefillNUnrecovered}{3}
+\newcommand{\PrefillRecoveredModels}{MiniMax-M2.5, Nemotron-3\_5-Lightning}
+\newcommand{\PrefillUnrecoveredModels}{DeepSeek-V4-Flash, gpt-oss-120b, GLM-5.2}
+\newcommand{\PrefillNPairs}{6}
+\newcommand{\PrefillBestMass}{0.998}
+\newcommand{\PrefillWorstRecoveredMass}{0.963}
+\newcommand{\PrefillBestUnrecoveredMass}{0.093}
+\newcommand{\gemmaThreeTwoSevenbitHostR}{0.896}
+\newcommand{\gemmaThreeTwoSevenbitHostN}{0.899}
+\newcommand{\gemmaThreeTwoSevenbitHostResid}{-0.003}
+\newcommand{\gemmaThreeTwoSevenbitHostDecR}{81}
+\newcommand{\gemmaThreeTwoSevenbitHostDecN}{61}
+\newcommand{\gemmaThreeTwoSevenbitHostReps}{1}
 \newcommand{\LlamaThreeThreeSevenZeroBInstructHostR}{0.917}
 \newcommand{\LlamaThreeThreeSevenZeroBInstructHostN}{0.915}
 \newcommand{\LlamaThreeThreeSevenZeroBInstructHostResid}{+0.002}
 \newcommand{\LlamaThreeThreeSevenZeroBInstructHostDecR}{88}
 \newcommand{\LlamaThreeThreeSevenZeroBInstructHostDecN}{66}
 \newcommand{\LlamaThreeThreeSevenZeroBInstructHostReps}{1}
-\newcommand{\HostedNScored}{1}
+\newcommand{\HostedNScored}{2}
+\newcommand{\PdNegMagR}{4.61}
+\newcommand{\PdNegMagMaxR}{10.70}
+\newcommand{\PdNegDirR}{+0.103}
+\newcommand{\PdSelfDirR}{+0.600}
+\newcommand{\PdShuffleDirR}{+0.174}
+\newcommand{\PdClearingR}{53}
+\newcommand{\PdNPositiveR}{60}
+\newcommand{\PdNNegativeR}{6}
+\newcommand{\PdNegMagN}{3.36}
+\newcommand{\PdNegMagMaxN}{11.05}
+\newcommand{\PdNegDirN}{-0.012}
+\newcommand{\PdSelfDirN}{+0.299}
+\newcommand{\PdShuffleDirN}{+0.050}
+\newcommand{\PdClearingN}{20}
+\newcommand{\PdNPositiveN}{49}
+\newcommand{\PdNNegativeN}{6}
+\newcommand{\PdBestCondition}{sch-selfdirection-D2}
+\newcommand{\PdBestFloorCorr}{0.796}
+\newcommand{\PdBestDirReal}{+0.354}
+\newcommand{\PdWorstCondition}{cautious-D1}
+\newcommand{\PdWorstFloorCorr}{0.331}
+\newcommand{\PdNRanked}{10}
+\newcommand{\PdLoudestCondition}{sch-power-D2}
+\newcommand{\PdLoudestDirReal}{+0.703}
+\newcommand{\PdLoudestFloorCorr}{0.493}
+\newcommand{\PdNModelsPerCondition}{5}
 \newcommand{\SchNModels}{4}
 \newcommand{\SchNModelsAll}{5}
 \newcommand{\SchThreshold}{-0.1}

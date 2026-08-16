@@ -458,6 +458,34 @@
       "what_would_falsify": "A large positive floor-corrected residual at or above this scale, which is what an emergence-with-scale account predicts and what this cell does not show. Equally, a replicated version of this cell whose noise floor turns out to be wide enough that the ladder's small positive residuals would also vanish -- that would make this agree with the ladder for the wrong reason.",
       "grows_by": "Design seeds on this cell first -- one replicate is what keeps this provisional rather than established. Then a second frontier family at comparable scale, so the result is not one model's recipe.",
       "priority": 1
+    },
+    {
+      "id": "persona-needs-an-empty-slot-control",
+      "statement": "Measured against a persona slot filled with no trait, a large share of the persona displacement this paper reports is not distinguishable from the act of installing one; what survives is direction agreement floor-corrected by the invented arm, and that statistic reverses the raw ranking.",
+      "status": "provisional",
+      "section": "sec:persona",
+      "macros": [
+        "PdNegMagR",
+        "PdNegMagMaxR",
+        "PdClearingR",
+        "PdNegDirR",
+        "PdSelfDirR",
+        "PdShuffleDirR",
+        "PdBestCondition",
+        "PdBestFloorCorr",
+        "PdLoudestCondition",
+        "PdLoudestDirReal",
+        "PdLoudestFloorCorr"
+      ],
+      "evidence": {
+        "models_per_condition": "\\PdNModelsPerCondition",
+        "positive_cells": "\\PdNPositiveR",
+        "negative_cells": "\\PdNNegativeR",
+        "note": "The control is the `neutral` cell: the persona slot occupied, no trait content, so it carries the added block, the length and the formatting and differs from a persona cell only in being a persona. Against it \\PdClearingR% of \\PdNPositiveR persona cells clear the largest empty-slot displacement on magnitude. Direction agreement separates far better (negative \\PdNegDirR, shuffle \\PdShuffleDirR) BUT FAILS ITS SELF-CHECK: a design-seed resample with no persona in it aligns at \\PdSelfDirR, above most persona conditions, so raw direction agreement is not persona-specific and must not be quoted alone. Floor-corrected direction is the surviving indicator: \\PdBestCondition reaches \\PdBestFloorCorr while \\PdLoudestCondition, which has the LARGEST raw agreement at \\PdLoudestDirReal, floor-corrects to only \\PdLoudestFloorCorr. Bears directly on persona-displacement, which is a magnitude claim established against the bare baseline and therefore against no denominator; it should not be reported without this one."
+      },
+      "what_would_falsify": "More models per condition moving the clearing rate substantially above \\PdClearingR%, or a matched self-check (same design, prompt-only perturbation) that returns near zero, which would restore raw direction agreement as a persona-specific indicator.",
+      "grows_by": "Only \\PdNModelsPerCondition models carry each persona condition, so every cosine rests on ten pairs; and each persona cell is one design seed, so the conditions have no noise floor of their own.",
+      "priority": 2
     }
   ]
 }

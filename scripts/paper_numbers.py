@@ -268,6 +268,37 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         _tex(m.api_id.split("/")[-1])
         for m in sc["preamble"] + sc["no_logprobs"])))
 
+    # The remedy this paper predicted, measured. sec:limits used to assert that
+    # a prefill variant "would recover them" -- all of the preamble-blocked
+    # models -- on no evidence beyond the mechanism sounding right. It recovers
+    # some. These macros exist so the sentence states the measurement, and so it
+    # restates itself if the probe is ever re-run against a changed roster.
+    pf_path = Path("site/hosted_scoreability_prefill.json")
+    if pf_path.exists():
+        pf = json.loads(pf_path.read_text())
+        rec = sorted(m for m, v in pf.items() if v.get("first_token_scoreable"))
+        unrec = sorted(m for m, v in pf.items()
+                       if not v.get("first_token_scoreable"))
+        out.append(_cmd("PrefillNProbed", str(len(pf))))
+        out.append(_cmd("PrefillNRecovered", str(len(rec))))
+        out.append(_cmd("PrefillNUnrecovered", str(len(unrec))))
+        out.append(_cmd("PrefillRecoveredModels", ", ".join(
+            _tex(m.split("/")[-1]) for m in rec)))
+        out.append(_cmd("PrefillUnrecoveredModels", ", ".join(
+            _tex(m.split("/")[-1]) for m in unrec)))
+        # n per model is small (a handful of pairs), so the paper must say so
+        # rather than let a bare 2-of-5 read as a settled rate.
+        out.append(_cmd("PrefillNPairs",
+                        str(min(v.get("n", 0) for v in pf.values()))))
+        if rec:
+            out.append(_cmd("PrefillBestMass",
+                            f"{max(pf[m]['mean_answer_mass'] for m in rec):.3f}"))
+            out.append(_cmd("PrefillWorstRecoveredMass",
+                            f"{min(pf[m]['mean_answer_mass'] for m in rec):.3f}"))
+        if unrec:
+            out.append(_cmd("PrefillBestUnrecoveredMass",
+                            f"{max(pf[m]['mean_answer_mass'] for m in unrec):.3f}"))
+
     # The frontier check. Read from card_hosted.json rather than card.json
     # because the hosted tree is deliberately not pooled with the self-hosted
     # one -- different serving stack, so these macros exist to be quoted BESIDE
@@ -292,6 +323,48 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                             f"{100 * t['decisive_fraction']['N_minus']:.0f}"))
             out.append(_cmd(f"{s}HostReps", str(t.get("n_design_replicates", 1))))
         out.append(_cmd("HostedNScored", str(len(scored))))
+
+    # The persona indicators against their denominator. Emitted because the
+    # magnitude claim (persona-displacement) was established against the bare
+    # baseline, which differs from a persona cell by two things at once -- a
+    # trait, and a block of added text. These macros carry the control that
+    # separates them, including the self-check it FAILS, so the paper cannot
+    # quote the flattering half alone.
+    pd_path = Path("site/persona_denominator.json")
+    if pd_path.exists():
+        pd = json.loads(pd_path.read_text())
+        for arm, tag in (("R", "R"), ("N_minus", "N")):
+            c = pd["controls"][arm]
+            out.append(_cmd(f"PdNegMag{tag}", f"{c['negative_magnitude_mean']:.2f}"))
+            out.append(_cmd(f"PdNegMagMax{tag}", f"{c['negative_magnitude_max']:.2f}"))
+            out.append(_cmd(f"PdNegDir{tag}", f"{c['negative_direction']:+.3f}"))
+            out.append(_cmd(f"PdSelfDir{tag}", f"{c['self_check_direction']:+.3f}"))
+            out.append(_cmd(f"PdShuffleDir{tag}",
+                            f"{c['shuffle_direction_mean']:+.3f}"))
+            out.append(_cmd(f"PdClearing{tag}",
+                            f"{100 * c['positives_clearing_negative']:.0f}"))
+            out.append(_cmd(f"PdNPositive{tag}", str(c["n_positive_cells"])))
+            out.append(_cmd(f"PdNNegative{tag}", str(c["n_negative"])))
+        ranked = [r for r in pd["conditions"]
+                  if r["floor_corrected_direction"] is not None]
+        if ranked:
+            best, worst = ranked[0], ranked[-1]
+            out.append(_cmd("PdBestCondition", _tex(best["condition"])))
+            out.append(_cmd("PdBestFloorCorr",
+                            f"{best['floor_corrected_direction']:.3f}"))
+            out.append(_cmd("PdBestDirReal", f"{best['direction_real']:+.3f}"))
+            out.append(_cmd("PdWorstCondition", _tex(worst["condition"])))
+            out.append(_cmd("PdWorstFloorCorr",
+                            f"{worst['floor_corrected_direction']:.3f}"))
+            out.append(_cmd("PdNRanked", str(len(ranked))))
+            # The reversal: the condition with the LARGEST raw direction
+            # agreement, which is not the best marker.
+            loud = max(ranked, key=lambda r: r["direction_real"])
+            out.append(_cmd("PdLoudestCondition", _tex(loud["condition"])))
+            out.append(_cmd("PdLoudestDirReal", f"{loud['direction_real']:+.3f}"))
+            out.append(_cmd("PdLoudestFloorCorr",
+                            f"{loud['floor_corrected_direction']:.3f}"))
+            out.append(_cmd("PdNModelsPerCondition", str(best["n_models_real"])))
 
     # Track 6, the borrowed instrument. Emitted so the slides and sec:persona
     # can state a falsified pre-registered test with its actual numbers instead

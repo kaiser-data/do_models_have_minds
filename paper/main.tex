@@ -1152,8 +1152,19 @@ one number would misdescribe both. \HostedNPreamble{} begin an answer we cannot
 read from where we are looking --- a reasoning preamble (``We'', ``The'',
 ``Here'') or a format control token --- so the choice is presumably made, but
 not in the first token. That is a limitation of first-token forced choice as an
-instrument, not of any model and not of our harness; a prefill variant would
-recover them, and until one exists their numbers are not poolable with the rest
+instrument, not of any model and not of our harness.
+
+An earlier version of this section predicted that a prefill variant would
+recover all \PrefillNProbed{} of them. We built one and it does not. Seeding the
+assistant turn with a partial answer recovers \PrefillNRecovered{}
+(\PrefillRecoveredModels{}, to answer mass \PrefillWorstRecoveredMass{} and
+\PrefillBestMass{}) and leaves \PrefillNUnrecovered{} where they were
+(\PrefillUnrecoveredModels{}, the best of them reaching only
+\PrefillBestUnrecoveredMass{}). The probe is \PrefillNPairs{} pairs per model,
+so \PrefillNRecovered{} of \PrefillNProbed{} is a direction and not a rate. We
+report it because the prediction was ours: a preamble is not one failure with
+one remedy, and for most of these models the first token is not recoverable by
+prompt-level means. Until it is, their numbers are not poolable with the rest
 (\S\ref{sec:defs}). The remaining \HostedNNoLogprobs{}
 (\HostedNoLogprobsModel{}) is different in kind: its API declines to return
 logprobs at all, so no prompt-level change reaches it. That is a property of the
