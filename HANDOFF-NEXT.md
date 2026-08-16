@@ -16,10 +16,13 @@ Every number below was read from `site/*.json`, `card.json`, `claims.json` or
 
 ## 0. State: everything committed, one sweep in flight
 
-`origin/main` is at **`53ca3a2`**. **Nine commits since `c6f3dc8`; the working
-tree is clean.** 343 tests pass, `claims.py` exits 0 (13 established / 11
-provisional, 24 total), `lint_paper.py` 8/8, `main.pdf` and `slides.pdf` both
-build.
+`origin/main` is at **`b74c2c1`**. **Fourteen commits since `c6f3dc8`; the
+working tree is clean.** 343 tests pass, `claims.py` exits 0 (13 established /
+11 provisional, 24 total), `lint_paper.py` 8/8, `main.pdf` (38pp) and
+`slides.pdf` both build.
+
+**The method now has a name and a lineage (§8).** Read that before editing the
+related-work section, because it changes what the paper is claiming to be.
 
 **LaTeX is available on this machine.** The previous handoff said it was not.
 That was wrong: `latexmk` and `pdflatex` are genuinely absent, but **tectonic is
@@ -188,8 +191,104 @@ the cheapest remaining test and it directly explains §1's one-sided flips.
 widens the invented-option sink. Needs cells that do not exist; the MIXED arm
 was only ever run at baseline.
 
+**F. The warned-foils control (§5c).** One line in the prompt telling the model
+the battery contains invented outcomes. Paulhus's index survived that warning;
+if ours does not, the foil floor is a disclosure artifact and that is a finding.
+Cheapest new experiment in the list.
+
 **Not now:** more self-hosted models on the plateau; the ten-value Schwartz
 version; anything that resurrects the ARI clustering test.
+
+---
+
+## 5d. Two things the paper now says about minds, because it said nothing before
+
+Grep for `conscious|sentient|phenomenal|welfare` returned **zero hits** across
+the whole paper before §10 was written, which is odd for a digital-minds
+submission. It now says two things, and both are load-bearing for how the work
+gets read:
+
+1. **Neither proof nor disproof.** What is refuted is an *inference* — "these
+   choices fit a stable scalar ordering, therefore this model has a value
+   system" — not a claim about inner life. A system with rich inner states can
+   still produce form-driven answers on a badly anchored instrument; humans do,
+   and nobody reads acquiescence bias as evidence against human consciousness.
+2. **The scaling result is *not* "no growth with scale".** Real-outcome
+   coherence **rises** (+0.014, flat); the floor rises +0.085, six times faster.
+   The residual falls because the floor climbed, not because anything declined.
+   If a test's guessing baseline went 50% → 92% while scores went 90% → 92%,
+   the conclusion is that the test stopped discriminating, not that the students
+   stopped learning. **Any "property X does not increase with scale" claim needs
+   an instrument whose floor is flat in scale, and this one's is not.**
+
+And on the title question (§10.4): **a persona installs a topic, not a policy.**
+Displacement is targeted — the Schwartz personas raise the outcomes their own
+value is about, against labels written by someone else beforehand, which a prose
+change cannot do. But half the apparent effect is the *slot* (+0.517 → +0.258
+against an empty persona slot), and the model cannot distinguish *have* a trait
+(0.869–1.000) from *conceal* it (0.901–1.000) from *perform* it (0.947–0.999).
+Concealment scores higher than possession. The consequence needs no position on
+inner life: a model that cannot tell being cautious from performing caution
+cannot tell an evaluator which it is doing.
+
+---
+
+## 5b. How much each finding is actually worth
+
+Added as §11 of the paper, and the ordering is not the one anyone guessed. The
+**thesis is the marginal result**; the firm ones are the mechanisms under it.
+
+| finding | support | verdict |
+|---|---|---|
+| preference tracks utility (MIXED) | +0.707–+0.937, **9/9 models** | firm |
+| surface R² gap | R 0.072–0.101 vs N− 0.328–0.425, **3/3 seeds, non-overlapping** | firm |
+| ordering rotates under rewording | 4/4 CIs exclude 1.0 | firm per cell, narrow scope |
+| **the metric barely separates real from invented** | **+0.0255, CI [+0.0073, +0.0443], t=2.51** | **marginal — and it is the thesis** |
+| 70B does not clear its floor | 3 seeds, 1 model | sound, single model |
+| personas hit their own outcomes | sign test **p=0.0625** | suggestive; does *not* reach 0.05 |
+| gibberish beats bad outcomes | 103 pairs, 6 models, 1 seed | weakest claimed result |
+
+The headline's across-model **sd (0.0305) is larger than its mean**, 7/9 models
+are positive (sign test p=0.18, not significant), and 2 are negative. That does
+not sink the claim — the claim is that the residual is *small* — but two
+sentences are unavailable: that every model shows it, and that it is reliably
+positive. Do not write either.
+
+**What the noise model does not cover**, now named in the paper rather than
+absorbed into the design floor: **wording** (no prompt-replicate floor exists;
+two wordings is not a distribution), **battery** (all 510 outcomes from one
+source), **family** (one ladder).
+
+---
+
+## 5c. The method has a name, and it is not new
+
+`refs.bib` had **zero** psychometrics citations, which made the work read as a
+novel objection to Utility Engineering instead of a standard control arriving
+late. Named so it can be cited:
+
+- **referent ablation** — remove what the words denote; hold grammar, frame,
+  pair structure and indices fixed
+- **the foil arm** — the resulting condition
+- **the foil floor** — what the instrument returns with nothing denoted
+
+Three ancestors, **all verified against primary sources**, none from memory:
+
+| source | contributes |
+|---|---|
+| Ebbinghaus (1885) | meaning-free stimuli — but he stripped meaning to make *form* measurable; we strip it to ask whether form was all there ever was. Opposite purpose, same tool. |
+| Campbell & Fiske (1959) | a measure must *fail* to respond to what it should not, and showing that failure is part of validating it |
+| Paulhus et al. (2003) | the over-claiming technique: ~20% nonexistent items, signal detection over real items and foils to separate knowledge from response bias |
+
+UE's robustness suite is entirely **convergent** — seven languages, syntactic
+perturbation, reframing, relabelled options. The **discriminant** half was
+missing. The foil arm supplies it, and the metric does not pass it.
+
+**A free experiment fell out of this.** Paulhus found the over-claiming index
+survived respondents being *warned* that foils were present. Our models are
+never told the invented arm exists. That is a one-line prompt change and it
+tests whether the foil floor is robust to disclosure — written into the paper
+as open, not yet run.
 
 ---
 
