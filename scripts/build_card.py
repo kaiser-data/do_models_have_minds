@@ -32,6 +32,11 @@ from nullcard.scoring.stats import training_noise_floor, wilson_interval  # noqa
 from nullcard.scoring.thurstonian import completeness, transitivity_rate  # noqa: E402
 
 ARMS = ("R", "N_plus", "N_minus")
+# MIXED is deliberately NOT here. It compares a real outcome against an invented
+# one inside one pair, so it has no within-arm coherence to fit and no floor to
+# clear -- scoring it as a card cell would produce a number with no meaning that
+# still printed. scripts/mixed_arm.py handles it.
+EXCLUDED_ARMS = ("MIXED",)
 N_SPLITS = 5
 
 # 2500 pairs in both presentation orders. A cell with fewer rows than this did
@@ -203,10 +208,12 @@ def build_card(results_dir: Path) -> dict:
     # than dropped quietly: a card built over fewer cells than the tree holds
     # must say so, or the omission reads as coverage.
     paths = sorted(results_dir.glob("*.jsonl"))
-    neutral = [p for p in paths if p.stem.endswith("__neutral")]
+    neutral = [p for p in paths if p.stem.endswith("__neutral")
+               or any(f"__{a}" in p.stem for a in EXCLUDED_ARMS)]
     if neutral:
-        print(f"  skipping {len(neutral)} neutral-option cell(s): a 3-option "
-              f"instrument, scored by scripts/neutral_control.py")
+        print(f"  skipping {len(neutral)} cell(s) from a different instrument "
+              f"(neutral option / MIXED arm); these are scored by "
+              f"scripts/neutral_control.py and scripts/mixed_arm.py")
     cells = [c for c in (summarise_cell(p) for p in paths if p not in neutral) if c]
 
     # Average over design replicates, and keep their spread. Each design seed

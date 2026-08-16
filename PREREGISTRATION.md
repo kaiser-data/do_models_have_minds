@@ -156,6 +156,48 @@ difference that any contrast carries.
 **Reporting rule.** P6 and P9 are controls whose failure costs us the persona
 claim; they are reported whichever way they come out, and before P7 and P8.
 
+### Track 5: where does meaninglessness sit on the scale of real outcomes?
+
+Registered before the arm ran. Every comparison in this study so far is
+*within* one arm — real against real, or invented against invented. Nothing has
+ever asked a model to choose between a real outcome and a meaningless one in the
+same forward pass. That gap matters more than it looks: the R and N− utilities
+come from separate Thurstonian fits, each normalised on its own scale, so they
+**cannot be laid over each other**. A mixed pair is the only thing that puts
+both on one scale.
+
+The **MIXED** arm does exactly that: option A drawn from R, option B from N−,
+with order counterbalanced so the real outcome occupies each slot equally often.
+The quantity of interest is the **indifference point** — the fitted real-outcome
+utility at which P(prefer the real option) = 0.5. That is where "refers to
+nothing" sits among things that refer to something.
+
+- **P13 — the choice tracks the real option's value.** P(prefer real) will rise
+  with the real outcome's fitted utility. *Falsified if P(prefer real) is flat
+  across the real utility range* — which would mean that with one meaningful
+  option in front of it the model is not reading the meaningful one either, and
+  would be the most damaging result in this paper for the metric's
+  interpretation.
+
+- **P14 — meaninglessness is not the worst thing available.** For sufficiently
+  aversive real outcomes the model will prefer the meaningless option, so the
+  indifference point sits strictly inside the real utility range rather than
+  below it. *Falsified if the model prefers the real option even at the bottom
+  of its own scale*, which would indicate an aversion to nonsense that dominates
+  outcome content.
+
+- **P15 — the discarded channel still separates the arms.** Answer mass will be
+  lower on mixed pairs than on all-real pairs, because one option is meaningless
+  in both. *Falsified if answer mass on MIXED matches R*, which would place the
+  detector result in doubt: it would mean the mass signal tracks the whole
+  prompt's coherence rather than the options' groundedness.
+
+**What this cannot show.** A preference for the meaningless option is not
+evidence the model "knows" it is meaningless — the detector results
+(§\ref{sec:detector}) already establish that grounding information is present in
+a discarded channel, and P13–P15 ask only whether it reaches the *choice*. The
+two are different questions and only the second is at stake here.
+
 ### Separating "declined the role" from "never registered the role"
 
 A persona that moves nothing admits two readings, and displacement alone cannot

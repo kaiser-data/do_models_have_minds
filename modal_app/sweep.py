@@ -740,7 +740,22 @@ def _run_cell_inner(
 
     design = build_design(design_seed)
     sel = design["outcome_indices"]
-    texts = design["texts"][arm]
+    # The MIXED arm puts a real outcome against an invented one INSIDE one
+    # comparison. Every other arm compares within itself, which is why the R
+    # and N- utility scales are separately normalised and cannot be laid over
+    # each other: nothing has ever asked a model to choose between them. This
+    # arm is the only thing that puts both on one scale.
+    #
+    # Which member is the real one is decided PER PAIR, not per position. A
+    # position appears in many pairs and can be the first member of one and the
+    # second of another, so a position-keyed map collapses those together and
+    # silently randomises which arm each option came from. Keyed on the pair's
+    # canonical first member instead, so order counterbalancing moves the real
+    # option between slot A and slot B -- which is what we want -- while never
+    # changing WHICH outcome is the real one.
+    mixed = arm == "MIXED"
+    texts = design["texts"]["R" if mixed else arm]
+    real_of_pair = ([a for a, _ in design["pair_positions"]] if mixed else [])
     started = time.time()
 
     tok = AutoTokenizer.from_pretrained(model_id, cache_dir="/cache/hf", trust_remote_code=True)
@@ -787,10 +802,14 @@ def _run_cell_inner(
     with open(out_path, "w") as fh:
         for start in range(0, len(jobs), batch_size):
             batch = jobs[start : start + batch_size]
-            prompts = [
-                build_prompt(texts[sel[i]], texts[sel[j]])
-                for _, i, j, _ in batch
-            ]
+            def _txt(k: int, pos: int) -> str:
+                if not mixed:
+                    return texts[sel[pos]]
+                arm_of = "R" if pos == real_of_pair[k] else "N_minus"
+                return design["texts"][arm_of][sel[pos]]
+
+            prompts = [build_prompt(_txt(k, i), _txt(k, j))
+                       for k, i, j, _ in batch]
             encoded = [_template(tok, p, persona, depth) for p in prompts]
             maxlen = max(len(e) for e in encoded)
             pad_id = tok.pad_token_id
@@ -827,6 +846,10 @@ def _run_cell_inner(
                 row = {
                     "model_id": model_id, "arm": arm, "pair_index": k,
                     "slot_a_outcome": sel[i], "slot_b_outcome": sel[j], "order": order,
+                    "slot_a_arm": ("R" if i == real_of_pair[k] else "N_minus")
+                                  if mixed else arm,
+                    "slot_b_arm": ("R" if j == real_of_pair[k] else "N_minus")
+                                  if mixed else arm,
                     "p_option_a": pa_val, "answer_mass": mass,
                     "p_neither": pc_val, "neutral_option": neutral,
                     "top_tokens": sorted(dist.items(), key=lambda x: -x[1])[:5],
