@@ -73,6 +73,17 @@
       "NeutABRefuseHi": "0.0100",
       "NeutNCells": "12"
     },
+    "instruction-registered-not-obeyed": {
+      "ComplyNModels": "5",
+      "ComplyNObey": "4",
+      "ComplyNRegister": "4",
+      "ComplyNBoth": "3",
+      "ComplyRefuser": "Qwen3.5-2B",
+      "ComplyRefuserBase": "0.725",
+      "ComplyRefuserAfter": "0.465",
+      "ComplyTrivial": "LFM2.5-1.2B-Instruct",
+      "ComplyTrivialBase": "0.068"
+    },
     "harness-not-invariant": {
       "HarnessNRendered": "9",
       "HarnessNInjecting": "2",

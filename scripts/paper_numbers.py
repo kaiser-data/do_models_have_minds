@@ -79,7 +79,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           stated_base: list[dict] | None = None,
           revealed: dict | None = None,
           neutral: dict | None = None,
-          rendered: dict | None = None) -> str:
+          rendered: dict | None = None,
+          comply: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -102,6 +103,26 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("NClears", str(sum(1 for t in tiles if t.get("clears_floor")))))
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
+
+    # The instruction-following gate (P12). Reported with BOTH criteria,
+    # because the registered one and the one the gate needs disagree in
+    # opposite directions on two different models.
+    if comply is not None:
+        out.append(_cmd("ComplyNModels", str(comply["n_models"])))
+        out.append(_cmd("ComplyNObey", str(comply["n_complying"])))
+        out.append(_cmd("ComplyNRegister", str(comply["n_registering"])))
+        out.append(_cmd("ComplyNBoth", str(comply["n_both"])))
+        refuser = next((r for r in comply["rows"]
+                        if r["registers"] and not r["complies"]), None)
+        if refuser:
+            out.append(_cmd("ComplyRefuser", refuser["model"].split("/")[-1]))
+            out.append(_cmd("ComplyRefuserBase", f"{refuser['baseline_mean_p_a']:.3f}"))
+            out.append(_cmd("ComplyRefuserAfter", f"{refuser['mean_p_a']:.3f}"))
+        trivial = next((r for r in comply["rows"]
+                        if r["complies"] and not r["registers"]), None)
+        if trivial:
+            out.append(_cmd("ComplyTrivial", trivial["model"].split("/")[-1]))
+            out.append(_cmd("ComplyTrivialBase", f"{trivial['baseline_mean_p_a']:.3f}"))
 
     # The harness itself, as measured rather than as intended. The sweep sends
     # no system message at D0 and records system_prompt: None; some chat
@@ -740,6 +761,7 @@ def main() -> None:
     ap.add_argument("--revealed", default="site/deception.json")
     ap.add_argument("--neutral", default="site/neutral_control.json")
     ap.add_argument("--rendered", default="site/rendered_prompts.json")
+    ap.add_argument("--comply", default="site/comply_gate.json")
     ap.add_argument("--stated-table-out", default="paper/table_stated.tex")
     ap.add_argument("--revealed-table-out", default="paper/table_revealed.tex")
     ap.add_argument("--neutral-table-out", default="paper/table_neutral.tex")
@@ -780,10 +802,13 @@ def main() -> None:
             print(f"  no {label} at {path}; omitting those macros")
     rpath4 = Path(args.rendered)
     rendered = json.loads(rpath4.read_text()) if rpath4.exists() else None
+    cpath = Path(args.comply)
+    comply = json.loads(cpath.read_text()) if cpath.exists() else None
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
-                 detector, stated, stated_base, revealed, neutral, rendered)
+                 detector, stated, stated_base, revealed, neutral, rendered,
+                 comply)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

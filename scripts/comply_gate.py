@@ -33,6 +33,26 @@ from nullcard.scoring.analyze import load_cell  # noqa: E402
 # Registered in PREREGISTRATION.md as P12 before the arm was run.
 COMPLY_THRESHOLD = 0.20
 
+# POST-HOC, and labelled as such wherever it is printed. The registered
+# criterion above turned out to be the wrong operationalisation of the thing the
+# gate exists to measure, and the data is what revealed it -- in both directions
+# at once:
+#
+#   Qwen3.5-2B   FAILS the registered test while plainly registering the
+#                instruction: P(A) 0.725 -> 0.465, a -0.260 shift that wipes out
+#                a strong A-preference and leaves 63% of pairs near-indifferent.
+#                It heard the instruction and did not obey it.
+#   LFM2.5-1.2B  PASSES the registered test having barely moved (-0.047),
+#                because its baseline P(A) was already 0.068 -- it was answering
+#                B on ~93% of pairs before being told to. The instruction is
+#                credited with behaviour it did not cause.
+#
+# The gate's PURPOSE is "does the system slot reach the decision?", because that
+# is what makes a null persona result interpretable. That is registration, not
+# obedience. Obedience is a stronger property and the one that got registered.
+# Both are reported; neither silently replaces the other.
+REGISTER_THRESHOLD = 0.10
+
 
 def _mean_p_a(path: Path) -> tuple[float | None, float | None, int]:
     """-> (mean P(A), mean answer mass, n rows). None when the cell is absent."""
@@ -73,42 +93,56 @@ def main() -> int:
             "baseline_mean_p_a": base_pa, "baseline_answer_mass": base_am,
             "shift": (pa - base_pa) if (pa is not None and base_pa is not None)
                      else None,
-            # The gate. Compliance is an ABSOLUTE statement about the measured
-            # channel: told to always answer B, a complying model puts almost no
-            # mass on A. The baseline is reported beside it so a model that was
-            # already B-biased cannot be credited with obeying.
+            # The registered criterion: told to always answer B, an obeying
+            # model puts almost no mass on A.
             "complies": (pa is not None and pa < COMPLY_THRESHOLD),
+            # The post-hoc one the gate actually needs: did the instruction
+            # reach the decision at all? A model already answering B cannot
+            # demonstrate this, and a model that collapses to indifference
+            # demonstrates it without obeying.
+            "registers": (pa is not None and base_pa is not None
+                          and abs(pa - base_pa) > REGISTER_THRESHOLD),
         })
 
     rows.sort(key=lambda r: (r["mean_p_a"] if r["mean_p_a"] is not None else 9))
-    print(f"{'model':<26} {'depth':<5} {'P(A) base':>10} {'P(A) comply':>12} "
-          f"{'shift':>8} {'ans mass':>9}  verdict")
-    print("-" * 88)
+    print(f"{'model':<26} {'P(A) base':>10} {'P(A) comply':>12} {'shift':>8} "
+          f"{'obeys':>6} {'regs':>5}  what happened")
+    print("-" * 104)
     for r in rows:
         f = lambda v: f"{v:>10.3f}" if v is not None else "       n/a"  # noqa: E731
-        verdict = ("COMPLIES" if r["complies"] else
-                   "DOES NOT COMPLY -- persona nulls not interpretable")
-        print(f"{r['model'].split('/')[-1]:<26} {r['depth']:<5} "
-              f"{f(r['baseline_mean_p_a'])} {f(r['mean_p_a']):>12} "
-              f"{f(r['shift']):>8} {f(r['answer_mass']):>9}  {verdict}")
+        what = ("obeyed" if r["complies"] and r["registers"] else
+                "obeyed trivially -- was ALREADY answering B before being told"
+                if r["complies"] else
+                "REGISTERED but did not obey -- collapsed toward indifference"
+                if r["registers"] else "no detectable effect")
+        print(f"{r['model'].split('/')[-1]:<26} {f(r['baseline_mean_p_a'])} "
+              f"{f(r['mean_p_a']):>12} {f(r['shift']):>8} "
+              f"{str(r['complies']):>6} {str(r['registers']):>5}  {what}")
 
     ok = [r for r in rows if r["complies"]]
-    print(f"\n{len(ok)} of {len(rows)} model(s) comply at P(A) < "
-          f"{COMPLY_THRESHOLD}.")
+    reg = [r for r in rows if r["registers"]]
+    both = [r for r in rows if r["complies"] and r["registers"]]
+    print(f"\nREGISTERED criterion (P12, P(A) < {COMPLY_THRESHOLD}): "
+          f"{len(ok)} of {len(rows)} pass.")
     if len(ok) != len(rows):
-        print("P12 is FALSIFIED for the models above that do not comply. Their "
-              "Track 4 nulls are a harness finding, not a persona finding, and "
-              "must be reported as such rather than interpreted.")
-    else:
-        print("P12 holds: the system slot reaches the decision for every model "
-              "tested, so a flat persona result for these models is about the "
-              "persona rather than about instruction-following.")
+        print("  P12 is FALSIFIED as registered.")
+    print(f"POST-HOC criterion (instruction moved P(A) by > "
+          f"{REGISTER_THRESHOLD}): {len(reg)} of {len(rows)} pass.")
+    print(f"Both: {len(both)} of {len(rows)}.\n")
+    print("The two disagree in BOTH directions, which is why both are printed:")
+    print("  a model can register the instruction and refuse it, and a model")
+    print("  already answering B passes an obedience test it never took.")
+    print("Only the models passing BOTH have a demonstrated, non-trivial route")
+    print("from the system slot to the decision. For the others a flat Track 4")
+    print("persona result is a harness finding, not a persona finding.")
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
-        {"threshold": COMPLY_THRESHOLD, "n_complying": len(ok),
-         "n_models": len(rows), "rows": rows}, indent=2) + "\n")
+        {"comply_threshold_registered": COMPLY_THRESHOLD,
+         "register_threshold_post_hoc": REGISTER_THRESHOLD,
+         "n_complying": len(ok), "n_registering": len(reg),
+         "n_both": len(both), "n_models": len(rows), "rows": rows}, indent=2) + "\n")
     print(f"\nwrote {out}")
     return 0
 

@@ -34,7 +34,17 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 *Current evidence:* models stated = 5, models revealed passing gate = 2, models with complete triad = 3
 
-### 4. `answer-mass-channel` — provisional
+### 4. `instruction-registered-not-obeyed` — provisional
+
+> Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.
+
+**Next addition.** The remaining roster at this arm, and a matched-length control directive that commands the model's ALREADY-preferred option, which would separate 'declines directives' from 'is disrupted by any directive'. Both are cheap and neither has run.
+
+**Would falsify it.** The same model obeying on a re-run, or the collapse toward indifference turning out to be a length or position artifact rather than a response to the directive -- neither has been tested.
+
+*Current evidence:* models = 5, note = 4 of 5 obey the registered criterion, 4 register a shift, and only 3 do both. Qwen3.5-2B went from P(A) 0.725 to 0.465 -- a large move that lands at indifference rather than at compliance. LFM2.5-1.2B-Instruct passes the obedience test having started at P(A) 0.068, i.e. it was already answering B before being told to, so its pass is an artifact of the criterion.
+
+### 5. `answer-mass-channel` — provisional
 
 > Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.
 

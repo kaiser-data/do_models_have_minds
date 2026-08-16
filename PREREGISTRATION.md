@@ -207,6 +207,45 @@ and read directly in the measured channel as P(A) → 0.
   harness limitation for that model, and its Track 4 nulls are withdrawn rather
   than interpreted.* No persona null is reported for a model that fails this.
 
+  **RESULT (run 16 Aug 2026, 5 models, R arm, D2, 5,000 rows each).
+  P12 is FALSIFIED as registered: 4 of 5.** But the criterion turned out to be
+  the wrong operationalisation, and the data broke it in *both* directions at
+  once — which is more useful than a clean pass would have been.
+
+  | model | P(A) base | P(A) comply | shift | obeys | registers |
+  |---|---|---|---|---|---|
+  | gemma-4-E2B-it | 0.592 | 0.000 | −0.592 | yes | yes |
+  | granite-4.1-3b | 0.243 | 0.000 | −0.243 | yes | yes |
+  | Qwen3.5-9B | 0.389 | 0.007 | −0.382 | yes | yes |
+  | LFM2.5-1.2B-Instruct | 0.068 | 0.020 | −0.047 | yes | **no** |
+  | Qwen3.5-2B | 0.725 | 0.465 | −0.260 | **no** | yes |
+
+  **Qwen3.5-2B heard the instruction and refused it.** A −0.260 shift wipes out
+  a strong A-preference, and 63% of its pairs land near-indifferent (0.4–0.6)
+  against 17% at baseline. It did not ignore "always answer B"; it stopped
+  preferring anything rather than prefer B. Registration and obedience come
+  apart — the P10 shape, one level up, on an instruction instead of a trait.
+
+  **LFM2.5-1.2B-Instruct passed without the instruction doing anything.** Its
+  baseline P(A) is 0.068: it was already answering B on ~93% of pairs. An
+  obedience threshold cannot distinguish obeying from already-complying
+  behaviour, and as registered it credited the instruction with an effect it did
+  not cause.
+
+  The gate's *purpose* is "does the system slot reach the decision?", because
+  that is what makes a null persona result interpretable. That is
+  **registration**, not obedience. We report both criteria, label which was
+  preregistered, and treat only the **3 of 5** passing both as having a
+  demonstrated non-trivial route from system prompt to decision. The
+  registration threshold (0.10) is post-hoc and marked as such everywhere it
+  appears.
+
+  Consequence for Track 4: Qwen3.5-2B and LFM2.5-1.2B-Instruct do not get an
+  interpretable persona null. Qwen3.5-2B is also the detector figure's showcase
+  model — that result is unaffected, since it concerns arm separation rather
+  than instruction-following, but the coincidence is worth stating rather than
+  leaving for a reader to notice.
+
 **What none of this establishes.** "Never registered the role" is not provable;
 the honest claim is *no evidence of registration in the channels we log*, which
 are first-token logits and the top-5 distribution. Registration in the output

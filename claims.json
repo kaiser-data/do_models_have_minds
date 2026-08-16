@@ -268,6 +268,30 @@
       "priority": 1
     },
     {
+      "id": "instruction-registered-not-obeyed",
+      "statement": "Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.",
+      "status": "provisional",
+      "section": "sec:track4",
+      "macros": [
+        "ComplyNModels",
+        "ComplyNObey",
+        "ComplyNRegister",
+        "ComplyNBoth",
+        "ComplyRefuser",
+        "ComplyRefuserBase",
+        "ComplyRefuserAfter",
+        "ComplyTrivial",
+        "ComplyTrivialBase"
+      ],
+      "evidence": {
+        "models": "\\ComplyNModels",
+        "note": "\\ComplyNObey of \\ComplyNModels obey the registered criterion, \\ComplyNRegister register a shift, and only \\ComplyNBoth do both. \\ComplyRefuser went from P(A) \\ComplyRefuserBase to \\ComplyRefuserAfter -- a large move that lands at indifference rather than at compliance. \\ComplyTrivial passes the obedience test having started at P(A) \\ComplyTrivialBase, i.e. it was already answering B before being told to, so its pass is an artifact of the criterion."
+      },
+      "what_would_falsify": "The same model obeying on a re-run, or the collapse toward indifference turning out to be a length or position artifact rather than a response to the directive -- neither has been tested.",
+      "grows_by": "The remaining roster at this arm, and a matched-length control directive that commands the model's ALREADY-preferred option, which would separate 'declines directives' from 'is disrupted by any directive'. Both are cheap and neither has run.",
+      "priority": 3
+    },
+    {
       "id": "harness-not-invariant",
       "statement": "The baseline condition is not the same instrument across models: some chat templates supply a system prompt the sweep never sent, and one stamps the current date into it.",
       "status": "established",
