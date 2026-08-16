@@ -1,0 +1,71 @@
+{
+  "by_prompt": {
+    "ue": {
+      "mean_conviction_N_minus": 0.0714,
+      "mean_conviction_R": 0.3024,
+      "mean_residual": 0.026187599703287212,
+      "n_models": 2
+    },
+    "v2": {
+      "mean_conviction_N_minus": 0.2576,
+      "mean_conviction_R": 0.197,
+      "mean_residual": -0.006945325722803819,
+      "n_models": 2
+    }
+  },
+  "cells": [
+    {
+      "answer_mass_N_minus": 0.9846446379636448,
+      "answer_mass_R": 0.9956367434084817,
+      "coherence_N_minus": 0.8890675680678626,
+      "coherence_R": 0.8955583166332666,
+      "conviction_N_minus": 0.0004,
+      "conviction_R": 0.1232,
+      "conviction_ratio": 308.0,
+      "model": "Qwen/Qwen3.5-2B",
+      "prompt": "ue",
+      "residual": 0.006490748565403992
+    },
+    {
+      "answer_mass_N_minus": 0.9923250580230817,
+      "answer_mass_R": 0.9961783652506245,
+      "coherence_N_minus": 0.9172068342053705,
+      "coherence_R": 0.8926690710017418,
+      "conviction_N_minus": 0.0,
+      "conviction_R": 0.0,
+      "conviction_ratio": null,
+      "model": "Qwen/Qwen3.5-2B",
+      "prompt": "v2",
+      "residual": -0.02453776320362877
+    },
+    {
+      "answer_mass_N_minus": 0.9999999775751476,
+      "answer_mass_R": 0.999999998323944,
+      "coherence_N_minus": 0.8328754640916879,
+      "coherence_R": 0.8787599149328583,
+      "conviction_N_minus": 0.1424,
+      "conviction_R": 0.4816,
+      "conviction_ratio": 3.3820224719101124,
+      "model": "ibm-granite/granite-4.1-3b",
+      "prompt": "ue",
+      "residual": 0.04588445084117043
+    },
+    {
+      "answer_mass_N_minus": 0.9999999940406206,
+      "answer_mass_R": 1.0000000005809597,
+      "coherence_N_minus": 0.875532759241127,
+      "coherence_R": 0.8861798709991481,
+      "conviction_N_minus": 0.5152,
+      "conviction_R": 0.394,
+      "conviction_ratio": 0.7647515527950312,
+      "model": "ibm-granite/granite-4.1-3b",
+      "prompt": "v2",
+      "residual": 0.010647111758021133
+    }
+  ],
+  "n_design_seeds": 1,
+  "prompts": [
+    "ue",
+    "v2"
+  ]
+}

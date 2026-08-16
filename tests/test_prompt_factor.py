@@ -143,3 +143,28 @@ def test_persona_and_prompt_suffixes_do_not_collide():
     model, arm, _, persona, depth, prompt = parse_cell_name(Path(name))
     assert (model, arm) == ("google/gemma-4-E2B-it", "R")
     assert (persona, depth, prompt) == ("cautious", "D2", "v2")
+
+
+# ---------------------------------------------------------------------------
+# Run summaries carry the factor too (the same bug, one level up)
+# ---------------------------------------------------------------------------
+
+def test_summary_filename_separates_the_prompts():
+    """A v2 run must not overwrite the ue summaries it is compared against.
+
+    `summary_filename` exists because an earlier run clobbered the baseline
+    summary that made the others interpretable. It was taught about persona and
+    depth then; the prompt factor reproduced the same failure until this test.
+    """
+    from modal_app.sweep import summary_filename
+    ue = summary_filename("sweep_summary", ["none"], ["D0"], "ue")
+    v2 = summary_filename("sweep_summary", ["none"], ["D0"], "v2")
+    assert ue == "sweep_summary.json"          # historical name preserved
+    assert v2 == "sweep_summary__pv2.json"
+    assert ue != v2
+
+
+def test_summary_filename_composes_prompt_with_persona():
+    from modal_app.sweep import summary_filename
+    name = summary_filename("sweep_summary", ["cautious"], ["D2"], "v2")
+    assert "pv2" in name and "cautious-D2" in name

@@ -201,6 +201,22 @@
       "AvoidNoFlipModels": "3",
       "AvoidNModelsWithFlips": "6",
       "AvoidConcordance": "+0.375"
+    },
+    "question-is-part-of-the-instrument": {
+      "PcNModels": "2",
+      "PcUeResidual": "+0.0262",
+      "PcVtwoResidual": "-0.0069",
+      "PcResidualShift": "0.0331",
+      "PcUeConvR": "0.302",
+      "PcUeConvN": "0.071",
+      "PcVtwoConvR": "0.197",
+      "PcVtwoConvN": "0.258",
+      "PcQwenThreeFiveTwoBUeResid": "+0.0065",
+      "PcQwenThreeFiveTwoBVtwoResid": "-0.0245",
+      "PcgraniteFourOneThreebUeResid": "+0.0459",
+      "PcgraniteFourOneThreebVtwoResid": "+0.0106",
+      "PcgraniteFourOneThreebVtwoConvR": "0.394",
+      "PcgraniteFourOneThreebVtwoConvN": "0.515"
     }
   }
 }

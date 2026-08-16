@@ -626,6 +626,72 @@ both distributions score alike.}
 \label{fig:strength}
 \end{figure}
 
+\subsection{The question is part of the instrument}\label{sec:prompt}
+
+Every number above was elicited with one wording --- Utility Engineering's,
+quoted verbatim, which is what makes the comparison to their result legitimate.
+That wording is therefore a factor of this design with exactly one realized
+level, and a factor with one level is confounded with every accidental property
+of that instance. This subsection gives it a second level.
+
+We wrote one alternative question, \texttt{v2}, which differs from
+\texttt{ue} in three respects and no others: it \emph{licenses} answering
+(``you are supposed to answer this question''), it \emph{forbids} treating the
+letter as a verdict on the wording (``do not comment on whether the wording is
+real or invented''), and it \emph{locks the format} (``the letter is the whole
+answer''). Each addresses a specific observed failure rather than a guess; the
+second is aimed at the presentation-order artifact of \S\ref{sec:avoidance}.
+Battery, pair set, design seed, scoring rule and serving stack are held fixed,
+both arms were re-run the same day so nothing is compared across harness
+hashes, and the cells carry the wording in their filename so they cannot pool
+with the historical ones.
+
+\begin{center}
+\small
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+model & prompt & \multicolumn{1}{c}{residual} & \multicolumn{2}{c}{conviction}
+& \multicolumn{1}{c}{own floor} \\
+\cmidrule(lr){4-5}
+ & & & \armR & \armNm & \\
+\midrule
+Qwen3.5-2B & \texttt{ue} & \PcQwenThreeFiveTwoBUeResid & \PcQwenThreeFiveTwoBUeConvR & \PcQwenThreeFiveTwoBUeConvN & 0.0008 \\
+Qwen3.5-2B & \texttt{v2} & \PcQwenThreeFiveTwoBVtwoResid & \PcQwenThreeFiveTwoBVtwoConvR & \PcQwenThreeFiveTwoBVtwoConvN & \\
+granite-4.1-3b & \texttt{ue} & \PcgraniteFourOneThreebUeResid & \PcgraniteFourOneThreebUeConvR & \PcgraniteFourOneThreebUeConvN & 0.0292 \\
+granite-4.1-3b & \texttt{v2} & \PcgraniteFourOneThreebVtwoResid & \PcgraniteFourOneThreebVtwoConvR & \PcgraniteFourOneThreebVtwoConvN & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\textbf{The wording moves the result by more than design noise does.} On both
+models the residual shifts further than that model's own design-replicate floor:
+Qwen3.5-2B moves 0.031 against a floor of 0.0008 and changes sign, and
+granite-4.1-3b moves 0.035 against a floor of 0.0292 and stops clearing its
+floor at all. Averaged over the two, the residual goes from \PcUeResidual{}
+under \texttt{ue} to \PcVtwoResidual{} under \texttt{v2}.
+
+\textbf{The mechanism does not survive intact either.} \S\ref{sec:strength}
+attributes the flat residual to the metric recording direction while discarding
+strength: models commit on real outcomes and sit near indifference on invented
+ones. Under \texttt{ue} that is what both models do. Under \texttt{v2}
+granite-4.1-3b \emph{reverses} --- conviction \PcgraniteFourOneThreebVtwoConvR{}
+on real against \PcgraniteFourOneThreebVtwoConvN{} on invented, so it is now
+more decisive about nonsense --- and Qwen3.5-2B goes to \emph{zero} conviction
+on both arms, meaning no pair at all leaves the indifference band. The format
+lock did not make the model answer more sharply; it made it answer less
+sharply, everywhere.
+
+\textbf{What this does and does not license.} It is \PcNModels{} models at one
+design seed. It cannot revise the nine-model result, and it does not: those
+cells stand as measured, on the instrument they were measured with. What it
+establishes is narrower and, we think, more useful --- that ``coherence'' as
+reported here is a property of a model \emph{and a question}, and that the
+sensitivity to the question is not small compared with the noise sources this
+paper already accounts for. A preference-coherence number quoted without its
+elicitation wording is under-specified. That applies to ours as much as to
+anyone's, which is why the wording is hash-pinned in every cell we ship.
+
 \subsection{Two controls the headline needs}\label{sec:controls}
 
 The two uncontrolled rows of \S\ref{sec:factors} are each an alternative

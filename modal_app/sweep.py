@@ -491,7 +491,8 @@ def cell_filename(model_id: str, arm: str, design_seed: int = DEFAULT_DESIGN_SEE
     return stem + ".jsonl"
 
 
-def summary_filename(stem: str, personas: list[str], depths: list[str]) -> str:
+def summary_filename(stem: str, personas: list[str], depths: list[str],
+                     prompt_id: str = DEFAULT_PROMPT) -> str:
     """The same anti-clobber convention as cell_filename, for run summaries.
 
     Cells were always config-suffixed; the run summaries were not, so every
@@ -502,10 +503,16 @@ def summary_filename(stem: str, personas: list[str], depths: list[str]) -> str:
     The default config keeps the bare name so existing files stay findable.
     Depth tags contain no hyphen, so a reader can recover the depth with
     rsplit("-", 1) even though persona names are hyphenated.
+
+    The prompt factor arrives here for the same reason it arrived in
+    cell_filename, and it was missed the first time: a v2 run overwrote the ue
+    summaries of the run it exists to be compared against, which is the exact
+    failure this function was written to prevent, one factor later.
     """
+    tag = "" if prompt_id == DEFAULT_PROMPT else f"__p{prompt_id}"
     if personas == ["none"] and depths == ["D0"]:
-        return f"{stem}.json"
-    return f"{stem}__{'+'.join(personas)}-{'+'.join(depths)}.json"
+        return f"{stem}{tag}.json"
+    return f"{stem}{tag}__{'+'.join(personas)}-{'+'.join(depths)}.json"
 
 
 def _warn_if_clobbering(path: str) -> None:
@@ -1174,7 +1181,8 @@ def main(
         for s in summaries:
             print(json.dumps(s))
 
-        cells_out = summary_filename("sweep_summary", persona_list, depth_list)
+        cells_out = summary_filename("sweep_summary", persona_list, depth_list,
+                                     prompt)
         _warn_if_clobbering(cells_out)
         with open(cells_out, "w") as f:
             json.dump(summaries, f, indent=2)

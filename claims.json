@@ -557,6 +557,33 @@
         "note": "The rank correlation uses every pair and the counterbalanced mean; it does not depend on the flip classification and holds on all \\AvoidNModels models. The avoidance reading rests only on the \\AvoidFlipsRobust pairs that flip in both presentation orders, spread over \\AvoidNModelsWithFlips models at one design seed, and is therefore provisional. An earlier version of this claim reported the raw \\AvoidFlipsRaw flips as preferences; the slot split retracted \\AvoidFlipsPct percent of that. The by-category pattern has concordance \\AvoidConcordance and is not claimed. The safety inference -- an invented option as a default sink reachable by degrading the real alternative -- is a hypothesis consistent with these pairs, not a demonstrated vulnerability."
       },
       "what_would_falsify": "The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom."
+    },
+    {
+      "id": "question-is-part-of-the-instrument",
+      "statement": "Changing only the elicitation wording, holding battery, pair set, design seed, scoring rule and serving stack fixed, moves the floor-corrected residual by more than each model's own design-replicate noise floor, and reverses the conviction-collapse mechanism on one of the two models tested.",
+      "status": "provisional",
+      "section": "sec:prompt",
+      "macros": [
+        "PcNModels",
+        "PcUeResidual",
+        "PcVtwoResidual",
+        "PcResidualShift",
+        "PcUeConvR",
+        "PcUeConvN",
+        "PcVtwoConvR",
+        "PcVtwoConvN",
+        "PcQwenThreeFiveTwoBUeResid",
+        "PcQwenThreeFiveTwoBVtwoResid",
+        "PcgraniteFourOneThreebUeResid",
+        "PcgraniteFourOneThreebVtwoResid",
+        "PcgraniteFourOneThreebVtwoConvR",
+        "PcgraniteFourOneThreebVtwoConvN"
+      ],
+      "evidence": {
+        "source": "site/prompt_contrast.json",
+        "note": "\\PcNModels models at one design seed, both arms re-run the same day so nothing is compared across harness hashes, cells tagged with the wording so they cannot pool with historical ones. The comparison is against each model's DESIGN-seed floor, which bounds a different variance source than a prompt change; it is used as a scale reference, not as a significance test, and there is no prompt-replicate floor. This cannot revise the nine-model result and does not attempt to -- it establishes that the reported quantity is a property of a model and a question together."
+      },
+      "what_would_falsify": "A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed."
     }
   ]
 }

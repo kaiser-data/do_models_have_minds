@@ -131,7 +131,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           surface: dict | None = None,
           attrition: dict | None = None,
           hosted: dict | None = None,
-          avoidance: dict | None = None) -> str:
+          avoidance: dict | None = None,
+          contrast: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -976,6 +977,26 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                 out.append(_cmd("AttrResidStrictGate",
                                 f"{sum(r['residual_matched'] for r in hi)/len(hi):+.4f}"))
 
+    # The prompt factor. Two wordings, everything else held fixed.
+    if contrast and contrast.get("by_prompt"):
+        bp = contrast["by_prompt"]
+        out.append(_cmd("PcNModels", str(len({c["model"] for c in contrast["cells"]}))))
+        for pid, tag in (("ue", "Ue"), ("v2", "Vtwo")):
+            if pid in bp:
+                out.append(_cmd(f"Pc{tag}Residual", f"{bp[pid]['mean_residual']:+.4f}"))
+                out.append(_cmd(f"Pc{tag}ConvR", f"{bp[pid]['mean_conviction_R']:.3f}"))
+                out.append(_cmd(f"Pc{tag}ConvN", f"{bp[pid]['mean_conviction_N_minus']:.3f}"))
+        if "ue" in bp and "v2" in bp:
+            out.append(_cmd("PcResidualShift",
+                            f"{abs(bp['ue']['mean_residual'] - bp['v2']['mean_residual']):.4f}"))
+        # Per model, because the mean hides that one model reverses.
+        for c in contrast["cells"]:
+            short = _slug(c["model"].split("/")[-1])
+            tag = "Ue" if c["prompt"] == "ue" else "Vtwo"
+            out.append(_cmd(f"Pc{short}{tag}Resid", f"{c['residual']:+.4f}"))
+            out.append(_cmd(f"Pc{short}{tag}ConvR", f"{c['conviction_R']:.3f}"))
+            out.append(_cmd(f"Pc{short}{tag}ConvN", f"{c['conviction_N_minus']:.3f}"))
+
     # Avoidance: when gibberish beats a real outcome, which real outcome was it?
     # The answer decides whether content-blindness is total (confusion) or
     # whether the model reads well enough to rank nonsense above bad outcomes.
@@ -1221,6 +1242,7 @@ def main() -> None:
     ap.add_argument("--mixed", default="site/mixed_arm.json")
     ap.add_argument("--hosted-card", default="site/card_hosted.json")
     ap.add_argument("--avoidance", default="site/avoidance.json")
+    ap.add_argument("--prompt-contrast", default="site/prompt_contrast.json")
     ap.add_argument("--surface", default="site/surface_covariates.json")
     ap.add_argument("--attrition", default="site/attrition_control.json")
     ap.add_argument("--harm", default="site/harm_residual.json")
@@ -1275,6 +1297,8 @@ def main() -> None:
         mixed = dict(mixed, harm=harm)
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
+    pcpath = Path(args.prompt_contrast)
+    contrast = json.loads(pcpath.read_text()) if pcpath.exists() else None
     avpath = Path(args.avoidance)
     avoidance = json.loads(avpath.read_text()) if avpath.exists() else None
     hcpath = Path(args.hosted_card)
@@ -1288,7 +1312,8 @@ def main() -> None:
             print(f"  no {label} at {path}; omitting those macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
                  detector, stated, stated_base, revealed, neutral, rendered,
-                 comply, mixed, surface, attrition, hosted, avoidance)
+                 comply, mixed, surface, attrition, hosted, avoidance,
+                 contrast)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 
