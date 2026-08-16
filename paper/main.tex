@@ -89,11 +89,18 @@ floor, a surface-covariate control and an attrition control --- that reports,
 per model, how much of its preference ordering is about content. Running it
 yields a card rather than a headline. On these models the metric returns
 \MeanFloor{} on invented outcomes against \MeanR{} on real ones (\NCells{}
-cells, \NSplits{} splits, three design replicates each); a linear model over
-seven surface features recovers \SurfNmRsq{} of the ranking of invented
-outcomes against \SurfRRsq{} of the real ranking, and removing that span halves
-the agreement between models on the invented arm (cross-model $r$
-\SurfNmCorrRaw{} to \SurfNmCorrCtrl). Put real and invented outcomes in direct
+cells, \NSplits{} splits, three design replicates each) --- a residual of
+\MeanResidual{}, bootstrap 95\% CI [\ResidCiLo, \ResidCiHi], with \NClears{}
+of \NModels{} models clearing their own replicate floor and two falling below
+it. That the residual is only marginally separable from zero \emph{is} the
+claim, not a caveat on it; but it means the firmest results here are the
+mechanisms underneath rather than the residual itself, and
+\S\ref{sec:strength} ranks all of them by how much weight they bear. The two
+that bear most: a linear model over seven surface features recovers
+\SurfNmRsq{} of the ranking of invented outcomes against \SurfRRsq{} of the
+real ranking, with ranges across three design seeds that do not overlap, and
+removing that span halves the agreement between models on the invented arm
+(cross-model $r$ \SurfNmCorrRaw{} to \SurfNmCorrCtrl). Put real and invented outcomes in direct
 competition and preference for the real one runs \MixPreferRealLo{} to
 \MixPreferRealHi{} across models --- above indifference everywhere. Individual
 pairs where the invented outcome wins are mostly an artifact of presentation
@@ -1492,6 +1499,97 @@ every pair that crosses one half as a choice. The check is cheap --- split the
 pair back into its presentations and ask whether both agree --- and here it
 removed \AvoidFlipsPct\% of an effect the first draft of this section reported
 as a finding.
+
+\section{How much to believe each of these}\label{sec:strength}
+
+The results above are not equally supported and the abstract cannot convey
+that, so this section ranks them by evidential weight rather than by how
+interesting they are. The ordering is not the one a reader would guess: the
+paper's \emph{thesis} rests on the weakest of the strong results, and the
+firmest findings are the mechanisms underneath it.
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.21\textwidth}p{0.14\textwidth}p{0.22\textwidth}p{0.30\textwidth}@{}}
+\toprule
+finding & what varies & uncertainty & verdict \\
+\midrule
+Preference for a real outcome tracks its utility (\S\ref{sec:avoidance})
+& \NModels{} models, 1 seed
+& \AvoidCorrLo{}--\AvoidCorrHi{}, \textbf{all \NModels{} positive}
+& \textbf{Firm.} No model is an exception; sign test $p<0.01$. \\
+\addlinespace
+Surface explains far more of the invented ranking (\S\ref{sec:surface})
+& 3 design seeds
+& \armR{} 0.072--0.101 vs \armNm{} 0.328--0.425
+& \textbf{Firm.} Ranges do not overlap, 3 of 3 seeds. \\
+\addlinespace
+The ordering rotates under rewording (\S\ref{sec:rotation})
+& 2 models, 1 seed, 1 alt.\ wording
+& all \VsNRotating{} of \VsNCells{} CIs exclude 1.0
+& \textbf{Firm per cell, narrow in scope.} Says rewording \emph{can} move an ordering, not how much an arbitrary one will. \\
+\addlinespace
+The metric barely separates real from invented (\S\ref{sec:flat})
+& \NModels{} models, 3 seeds
+& \MeanResidual{}, CI [\ResidCiLo, \ResidCiHi]
+& \textbf{Marginal, and the thesis rests on it.} See below. \\
+\addlinespace
+70B does not clear its own floor (\S\ref{sec:scale})
+& 1 model, 3 seeds
+& residual \HostedResidual{} vs floor \HostedFloor{}
+& \textbf{Sound but single-model.} \\
+\addlinespace
+Personas hit the outcomes they name (\S\ref{sec:persona})
+& 4 models, 1 seed
+& sign test $p=0.0625$
+& \textbf{Suggestive only.} Does not reach $0.05$. \\
+\addlinespace
+Gibberish beats bad outcomes (\S\ref{sec:avoidance})
+& \AvoidFlipsRobust{} pairs, 6 models, 1 seed
+& no interval
+& \textbf{Weakest claimed result.} Provisional in the ledger. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The headline is the marginal one, and we should not hide it.} The
+mean residual is \MeanResidual{} with a bootstrap 95\% interval of
+[\ResidCiLo, \ResidCiHi]. It excludes zero, but not by much: $t=\ResidT$ on
+$\NModels-1$ degrees of freedom, and the across-model standard deviation
+(\ResidSD) is larger than the mean. \NPositiveModels{} of \NModels{} models
+are positive, which is a sign-test $p$ of \ResidSignP{} --- \emph{not}
+significant. \NClears{} of \NModels{} clear their own design-replicate floor,
+so three do not, and two are negative.
+
+None of this undermines the claim being made, because the claim is that the
+residual is \textbf{small}, not that it is zero. A confidence interval whose
+upper end is \ResidCiHi{} is exactly the evidence for smallness. But it does
+mean two sentences are unavailable to us: that every model shows the effect,
+and that the effect is reliably positive. We assert neither, and the ledger
+records the residual claim with its interval rather than as a point.
+
+\paragraph{Where the noise model comes from, and what it does not cover.} Our
+uncertainty is the \emph{design-replicate} spread: three independent draws of
+the outcome subsample and pair set, per model. That bounds sampling of the
+battery. It does not bound three other sources, and we say so rather than
+letting the floor stand in for all of them:
+
+\begin{itemize}
+  \item \textbf{Wording.} \S\ref{sec:prompt} shows a rewording moves the
+    residual further than the design floor does. There is no
+    prompt-replicate floor; two wordings is not a distribution over wordings.
+  \item \textbf{Battery.} All 510 outcomes come from one source
+    \citep{mazeika2025utility}, so ``outcome'' means what that battery means by
+    it. A second battery is the control we have not run.
+  \item \textbf{Family.} The scale ladder is one family, and its noise floor
+    says nothing about between-family differences.
+\end{itemize}
+
+\noindent
+The honest summary is that this study bounds the noise it designed for and
+names the noise it did not. A reader who wants a single number for how much of
+the paper survives a hostile replication should take the two firm rows of the
+table and treat the rest as directional.
 
 \section{State of the evidence}\label{sec:evidence}
 

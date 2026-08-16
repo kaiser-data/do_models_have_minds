@@ -16,7 +16,10 @@ from __future__ import annotations
 
 import argparse
 import json
+from math import comb
 from pathlib import Path
+
+import numpy as np
 
 # Numeric macros are emitted as \newcommand so a missing one is a LaTeX error
 # at build time rather than a blank in a PDF nobody re-reads.
@@ -154,6 +157,24 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("MeanFloor", f"{mean_f:.3f}"))
     out.append(_cmd("MeanResidual", f"{mean_r - mean_f:+.3f}"))
     out.append(_cmd("NClears", str(sum(1 for t in tiles if t.get("clears_floor")))))
+
+    # Uncertainty on the headline, because a point estimate in an abstract
+    # reads as more solid than this one is. The design floor is per-model; this
+    # is the ACROSS-model spread, which is a different and larger thing.
+    vals = np.array([t["value"] for t in tiles], dtype=float)
+    sd = float(vals.std(ddof=1))
+    sem = sd / np.sqrt(len(vals))
+    out.append(_cmd("ResidSD", f"{sd:.4f}"))
+    out.append(_cmd("ResidSEM", f"{sem:.4f}"))
+    out.append(_cmd("ResidT", f"{vals.mean() / sem:.2f}"))
+    rng = np.random.default_rng(0)
+    boot = [rng.choice(vals, len(vals), replace=True).mean() for _ in range(20000)]
+    out.append(_cmd("ResidCiLo", f"{np.percentile(boot, 2.5):+.4f}"))
+    out.append(_cmd("ResidCiHi", f"{np.percentile(boot, 97.5):+.4f}"))
+    npos = int((vals > 0).sum())
+    out.append(_cmd("NPositiveModels", str(npos)))
+    p_sign = 2 * sum(comb(len(vals), k) for k in range(npos, len(vals) + 1)) / 2 ** len(vals)
+    out.append(_cmd("ResidSignP", f"{min(1.0, p_sign):.2f}"))
     out.append(_cmd("NNegative", str(sum(1 for t in tiles if t["value"] < 0))))
     out.append(_cmd("BatterySHA", card["tiles"][0]["battery_sha256"][:16]))
     # Families, because "nine models" and "nine models from one family" are
