@@ -1,0 +1,150 @@
+{
+  "models": [
+    "LiquidAI/LFM2.5-1.2B-Instruct",
+    "Qwen/Qwen3.5-2B",
+    "Qwen/Qwen3.5-9B",
+    "google/gemma-4-E2B-it",
+    "ibm-granite/granite-4.1-3b"
+  ],
+  "arms": {
+    "R": [
+      {
+        "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+        "correlations": {
+          "sch-power|sch-universalism": 0.22158524781591965,
+          "sch-power|sch-selfdirection": 0.4176990995981939,
+          "sch-power|sch-security": 0.20997252923256932,
+          "sch-universalism|sch-selfdirection": 0.5193129729656095,
+          "sch-universalism|sch-security": 0.8520345023921072,
+          "sch-selfdirection|sch-security": 0.3419182614154474
+        },
+        "mean_opposed": 0.2817517546156835,
+        "mean_cross_axis": 0.49975477604712,
+        "both_opposed_negative": false
+      },
+      {
+        "model": "Qwen/Qwen3.5-2B",
+        "correlations": {
+          "sch-power|sch-universalism": -0.26780647976800565,
+          "sch-power|sch-selfdirection": 0.7337254959852942,
+          "sch-power|sch-security": -0.28878152553488307,
+          "sch-universalism|sch-selfdirection": -0.31224256368932085,
+          "sch-universalism|sch-security": 0.8868312583369015,
+          "sch-selfdirection|sch-security": -0.38271559111088477
+        },
+        "mean_opposed": -0.3252610354394452,
+        "mean_cross_axis": 0.2548831662744979,
+        "both_opposed_negative": true
+      },
+      {
+        "model": "Qwen/Qwen3.5-9B",
+        "correlations": {
+          "sch-power|sch-universalism": -0.06734370734256766,
+          "sch-power|sch-selfdirection": 0.5810066640790723,
+          "sch-power|sch-security": 0.05437062955815213,
+          "sch-universalism|sch-selfdirection": -0.19483724115349985,
+          "sch-universalism|sch-security": 0.8888087504967012,
+          "sch-selfdirection|sch-security": -0.22080809887104247
+        },
+        "mean_opposed": -0.14407590310680507,
+        "mean_cross_axis": 0.3323372007451064,
+        "both_opposed_negative": true
+      },
+      {
+        "model": "google/gemma-4-E2B-it",
+        "correlations": {
+          "sch-power|sch-universalism": -0.3046303241208606,
+          "sch-power|sch-selfdirection": 0.5695347134897133,
+          "sch-power|sch-security": -0.18105688893054417,
+          "sch-universalism|sch-selfdirection": -0.15343012622237373,
+          "sch-universalism|sch-security": 0.8409571191233007,
+          "sch-selfdirection|sch-security": -0.12715602865675274
+        },
+        "mean_opposed": -0.21589317638880667,
+        "mean_cross_axis": 0.26900120436502406,
+        "both_opposed_negative": true
+      },
+      {
+        "model": "ibm-granite/granite-4.1-3b",
+        "correlations": {
+          "sch-power|sch-universalism": -0.2163903579747261,
+          "sch-power|sch-selfdirection": 0.18962262146982223,
+          "sch-power|sch-security": -0.17328204682153478,
+          "sch-universalism|sch-selfdirection": 0.31244724999335843,
+          "sch-universalism|sch-security": 0.8966659150662677,
+          "sch-selfdirection|sch-security": 0.20566863078521888
+        },
+        "mean_opposed": -0.005360863594753615,
+        "mean_cross_axis": 0.3063634349269784,
+        "both_opposed_negative": false
+      }
+    ],
+    "N_minus": [
+      {
+        "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+        "correlations": {
+          "sch-power|sch-universalism": 0.7579420300701508,
+          "sch-power|sch-selfdirection": 0.766917728502128,
+          "sch-power|sch-security": 0.7422501937395716,
+          "sch-universalism|sch-selfdirection": 0.8132256920195883,
+          "sch-universalism|sch-security": 0.9667122372030421,
+          "sch-selfdirection|sch-security": 0.7547388549606047
+        },
+        "mean_opposed": 0.7563404425153777,
+        "mean_cross_axis": 0.8222764628660826,
+        "both_opposed_negative": false
+      },
+      {
+        "model": "Qwen/Qwen3.5-2B",
+        "correlations": {
+          "sch-power|sch-universalism": 0.04117146430396104,
+          "sch-power|sch-selfdirection": 0.8329339792808819,
+          "sch-power|sch-security": -0.08423833637899245,
+          "sch-universalism|sch-selfdirection": 0.10464523496625898,
+          "sch-universalism|sch-security": 0.8669890840602825,
+          "sch-selfdirection|sch-security": -0.10342383157444741
+        },
+        "mean_opposed": -0.031126183635243186,
+        "mean_cross_axis": 0.4300824904821077,
+        "both_opposed_negative": false
+      },
+      {
+        "model": "Qwen/Qwen3.5-9B",
+        "correlations": {
+          "sch-power|sch-universalism": -0.27812898072811715,
+          "sch-power|sch-selfdirection": 0.20339492900497338,
+          "sch-power|sch-security": -0.2375913030010718,
+          "sch-universalism|sch-selfdirection": 0.18713262489104412,
+          "sch-universalism|sch-security": 0.9112041300981848,
+          "sch-selfdirection|sch-security": 0.03808343356625955
+        },
+        "mean_opposed": -0.1200227735809288,
+        "mean_cross_axis": 0.2660350952482826,
+        "both_opposed_negative": false
+      },
+      {
+        "model": "ibm-granite/granite-4.1-3b",
+        "correlations": {
+          "sch-power|sch-universalism": -0.051237334349675874,
+          "sch-power|sch-selfdirection": 0.6319604691768202,
+          "sch-power|sch-security": 0.051983266979995064,
+          "sch-universalism|sch-selfdirection": 0.2348601872855681,
+          "sch-universalism|sch-security": 0.8713349343090672,
+          "sch-selfdirection|sch-security": 0.2197127018497277
+        },
+        "mean_opposed": 0.08423768375002591,
+        "mean_cross_axis": 0.44753471443786264,
+        "both_opposed_negative": false
+      }
+    ]
+  },
+  "common_models": [
+    "LiquidAI/LFM2.5-1.2B-Instruct",
+    "Qwen/Qwen3.5-2B",
+    "Qwen/Qwen3.5-9B",
+    "ibm-granite/granite-4.1-3b"
+  ],
+  "dropped_from_comparison": [
+    "google/gemma-4-E2B-it"
+  ]
+}

@@ -46,6 +46,33 @@ OPPOSED = (("sch-power", "sch-universalism"),
            ("sch-selfdirection", "sch-security"))
 
 
+def cell_is_scoreable(path: Path) -> bool:
+    """Did the harness itself judge this cell readable by the metric?
+
+    A cell can be present, parse, and still be something the sweep already
+    decided is not a measurement: `--abort-on-mass` stops a cell whose trailing
+    answer mass says the model is not putting its choice in the first token,
+    and records that verdict in the sidecar.
+
+    Without this check the exclusion is incidental rather than principled.
+    gemma-4-E2B-it under sch-universalism aborted at answer mass 0.246 and was
+    dropped only because the abort happened to leave 7 distinct pairs, below
+    utility()'s coverage floor of 10. An abort a few hundred rows later would
+    have cleared that floor and fitted a Thurstonian to non-answers, and
+    nothing downstream would have objected.
+    """
+    marker = path.with_suffix(path.suffix + ".done")
+    if not marker.exists():
+        return True          # no verdict recorded; coverage checks still apply
+    try:
+        d = json.loads(marker.read_text())
+    except (json.JSONDecodeError, OSError):
+        return True
+    if d.get("status") == "aborted":
+        return False
+    return d.get("first_token_scoreable", True) is not False
+
+
 def displacement_vector(results: Path, stem: str, arm: str,
                         persona: str) -> np.ndarray | None:
     """Per-outcome shift in fitted utility, persona minus baseline.
@@ -58,6 +85,8 @@ def displacement_vector(results: Path, stem: str, arm: str,
     base = results / f"{stem}__{arm}.jsonl"
     cond = results / f"{stem}__{arm}__{persona}-D2.jsonl"
     if not base.exists() or not cond.exists():
+        return None
+    if not cell_is_scoreable(base) or not cell_is_scoreable(cond):
         return None
     rows = load_cell(base)
     outs = sorted({r["slot_a_outcome"] for r in rows}
@@ -100,6 +129,17 @@ def analyse(results: Path) -> dict:
             })
         out["arms"][arm] = rows
     out["models"] = [r["model"] for r in out["arms"].get("R", [])]
+
+    # The decisive line is a comparison BETWEEN the arms, so it has to be over
+    # the same models on both sides. A model that drops out of one arm -- for
+    # the scoreability reason above, or any other -- would otherwise contribute
+    # its correlation to one mean and nothing to the other, and the difference
+    # between the two lines would be partly a difference of population.
+    per_arm = {a: {r["model"] for r in rs} for a, rs in out["arms"].items()}
+    common = set.intersection(*per_arm.values()) if per_arm else set()
+    out["common_models"] = sorted(common)
+    out["dropped_from_comparison"] = sorted(set().union(*per_arm.values()) - common) \
+        if per_arm else []
     return out
 
 
@@ -130,14 +170,27 @@ def main() -> int:
                   f"{(f'{mc:+.3f}' if mc is not None else 'n/a'):>12}  "
                   f"{'yes' if r['both_opposed_negative'] else 'no'}")
 
-    def summary(arm):
-        rows = data["arms"].get(arm, [])
+    def summary(arm, restrict=None):
+        rows = [r for r in data["arms"].get(arm, [])
+                if restrict is None or r["model"] in restrict]
         vals = [r["mean_opposed"] for r in rows if r["mean_opposed"] is not None]
         return (float(np.mean(vals)) if vals else None,
                 sum(1 for r in rows if r["both_opposed_negative"]), len(rows))
 
-    (r_mean, r_n, r_tot) = summary("R")
-    (n_mean, n_n, n_tot) = summary("N_minus")
+    common = set(data.get("common_models", []))
+    dropped = data.get("dropped_from_comparison", [])
+    if dropped:
+        print(f"\nnot scoreable in both arms, so excluded from the comparison: "
+              f"{', '.join(m.split('/')[-1] for m in dropped)}")
+        for arm, label in (("R", "real"), ("N_minus", "invented")):
+            m_all, _, n_all = summary(arm)
+            m_com, _, n_com = summary(arm, common)
+            if m_all is not None and m_com is not None and n_all != n_com:
+                print(f"  {label:<9} all {n_all} models {m_all:+.3f}  ->  "
+                      f"common {n_com} models {m_com:+.3f}")
+
+    (r_mean, r_n, r_tot) = summary("R", common or None)
+    (n_mean, n_n, n_tot) = summary("N_minus", common or None)
     print(f"\nreal arm     mean opposed-pair correlation {r_mean:+.3f}; "
           f"{r_n}/{r_tot} models have both pairs negative")
     if n_tot:

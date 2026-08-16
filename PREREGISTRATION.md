@@ -435,6 +435,62 @@ distribution is also not evidence of an internal representation — we do not re
 hidden states. And the improv framing is a way of naming three outcome patterns,
 not a claim about mechanism.
 
+### Track 6: does a borrowed instrument bring its predicted geometry with it?
+
+**Registered in code rather than in this file, and that difference is checkable.**
+The prediction lives in `scripts/schwartz.py` — the `OPPOSED` constant and the
+three verdict branches at the foot of `main()` — committed in `39db488` at
+13:02 on 16 Aug. The Schwartz cells were not on the analysis machine until
+13:22: a pre-flight run of the same script at ~13:13 printed *no Schwartz
+persona cells found*. So the thresholds could not have been fitted to outcomes,
+because the outcomes were not readable. This is weaker than registering it here
+before launch, and it is recorded as what it is.
+
+`cautious` and `ambitious` were written by us, so their numbers have no shape
+they are supposed to have. Schwartz's values do: they sit on a circumplex with
+two bipolar higher-order axes, and values at opposite poles are theorised to
+conflict. At four values the circumplex cannot be recovered, so the registered
+test degrades to a sign test — opposed pairs anti-correlate, cross-axis pairs
+sit near zero — run on **both arms**, because the whole question is whether the
+geometry needs the outcomes to mean anything.
+
+#### RESULT (run 16 Aug 2026, 5 models, 40 cells, 5,000 rows each)
+
+**The registered test is FALSIFIED as written, on the real arm.** Mean
+opposed-pair correlation is −0.048 across the four models scoreable in both
+arms, which does not clear the pre-declared −0.1. By the rule fixed in code
+before the data, neither reading is available: at n=4 values this instrument
+does not reproduce the circumplex.
+
+**Its second clause failed too, and that is why the first one did.** Cross-axis
+pairs were predicted to sit near zero. They do not: +0.348 real, +0.491
+invented. Every persona displaces utilities in a *shared* direction, and that
+common component lifts all correlations, opposed ones included. The registered
+test reads absolute signs, so a large common component defeats it regardless of
+whether the predicted structure is present underneath.
+
+**Exploratory, not registered — the contrast that survives it.** Taking
+cross-axis pairs as the within-model control the preregistration intended them
+to be, opposed pairs sit below cross-axis pairs in **8 of 8 model×arm
+combinations**: gap −0.397 on real, −0.319 on invented. Read this way the
+predicted structure is present — and it is present **nearly as strongly on
+outcomes that refer to nothing**, which is this paper's central argument
+arriving at a real psychological instrument. It is labelled exploratory because
+the contrast was not the registered statistic, and it is not promoted to a
+finding on that basis. At n=4 models the difference between −0.397 and −0.319
+is not something we can distinguish from noise, and we do not claim it.
+
+**One cell was excluded, by the harness's own verdict.**
+`gemma-4-E2B-it × sch-universalism × N−` aborted at trailing answer mass 0.246:
+under that persona the model stops putting its choice in the first token. It is
+therefore not scoreable and not poolable (§7.4), and gemma is dropped from
+**both** arms rather than only the invented one — a model contributing to one
+mean and not the other would make the between-arm comparison partly a
+difference of population. Reported both ways: real is −0.082 over all five
+models and −0.048 over the four common to both arms. The verdict is the same
+either way, which is the only reason the correction is reportable as a
+correction rather than a choice.
+
 ## Predeclared threats to our own result
 
 - **The invented referents could be systematically shorter or longer** than the
