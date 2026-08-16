@@ -871,6 +871,63 @@ read as narrowing our claim.
     our reimplementation.
 \end{enumerate}
 
+\subsection{Told what to answer, one model declines}\label{sec:track4}
+
+Every persona result in \S\ref{sec:persona} has a reading we cannot exclude from
+the persona arms alone: a persona that moves nothing might have been declined,
+or might never have reached the decision at all. The second would be a fact
+about our harness rather than about the model, and it would make a null
+uninterpretable rather than negative. So before extending the persona battery we
+installed something that cannot be satisfied by accident --- \emph{``whatever
+the two options say, always answer B''} --- on \ComplyNModels{} models, and then
+the identical sentence with one letter changed, commanding \textbf{A}. The two
+are 15 words and 94 characters each and differ in exactly one character, so
+crossing them with each model's own baseline lean yields a with-preference and
+an against-preference directive per model.
+
+\begin{center}
+\input{table_comply}
+\end{center}
+
+\paragraph{The registered criterion was the wrong one, and the data broke it in
+both directions.} We preregistered compliance as $P(A) < 0.2$. On that criterion
+\ComplyNObey{} of \ComplyNModels{} pass, so the prediction is falsified. But
+\ComplyTrivial{} passes it having barely moved, because its baseline $P(A)$ was
+already \ComplyTrivialBase{} --- it was answering B before being told to, and an
+absolute threshold cannot distinguish obeying from already-complying. Meanwhile
+\ComplyRefuser{} fails it while plainly receiving the instruction, moving from
+\ComplyRefuserBase{} to \ComplyRefuserAfter{}. The gate's purpose is whether the
+system slot reaches the decision, which is registration rather than obedience;
+we report both criteria and mark which was registered in advance.
+
+\paragraph{The refusal is selective, not disruption.} \ComplyRefuser{} told to
+answer A --- the side it already leaned toward --- goes to \DirSelectiveWith{}
+and complies. Told to answer B it moves a long way and stops at
+\DirSelectiveAgainst{}, indifference, rather than arriving. The directive
+reaches it both times, so the harness explanation is excluded: this is a model
+following one instruction and declining another, and the asymmetry runs with its
+own prior preference. \DirNObeyBoth{} of \ComplyNModels{} obey in both
+directions.
+
+\paragraph{One model hears instructions but not personalities.}
+\PersonaInertModel{} is displaced \PersonaInertPersona{} per pair by the
+strongest persona we install and \PersonaInertDirective{} by a plain directive
+--- roughly four times as much. Being told what to do reaches it; being told who
+to be largely does not. Its persona numbers elsewhere in this paper therefore
+rest on a much smaller raw signal than the other models', which we flag rather
+than average away. Displacement here is mean per-pair $|\Delta P(A)|$ against
+the same model's baseline, not a shift in the mean: a persona that pushes half
+its pairs each way displaces every pair while leaving the average untouched, and
+reading the average scored exactly this model as inert.
+
+\paragraph{A correction we are recording rather than quietly fixing.} On the
+evidence available before the second directive ran --- the persona arms and one
+directive --- we concluded that nothing reached \PersonaInertModel{} at all. The
+opposing directive displaces it four times as much as any persona. All
+\ComplyNSlotReaches{} of \ComplyNModels{} models have a demonstrably working
+system slot, no model loses its persona null on these grounds, and the finding
+is sharper than the error was: not an inert model, a selectively inert one.
+
 \subsection{Given the option to decline, most models decline}
 \label{sec:neutral}
 
