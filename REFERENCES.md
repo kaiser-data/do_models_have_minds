@@ -46,6 +46,69 @@ different in construction.
 
 ---
 
+### Schwartz (1992, and its lineage) — the borrowed instrument behind Track 6
+
+**Cite the primary source, not the overview.** The 2012 ORPC piece is a summary
+written twenty years after the theory was established; citing only it would
+attribute the theory to the wrong document. The chain, all verified via Crossref
+(DOI, authors, year, venue, pages):
+
+| year | work | role | cited |
+|---|---|---|---|
+| 1987 | Schwartz & Bilsky, *Toward a universal psychological structure of human values*, JPSP 53(3) 550–562 | first statement of the structure | 2,371 |
+| 1990 | Schwartz & Bilsky, *Toward a theory of the universal content and structure of values*, JPSP 58(5) 878–891 | extensions, cross-cultural replication | 1,402 |
+| **1992** | **Schwartz, *Universals in the Content and Structure of Values*, Adv. Exp. Soc. Psych. 25, 1–65** | **the theory as we use it — ten values, circular structure, 20 countries** | **7,229** |
+| 1994 | Schwartz, *Are There Universal Aspects in the Structure and Contents of Human Values?*, J. Social Issues 50(4) 19–45 | the higher-order dimensions | 3,910 |
+| 2012 | Schwartz, *An Overview of the Schwartz Theory of Basic Values*, ORPC 2(1) | accessible overview; the entry point, not the source | — |
+
+> Shalom H. Schwartz. *Universals in the Content and Structure of Values:
+> Theoretical Advances and Empirical Tests in 20 Countries.* In Advances in
+> Experimental Social Psychology, vol. 25, pp. 1–65. Elsevier, 1992.
+> <https://doi.org/10.1016/S0065-2601(08)60281-6></br>
+> and: *An Overview of the Schwartz Theory of Basic Values.* Online Readings in
+> Psychology and Culture, 2(1), 2012.
+> <https://doi.org/10.9707/2307-0919.1116>
+
+**Used in:** `battery/` Schwartz persona texts; `scripts/schwartz.py`
+(`VALUES`, `OPPOSED`, `REGISTERED_OPPOSED_THRESHOLD`); Track 6 in
+`PREREGISTRATION.md`; the two Track 6 frames in `paper/slides.tex`.
+
+**Not yet in `main.tex`.** The paper does not currently discuss Track 6 at all —
+the result lives in `PREREGISTRATION.md` and on the slides. Whoever writes it
+into `main.tex` must carry this citation with it; the instrument is the reason
+the test was falsifiable and it cannot appear unattributed.
+
+**What is taken.** The *structure*, which is the entire reason for using this
+instrument rather than one of our own. Our `cautious` and `ambitious` personas
+were written by us, so their results have no shape they are supposed to have.
+Schwartz's values do: the theory places them on a circular motivational
+continuum in which adjacent values are congruent and opposing values conflict.
+That yields a prediction **before** the measurement, which is what makes Track 6
+falsifiable — and it was duly falsified as registered (`sec:persona`).
+
+Taken specifically: the four values we instantiate (`power`, `universalism`,
+`self-direction`, `security`) and the two opposed pairs the design tests,
+power↔universalism and self-direction↔security, implemented as `OPPOSED` in
+`scripts/schwartz.py`.
+
+**Retrieval note — what was and was not opened.** Bibliographic metadata for
+all five works above is verified against Crossref (authors, year, venue,
+volume, pages, DOI), and the 2012 entry additionally against the publisher's
+ScholarWorks landing page, whose abstract confirms "ten basic personal values"
+and "a circular structure that reflects the motivations each value expresses".
+
+**No full text was retrieved in this session.** The 2012 PDF returned HTTP 403;
+the 1992 chapter is behind Elsevier and its reference list is not deposited with
+Crossref or Semantic Scholar. So the *citations* are verified and the *content*
+is not re-verified here — the persona texts and the opposed pairs were sourced
+when they were written (commit `b1b82ea`, "sourced not recalled").
+
+Anyone extending Track 6 — to the full ten-value circumplex, or to the
+higher-order dimensions from the 1994 paper — must open the primary text first
+rather than build on this note.
+
+---
+
 ## Primary target of the study
 
 ### Mazeika et al. (2025) — Utility Engineering
