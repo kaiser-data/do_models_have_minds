@@ -55,12 +55,18 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from nullcard.runner.forced_choice import build_forced_choice_prompt  # noqa: E402
 from scripts.hosted_sweep import build_design  # noqa: E402
 from scripts.outcome_clusters import (  # noqa: E402
     ARMS, cells_by_seed, mean_cross_model_correlation, pca, utility_matrix,
     zscore_columns)
 
 WORDLIST = Path("/usr/share/dict/words")
+
+# Tokenisers to measure the arms against, when cached locally. Two families,
+# because the token gap is a property of the tokeniser and not of the battery.
+TOKENISER_MODELS = ("Qwen/Qwen3.5-4B", "HuggingFaceTB/SmolLM3-3B",
+                    "google/gemma-4-E2B-it")
 
 FEATURE_NAMES = (
     "chars",              # the one the arms are not matched on
@@ -241,6 +247,42 @@ def analyse(results_dir: Path, battery: Path) -> dict:
     return out
 
 
+def token_lengths(battery: Path, models: list[str] | None = None) -> dict:
+    """Mean prompt tokens per arm, per tokeniser, from locally cached models.
+
+    Characters are what a human reads; **tokens are what the model receives**,
+    and the two do not agree here. The invented vocabulary fragments into more
+    subwords than real English, so the gap in tokens is larger than the gap in
+    characters -- and because it depends on the tokeniser, it also differs per
+    model, which makes the length confound partly a between-model one.
+
+    Returns {} when no tokeniser is cached, rather than downloading several GB
+    as a side effect of building a table.
+    """
+    try:
+        from transformers import AutoTokenizer
+    except ImportError:
+        return {}
+
+    data = json.loads(battery.read_text())
+    out: dict[str, dict] = {}
+    for model in models or TOKENISER_MODELS:
+        try:
+            tok = AutoTokenizer.from_pretrained(model, local_files_only=True)
+        except Exception:
+            continue                      # not cached; not worth a download
+        per_arm = {}
+        for arm in ARMS:
+            texts = [o["text"] for o in data["arms"][arm]]
+            prompts = [build_forced_choice_prompt(a, b)
+                       for a, b in zip(texts[::2], texts[1::2])]
+            per_arm[arm] = float(np.mean([len(tok(p)["input_ids"]) for p in prompts]))
+        if per_arm.get("R"):
+            per_arm["n_minus_vs_r_pct"] = 100 * (per_arm["N_minus"] / per_arm["R"] - 1)
+        out[model] = per_arm
+    return out
+
+
 def battery_comparability(battery: Path, bound=(0.6, 1.6)) -> dict:
     """Are the arms matched on surface? Answered before any model is consulted.
 
@@ -285,6 +327,7 @@ def main() -> int:
     battery = Path(args.battery)
     res = analyse(Path(args.results), battery)
     res["battery_comparability"] = battery_comparability(battery)
+    res["token_lengths"] = token_lengths(battery)
 
     print("BATTERY COMPARABILITY  (before any model is consulted)")
     print(f"{'arm':<10}{'unique':>8}{'chars':>9}{'words':>8}{'wordlen':>9}"
@@ -293,6 +336,13 @@ def main() -> int:
         print(f"{arm:<10}{c['n_unique_texts']:>8}{c['chars']:>9.2f}{c['words']:>8.2f}"
               f"{c['mean_word_len']:>9.2f}{100*c['frac_with_numeral']:>9.1f}%"
               f"{100*c['frac_english']:>9.1f}%")
+
+    if res["token_lengths"]:
+        print("\nPROMPT TOKENS  (what the model receives, not what a human reads)")
+        print(f"{'tokeniser':<28}{'R':>8}{'N+':>8}{'N-':>8}{'N- vs R':>10}")
+        for m, t in res["token_lengths"].items():
+            print(f"{m.split('/')[-1][:27]:<28}{t['R']:>8.1f}{t['N_plus']:>8.1f}"
+                  f"{t['N_minus']:>8.1f}{t['n_minus_vs_r_pct']:>+9.1f}%")
 
     if not res["seeds"]:
         print("\nno baseline cells found")

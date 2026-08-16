@@ -1374,8 +1374,18 @@ within-family result rather than a cross-family one.
 \section{Limitations}\label{sec:limits}
 
 \paragraph{The invented arms are longer than the real one, and no crossed
-design separates that from meaning.} \armNm{} runs \BatCharGapPct\% longer in
-characters than \armR{} (words match to \BatWordGapPct\%), and
+design separates that from meaning.} How much longer depends on the unit, and
+all three are worth stating because they are the three things a reader might
+mean. In \emph{words} the arms match to \BatWordGapPct\%, which is what the
+battery construction controlled. In \emph{characters} \armNm{} runs
+\BatCharGapPct\% longer. In \emph{tokens} --- the unit the model actually
+receives --- the whole prompt runs \TokGapLo--\TokGapHi\% longer, measured
+across \TokNTokenisers{} tokenisers, and the outcome text alone inflates by
+\TokenInflation$\times$ (\TokensR{} $\to$ \TokensNm{} tokens). The token gap is
+therefore larger than the character gap and, because it is a property of the
+tokeniser rather than of the battery, it also differs by model --- which makes
+part of this confound a between-model one, and the cross-family comparisons in
+\S\ref{sec:scale} inherit it. Concretely,
 \BatNmLonger{} of 510 invented items are longer than their real counterpart. An
 earlier draft of \S\ref{sec:method} asserted a per-item length ratio constrained
 to $[0.6, 1.6]$; that constraint is not implemented anywhere in the generator

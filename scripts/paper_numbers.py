@@ -937,6 +937,14 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             out.append(_cmd("BatCharGapPct", f"{gap:.1f}"))
             wgap = 100 * (comp["N_minus"]["words"] / comp["R"]["words"] - 1)
             out.append(_cmd("BatWordGapPct", f"{wgap:.1f}"))
+        tl = surface.get("token_lengths") or {}
+        if tl:
+            gaps = [t["n_minus_vs_r_pct"] for t in tl.values()
+                    if "n_minus_vs_r_pct" in t]
+            out.append(_cmd("TokGapLo", f"{min(gaps):.0f}"))
+            out.append(_cmd("TokGapHi", f"{max(gaps):.0f}"))
+            out.append(_cmd("TokNTokenisers", str(len(gaps))))
+
         if surface.get("seeds"):
             nf = [a.get("n_features_used") for s in surface["seeds"].values()
                   for name, a in s.items() if name == "N_minus"]

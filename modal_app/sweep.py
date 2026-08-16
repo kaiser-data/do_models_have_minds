@@ -722,9 +722,17 @@ def run_cell(
     depth: str = "D0",
     neutral: bool = False,
     prompt_id: str = DEFAULT_PROMPT,
+    subdir: str = "",
 ) -> dict:
+    # `subdir` keeps a run's cells out of the historical tree. The prompt tag
+    # alone cannot do that job: `ue` is untagged by design, so a fresh `ue` arm
+    # would land on the filename its 15 Aug predecessor already owns and
+    # skip_existing would skip it -- which is exactly the same-day comparison
+    # the run exists to make.
+    out_dir = os.path.join(RESULTS_DIR, subdir) if subdir else RESULTS_DIR
+    os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(
-        RESULTS_DIR,
+        out_dir,
         cell_filename(model_id, arm, design_seed, persona, depth, neutral,
                       prompt_id))
     if skip_existing:
@@ -1094,6 +1102,8 @@ def main(
     self_report_probe: bool = False,
     probe_only: bool = False,
     neutral: bool = False,
+    prompt: str = DEFAULT_PROMPT,
+    subdir: str = "",
 ):
     import sys
 
@@ -1111,6 +1121,7 @@ def main(
 
     print(f"models ({len(model_ids)}): {model_ids}")
     print(f"arms: {arm_list}")
+    print(f"prompt: {prompt}" + (f"   subdir: {subdir}/" if subdir else ""))
     if neutral:
         print("INSTRUMENT: neutral option (A/B/C). This is a DIFFERENT battery "
               "from the paper's; cells are written with a __neutral suffix and "
@@ -1156,7 +1167,7 @@ def main(
         summaries = list(
             run_cell.starmap(
                 [(m, a, batch_size, 500, 0.25, skip_existing, design_seed, p, d,
-                  neutral)
+                  neutral, prompt, subdir)
                  for m, a, p, d in cells]
             )
         )
