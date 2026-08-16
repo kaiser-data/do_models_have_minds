@@ -138,9 +138,17 @@ modal volume get nullcard-results / results/ --force   # ← needs access; see b
 python3 scripts/results_manifest.py --verify           # content check, exits non-zero on drift
 ```
 
-The archive currently lives on a private Modal volume, so third-party reproduction from
-raw outputs is **not yet possible** — only verification, once you have a copy. Publishing
-it (GitHub release or Zenodo) is the fix and has not been done.
+The archive is **public** — 72 MB compressed, attached to the `data-v1` release:
+
+```bash
+curl -L -o cells.tar.gz \
+  https://github.com/kaiser-data/do_models_have_minds/releases/download/data-v1/nullcard-raw-cells.tar.gz
+tar -xzf cells.tar.gz
+python3 scripts/results_manifest.py --verify
+```
+
+It carries all three result trees, all three manifests and the hash-pinned battery, so
+reproduction runs from raw outputs rather than from our derived files.
 
 Everything below runs from a clean clone against a verified `results/`:
 

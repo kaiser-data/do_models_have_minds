@@ -2223,13 +2223,20 @@ python3 scripts/results\_manifest.py -{-}verify
 
 \noindent
 Code, the pre-registration, the claims ledger and every derived artifact are in
-the repository. \textbf{The raw cell archive is not yet public}: it lives on a
-private Modal volume, so third-party reproduction \emph{from raw outputs} is
-not currently possible --- only verification, once a copy is obtained.
-Publishing it as a release or Zenodo deposit is the outstanding fix, and at
-\CorpusGB\,GB it is within the size limits of either. Everything downstream of
-the raw cells --- \texttt{card.json}, the figures, the tables, every macro in
-this paper --- rebuilds from a clean clone once \texttt{results/} is present.
+the repository. \textbf{The raw cells are public}, as a \CorpusMB\,MB archive
+(72\,MB compressed) attached to a tagged release:
+
+\begin{center}
+\small\ttfamily
+github.com/kaiser-data/do\_models\_have\_minds/releases/tag/data-v1
+\end{center}
+
+\noindent
+It contains all three trees, all three manifests and the hash-pinned battery, so
+third-party reproduction runs from raw outputs rather than from our derived
+files. Everything downstream --- \texttt{card.json}, the figures, the tables,
+every macro in this paper --- rebuilds from a clean clone once the archive is
+extracted.
 
 \section*{AI usage, and where the humans were}
 
