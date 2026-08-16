@@ -533,6 +533,29 @@
         "note": "Seven of nine models show zero attrition on both arms. The effect is carried by SmolLM3-3B and gemma-4-E2B-it, the two that deliberate. Direction favours this paper's thesis, which is why it is bounded rather than mentioned: dropping the hardest invented pairs inflates invented-arm coherence and shrinks the residual. Matched scoring shares one pair set and therefore one train/test fold, so the shift cannot come from differing folds."
       },
       "what_would_falsify": "A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold."
+    },
+    {
+      "id": "gibberish-beats-only-bad-outcomes",
+      "statement": "When an invented outcome beats a real one in direct competition, the real outcome is near the bottom of the model's own utility scale rather than an arbitrary item; models rank gibberish low but above genuinely bad outcomes, which is avoidance rather than failure to comprehend.",
+      "status": "established",
+      "section": "sec:avoidance",
+      "macros": [
+        "AvoidNModels",
+        "AvoidCorrLo",
+        "AvoidCorrHi",
+        "AvoidPctileLo",
+        "AvoidPctileHi",
+        "AvoidWinRateLo",
+        "AvoidWinRateHi",
+        "AvoidConcordance",
+        "AvoidTopCategory",
+        "AvoidTopRate"
+      ],
+      "evidence": {
+        "source": "site/avoidance.json",
+        "note": "Rank correlation between a real outcome's fitted utility and how often it beats an invented one holds on every model in the set. The median losing outcome sits in the bottom fifth of the utility distribution. The by-category pattern is reported as suggestive only: it rests on one design seed, and cross-model concordance of the category ranking is \\AvoidConcordance, which is moderate. The safety reading -- that the invented option is a sink reachable by degrading the real alternative -- is an inference from these numbers, not a measurement; MIXED cells under persona conditions do not exist."
+      },
+      "what_would_falsify": "A model whose losing real outcomes are spread across the utility range rather than concentrated at the bottom, or a rank correlation near zero on a new family."
     }
   ]
 }

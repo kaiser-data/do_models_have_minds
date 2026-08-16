@@ -120,7 +120,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           mixed: dict | None = None,
           surface: dict | None = None,
           attrition: dict | None = None,
-          hosted: dict | None = None) -> str:
+          hosted: dict | None = None,
+          avoidance: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -957,6 +958,34 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                 out.append(_cmd("AttrResidStrictGate",
                                 f"{sum(r['residual_matched'] for r in hi)/len(hi):+.4f}"))
 
+    # Avoidance: when gibberish beats a real outcome, which real outcome was it?
+    # The answer decides whether content-blindness is total (confusion) or
+    # whether the model reads well enough to rank nonsense above bad outcomes.
+    if avoidance and avoidance.get("models"):
+        ms = avoidance["models"]
+        out.append(_cmd("AvoidNModels", str(len(ms))))
+        cs = [m["spearman_utility_vs_prefer_real"] for m in ms
+              if m["spearman_utility_vs_prefer_real"] is not None]
+        if cs:
+            out.append(_cmd("AvoidCorrLo", f"{min(cs):+.3f}"))
+            out.append(_cmd("AvoidCorrHi", f"{max(cs):+.3f}"))
+        pcts = [m["median_utility_percentile_of_losers"] for m in ms]
+        out.append(_cmd("AvoidPctileLo", f"{min(pcts):.0f}"))
+        out.append(_cmd("AvoidPctileHi", f"{max(pcts):.0f}"))
+        wr = [100 * m["frac_gibberish_wins"] for m in ms]
+        out.append(_cmd("AvoidWinRateLo", f"{min(wr):.1f}"))
+        out.append(_cmd("AvoidWinRateHi", f"{max(wr):.1f}"))
+        out.append(_cmd("AvoidWinRateHiModel",
+                        max(ms, key=lambda m: m["frac_gibberish_wins"])["model"].split("/")[-1]))
+        conc = avoidance.get("cross_model_concordance")
+        if conc is not None:
+            out.append(_cmd("AvoidConcordance", f"{conc:+.3f}"))
+        cat = avoidance.get("mean_category_loss_rate") or {}
+        if cat:
+            top = max(cat.items(), key=lambda kv: kv[1])
+            out.append(_cmd("AvoidTopCategory", top[0]))
+            out.append(_cmd("AvoidTopRate", f"{100 * top[1]:.1f}"))
+
     return "".join(out)
 
 
@@ -1168,6 +1197,7 @@ def main() -> None:
     ap.add_argument("--comply", default="site/comply_gate.json")
     ap.add_argument("--mixed", default="site/mixed_arm.json")
     ap.add_argument("--hosted-card", default="site/card_hosted.json")
+    ap.add_argument("--avoidance", default="site/avoidance.json")
     ap.add_argument("--surface", default="site/surface_covariates.json")
     ap.add_argument("--attrition", default="site/attrition_control.json")
     ap.add_argument("--harm", default="site/harm_residual.json")
@@ -1222,6 +1252,8 @@ def main() -> None:
         mixed = dict(mixed, harm=harm)
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
+    avpath = Path(args.avoidance)
+    avoidance = json.loads(avpath.read_text()) if avpath.exists() else None
     hcpath = Path(args.hosted_card)
     hosted = json.loads(hcpath.read_text()) if hcpath.exists() else None
     sfpath, atpath = Path(args.surface), Path(args.attrition)
@@ -1233,7 +1265,7 @@ def main() -> None:
             print(f"  no {label} at {path}; omitting those macros")
     text = build(card, personas, length, floor_decomp, reasoning, validity,
                  detector, stated, stated_base, revealed, neutral, rendered,
-                 comply, mixed, surface, attrition, hosted)
+                 comply, mixed, surface, attrition, hosted, avoidance)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

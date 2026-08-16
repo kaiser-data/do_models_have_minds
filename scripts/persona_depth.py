@@ -64,7 +64,11 @@ from matplotlib.lines import Line2D  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from nullcard.scoring.analyze import aggregate_pair_probabilities, load_cell  # noqa: E402
 from nullcard.scoring.thurstonian import Comparison, fit_thurstonian  # noqa: E402
+
 from scripts.figures import FAMILY, FAMILY_ORDER, THEMES, _despine, _style  # noqa: E402
+
+# The two arms whose displacement ratio is the figure's statistic.
+ARMS = ("R", "N_minus")
 
 
 def utility(path: Path, outcomes: list[int]) -> np.ndarray | None:
@@ -80,7 +84,31 @@ def utility(path: Path, outcomes: list[int]) -> np.ndarray | None:
     return np.nan_to_num(v)
 
 
-def collect(results_dir: Path) -> list[dict]:
+def reference_paths(results_dir: Path, stem: str,
+                    allow_bare: bool = False) -> tuple[dict[str, Path], str]:
+    """The cells a persona displacement is measured *from*, and which kind.
+
+    Prefers `<stem>__<arm>__neutral.jsonl`: the persona slot occupied by text
+    that names no trait. Measured against that, the displacement isolates the
+    trait. Measured against the bare baseline -- no system prompt at all -- it
+    also contains the cost of a system prompt existing, which `neutral` exists
+    to charge separately and which is a large share of the total.
+
+    Both arms must supply the same kind of reference. A neutral numerator on one
+    axis and a bare one on the other would make the ratio of the two --- the
+    figure's whole statistic --- a comparison of denominators.
+    """
+    neutral = {arm: results_dir / f"{stem}__{arm}__neutral.jsonl" for arm in ARMS}
+    if all(p.exists() for p in neutral.values()):
+        return neutral, "neutral"
+    if allow_bare:
+        bare = {arm: results_dir / f"{stem}__{arm}.jsonl" for arm in ARMS}
+        if all(p.exists() for p in bare.values()):
+            return bare, "bare"
+    return {}, "missing"
+
+
+def collect(results_dir: Path, allow_bare: bool = False) -> list[dict]:
     base = sorted(results_dir.glob("*__R.jsonl"))
     base = [b for b in base if "-D" not in b.stem and "__s" not in b.stem]
     if not base:
@@ -88,18 +116,22 @@ def collect(results_dir: Path) -> list[dict]:
     rows0 = load_cell(base[0])
     outcomes = sorted({r["slot_a_outcome"] for r in rows0} | {r["slot_b_outcome"] for r in rows0})
 
-    out = []
+    out, skipped = [], []
     for b in base:
         model = b.stem[:-3].replace("__", "/")
         stem = model.replace("/", "__")
-        u0 = {arm: utility(results_dir / f"{stem}__{arm}.jsonl", outcomes)
-              for arm in ("R", "N_minus")}
+        ref, ref_kind = reference_paths(results_dir, stem, allow_bare=allow_bare)
+        if not ref:
+            skipped.append(model)
+            continue
+        u0 = {arm: utility(ref[arm], outcomes) for arm in ARMS}
         if any(v is None for v in u0.values()):
+            skipped.append(model)
             continue
         for persona in ("cautious", "ambitious"):
             for depth in ("D1", "D2"):
                 u = {}
-                for arm in ("R", "N_minus"):
+                for arm in ARMS:
                     p = results_dir / f"{stem}__{arm}__{persona}-{depth}.jsonl"
                     u[arm] = utility(p, outcomes) if p.exists() else None
                 if any(v is None for v in u.values()):
@@ -108,10 +140,15 @@ def collect(results_dir: Path) -> list[dict]:
                 dn = float(np.linalg.norm(u["N_minus"] - u0["N_minus"]))
                 out.append({
                     "model": model, "persona": persona, "depth": depth,
+                    "reference": ref_kind,
                     "shift_real": dr, "shift_invented": dn,
                     # what survives once the invented arm is subtracted
                     "floor_corrected": 1.0 - (dn / dr) if dr > 0 else None,
                 })
+    if skipped:
+        # Never a silent cap: a model absent from the figure because its
+        # control is missing must be named, or the figure reads as complete.
+        print(f"  no usable reference cell, omitted: {', '.join(sorted(skipped))}")
     return out
 
 
@@ -176,9 +213,13 @@ def main() -> None:
     # Mirrors scripts/figures.py: PDF/light for the paper, SVG/both for the page.
     ap.add_argument("--format", default="svg", choices=("svg", "pdf", "png"))
     ap.add_argument("--themes", default="light,dark")
+    ap.add_argument("--allow-bare-reference", action="store_true",
+                    help="measure displacement from the bare baseline when no "
+                         "neutral cell exists; mixes the persona effect with the "
+                         "cost of a system prompt existing at all")
     args = ap.parse_args()
 
-    rows = collect(Path(args.results))
+    rows = collect(Path(args.results), allow_bare=args.allow_bare_reference)
     if not rows:
         print("no persona cells yet — run the depth ladder first")
         return

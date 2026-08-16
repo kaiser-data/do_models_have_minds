@@ -29,14 +29,14 @@
       "MixPreferRealLo": "0.552",
       "MixPreferRealHi": "0.940",
       "MixNBelowHalf": "795",
-      "MixNPairsTotal": "22436",
+      "MixNPairsTotal": "22{,",
       "MixNBelowRange": "7"
     },
     "persona-displacement": {
-      "PersonaAbovePointThree": "18",
+      "PersonaAbovePointThree": "14",
       "NPersonaCells": "20",
-      "PersonaMax": "+0.85",
-      "PersonaMin": "-0.66"
+      "PersonaMax": "+0.87",
+      "PersonaMin": "-2.33"
     },
     "persona-direction-shallow": {
       "PersonaNonsenseShare": "66",
@@ -188,6 +188,18 @@
       "AttrFloor": "0.5",
       "AttrResidNoGate": "+0.0257",
       "AttrResidStrictGate": "+0.0191"
+    },
+    "gibberish-beats-only-bad-outcomes": {
+      "AvoidNModels": "9",
+      "AvoidCorrLo": "+0.707",
+      "AvoidCorrHi": "+0.937",
+      "AvoidPctileLo": "3",
+      "AvoidPctileHi": "22",
+      "AvoidWinRateLo": "0.2",
+      "AvoidWinRateHi": "12.4",
+      "AvoidConcordance": "+0.437",
+      "AvoidTopCategory": "Personal relationships",
+      "AvoidTopRate": "20.3"
     }
   }
 }

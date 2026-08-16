@@ -1254,6 +1254,58 @@ $n = 1$ we could not have known that it was the exception rather than the rule,
 and the conclusion we drew was correspondingly too clean. It is recorded here
 rather than quietly revised.
 
+\section{Confusion or avoidance? What the losing outcomes were}
+\label{sec:avoidance}
+
+Everything above measures coherence \emph{within} an arm. The MIXED arm puts a
+real outcome directly against an invented one, and the pairs where gibberish
+\emph{wins} decide between two readings of this whole paper that its other
+measurements cannot separate.
+
+Under \textbf{confusion}, the real outcomes that lose are arbitrary: the model
+cannot reliably tell a referent from a nonsense string, and the flat coherence
+result describes a system that is not reading. Under \textbf{avoidance}, the
+losers are the \emph{bad} outcomes: preferring \emph{lunouplur kriabrons} to
+losing your job is not a failure of comprehension but a correct ranking, and
+the model is reading well enough to place gibberish on the same scale as real
+outcomes --- near the bottom, but above the genuinely harmful ones.
+
+The data are unambiguous. Across all \AvoidNModels{} models, the rank
+correlation between a real outcome's fitted utility and how often it beats
+gibberish runs \AvoidCorrLo{} to \AvoidCorrHi{}. The real outcomes that lose sit
+at the \AvoidPctileLo--\AvoidPctileHi th percentile of the utility
+distribution --- the bottom fifth, and for several models the bottom tenth.
+Gibberish does not beat arbitrary outcomes. It beats the worst ones.
+
+How often it happens is a property of the model, not of the battery: the
+gibberish win rate runs \AvoidWinRateLo\% to \AvoidWinRateHi\% across models,
+with \AvoidWinRateHiModel{} at the top. By category the losses concentrate in
+\AvoidTopCategory{} (\AvoidTopRate\% of its pairs), and independent models agree
+on that ranking at \AvoidConcordance{} --- moderate, and stated here because
+one design seed cannot support a category claim on its own. We report the
+category pattern as suggestive; the utility relationship above does not depend
+on it.
+
+\paragraph{Why the reassuring reading is the worrying one.} Avoidance is better
+news about comprehension and worse news about safety. A system that scores an
+unparseable string \emph{above} a bad outcome has a default sink: whenever the
+real option can be made to look sufficiently bad, the meaningless option wins.
+An adversary who cannot change what a model wants may still be able to change
+what it picks, by degrading the alternatives rather than by promoting a target
+--- and nothing computed inside a single arm can see this, because within an
+arm the sink is not on the ballot. This also sharpens the paper's title: the
+persona result says an installed trait moves preferences about half as much as
+it appears to (\S\ref{sec:persona}), while this section says the preferences it
+moves are real enough to be exploited.
+
+\paragraph{What we did not establish.} Whether a risk-averse persona
+\emph{widens} the sink --- whether telling a model to be cautious makes it take
+the nonsense option more often --- is the obvious next experiment and we did not
+run it. It needs MIXED cells under the persona conditions, which do not exist:
+the MIXED arm was run only at baseline. That is a two-hour sweep on the
+existing harness and it would convert this section's safety argument from an
+inference into a measurement.
+
 \section{State of the evidence}\label{sec:evidence}
 
 This paper is built to grow: the roster, the replicate count and the number of
