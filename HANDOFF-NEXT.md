@@ -1,207 +1,191 @@
 # Handoff — the next stage
 
-Rewritten 15 Aug 2026, late. **This file replaces its own previous version**:
-every action it ranked (A–E) has been executed, and three of its factual claims
-turned out to be wrong. Those corrections are in §5 and matter more than the
-new work, because they are the kind that survive by sounding researched.
+Rewritten 16 Aug 2026. **This file replaces its own previous version.** Every
+action the last one ranked has been executed, and its §5 corrections still
+stand — read them there if you have not.
 
-`HANDOFF.md` (detailed), `HANDOFF-SIMPLE.md` (zero-context orientation) and
-`HANDOFF-PUBLICATION.md` (reviewer analysis, Loyal Lies reading) still stand and
-are not repeated.
-
-Everything below was verified against disk. Ten commits, `c06aac6..163393e`.
+22 commits, `846ccb0..HEAD`, all pushed. Everything below was verified against
+disk in the session that wrote it.
 
 ---
 
-## 0. The one thing to understand first
+## 0. FIRST: a sweep was killed mid-flight. Restart it.
 
-**The paper is now a living document with a failing build.** `claims.json` holds
-every claim, the macros it rests on, its status, what would falsify it, and the
-specific experiment that would settle it. `scripts/claims.py` re-reads those
-macros after every card rebuild and **exits non-zero if any moved past
-tolerance**.
-
-That is not bookkeeping. It fired twice this session and caught two stale
-sentences in prose that macros could not fix on their own. Run it after any
-change to `results/`:
+Track 6 (the Schwartz personas) was running when this session ended. Killing the
+local `modal run` client stops the app, so **8 of 40 cells landed when this was written and the rest did
+not** — check the current count rather than trusting that number, since more
+may have landed before the client died.
 
 ```bash
-python3 scripts/claims.py                    # report; non-zero on drift
-python3 scripts/claims.py --accept           # adopt, AFTER re-reading the prose
-python3 scripts/claims.py --table --roadmap  # regenerate the paper table + ROADMAP.md
+# resumes; --skip-existing is the default and completed cells are skipped
+modal run modal_app/sweep.py --batch-size 8 \
+  --models "google/gemma-4-E2B-it,Qwen/Qwen3.5-9B,Qwen/Qwen3.5-2B,LiquidAI/LFM2.5-1.2B-Instruct,ibm-granite/granite-4.1-3b" \
+  --arms "R,N_minus" \
+  --personas "sch-power,sch-universalism,sch-selfdirection,sch-security" \
+  --depths "D2"
 ```
 
-`ROADMAP.md` is generated from the same file. **Do not edit it; edit the
-ledger.** Current state: **7 established, 4 provisional, 0 open.**
+**This is safe to re-run.** `cell_is_complete()` checks the row count *and* the
+`.done` sidecar, so a cell killed mid-write is re-run rather than trusted — that
+guard exists because a resume that trusted `os.path.exists` once put six
+truncated cells into a published card. Cost of the remainder: ~150 GPU-min.
+Verify with `modal volume ls nullcard-results | grep -c 'sch-.*done'` — 40 means
+done.
+
+Then, in order:
+
+```bash
+modal volume get nullcard-results / results/ --force   # ONE at a time, never two
+python3 scripts/schwartz.py            # the analysis, written before the data
+python3 scripts/results_manifest.py    # or the manifest test fails
+python3 -m pytest tests/ -q            # 201 expected
+```
+
+**Do not start a second `modal volume get` while one is running.** Concurrent
+downloads into the same tree produce garbage reads that look exactly like
+corruption; a previous session lost an hour to diagnosing one.
 
 ---
 
-## 1. What is new since the last handoff
+## 1. What Track 6 is for, and how to read it
 
-- **Track 3 is in the paper** (§4.7) with both channels and two generated tables.
-- **Retitled and re-led.** The subtitle names the finding with its hedge and
-  resolves through macros; the abstract opens on the detector dissociation.
-- **The neutral-option control ran** on 6 models. See §2 — it is the biggest
-  result of the session and it partly reversed itself between n=1 and n=6.
-- **Two convergent claims sourced, two withdrawn.** §5.
-- **A generated prompt appendix.** `scripts/appendix_prompts.py` renders every
-  prompt from the SHA-pinned battery and every answer from real result rows. It
-  computes its own run/not-run status from disk, so it cannot claim an
-  unrun arm was run.
-- **A definitions section** (§4.1) and a "How each number is computed" block on
-  the site, both stating the formulas explicitly.
-- **`scripts/cross_model.py` + `ANALYSIS-CROSS-MODEL.md`** — five theories, each
-  with its test. Two tests were free, both ran, both killed their own theory.
-- **The validity gate is enforced in the card.** `build_card.py` computed
-  `mean_answer_mass` and never gated on it. No cell fails it today, so no number
-  moved; the fix closes the class.
-- **An ETA before every GPU wave**, from measured throughput (`throughput.json`).
+Four personas taken from Schwartz's Basic Human Values — the two poles of each
+higher-order axis. The point is not the labels: a real instrument comes with a
+**predicted geometry**, so the numbers have a shape they are supposed to have.
 
----
+At n=4 the circumplex cannot be recovered, so the prediction is a sign test:
+`sch-power` vs `sch-universalism` and `sch-selfdirection` vs `sch-security` must
+anti-correlate; cross-axis pairs should sit near zero.
 
-## 2. The neutral-option result, and why n mattered
+**The decisive comparison is between arms**, and `scripts/schwartz.py` prints
+both adjacent with all three readings spelled out:
 
-Offered an explicit third option ("Neither — I have no preference between
-these"), on 6 models, both arms:
-
-| | |
+| result | reading |
 |---|---|
-| decline invented more than real | **6 of 6**, gap +0.146 to +0.769 |
-| still answer the invented arm at all | **3 of 6** (A/B mass 0.0003–0.010 for the rest) |
-| of those, keep their floor | **3 of 3**, shift −0.023 to +0.003 |
+| geometry on **real only** | the personas reorganised something that needed meaning |
+| geometry on **both arms** | structure in the persona *texts*, reflected back |
+| geometry on **neither** | the instrument does not reproduce the circumplex |
 
-**The narrow objection is answered where it can be tested** — the floor is not
-an artifact of forced choice. **The broader one survives in a different shape:**
-for half the roster the forced binary is what produced an answer at all.
-
-At n=1 (Qwen3.5-2B) I concluded plainly that the floor survives. It does — for
-that model, which turns out to be one of the three that still engages. The paper
-records the reversal in §4.8 rather than quietly revising it. **This is the
-strongest argument in the repo for not reporting single-model controls.**
-
-The diagnostic that made this legible did not exist until n>1 produced
-P(neither)=1.000: `answer_mass_neutral` counts C, so it stays ~1.0 even when the
-model has put everything on "neither". The **A/B mass** is what distinguishes
-"floor survived" from "floor never measured".
+Expect the middle row: at n=5, 66% of a persona's value-aligned reordering
+already reproduces on outcomes that mean nothing. If that is what lands, it is
+this paper's central argument applied to a real psychological instrument, which
+is stronger than the ad-hoc personas could support.
 
 ---
 
-## 3. Next actions, ranked
+## 2. What is new since the last handoff
 
-**A. The two remaining free tests.** (~1h, no GPU) `ANALYSIS-CROSS-MODEL.md`
-lists T3a (does D2−D1 track chat-template system-role structure?) and T2a
-(does P(neither) track calibration training rather than scale?). Both need only
-tokeniser configs and public benchmark numbers. The two free tests already run
-each overturned a theory, so the prior on these is good.
-
-**B. A second model family spanning 3+ sizes.** (~20 min wall, ~190 GPU-min)
-Still the largest single liability in the paper: the scaling claim rests on one
-ladder, and §4 now also shows the pooled correlation collapses under length
-matching (−0.67 → −0.16). A second family is the only thing that settles it.
-Use the sharding note in §4 if you want it faster.
-
-**C. Neutral cells for the remaining 3 roster models.** (~10 min wall) Takes the
-opt-out result from 6 to 9 and the interpretable subset from 3 to maybe 5.
-Cheap, and it is the top ledger item.
-
-**D. Track 3's missing cells.** (~10 min wall) Qwen3.5-9B and granite
-concealed+verbal, taking the revealed channel from n=2 to n=4. The weakest n in
-the paper.
-
-**Explicitly not now:** a fifth analysis; any valence work; re-running anything
-that already has a complete cell.
-
----
-
-## 4. Operational things learned the hard way
-
-1. **Never run two `modal volume get` calls into the same tree.** They race and
-   produce garbage reads — I diagnosed a "destroyed results tree" that was
-   nothing but two concurrent downloads. Files were fine once they settled.
-2. **Qwen3.5-9B OOMs at `--batch-size 16` on the neutral arm.** The neutral
-   prompt is ~15 tokens longer and that is enough on a 24GB L4. Use 8.
-3. **A filename is not evidence of what produced it.** See §5.
-4. **Sharding across the 3 Modal workspaces is worth it only for a big
-   fan-out, and only partitioned BY MODEL** — otherwise each workspace
-   re-downloads the same weights. `scripts/merge_results.py` handles the merge
-   back and **refuses** rather than guessing when two workspaces hold the same
-   cell complete with different content.
-5. **The neutral prompt contains a literal em dash.** It ran fine on all six
-   models, but `ec-lmtt10` cannot set it, so the appendix substitutes it for
-   display and footnotes that it has. If you ever want a plain-ASCII instrument,
-   changing it invalidates the six cells — that is a decision, not a fix.
+- **Track 4 — the directive gate.** `comply` ("always answer B") and its
+  one-letter direction control `comply-a`. P12 falsified as registered: 4 of 5.
+  The criterion broke in *both* directions — one model passed an obedience test
+  it never took (baseline already at B), another failed while plainly receiving
+  the instruction. **Qwen3.5-2B refuses selectively**: obeys the directive
+  agreeing with its lean (0.725→0.877), stops at indifference under the opposing
+  one (→0.465). Not disruption; a refusal.
+- **Track 5 — the MIXED arm, and the best result of the session.** Real vs
+  invented *inside one comparison*, which is the only thing that can put the two
+  Thurstonian scales in one frame. P13 established at n=9: preference for the
+  real option tracks its own fitted utility, **+0.505 to +0.814 length-controlled,
+  monotone in every quartile of every model.** Models are not ignoring content.
+- **A harm reading raised and refuted.** The pairs where models prefer gibberish
+  *look* like harms. Tested rather than asserted, held-out models only: mean
+  r = +0.003 at n=7, and the largest value runs the *wrong* way. The only two
+  models showing the effect are the only two whose lists I had read. See §4.
+- **Stage 0 — the harness is rendered, and one model cannot be fixed.** 2 of 9
+  models receive a template-injected system prompt. `SmolLM2` can be suppressed
+  by sending our own; **`SmolLM3-3B` cannot** — its metadata block, including the
+  *current date*, is unconditional. It is the top row of the main table.
+- **Published.** <https://nullcard-preresults.netlify.app> now shows every prompt
+  verbatim, the Track 4/5 results, and `/pairs.html` — all 2,500 comparisons
+  browsable with what each model answered.
+- **Ledger: 9 established, 6 provisional.** `claims.py` now fails on any number
+  in the ledger that is neither derived from a macro nor declared as a literal.
 
 ---
 
-## 5. Three corrections to the previous version of this file
+## 3. Ranked next actions
 
-**These are the important part of this handoff.** Each sounded researched and
-each was wrong.
+**A. Finish Track 6** (~150 GPU-min). §0. It is half-run and the analysis is
+already written.
 
-1. **The 960-row cell wearing a `.done` marker was not a bug.** Its sidecar
-   reads `status: aborted` with `abort_reason: "trailing answer_mass 0.249 <
-   0.25"`. The sweep writes markers only on clean exit and records why it
-   stopped, so that marker was correct and informative. The previous handoff
-   filed the harness working correctly as a data-integrity defect. The real gap
-   was next to it: the card never enforced the answer-mass gate.
+**B. Write the hosted-model runner.** `DECISION-MODELS.md` argues this is the
+highest-value remaining work and explains why "a second dense family" — what the
+ledger asked for until this session — **cannot be satisfied by this roster at
+all**. Four hosted models are already measured as first-token scoreable
+(`Llama-3.3-70B` at 7.8× our current maximum, `Qwen3-235B-A22B` at 26× on total
+params). Everything in the paper is ≤9B; that is the objection most likely to
+limit how seriously it is taken. The cost is engineering, not compute — no
+runner exists.
 
-2. **"Models impose order on nonsense rather than abstaining" was backwards.**
-   That came from reading mass on a literal "Neither" out of the *binary* rows'
-   top-5, which is ~0.000. But that proxy can only measure *spontaneous*
-   abstention on an instrument where declining was never offered. Offered it,
-   models decline on 64%–100% of invented pairs. The caveat attached to the
-   proxy was carrying far more weight than it looked.
+**C. The finding sitting unwritten in `roster.py`.** Six of ten frontier models
+**cannot be scored by this metric at all** — reasoning preambles in the first
+token, or an API that refuses logprobs. That is a limitation of the *coherence
+metric*, not of our harness, and it is free to state because the measurement is
+done. It also bounds our own claims: our nine models are nine that *could* be
+scored.
 
-3. **The Deep Value Benchmark is not a scaling result.** The brief rendered it
-   as "shallow beats deep at every size". The paper's actual evidence is five
-   pairwise comparisons, three favouring the smaller model, mean absolute
-   difference 0.07; the authors say "slightly less". It must not sit beside our
-   within-family correlation as the same kind of evidence, and `REFERENCES.md`
-   now says so. Also: 1−DVGR = 0.70 against our 66% looks like agreement and is
-   not — different quantities, different model regimes.
+**D. Publish the results archive.** `results_manifest.json` pins 172 files by
+SHA; the README is honest that third-party reproduction is not yet possible.
+Outward-facing, so it needs a human decision.
 
-Two further corrections were to my own work this session: a `opt_out_gap`
-denominator quietly restricted to the flattering subset (reported 3/3 where the
-truth was 5/5), and a verdict string asserting "the model takes the opt-out on
-essentially none of the pairs" from the floor shift alone, printed over
-P(C)=0.638. **A verdict must be computed from every quantity it mentions.**
+**E. Decide the SmolLM3 question.** Exclude it from cross-family contrasts, or
+report the difference permanently. Adding large models first changes its weight
+— it stops being the headline — which is a reason to do **B** before deciding.
 
----
-
-## 6. The bug worth remembering
-
-The first neutral run wrote **10,000 rows of the binary battery into files named
-`__neutral`**. `run_cell` computed the neutral filename but called
-`_run_cell_inner` without the flag, so it defaulted to `False`. Nothing failed:
-the sweep exited 0, both files were the right size, the names were right. The
-only evidence was `neutral_option: false` inside the rows.
-
-Had the analysis run before anyone looked at a row, it would have reported *"the
-floor survives when a neutral option is offered"* from data in which no neutral
-option was ever offered — and that sentence would have been quoted for the rest
-of the project.
-
-`_run_cell_inner` now refuses to write when the flag disagrees with the path
-suffix, and three tests state the invariant. The contaminated cells were deleted
-from the local tree and the Modal volume.
+**Explicitly not now:** more small dense models (the core claims are established
+at n=9 and hold on every one); the ten-value Schwartz version (two of its values
+have almost no items in this battery — see `STUDY-PERSONAS.md` §2).
 
 ---
 
-## 7. Standing rules this session added
+## 4. The methodological result worth carrying forward
 
-17. **A verdict must be computed from every quantity it mentions.** A
-    conclusion string that asserts a fact it never read is worse than no
-    conclusion, because it is quotable.
-18. **A filename is not evidence of what produced it.** If a run can be
-    configured two ways, the artifact must carry which way, and the writer must
-    refuse when the two disagree.
-19. **Report single-model controls as single-model controls.** The n=1 neutral
-    result was not wrong; it was unrepresentative in a way that n=1 cannot
-    reveal.
-20. **Write the test next to the theory.** Two of five theories in
-    `ANALYSIS-CROSS-MODEL.md` died within an hour because their tests cost
-    nothing and were already written down. The attractive theory is the one to
-    test first.
-21. **A stable mean can conceal per-model movement in both directions.** Length
-    matching moved the aggregate residual +0.025 → +0.021 while individual
-    models moved up to 0.044 and two flipped sign.
+**I formed a hypothesis by reading two models' outputs, and those two models
+became its entire evidence base.**
+
+Reading the pairs where models prefer gibberish, they looked like harms. I
+reported that. Then I tested it: regress preference on fitted utility, ask
+whether the residual tracks a harm-word count. Models whose lists I had read
+were excluded from the verdict, because the lexicon was written by someone who
+had seen what it needed to match.
+
+| | r(harm, residual) |
+|---|---|
+| 7 held-out models | **mean +0.003** |
+| the 2 whose lists I read | −0.117, −0.468 |
+
+The split is total. Had I written the lexicon first and pooled all nine, it
+would have looked like a result.
+
+`scripts/harm_residual.py` keeps `READ_BEFORE_HYPOTHESIS` in code, and a test
+asserts it is non-empty so it cannot silently default to empty and re-admit the
+contaminated evidence. **Add a model to that list the moment anyone inspects its
+outcomes, including for a quick sanity check. A held-out model is only held out
+once.**
+
+---
+
+## 5. Standing rules this session added
+
+22. **A pairwise instrument measures the difference between two items, never
+    either item.** Ipsative scores from separate fits are on separate scales
+    until some comparison bridges them. Skill: `pairwise-comparison-design`.
+23. **Check keyword leakage before running a manipulation.** `control` appeared
+    in 24% of the items one persona targeted and 0% of the rest — a perfect
+    lexical discriminator that would have produced a positive result from word
+    overlap alone.
+24. **Check coverage before writing prompts.** A construct with no items cannot
+    be measured, and the null costs the same as a real cell. Two of Schwartz's
+    ten have almost no support here; that was found for free.
+25. **Score a manipulation against the subject's own baseline, never a fixed
+    value.** An item already where the manipulation would push it clears any
+    absolute threshold without the manipulation doing anything. This bug
+    occurred twice — in the gate, then again one level down in its own control.
+26. **A rendered artifact is the only proof of what was sent.** Two bugs this
+    session were visible only by looking at output: a chat template injecting a
+    system prompt, and a public page showing two identical options as an example
+    of a contrast.
+27. **Decide what to run by asking what it changes, not what is next on the
+    list.** `DECISION-MODELS.md` exists because the next sweep was about to be
+    launched out of momentum, and the answer turned out to be a different
+    experiment entirely.
