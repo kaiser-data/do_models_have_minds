@@ -268,6 +268,31 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         _tex(m.api_id.split("/")[-1])
         for m in sc["preamble"] + sc["no_logprobs"])))
 
+    # The frontier check. Read from card_hosted.json rather than card.json
+    # because the hosted tree is deliberately not pooled with the self-hosted
+    # one -- different serving stack, so these macros exist to be quoted BESIDE
+    # the local ladder with the difference stated, never inside its mean.
+    ch_path = Path("site/card_hosted.json")
+    if ch_path.exists():
+        ch = json.loads(ch_path.read_text())
+        # Per model, keyed by slug. No "largest hosted model" macro: HostedModel
+        # carries no parameter count, and half the roster's sizes are not
+        # public, so any such macro would rest on a number we invented. The
+        # prose names the model it is discussing instead.
+        scored = [t for t in ch["tiles"]
+                  if t.get("floor") is not None and t.get("value") is not None]
+        for t in scored:
+            s = _slug(t["model"])
+            out.append(_cmd(f"{s}HostR", f"{t['raw_coherence']:.3f}"))
+            out.append(_cmd(f"{s}HostN", f"{t['floor']:.3f}"))
+            out.append(_cmd(f"{s}HostResid", f"{t['value']:+.3f}"))
+            out.append(_cmd(f"{s}HostDecR",
+                            f"{100 * t['decisive_fraction']['R']:.0f}"))
+            out.append(_cmd(f"{s}HostDecN",
+                            f"{100 * t['decisive_fraction']['N_minus']:.0f}"))
+            out.append(_cmd(f"{s}HostReps", str(t.get("n_design_replicates", 1))))
+        out.append(_cmd("HostedNScored", str(len(scored))))
+
     # Track 6, the borrowed instrument. Emitted so the slides and sec:persona
     # can state a falsified pre-registered test with its actual numbers instead
     # of hedging qualitatively -- a registered test reported without the figure

@@ -1,0 +1,119 @@
+{
+  "tiles": [
+    {
+      "model": "google/gemma-3-27b-it",
+      "badge": "NOT_ASSESSED",
+      "reason": "no N- floor cell for this model",
+      "raw_coherence": 0.8956978782239435
+    },
+    {
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "badge": "FLOOR_CORRECTED",
+      "value": 0.0020790576454177145,
+      "raw_coherence": 0.9171036267267644,
+      "floor": 0.9150245690813467,
+      "floor_magnitude": null,
+      "arithmetic_component": null,
+      "interval_raw": [
+        0.8884526941230242,
+        0.9377233846823363
+      ],
+      "interval_floor": [
+        0.8861636281422827,
+        0.9359625679238357
+      ],
+      "decisive_fraction": {
+        "N_minus": 0.655414291977203,
+        "R": 0.8755102040816326
+      },
+      "mean_abs_deviation": {
+        "N_minus": 0.3360167714620485,
+        "R": 0.4396927907122066
+      },
+      "decisive_ratio_R_over_Nminus": 1.3358118899733804,
+      "shuffled_null": {
+        "N_minus": 0.5617346155322661,
+        "R": 0.5091829436860399
+      },
+      "split_spread": 0.03284921330495394,
+      "n_design_replicates": 1,
+      "design_noise_floor": null,
+      "clears_floor": null,
+      "floor_margin": null,
+      "slot_a_bias": 0.47311870650510784,
+      "transitivity": {
+        "N_minus": 0.9918444866495364,
+        "R": 0.9857858769931663
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9386907153626786,
+        "R": 0.9999957309405032
+      },
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": {
+        "N_minus": "558925f22df1e0d9",
+        "R": "5ad0ed3071f4abdd"
+      }
+    }
+  ],
+  "cells": [
+    {
+      "model": "google/gemma-3-27b-it",
+      "arm": "R",
+      "design_seed": 20260815,
+      "coherence": 0.8956978782239435,
+      "coherence_spread": 0.024281494716340335,
+      "shuffled_null": 0.5263620574482298,
+      "decisive_fraction": 0.8104,
+      "mean_abs_deviation": 0.40617709007936054,
+      "sd_pair_prob": 0.4479291058501589,
+      "n_pairs": 2500,
+      "mean_answer_mass": 1.0000000026342781,
+      "slot_a_bias": 0.5352159140882728,
+      "transitivity": 0.9782702796294693,
+      "completeness": 0.8232,
+      "frac_near_indifferent": 0.1664,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "1b1fd9e11a941dfb"
+    },
+    {
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "arm": "N_minus",
+      "design_seed": 20260815,
+      "coherence": 0.9150245690813467,
+      "coherence_spread": 0.010964912280701733,
+      "shuffled_null": 0.5617346155322661,
+      "decisive_fraction": 0.655414291977203,
+      "mean_abs_deviation": 0.3360167714620485,
+      "sd_pair_prob": 0.3681925453772585,
+      "n_pairs": 2281,
+      "mean_answer_mass": 0.9386907153626786,
+      "slot_a_bias": 0.3753378030767158,
+      "transitivity": 0.9918444866495364,
+      "completeness": 0.7448487505480053,
+      "frac_near_indifferent": 0.22051731696624288,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "558925f22df1e0d9"
+    },
+    {
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "arm": "R",
+      "design_seed": 20260815,
+      "coherence": 0.9171036267267644,
+      "coherence_spread": 0.03284921330495394,
+      "shuffled_null": 0.5091829436860399,
+      "decisive_fraction": 0.8755102040816326,
+      "mean_abs_deviation": 0.4396927907122066,
+      "sd_pair_prob": 0.46567606024420644,
+      "n_pairs": 2450,
+      "mean_answer_mass": 0.9999957309405032,
+      "slot_a_bias": 0.47311870650510784,
+      "transitivity": 0.9857858769931663,
+      "completeness": 0.8938775510204081,
+      "frac_near_indifferent": 0.09755102040816327,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "5ad0ed3071f4abdd"
+    }
+  ],
+  "n_splits": 5
+}

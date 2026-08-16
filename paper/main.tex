@@ -530,6 +530,35 @@ contributes --- does not widen as models get larger.}
 \label{fig:scale}
 \end{figure}
 
+\paragraph{The floor holds at 70B.} The ladder above tops out at
+\LadderLarge{}, which leaves the obvious objection that everything here is a
+property of small models. We therefore ran the full battery on
+\texttt{Llama-3.3-70B-Instruct}, both arms, \nobreak$5{,}000$ rows each ---
+roughly eight times the largest self-hosted model. Real-outcome coherence is
+\LlamaThreeThreeSevenZeroBInstructHostR{}; the floor is
+\LlamaThreeThreeSevenZeroBInstructHostN{}; the residual is
+\hbox{\LlamaThreeThreeSevenZeroBInstructHostResid{}}. On outcomes that refer to
+nothing, at seventy billion parameters, the metric returns very nearly the same
+number it returns on real ones.
+
+\textbf{And the mechanism reproduces at that scale.} The model is decisive on
+\LlamaThreeThreeSevenZeroBInstructHostDecR{}\% of real pairs against
+\LlamaThreeThreeSevenZeroBInstructHostDecN{}\% of invented ones --- a large gap
+in conviction --- while the coherence numbers those choices produce differ by
+\LlamaThreeThreeSevenZeroBInstructHostResid{}. That is this paper's argument in
+a single cell: what the outcomes mean changes how strongly the model commits,
+and the statistic reads only which side of $0.5$ each pair fell on.
+
+We state two things about this cell rather than pooling it. It was run at
+\LlamaThreeThreeSevenZeroBInstructHostReps{} design seed, so it carries no
+noise floor and we do not claim
+\LlamaThreeThreeSevenZeroBInstructHostResid{} is distinguishable from zero ---
+only that it is not the large positive residual a scale explanation predicts.
+And it was served by a hosted API rather than our own vLLM harness, so it is
+reported \emph{beside} the ladder in Figure~\ref{fig:scale} and never inside its
+mean. The comparison it licenses is directional, and in that direction the
+answer is that scale does not rescue the metric.
+
 \subsection{Positive control: personas move wanting, not only writing}
 \label{sec:persona}
 

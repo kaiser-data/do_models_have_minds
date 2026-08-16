@@ -88,6 +88,14 @@ tr:last-child td{border-bottom:none}
 .pr-text{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
   line-height:1.65;white-space:pre-wrap;color:var(--text-primary);margin-top:3px}
 .pr-note{font-size:12.5px;color:var(--text-secondary);margin:12px 0 0}
+.callout{border:1px solid var(--border);border-left:3px solid var(--series-r);border-radius:10px;background:var(--surface-1);padding:18px 22px;margin:22px 0}
+.callout h3{margin:0 0 10px;font-size:17px;letter-spacing:-.01em}
+.callout p{margin:0 0 10px}
+.callout p:last-child{margin-bottom:0}
+.callout .caveat{font-size:12.5px;color:var(--text-secondary);border-top:1px solid var(--border);padding-top:10px;margin-top:14px}
+table.mini{border-collapse:collapse;margin:12px 0 14px;font-variant-numeric:tabular-nums}
+table.mini td{padding:3px 18px 3px 0;border:0}
+table.mini td.num{text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;
  background:var(--surface-1);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
 footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--border);
@@ -162,6 +170,18 @@ models commit to a side on 41% of pairs, and on invented ones
 <figure class="fig"><img class="lightonly" src="fig3_strength.svg" alt="Distribution of preference strength"><img class="darkonly" src="fig3_strength-dark.svg" alt="Distribution of preference strength"><figcaption>The mechanism, directly. On real outcomes the model commits &mdash; mass moves to the edges. On invented ones it piles up at indifference. Coherence reads only <i>which side of 0.5</i> each pair falls on, so both score the same.</figcaption></figure>
 
 <figure class="fig"><img class="lightonly" src="fig2_scale.svg" alt="The scale ladder"><img class="darkonly" src="fig2_scale-dark.svg" alt="The scale ladder"><figcaption>One family, four sizes, size as the only variable. The floor rises with scale alongside the signal, so the shaded band &mdash; the most the replaced content can be contributing &mdash; does not widen as the models get bigger. This is a statement about one family and not a scaling law: pooled across families the correlation is weak, and it weakens further once prompt length is matched.</figcaption></figure>
+
+<div class="callout"><h3>The floor holds at 70B</h3>
+<p>The ladder above stops at 9B, which invites the obvious objection: perhaps all of this is a property of small models. So we ran the full battery on <b>Llama-3.3-70B-Instruct</b> &mdash; both arms, 5,000 rows each, about eight times the largest model in the ladder.</p>
+<table class="mini"><tbody>
+<tr><td>real outcomes</td><td class="num">0.917</td></tr>
+<tr><td>invented outcomes</td><td class="num">0.915</td></tr>
+<tr><td><b>residual</b></td><td class="num"><b>+0.002</b></td></tr>
+</tbody></table>
+<p>At seventy billion parameters, on outcomes that refer to nothing, the metric returns very nearly the number it returns on real ones.</p>
+<p><b>And the mechanism reproduces at that scale.</b> The model commits on <b>88%</b> of real pairs against <b>66%</b> of invented ones &mdash; a wide gap in conviction &mdash; while the coherence those choices produce differs by 0.002. That is the whole argument in one cell: meaning changes how strongly the model commits, and the statistic reads only which side of 0.5 each pair fell on.</p>
+<p class="caveat">Two limits, stated rather than buried. This cell ran at <b>one design seed</b>, so it has no noise floor: we do not claim +0.002 is distinguishable from zero, only that it is not the large positive residual a scale explanation predicts. And it was served by a hosted API rather than our own harness, so it sits <i>beside</i> the ladder and never inside its mean. The comparison is directional &mdash; and in that direction, scale does not rescue the metric.</p>
+</div>
 
 <p>Utility Engineering's accuracy thresholds preferences to hard labels
 (their §4.1), so it records <em>which way</em> a model leans and never <em>how

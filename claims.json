@@ -435,6 +435,29 @@
       "what_would_falsify": "A per-item collapse ranking that reproduces across seeds within a model -- any appreciable positive test-retest correlation would restore the item-level reading. Equally, a model-level ordering that tracked parameter count once recipe is held fixed would make this a scale claim after all.",
       "grows_by": "More seeds per cell, and more families at matched sizes. Seeds are what makes the negative half of this claim possible at all, and a single-seed sweep cannot state it.",
       "priority": 2
+    },
+    {
+      "id": "floor-holds-at-seventy-b",
+      "statement": "The floor is not an artifact of small models: on Llama-3.3-70B-Instruct, roughly eight times the largest model in our ladder, real-outcome coherence is \\LlamaThreeThreeSevenZeroBInstructHostR and the invented-outcome floor is \\LlamaThreeThreeSevenZeroBInstructHostN, a residual of \\LlamaThreeThreeSevenZeroBInstructHostResid.",
+      "status": "provisional",
+      "section": "sec:scale",
+      "macros": [
+        "LlamaThreeThreeSevenZeroBInstructHostR",
+        "LlamaThreeThreeSevenZeroBInstructHostN",
+        "LlamaThreeThreeSevenZeroBInstructHostResid",
+        "LlamaThreeThreeSevenZeroBInstructHostDecR",
+        "LlamaThreeThreeSevenZeroBInstructHostDecN",
+        "LlamaThreeThreeSevenZeroBInstructHostReps"
+      ],
+      "evidence": {
+        "models": "\\HostedNScored",
+        "replicates_per_cell": "\\LlamaThreeThreeSevenZeroBInstructHostReps",
+        "note": "Provisional, and the reason is the replicate count: at one design seed this cell has no noise floor, so the residual cannot be called distinguishable from zero. What it can be called is not the large positive residual a scale explanation predicts. The mechanism reproduces at this scale too -- decisive on \\LlamaThreeThreeSevenZeroBInstructHostDecR% of real pairs against \\LlamaThreeThreeSevenZeroBInstructHostDecN% of invented, while the coherence those choices produce differs by \\LlamaThreeThreeSevenZeroBInstructHostResid. Served by a hosted API rather than the vLLM harness, so it is reported beside the ladder and never inside its mean.",
+        "computed_by": "scripts/hosted_sweep.py then scripts/build_card.py --results results_hosted"
+      },
+      "what_would_falsify": "A large positive floor-corrected residual at or above this scale, which is what an emergence-with-scale account predicts and what this cell does not show. Equally, a replicated version of this cell whose noise floor turns out to be wide enough that the ladder's small positive residuals would also vanish -- that would make this agree with the ladder for the wrong reason.",
+      "grows_by": "Design seeds on this cell first -- one replicate is what keeps this provisional rather than established. Then a second frontier family at comparable scale, so the result is not one model's recipe.",
+      "priority": 1
     }
   ]
 }
