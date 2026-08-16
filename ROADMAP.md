@@ -18,7 +18,7 @@ This paper is meant to grow. The queue below is not a wish list --- it is every 
 
 > Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.
 
-**Next addition.** A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of the ~2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.
+**Next addition.** A SECOND FAMILY spanning 3+ sizes -- but NO clean second dense ladder exists in this roster, which this entry previously implied. gemma gives a single doubling with a gated member; liquid's third point is a mixture-of-experts model whose active parameter count breaks monotonicity. The honest routes are the scoreable hosted models, which reach far beyond the current maximum, or accepting that the claim stays within-family. See DECISION-MODELS.md.
 
 **Would falsify it.** A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.
 

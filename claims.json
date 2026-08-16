@@ -101,11 +101,9 @@
         "note": "within-family r \\WithinFamilyCorr unmatched and \\MatchedWithinCorr length-matched; pooled \\PooledSizeCorr collapsing to \\MatchedPooledCorr. The pooled collapse is why this is a within-family statement and not a scaling law."
       },
       "what_would_falsify": "A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.",
-      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- still the highest-value addition. Also: the matched band uses ~1,000 of the ~2,500 pairs, so a wider overlapping band or a length-controlled battery would sharpen the qualification rather than just noting it.",
+      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- but NO clean second dense ladder exists in this roster, which this entry previously implied. gemma gives a single doubling with a gated member; liquid's third point is a mixture-of-experts model whose active parameter count breaks monotonicity. The honest routes are the scoreable hosted models, which reach far beyond the current maximum, or accepting that the claim stays within-family. See DECISION-MODELS.md.",
       "literals": {
-        "3": "the target number of sizes a second family would need, not a measurement",
-        "1,000": "approximate pair count inside the matched token band; the analysis reports the band itself as \\MatchedBandLo-\\MatchedBandHi and does not emit this count",
-        "2,500": "approximate pairs per cell in the battery design, not a generated result"
+        "3": "the target number of sizes a second family would need, not a measurement"
       },
       "priority": 2
     },
