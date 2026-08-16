@@ -107,7 +107,10 @@
       "HarnessNClean": "7",
       "HarnessNDated": "1",
       "HarnessInjectingModels": "SmolLM2-1.7B-Instruct, SmolLM3-3B",
-      "HarnessDatedModel": "SmolLM3-3B"
+      "HarnessDatedModel": "SmolLM3-3B",
+      "HarnessNFixable": "1",
+      "HarnessNStuck": "1",
+      "HarnessStuckModel": "SmolLM3-3B"
     },
     "opt-out-is-a-discarded-channel": {
       "NeutGapLo": "+0.146",

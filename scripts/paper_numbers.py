@@ -199,6 +199,17 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                             ", ".join(m.split("/")[-1] for m in inj)))
         if dated:
             out.append(_cmd("HarnessDatedModel", dated[0].split("/")[-1]))
+        # Whether the injection can be suppressed by sending our own system
+        # message. A defect that cannot be fixed at the prompt level is a
+        # different kind of limitation from one that can, and the paper has to
+        # say which it has.
+        eqm = rendered.get("equalisable", {})
+        fixable = sorted(m for m in inj if eqm.get(m) is True)
+        stuck = sorted(m for m in inj if eqm.get(m) is False)
+        out.append(_cmd("HarnessNFixable", str(len(fixable))))
+        out.append(_cmd("HarnessNStuck", str(len(stuck))))
+        if stuck:
+            out.append(_cmd("HarnessStuckModel", stuck[0].split("/")[-1]))
 
     # Strength: the headline contrast. Restricted to models that are decisive
     # at all on real outcomes, because a model that never commits anywhere has

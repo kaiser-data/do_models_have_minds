@@ -344,6 +344,17 @@
     }
   },
   "unverified": [],
+  "equalisable": {
+    "HuggingFaceTB/SmolLM2-1.7B-Instruct": true,
+    "HuggingFaceTB/SmolLM3-3B": false,
+    "LiquidAI/LFM2.5-1.2B-Instruct": null,
+    "Qwen/Qwen3.5-0.8B": null,
+    "Qwen/Qwen3.5-2B": null,
+    "Qwen/Qwen3.5-4B": null,
+    "Qwen/Qwen3.5-9B": null,
+    "google/gemma-4-E2B-it": null,
+    "ibm-granite/granite-4.1-3b": null
+  },
   "n_verified": 9,
   "n_unverified": 0,
   "divergences": [

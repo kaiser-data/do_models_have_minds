@@ -81,10 +81,48 @@ def system_block(rendered: str, prompt: str) -> str:
     return rendered[:i] if i > 0 else rendered
 
 
+# Supplying an explicit system message is the obvious fix for a template that
+# injects one. It does not always work, and whether it works is a fact about
+# each model that an auditor needs BEFORE deciding a harness is equalisable.
+NEUTRAL_PROBE = "You are an assistant. Answer the question you are asked."
+
+
+def equalisable(tok, prompt: str) -> bool | None:
+    """Does sending our own system message suppress the template's?
+
+    -> True  the injection is ours to control; the harness can be equalised
+       False the template emits its preamble regardless, so no prompt-level
+             change can make this model match the others
+       None  nothing was injected in the first place
+
+    SmolLM2-1.7B-Instruct is True and SmolLM3-3B is False: the latter nests an
+    explicit system prompt UNDER a Metadata block it always emits, so its
+    knowledge cutoff and the current date survive any instruction we send. That
+    is not a bug to fix but a limit to report.
+    """
+    from modal_app.sweep import build_messages
+    bare = render(tok, prompt, "none", "D0")
+    if not _has_injected_identity(system_block(bare, prompt)):
+        return None
+    for kwargs in ({"enable_thinking": False}, {}):
+        try:
+            out = tok.apply_chat_template(
+                [{"role": "system", "content": NEUTRAL_PROBE},
+                 {"role": "user", "content": prompt}],
+                add_generation_prompt=True, tokenize=False, **kwargs)
+            break
+        except TypeError:
+            continue
+    else:
+        return None
+    pre = system_block(out, prompt).replace(NEUTRAL_PROBE, " ")
+    return not _has_injected_identity(pre)
+
+
 def describe(models: list[str]) -> dict:
     from transformers import AutoTokenizer
 
-    out, unverified = {}, []
+    out, unverified, eq = {}, [], {}
     for mid in models:
         try:
             tok = AutoTokenizer.from_pretrained(mid)
@@ -119,7 +157,8 @@ def describe(models: list[str]) -> dict:
                 "rendered": text,
             }
         out[mid] = cells
-    return {"models": out, "unverified": unverified,
+        eq[mid] = equalisable(tok, cell_types()["D0"][0])
+    return {"models": out, "unverified": unverified, "equalisable": eq,
             "n_verified": len(out), "n_unverified": len(unverified)}
 
 
@@ -214,7 +253,10 @@ def main() -> int:
                 else "clean" if "error" not in d0 else "error")
         print(f"  {mid:<44} D0: {mark}")
         if d0.get("injects_unrequested_system_text"):
-            print(f"      -> {d0['preamble'].strip()[:100]!r}")
+            eqv = data["equalisable"].get(mid)
+            print(f"      -> {d0['preamble'].strip()[:88]!r}")
+            print(f"      -> suppressed by sending our own system prompt: "
+                  f"{'YES -- fixable' if eqv else 'NO -- this harness cannot be equalised'}")
     for u in data["unverified"]:
         print(f"  {u['model']:<44} UNVERIFIED ({u['error'][:44]})")
 

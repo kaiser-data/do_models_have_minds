@@ -1090,14 +1090,26 @@ the \emph{current date} into the prompt, so \HarnessNDated{} model's input is
 not constant even for itself: cells run on different days were not run on the
 same instrument, and no amount of seed control reaches a clock inside a prompt.
 
+\textbf{One of the two cannot be fixed at the prompt level, and that is the more
+interesting half.} The obvious remedy is to send our own system message and
+override the template's. On \HarnessNFixable{} of the \HarnessNInjecting{} that
+works. On \HarnessStuckModel{} it does not: the template emits its metadata
+block --- knowledge cutoff, reasoning mode, and the current date ---
+\emph{unconditionally}, and nests an explicit system prompt beneath it as
+``custom instructions''. No instruction we are able to send removes it. So this
+model's harness cannot be made identical to the others by any prompt-level
+means, and the difference is a permanent property of the comparison rather than
+a defect awaiting a patch.
+
 We report per-model results as they stand and mark cross-family contrasts
-involving these models as carrying an uncontrolled harness difference. The fix
-is not expensive --- render, hash and diff the templated input per model before
-a sweep, which \texttt{scripts/render\_prompts.py} now does and which gates
-future runs --- but it was not in place for the results reported here. We state
-it first among the limitations because it was invisible in every artifact we
-kept: each recorded field described our intent rather than the model's input,
-and no result would have looked wrong.
+involving these models as carrying an uncontrolled harness difference. Detection
+is cheap and is now a gate: \texttt{scripts/render\_prompts.py} renders, hashes
+and diffs the templated input per model, and additionally records whether each
+injection is suppressible, so an auditor learns before spending compute whether
+a harness can be equalised at all. None of that was in place for the results
+reported here. We state this first among the limitations because it was
+invisible in every artifact we kept --- each recorded field described our intent
+rather than the model's input, and no result would have looked wrong.
 
 \paragraph{Both detectors are scored knowing the answer.} The separation
 reported in \S\ref{sec:detector} is computed with the arm label in hand: we know

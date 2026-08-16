@@ -348,15 +348,18 @@
         "HarnessNClean",
         "HarnessNDated",
         "HarnessInjectingModels",
-        "HarnessDatedModel"
+        "HarnessDatedModel",
+        "HarnessNFixable",
+        "HarnessNStuck",
+        "HarnessStuckModel"
       ],
       "evidence": {
         "models_rendered": "\\HarnessNRendered",
         "models_injecting": "\\HarnessNInjecting",
-        "note": "\\HarnessNClean of \\HarnessNRendered receive no system block and \\HarnessNInjecting receive one from their template (\\HarnessInjectingModels). \\HarnessDatedModel additionally has the current date stamped in, so its prompt is not constant across days. This is a claim AGAINST our own cross-family comparisons and is listed so it cannot be quietly dropped."
+        "note": "\\HarnessNClean of \\HarnessNRendered receive no system block and \\HarnessNInjecting receive one from their template (\\HarnessInjectingModels). \\HarnessDatedModel additionally has the current date stamped in, so its prompt is not constant across days. This is a claim AGAINST our own cross-family comparisons and is listed so it cannot be quietly dropped. Of the \\HarnessNInjecting injecting models, \\HarnessNFixable can be suppressed by sending our own system message and \\HarnessNStuck cannot: \\HarnessStuckModel emits its metadata block unconditionally and nests an explicit system prompt beneath it, so no prompt-level change makes its harness match the others."
       },
       "what_would_falsify": "A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.",
-      "grows_by": "Nothing; it is a fact about the templates. It is DISCHARGED, not grown, by equalising the harness: either supply the same explicit system prompt to every model, or strip the template's, and re-run the affected cells. Until then cross-family contrasts involving the affected models carry an uncontrolled difference.",
+      "grows_by": "Nothing; it is a fact about the templates. It is DISCHARGED, not grown. \\HarnessNFixable of the injecting models can be equalised by supplying an explicit system prompt and re-running its cells. \\HarnessStuckModel cannot be equalised at all, so the honest options there are to exclude it from cross-family contrasts or to report the difference permanently -- and that choice has not been made.",
       "priority": 1
     },
     {
