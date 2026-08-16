@@ -23,14 +23,14 @@
       "LadderNFamilies": "1"
     },
     "choice-tracks-content": {
-      "MixNModels": "3",
+      "MixNModels": "9",
       "MixCorrLo": "+0.37",
-      "MixCorrHi": "+0.71",
-      "MixPreferRealLo": "0.748",
+      "MixCorrHi": "+0.81",
+      "MixPreferRealLo": "0.552",
       "MixPreferRealHi": "0.940",
-      "MixNBelowHalf": "134",
-      "MixNPairsTotal": "7436",
-      "MixNBelowRange": "3"
+      "MixNBelowHalf": "795",
+      "MixNPairsTotal": "22436",
+      "MixNBelowRange": "7"
     },
     "persona-displacement": {
       "PersonaAbovePointThree": "18",

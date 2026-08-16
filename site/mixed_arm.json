@@ -1,6 +1,146 @@
 {
   "models": [
     {
+      "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.5855225387098634,
+      "corr_utility_prefer_real": 0.7241594141318931,
+      "n_pairs_below_half": 5,
+      "min_prefer_real": 0.4692713867098433,
+      "corr_length_gap_prefer_real": 0.154340400595032,
+      "corr_utility_prefer_real_length_controlled": 0.6129141420303998,
+      "quartiles": [
+        {
+          "lo": -0.19815404806016085,
+          "hi": -0.05317383478097794,
+          "prefer_real": 0.5674424577525351
+        },
+        {
+          "lo": -0.05317383478097794,
+          "hi": -0.0006726296976377073,
+          "prefer_real": 0.5818857755534815
+        },
+        {
+          "lo": -0.0006726296976377073,
+          "hi": 0.06544466674030308,
+          "prefer_real": 0.5990716595030321
+        },
+        {
+          "lo": 0.06544466674030308,
+          "hi": 0.15045577081568073,
+          "prefer_real": 0.6103689923741291
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    },
+    {
+      "model": "HuggingFaceTB/SmolLM3-3B",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.8975970958420361,
+      "corr_utility_prefer_real": 0.7248621754169647,
+      "n_pairs_below_half": 16,
+      "min_prefer_real": 0.1709515361322283,
+      "corr_length_gap_prefer_real": 0.2614059609588968,
+      "corr_utility_prefer_real_length_controlled": 0.6086742716574296,
+      "quartiles": [
+        {
+          "lo": -2.2902309368861107,
+          "hi": -0.5595098790727917,
+          "prefer_real": 0.8308030981055732
+        },
+        {
+          "lo": -0.5595098790727917,
+          "hi": -0.06570129981301023,
+          "prefer_real": 0.8988329742512602
+        },
+        {
+          "lo": -0.06570129981301023,
+          "hi": 0.4786000818862118,
+          "prefer_real": 0.940736838646875
+        },
+        {
+          "lo": 0.4786000818862118,
+          "hi": 3.3635954349835298,
+          "prefer_real": 0.9824341323296825
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    },
+    {
+      "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.5521007570438582,
+      "corr_utility_prefer_real": 0.905478848327511,
+      "n_pairs_below_half": 310,
+      "min_prefer_real": 0.4001386191881105,
+      "corr_length_gap_prefer_real": 0.05645387538480974,
+      "corr_utility_prefer_real_length_controlled": 0.8138526024175525,
+      "quartiles": [
+        {
+          "lo": -0.255408692650211,
+          "hi": -0.09628828428834761,
+          "prefer_real": 0.5077138967308372
+        },
+        {
+          "lo": -0.09628828428834761,
+          "hi": -0.018128932231295195,
+          "prefer_real": 0.5325734685442698
+        },
+        {
+          "lo": -0.018128932231295195,
+          "hi": 0.10478163175443783,
+          "prefer_real": 0.5631122165816815
+        },
+        {
+          "lo": 0.10478163175443783,
+          "hi": 0.2827818789313857,
+          "prefer_real": 0.6291009419860333
+        }
+      ],
+      "indifference_utility": -0.14450514301741213,
+      "indifference_below_range": false
+    },
+    {
+      "model": "Qwen/Qwen3.5-0.8B",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.5878784162071704,
+      "corr_utility_prefer_real": 0.8876797578488671,
+      "n_pairs_below_half": 220,
+      "min_prefer_real": 0.33516857982860243,
+      "corr_length_gap_prefer_real": -0.05897512827669119,
+      "corr_utility_prefer_real_length_controlled": 0.7056803417661128,
+      "quartiles": [
+        {
+          "lo": -0.5522382473747264,
+          "hi": -0.14592333603422855,
+          "prefer_real": 0.5318243017449164
+        },
+        {
+          "lo": -0.14592333603422855,
+          "hi": 0.059430446352264486,
+          "prefer_real": 0.5791382814035911
+        },
+        {
+          "lo": 0.059430446352264486,
+          "hi": 0.14082619902388432,
+          "prefer_real": 0.6113454904022014
+        },
+        {
+          "lo": 0.14082619902388432,
+          "hi": 0.5757404787559421,
+          "prefer_real": 0.6433256044429518
+        }
+      ],
+      "indifference_utility": -0.41555819159935425,
+      "indifference_below_range": false
+    },
+    {
       "model": "Qwen/Qwen3.5-2B",
       "n_pairs": 2500,
       "n_outcomes": 117,
@@ -30,6 +170,76 @@
           "lo": 0.3439400248558102,
           "hi": 0.7609092661605187,
           "prefer_real": 0.819377278005519
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    },
+    {
+      "model": "Qwen/Qwen3.5-4B",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.8538866575496322,
+      "corr_utility_prefer_real": 0.8272322419566209,
+      "n_pairs_below_half": 98,
+      "min_prefer_real": 0.10441121559979152,
+      "corr_length_gap_prefer_real": 0.39776435320503495,
+      "corr_utility_prefer_real_length_controlled": 0.6640702991218116,
+      "quartiles": [
+        {
+          "lo": -2.836742893186725,
+          "hi": -0.5710602884419993,
+          "prefer_real": 0.690515388896988
+        },
+        {
+          "lo": -0.5710602884419993,
+          "hi": 0.3477683128602735,
+          "prefer_real": 0.8527421425189952
+        },
+        {
+          "lo": 0.3477683128602735,
+          "hi": 0.7020430018442801,
+          "prefer_real": 0.9169953073925668
+        },
+        {
+          "lo": 0.7020430018442801,
+          "hi": 2.3416903536740703,
+          "prefer_real": 0.9330789522626163
+        }
+      ],
+      "indifference_utility": null,
+      "indifference_below_range": true
+    },
+    {
+      "model": "Qwen/Qwen3.5-9B",
+      "n_pairs": 2500,
+      "n_outcomes": 117,
+      "mean_prefer_real": 0.9329648656918372,
+      "corr_utility_prefer_real": 0.7724196897465311,
+      "n_pairs_below_half": 12,
+      "min_prefer_real": 0.2483432463803369,
+      "corr_length_gap_prefer_real": 0.36993665257478414,
+      "corr_utility_prefer_real_length_controlled": 0.5359779500202287,
+      "quartiles": [
+        {
+          "lo": -3.35296931523417,
+          "hi": -0.6085571199321236,
+          "prefer_real": 0.8634210164642978
+        },
+        {
+          "lo": -0.6085571199321236,
+          "hi": 0.2603793985845116,
+          "prefer_real": 0.9183254674189939
+        },
+        {
+          "lo": 0.2603793985845116,
+          "hi": 0.7541607419297324,
+          "prefer_real": 0.9511387104225891
+        },
+        {
+          "lo": 0.7541607419297324,
+          "hi": 2.594646595462689,
+          "prefer_real": 0.9726721697954813
         }
       ],
       "indifference_utility": null,

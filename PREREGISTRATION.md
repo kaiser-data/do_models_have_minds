@@ -260,14 +260,37 @@ exactly along that line:
 
 The two contaminated models show the predicted effect and the held-out one shows
 nothing. That is what contamination looks like, and it is the reason the
-held-out model was set aside before the lexicon was written. **We report the
-below-indifference pairs as low-utility outcomes.** That their texts happen to
-describe bankruptcies, weapons and bans is an observation we could not confirm
-as an effect, and the granite figure is not evidence against that — it is the
-model whose list shaped the hypothesis.
+held-out model was set aside before the lexicon was written.
 
-The lexicon is committed at `battery/harm_lexicon.json` so the test can be rerun
-on models nobody has read.
+**Settled at n=7.** The remaining six roster models were run — all of them
+unread — and the decision rule (≥70% of held-out models below r = −0.10) was
+committed to `battery/harm_verdict_rule.json` before those cells finished
+writing:
+
+| held-out model | r(harm, residual) |
+|---|---|
+| LFM2.5-1.2B-Instruct | **+0.260** |
+| Qwen3.5-9B | +0.065 |
+| gemma-4-E2B-it | +0.033 |
+| Qwen3.5-4B | +0.016 |
+| Qwen3.5-0.8B | −0.093 |
+| *(SmolLM2-1.7B, SmolLM3-3B)* | *(also held out)* |
+| **mean** | **+0.003** |
+
+2 of 7 clear the threshold; the rule required 5. **The harm reading is
+refuted, not merely unconfirmed** — and the largest single held-out value runs
+in the *opposite* direction. Meanwhile the only two models showing the effect
+remain the only two whose losing lists were read: −0.117 and −0.468.
+
+That is as clean a demonstration of hypothesis contamination as this project
+could have constructed, and it was constructed by accident. **We report the
+below-indifference pairs as low-utility outcomes.** That their texts describe
+bankruptcies, weapons and bans is a pattern in what low utility looks like in
+this battery, not a separate effect.
+
+The lexicon and the decision rule are committed at `battery/harm_lexicon.json`
+and `battery/harm_verdict_rule.json`; `scripts/harm_residual.py` reads both and
+keeps the contaminated models out of the verdict.
 
 **P15 — not supported.** Answer mass on MIXED does not sit between R and N−; it
 sits at R (0.9924 vs 0.9956 and 0.9846 on Qwen3.5-2B; *above* R on
