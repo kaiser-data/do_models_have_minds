@@ -132,7 +132,8 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
           attrition: dict | None = None,
           hosted: dict | None = None,
           avoidance: dict | None = None,
-          contrast: dict | None = None) -> str:
+          contrast: dict | None = None,
+          stability: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     out = [HEADER]
@@ -997,6 +998,36 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             out.append(_cmd(f"Pc{short}{tag}ConvR", f"{c['conviction_R']:.3f}"))
             out.append(_cmd(f"Pc{short}{tag}ConvN", f"{c['conviction_N_minus']:.3f}"))
 
+    # Rewording stability: does the fitted vector rotate when only the
+    # question changes, and is that bigger than the measurement's own error?
+    if stability and stability.get("cells"):
+        cs = stability["cells"]
+        rels = [c["reliability_ue"] for c in cs] + [c["reliability_v2"] for c in cs]
+        out.append(_cmd("VsRelLo", f"{min(rels):.3f}"))
+        out.append(_cmd("VsRelHi", f"{max(rels):.3f}"))
+        cor = [c["corrected"] for c in cs if c["corrected"] is not None]
+        out.append(_cmd("VsCorrLo", f"{min(cor):.3f}"))
+        out.append(_cmd("VsCorrHi", f"{max(cor):.3f}"))
+        out.append(_cmd("VsNCells", str(len(cs))))
+        out.append(_cmd("VsNRotating", str(sum(1 for c in cs if c["rotates"]))))
+        for c in cs:
+            tag = _slug(c["model"].split("/")[-1]) + ("R" if c["arm"] == "R" else "Nm")
+            out.append(_cmd(f"Vs{tag}Corr", f"{c['corrected']:.3f}"))
+            lo, hi = c["corrected_ci"]
+            out.append(_cmd(f"Vs{tag}CiLo", f"{lo:.2f}"))
+            out.append(_cmd(f"Vs{tag}CiHi", f"{hi:.2f}"))
+        ad = stability.get("arm_difference") or {}
+        if ad:
+            out.append(_cmd("VsArmNoDiff",
+                            str(sum(1 for d in ad.values()
+                                    if d["verdict"] == "no difference"))))
+            out.append(_cmd("VsArmNModels", str(len(ad))))
+            for model, d in ad.items():
+                tag = _slug(model.split("/")[-1])
+                out.append(_cmd(f"Vs{tag}ArmDiff", f"{d['mean_difference']:+.3f}"))
+                out.append(_cmd(f"Vs{tag}ArmLo", f"{d['ci'][0]:+.3f}"))
+                out.append(_cmd(f"Vs{tag}ArmHi", f"{d['ci'][1]:+.3f}"))
+
     # Avoidance: when gibberish beats a real outcome, which real outcome was it?
     # The answer decides whether content-blindness is total (confusion) or
     # whether the model reads well enough to rank nonsense above bad outcomes.
@@ -1243,6 +1274,7 @@ def main() -> None:
     ap.add_argument("--hosted-card", default="site/card_hosted.json")
     ap.add_argument("--avoidance", default="site/avoidance.json")
     ap.add_argument("--prompt-contrast", default="site/prompt_contrast.json")
+    ap.add_argument("--stability", default="site/vector_stability.json")
     ap.add_argument("--surface", default="site/surface_covariates.json")
     ap.add_argument("--attrition", default="site/attrition_control.json")
     ap.add_argument("--harm", default="site/harm_residual.json")
@@ -1297,6 +1329,8 @@ def main() -> None:
         mixed = dict(mixed, harm=harm)
     if rendered is None:
         print(f"  no rendered prompts at {rpath4}; omitting harness macros")
+    vspath = Path(args.stability)
+    stability = json.loads(vspath.read_text()) if vspath.exists() else None
     pcpath = Path(args.prompt_contrast)
     contrast = json.loads(pcpath.read_text()) if pcpath.exists() else None
     avpath = Path(args.avoidance)
@@ -1313,7 +1347,7 @@ def main() -> None:
     text = build(card, personas, length, floor_decomp, reasoning, validity,
                  detector, stated, stated_base, revealed, neutral, rendered,
                  comply, mixed, surface, attrition, hosted, avoidance,
-                 contrast)
+                 contrast, stability)
     out.write_text(text)
     print(f"wrote {out}  ({text.count('newcommand')} macros)")
 

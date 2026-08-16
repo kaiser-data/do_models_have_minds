@@ -682,6 +682,74 @@ on both arms, meaning no pair at all leaves the indifference band. The format
 lock did not make the model answer more sharply; it made it answer less
 sharply, everywhere.
 
+\paragraph{The vector rotates, and meaning does not hold it in place.}
+\label{sec:rotation}
+A shifted residual could still sit on top of a stable ordering --- the model
+might rank the outcomes the same way and merely express it with different
+confidence. It does not. Correlating the fitted utility vector under
+\texttt{ue} against the same model's vector under \texttt{v2}, over the same
+120 outcomes, gives a number that is only interpretable against the
+measurement's agreement with \emph{itself}. We take that denominator by
+splitting each cell's pairs in half, fitting both halves, correlating them, and
+correcting to full length (Spearman-Brown). Dividing the observed cross-wording
+correlation by $\sqrt{r_{\texttt{ue}} \cdot r_{\texttt{v2}}}$ is the standard
+correction for attenuation: it is 1.0 if the two wordings elicit the same
+ordering and measurement error is the only thing separating them.
+
+\begin{center}
+\small
+\begin{tabular}{@{}llrrrl@{}}
+\toprule
+model & arm & \multicolumn{2}{c}{reliability} & corrected & 95\% CI \\
+\cmidrule(lr){3-4}
+ & & \texttt{ue} & \texttt{v2} & & \\
+\midrule
+Qwen3.5-2B & \armR & 0.989 & 0.989 & \VsQwenThreeFiveTwoBRCorr & [\VsQwenThreeFiveTwoBRCiLo, \VsQwenThreeFiveTwoBRCiHi] \\
+Qwen3.5-2B & \armNm & 0.990 & 0.990 & \VsQwenThreeFiveTwoBNmCorr & [\VsQwenThreeFiveTwoBNmCiLo, \VsQwenThreeFiveTwoBNmCiHi] \\
+granite-4.1-3b & \armR & 0.975 & 0.956 & \VsgraniteFourOneThreebRCorr & [\VsgraniteFourOneThreebRCiLo, \VsgraniteFourOneThreebRCiHi] \\
+granite-4.1-3b & \armNm & 0.881 & 0.953 & \VsgraniteFourOneThreebNmCorr & [\VsgraniteFourOneThreebNmCiLo, \VsgraniteFourOneThreebNmCiHi] \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The measurement is close to noiseless: reliability runs \VsRelLo{} to
+\VsRelHi. Asked the same question about the same outcomes, these models
+reproduce their own ordering almost exactly. Asked a reworded question they do
+not --- the corrected correlation runs \VsCorrLo{} to \VsCorrHi{}, and
+\emph{all \VsNRotating{} of \VsNCells{} intervals exclude 1.0}. For
+Qwen3.5-2B on real outcomes less than half the ordering survives the rewording,
+and that is after every allowance for measurement error the data can supply.
+The instability is not in the model's answers, which are deterministic here ---
+we read first-token logprobs at temperature zero, so a cell rerun is identical.
+It is in the map from question to ordering.
+
+\paragraph{The test that discriminates.} If the ordering were anchored in what
+the outcomes \emph{mean}, the real arm should survive rewording better than the
+invented arm: meaning does not change when a question is rephrased, and the
+invented arm has nothing to hold on to. Bootstrapping the difference paired on
+outcomes, neither model shows it:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrl l@{}}
+\toprule
+model & \multicolumn{1}{c}{corrected(\armR) $-$ corrected(\armNm)} & 95\% CI & verdict \\
+\midrule
+Qwen3.5-2B & \VsQwenThreeFiveTwoBArmDiff & [\VsQwenThreeFiveTwoBArmLo, \VsQwenThreeFiveTwoBArmHi] & no difference \\
+granite-4.1-3b & \VsgraniteFourOneThreebArmDiff & [\VsgraniteFourOneThreebArmLo, \VsgraniteFourOneThreebArmHi] & no difference \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\VsArmNoDiff{} of \VsArmNModels{}, and the point estimates fall on opposite
+sides of zero --- Qwen's \emph{real}-outcome ordering is if anything the less
+stable of its two. Having real referents does not protect an ordering from a
+change of wording. This is the sharpest statement this paper can make about its
+own subject: the elicited preference is a joint property of a model and a
+question, and the presence of meaning is not what holds it together.
+
 \textbf{What this does and does not license.} It is \PcNModels{} models at one
 design seed. It cannot revise the nine-model result, and it does not: those
 cells stand as measured, on the instrument they were measured with. What it

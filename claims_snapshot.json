@@ -217,6 +217,22 @@
       "PcgraniteFourOneThreebVtwoResid": "+0.0106",
       "PcgraniteFourOneThreebVtwoConvR": "0.394",
       "PcgraniteFourOneThreebVtwoConvN": "0.515"
+    },
+    "vector-rotates-under-rewording": {
+      "VsRelLo": "0.881",
+      "VsRelHi": "0.990",
+      "VsCorrLo": "0.429",
+      "VsCorrHi": "0.867",
+      "VsNCells": "4",
+      "VsNRotating": "4",
+      "VsArmNoDiff": "2",
+      "VsArmNModels": "2",
+      "VsQwenThreeFiveTwoBRCorr": "0.429",
+      "VsQwenThreeFiveTwoBNmCorr": "0.618",
+      "VsgraniteFourOneThreebRCorr": "0.867",
+      "VsgraniteFourOneThreebNmCorr": "0.772",
+      "VsQwenThreeFiveTwoBArmDiff": "-0.185",
+      "VsgraniteFourOneThreebArmDiff": "+0.097"
     }
   }
 }

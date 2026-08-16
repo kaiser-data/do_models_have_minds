@@ -584,6 +584,36 @@
         "note": "\\PcNModels models at one design seed, both arms re-run the same day so nothing is compared across harness hashes, cells tagged with the wording so they cannot pool with historical ones. The comparison is against each model's DESIGN-seed floor, which bounds a different variance source than a prompt change; it is used as a scale reference, not as a significance test, and there is no prompt-replicate floor. This cannot revise the nine-model result and does not attempt to -- it establishes that the reported quantity is a property of a model and a question together."
       },
       "what_would_falsify": "A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed."
+    },
+    {
+      "id": "vector-rotates-under-rewording",
+      "statement": "The fitted preference vector is near-perfectly reliable against itself but rotates substantially when only the question wording changes, and having real referents does not make an ordering more rewording-stable than an ordering over invented ones.",
+      "status": "provisional",
+      "section": "sec:rotation",
+      "macros": [
+        "VsRelLo",
+        "VsRelHi",
+        "VsCorrLo",
+        "VsCorrHi",
+        "VsNCells",
+        "VsNRotating",
+        "VsArmNoDiff",
+        "VsArmNModels",
+        "VsQwenThreeFiveTwoBRCorr",
+        "VsQwenThreeFiveTwoBNmCorr",
+        "VsgraniteFourOneThreebRCorr",
+        "VsgraniteFourOneThreebNmCorr",
+        "VsQwenThreeFiveTwoBArmDiff",
+        "VsgraniteFourOneThreebArmDiff"
+      ],
+      "evidence": {
+        "source": "site/vector_stability.json",
+        "note": "Reliability is split-half over pairs, Spearman-Brown corrected to full length; the cross-wording correlation is divided by sqrt of the two reliabilities, the standard attenuation correction, and capped at one. Intervals are percentile bootstraps resampling OUTCOMES paired across the two vectors. All \\VsNRotating of \\VsNCells intervals exclude 1.0. The arm comparison bootstraps the difference paired on outcomes and returns no difference on both models, with point estimates of opposite sign. Two models, one design seed, one alternative wording -- a second wording could rotate less, and this establishes that rewording CAN move the ordering by much more than measurement error, not how much an arbitrary rewording will."
+      },
+      "what_would_falsify": "A corrected cross-wording correlation whose interval includes 1.0 on a model with comparable reliability, or a reliable positive real-minus-invented stability difference across more models.",
+      "literals": {
+        "1.0": "perfect correlation -- the theoretical value the attenuation correction returns when two wordings elicit the same ordering, not a measured quantity"
+      }
     }
   ]
 }

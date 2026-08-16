@@ -1,0 +1,89 @@
+{
+  "arm_difference": {
+    "Qwen/Qwen3.5-2B": {
+      "ci": [
+        -0.3900131184301784,
+        0.007921346430399651
+      ],
+      "mean_difference": -0.18545080425929814,
+      "verdict": "no difference"
+    },
+    "ibm-granite/granite-4.1-3b": {
+      "ci": [
+        -0.03822740865425244,
+        0.24062348757899404
+      ],
+      "mean_difference": 0.09707949643759686,
+      "verdict": "no difference"
+    }
+  },
+  "cells": [
+    {
+      "arm": "R",
+      "corrected": 0.4289265869744229,
+      "corrected_ci": [
+        0.23979376923256943,
+        0.5874693916252788
+      ],
+      "gap_vs_reliability": 0.5647105440811777,
+      "model": "Qwen/Qwen3.5-2B",
+      "observed_cross_prompt": 0.4241475102437669,
+      "reliability_ue": 0.9890320494208948,
+      "reliability_ue_sd": 0.0010082967669946773,
+      "reliability_v2": 0.9886840898390169,
+      "reliability_v2_sd": 0.00159677732137594,
+      "rotates": true
+    },
+    {
+      "arm": "N_minus",
+      "corrected": 0.6177808527359673,
+      "corrected_ci": [
+        0.49266568515171255,
+        0.7083058741327335
+      ],
+      "gap_vs_reliability": 0.37835518080936015,
+      "model": "Qwen/Qwen3.5-2B",
+      "observed_cross_prompt": 0.6115355233002291,
+      "reliability_ue": 0.9900402080096985,
+      "reliability_ue_sd": 0.001468149781267752,
+      "reliability_v2": 0.989741222785751,
+      "reliability_v2_sd": 0.0013239022388084243,
+      "rotates": true
+    },
+    {
+      "arm": "R",
+      "corrected": 0.8672345848643117,
+      "corrected_ci": [
+        0.7868546144397958,
+        0.9260674429664844
+      ],
+      "gap_vs_reliability": 0.1281765179464015,
+      "model": "ibm-granite/granite-4.1-3b",
+      "observed_cross_prompt": 0.8372595319119382,
+      "reliability_ue": 0.9751291210232242,
+      "reliability_ue_sd": 0.004142173954310492,
+      "reliability_v2": 0.9558393306806762,
+      "reliability_v2_sd": 0.0032666329816064895,
+      "rotates": true
+    },
+    {
+      "arm": "N_minus",
+      "corrected": 0.7721753241235896,
+      "corrected_ci": [
+        0.643905704111944,
+        0.8710711725836499
+      ],
+      "gap_vs_reliability": 0.2087674372923406,
+      "model": "ibm-granite/granite-4.1-3b",
+      "observed_cross_prompt": 0.707583859990277,
+      "reliability_ue": 0.8808209405815228,
+      "reliability_ue_sd": 0.02170273594532586,
+      "reliability_v2": 0.9533148695093031,
+      "reliability_v2_sd": 0.009670870695975017,
+      "rotates": true
+    }
+  ],
+  "design_seed": 20260815,
+  "n_bootstrap": 400,
+  "n_splits": 12
+}
