@@ -47,13 +47,19 @@ instrument is not blunt. The metric is not broken. It is unanchored.
 ## Upload your PDF report*
 
 ```
-paper/sprint.pdf
+dist/Kaiser-Bodorkos_Does-a-Persona-Prompt-Change-What-a-Model-Prefers_Apart-Digital-Minds-Sprint_2026-08-17.pdf
 ```
 
-9 pages: 6 body, 3 appendix. Built from `paper/sprint.tex`, all numbers
-generated from `paper/numbers.tex`.
+That is `paper/sprint.pdf` under a name a reviewer can identify in a downloads
+folder. Regenerate it with `python3 scripts/submission_pdf.py`, which derives
+the name from the title and authors in `sprint.tex` rather than from anything
+typed --- the title changed twice on the day of submission, and a hand-written
+filename would have gone stale on the first change with nothing to catch it.
 
-**Do not upload `paper/main.pdf`** — that is the 42-page archival version. It is
+11 pages: 6 body, appendix from 8. All numbers generated from
+`paper/numbers.tex`.
+
+**Do not upload `paper/main.pdf`** --- that is the 42-page archival version,
 linked from the sprint PDF for anyone who wants the full detail.
 
 ---
