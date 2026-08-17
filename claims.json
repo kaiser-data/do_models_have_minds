@@ -107,7 +107,7 @@
         "note": "within-family r \\WithinFamilyCorr unmatched and \\MatchedWithinCorr length-matched; pooled \\PooledSizeCorr collapsing to \\MatchedPooledCorr. The pooled collapse is why this is a within-family statement and not a scaling law."
       },
       "what_would_falsify": "A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.",
-      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- but NO clean second dense ladder exists in this roster, which this entry previously implied. gemma gives a single doubling with a gated member; liquid's third point is a mixture-of-experts model whose active parameter count breaks monotonicity. The honest routes are the scoreable hosted models, which reach far beyond the current maximum, or accepting that the claim stays within-family. See DECISION-MODELS.md.",
+      "grows_by": "A SECOND FAMILY spanning 3+ sizes -- but NO clean second dense ladder exists in this roster, which this entry previously implied. gemma gives a single doubling with a gated member; liquid's third point is a mixture-of-experts model whose active parameter count breaks monotonicity. The honest routes are the scoreable hosted models, which reach far beyond the current maximum, or accepting that the claim stays within-family. See docs/notes/DECISION-MODELS.md.",
       "literals": {
         "3": "the target number of sizes a second family would need, not a measurement"
       },

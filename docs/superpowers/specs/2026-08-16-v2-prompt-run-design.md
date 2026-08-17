@@ -7,9 +7,9 @@
 Related, not this run:
 
 - `docs/superpowers/specs/2026-08-14-nullcard-design.md` — original five-method card (mostly unshipped)
-- `STUDY-MODEL-CARD.md` — full card architecture (unrun; this run is one tile of it)
-- `PLAN.md`, `ideas/PLAN-12H-ALLOCATION.md` — other plans; the 12h staffing idea is **not** this
-- `HANDOFF-NEXT.md` — operational state, not a design
+- `docs/notes/STUDY-MODEL-CARD.md` — full card architecture (unrun; this run is one tile of it)
+- `docs/notes/PLAN.md`, `ideas/PLAN-12H-ALLOCATION.md` — other plans; the 12h staffing idea is **not** this
+- `docs/notes/HANDOFF-NEXT.md` — operational state, not a design
 
 ---
 

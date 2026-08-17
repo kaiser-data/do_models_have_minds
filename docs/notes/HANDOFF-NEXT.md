@@ -1,8 +1,8 @@
 # Handoff — the next stage
 
-**Open `PLAN-NEXT.md` first.** It is the current job list.
+**Open `docs/notes/PLAN-NEXT.md` first.** It is the current job list.
 
-`REVIEW-2026-08-17.md` (scholar review, 4/5) drove a Must-fix pass that is
+`docs/reviews/REVIEW-2026-08-17.md` (scholar review, 4/5) drove a Must-fix pass that is
 **done and verified but deliberately uncommitted** — the review says not to
 commit unless asked. All five items closed: duplicate `sec:strength` label
 renamed to `sec:weight`, three stale limitation/count paragraphs rewritten
@@ -10,7 +10,7 @@ against their own sections, `\NHosted` replaced as a size ratio by
 `\BigOverLadder` (26×) and `\BigOverSeventyB` (3.4×), Schwartz 1992 cited at
 first use, and the four typed persona numbers turned into macros. That last
 one needed a code fix, not a macro swap — see §5e. The review's Should-fix
-items 6–9 and its nits are **not** done and are planned in `PLAN-NEXT.md` §2.
+items 6–9 and its nits are **not** done and are planned in `docs/notes/PLAN-NEXT.md` §2.
 
 **Frontier models are partly reachable (§5f).** Two of the six unscoreable
 hosted models are recovered by a prefill and worth running.

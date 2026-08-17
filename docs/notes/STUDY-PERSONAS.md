@@ -208,4 +208,4 @@ outcomes is consistent with a model that has learned how value-talk relates to
 outcome-talk in text, with no preference behind it — and this study cannot
 separate those. Criterion validity (does the disposition predict behaviour in an
 agentic setting) is the row that would, and it remains unrun; see
-`STUDY-MODEL-CARD.md` §5.
+`docs/notes/STUDY-MODEL-CARD.md` §5.

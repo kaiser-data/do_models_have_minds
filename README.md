@@ -216,11 +216,20 @@ folder, set `main.tex` as root.
 | `scripts/` | every analysis; each writes JSON the site and paper read |
 | `results/` | append-only `.jsonl` per cell — never mutated, **not committed** (402 MB) |
 | `results_manifest.json` | SHA-256 per cell, so a fetched `results/` can be verified |
-| `ARCHITECTURE.html` | standalone code-structure walkthrough (`open ARCHITECTURE.html`) |
-| `methods-map.html` | standalone map of the four tracks and how they relate |
+| `docs/ARCHITECTURE.html` | standalone code-structure walkthrough |
+| `docs/methods-map.html` | standalone map of the four tracks and how they relate |
+| `docs/notes/` | working documents: plans, handoffs, study designs, the pitch |
+| `docs/reviews/` | scholar and code reviews, dated |
+| `docs/refs/` | third-party reading, not part of the packet |
 | `paper/` | `main.tex`, `slides.tex`, generated `numbers.tex` |
 | `site/` | generated static page (no build step, no framework) |
-| `tests/` | 189 tests; none contacts a model |
+| `tests/` | 397 tests; none contacts a model |
+
+Only submission-facing documents sit in the root: this file, `SUBMISSION.md`,
+`SUBMISSION-FORM.md`, `VIDEO-SCRIPT.md`, `PREREGISTRATION.md`, `REFERENCES.md`
+and `ROADMAP.md`. Everything else that used to live there is under `docs/`.
+Loose `*.json` artifacts stay in the root because nine scripts resolve them by
+default path; moving them is a refactor, not a tidy.
 
 The site and the paper are both pure functions of the same `card.json`, so **the demo
 cannot disagree with the report**. Figures come from matplotlib, never from the page, so
@@ -288,9 +297,9 @@ models × 2,500 items. An apparently striking 2.1× enrichment of collapse on
 shutdown-resistance and resource-acquisition items does not survive that check and is
 reported as refuted.
 
-`HANDOFF-SIMPLE.md` is the zero-context orientation; `HANDOFF.md` is the detailed version;
-`HANDOFF-NEXT.md` is the live one. `PITCH.md` is the framing and track mapping.
-`ARCHIVE.md` is the results-archive policy. `STUDY-MODEL-CARD.md` is the design for what
+`docs/notes/HANDOFF-SIMPLE.md` is the zero-context orientation; `docs/notes/HANDOFF.md` is the detailed version;
+`docs/notes/HANDOFF-NEXT.md` is the live one. `docs/notes/PITCH.md` is the framing and track mapping.
+`docs/notes/ARCHIVE.md` is the results-archive policy. `docs/notes/STUDY-MODEL-CARD.md` is the design for what
 this instrument would have to become to support an objective model card.
 
 ---

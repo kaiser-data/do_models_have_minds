@@ -771,4 +771,4 @@ welfare.
 | Commit `PREREGISTRATION.md` — every tile's prediction and falsifier, **including the 2606.12730-derived depth prediction (§2A.1) with its citation** | all | before Saturday's first run |
 | Confirm Nebius logprob support per model on the roster | — | Fri night |
 | Identify the known-positive for each tile family (§7.1) | P2 / P3 | Sat morning, before any null |
-| **Open the PDFs for every number that enters the writeup** — several figures in `RESEARCH-NOTES.md` are secondhand from abstracts and fetch summaries, and are flagged 🔍 | all | before any number is quoted |
+| **Open the PDFs for every number that enters the writeup** — several figures in `docs/notes/RESEARCH-NOTES.md` are secondhand from abstracts and fetch summaries, and are flagged 🔍 | all | before any number is quoted |

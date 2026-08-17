@@ -1,7 +1,7 @@
 # Handoff — the coverage problem, 17 Aug 2026
 
 Written mid-session, immediately after `scripts/coverage.py` first ran. It
-supersedes the "what next" sections of `PLAN-NEXT.md`, because the coverage
+supersedes the "what next" sections of `docs/notes/PLAN-NEXT.md`, because the coverage
 matrix changes what the next runs should be.
 
 ---

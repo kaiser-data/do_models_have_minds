@@ -1,6 +1,6 @@
 # Review — repo + `paper/sprint.pdf`
 
-17 August 2026. Local `paper/sprint.pdf` (9 pp, built 11:32 CEST from `paper/sprint.tex` at `a5bc57d`). Working tree clean except untracked `clustering science direct.pdf`. This is a sprint/scholar review, not a git-diff review.
+17 August 2026. Local `paper/sprint.pdf` (9 pp, built 11:32 CEST from `paper/sprint.tex` at `a5bc57d`). Working tree clean except untracked `docs/refs/clustering science direct.pdf`. This is a sprint/scholar review, not a git-diff review.
 
 Archival paper remains `paper/main.tex`. The sprint file says so, and that is the right rule.
 
@@ -23,7 +23,7 @@ First place is now *possible*. It is not locked. One figure on page 3 is unreada
 
 ## What the sprint PDF got right
 
-Checked against `PRESENTATION-NOTE.md` and the front-loading budget:
+Checked against `docs/notes/PRESENTATION-NOTE.md` and the front-loading budget:
 
 - **Abstract is 143 words** (cap 150). Claim, number, control, mechanism, detector, hedge. Repeatable from memory.
 - **Required heading exists**, named exactly: §7 Limitations and Dual-Use / Ethical Considerations. Moral-status declined, ground truth by construction, distressing content, release.
@@ -73,7 +73,7 @@ Page 1 looks like a paper. Page 4’s persona figure is clean. Page 5’s dual-u
 - Suggestion: One clause in the caption: “plotted against the empty-slot baseline, not the bare run.”
 
 ### 7 — Severity: nit
-- File: repo root `clustering science direct.pdf`
+- File: repo root `docs/refs/clustering science direct.pdf`
 - Description: Untracked 3.5 MB PDF sitting in the project root. Not in the sprint packet, but it is what a clone extra will trip over.
 - Suggestion: Move to `docs/` or gitignore. Do not add it to the submission zip unless you cite it.
 

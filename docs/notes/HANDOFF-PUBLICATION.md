@@ -1,6 +1,6 @@
 # Handoff — from "complete submission" to outstanding publication
 
-Written 15 Aug 2026, ~19:30. Assumes `HANDOFF.md` (detail) and `HANDOFF-SIMPLE.md`
+Written 15 Aug 2026, ~19:30. Assumes `docs/notes/HANDOFF.md` (detail) and `docs/notes/HANDOFF-SIMPLE.md`
 (zero-context) for state; this file is only about **what to do next and why**.
 
 Three inputs shaped it: the reviewer feedback on *Activation Forensics* (the team's
@@ -158,11 +158,11 @@ Promote the detector dissociation into the abstract's first three sentences.
 
 **D. Add the self-report result to the paper** (~1h) as its own subsection, with the
 baseline table above, the ceiling caveat, and LFM2.5 named as the negative control.
-Update `PITCH.md`: Track 3 moves from "not attempted / only if it finishes" to a
+Update `docs/notes/PITCH.md`: Track 3 moves from "not attempted / only if it finishes" to a
 claimed partial with a real result.
 
 **E. Regenerate every number through macros.** (~30 min)
-`PITCH.md` had hand-typed figures that disagreed with `paper/numbers.tex` (56%/2.8%/20×
+`docs/notes/PITCH.md` had hand-typed figures that disagreed with `paper/numbers.tex` (56%/2.8%/20×
 where the data says 41%/4.5%/17×). Fixed today, but the class of error will recur.
 Extend `scripts/paper_numbers.py` to emit a small JSON the markdown docs are checked
 against, and add a test that fails on drift.

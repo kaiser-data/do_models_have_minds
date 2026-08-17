@@ -79,7 +79,7 @@ class TestTrainingNoiseFloor:
     smallest effect the paper is allowed to claim."""
 
     def test_matches_the_documented_anchor_spread(self):
-        """SKILLS.md records five replicates spanning 38.30%-52.44%, and §8's
+        """docs/notes/SKILLS.md records five replicates spanning 38.30%-52.44%, and §8's
         example tile carries training_noise_floor = 0.14. Range, not SD."""
         floor = training_noise_floor([0.3830, 0.4102, 0.4455, 0.4881, 0.5244])
         assert floor == pytest.approx(0.1414, abs=1e-4)

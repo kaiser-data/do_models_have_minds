@@ -1,6 +1,6 @@
 # Plan — remaining work, 17 Aug 2026
 
-Written after the Must-fix pass on `REVIEW-2026-08-17.md`, and kept current
+Written after the Must-fix pass on `docs/reviews/REVIEW-2026-08-17.md`, and kept current
 since. That pass is **done, verified and committed**. This file is the job list
 for what is left, in the order I would do it.
 

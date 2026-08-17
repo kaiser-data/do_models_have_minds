@@ -1,7 +1,7 @@
 # Handoff — start here if you have no context
 
 This file assumes you know nothing about this project and have no special
-tooling. It is self-contained. `HANDOFF.md` is the detailed version and
+tooling. It is self-contained. `docs/notes/HANDOFF.md` is the detailed version and
 contradicts nothing here; read it only if you need the depth.
 
 **Deadline:** Sun 23:59 AoE = **Mon 13:59 Berlin**.
@@ -204,7 +204,7 @@ unstable was actually just the truncated file. **Do not put it back.**
 
 1. `python3 -m pytest tests/ -q` — confirm 129 pass.
 2. `cd paper && make` — confirm `main.pdf` and `slides.pdf` build.
-3. Read `PLAN.md` §"What the results changed" — it is the argument, ranked.
+3. Read `docs/notes/PLAN.md` §"What the results changed" — it is the argument, ranked.
 
 The page is live, the PDFs build and the data is complete. What remains is
 proofreading and the talk.
@@ -218,7 +218,7 @@ that gives a false-positive rate).
 
 State: 20 of 30 cells complete, 8 truncated, and **the self-report probe never
 ran** — so there is no "what the model says" channel, and therefore no result.
-Resume command is in `HANDOFF.md`. ~15 min, ~$2.
+Resume command is in `docs/notes/HANDOFF.md`. ~15 min, ~$2.
 
 **If in doubt, cut it.** Nothing else depends on it and the paper does not cite
 it. Half a two-channel design is not a finding.

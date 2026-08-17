@@ -107,5 +107,5 @@ screenshot page 3 of `sprint.pdf`.
 - **9 pages against a 4–8 page guideline.** The body is 6; the appendix is 3 and
   is cited from the body. If it must come down, drop Appendix Table 2 (Table 1
   again with full model ids) — not a figure.
-- **`clustering science direct.pdf`** is an untracked 3.5 MB third-party PDF in
-  the repo root. Not part of the packet; move or ignore it before zipping.
+- **Third-party reading** now lives in `docs/refs/`, out of the repo root. Not
+  part of the packet.

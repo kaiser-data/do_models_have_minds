@@ -10,14 +10,14 @@ a slice of the work and names what it must not touch.
 
 > You are session **B**, working in parallel with another Claude Code session
 > (**A**) on the same repo. A is running a paid API sweep and owns the results
-> trees. Read `PLAN-NEXT.md` and `REVIEW-2026-08-17.md` before doing anything.
+> trees. Read `docs/notes/PLAN-NEXT.md` and `docs/reviews/REVIEW-2026-08-17.md` before doing anything.
 >
 > **Work on a branch. Do not commit to `main`.**
 >
 >     git pull --ff-only && git switch -c review-shouldfix
 >
 > **Your slice: the review's Should-fix items 6–9 and its nits, and nothing
-> else.** They are specified in `PLAN-NEXT.md` §2. In order of value:
+> else.** They are specified in `docs/notes/PLAN-NEXT.md` §2. In order of value:
 >
 > 6. Split `NClears=6` into `\NClearsConviction` (gemma-4-E2B-it,
 >    granite-4.1-3b, Qwen3.5-2B — decisive on real, indifferent on invented)

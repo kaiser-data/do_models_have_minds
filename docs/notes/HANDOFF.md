@@ -29,7 +29,7 @@ Primary is **Track 1** (Model Preferences & Trade-offs) — "distinguishing stro
 from weak preferences" is a literal track bullet and our sharpest result.
 **Track 5** is strong (does persona mask underlying preferences — we answer
 *yes, mostly*). **Track 4 is partial**, not primary: we have one elicitation
-method, not the 3+ that track asks for. **`PITCH.md` still claims Track 4 as
+method, not the 3+ that track asks for. **`docs/notes/PITCH.md` still claims Track 4 as
 primary and is stale** — fix before submitting.
 
 ---
@@ -69,13 +69,13 @@ primary and is stale** — fix before submitting.
 
 | File | What it is |
 |---|---|
-| `HANDOFF-SIMPLE.md` | **self-contained, assumes no context.** Use this one if you are picking the project up cold, or handing it to a session without the tooling. |
-| `PLAN.md` | what to do next, ranked, with time and cost estimates. **Start here.** |
+| `docs/notes/HANDOFF-SIMPLE.md` | **self-contained, assumes no context.** Use this one if you are picking the project up cold, or handing it to a session without the tooling. |
+| `docs/notes/PLAN.md` | what to do next, ranked, with time and cost estimates. **Start here.** |
 | `paper/` | the writeup (`main.tex`), the talk (`slides.tex`), and a `Makefile`. Numbers are generated, never typed — see `scripts/paper_numbers.py`. |
 | `PREREGISTRATION.md` | the five predictions, committed before the first run |
 | `REFERENCES.md` | every source, what was taken from it, and what was not |
 | `docs/superpowers/specs/2026-08-14-nullcard-design.md` | the spec. § numbers below refer to it |
-| `RESEARCH-NOTES.md` · `PITCH.md` | literature scan · external framing |
+| `docs/notes/RESEARCH-NOTES.md` · `docs/notes/PITCH.md` | literature scan · external framing |
 
 ---
 
@@ -382,7 +382,7 @@ anyway.
 Everything below is optional. **The submission is complete without any of it:**
 the paper and slides build, the site is live and correct, the repo is public.
 
-1. **Fix `PITCH.md`'s track claims** (~10 min). It says Track 4 primary; the
+1. **Fix `docs/notes/PITCH.md`'s track claims** (~10 min). It says Track 4 primary; the
    truth is Track 1 primary, Track 5 strong, Track 4 partial. This is what a
    judge reads first, so it is the highest value-per-minute item left.
 2. **Either finish or cut the Track 3 arm** (~15 min, ~$2). See the resume

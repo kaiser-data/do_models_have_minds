@@ -160,7 +160,7 @@ passes a shuffled-probability null at ~0.50.
 
 ## Literature constraining the design
 
-Full notes in `RESEARCH-NOTES.md`. Load-bearing here:
+Full notes in `docs/notes/RESEARCH-NOTES.md`. Load-bearing here:
 
 - **2306.16388** (GlobalOpinionQA, Anthropic) — Jensen-Shannon distance between
   model and human answer distributions; the basis of `js_distance()`.

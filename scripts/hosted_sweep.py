@@ -2,7 +2,7 @@
 
 Everything in the paper is <=9B because that is what fits on a rented L4. The
 objection that follows -- "you have measured small models" -- is the one most
-likely to limit how seriously the result is taken, and `DECISION-MODELS.md`
+likely to limit how seriously the result is taken, and `docs/notes/DECISION-MODELS.md`
 argues it is also the cheapest remaining fix: four hosted models are already
 measured as first-token scoreable, and reaching them costs engineering rather
 than GPU-seconds.
