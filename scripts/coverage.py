@@ -13,7 +13,7 @@ The factors, per systematic-study's inventory:
     arm       R, N_plus, N_minus
     seed      3 design seeds
     prompt    ue and its variants
-    harness   local vLLM vs hosted API -- NOT a nuisance, a factor. Cells from
+    harness   local transformers vs hosted API -- NOT a nuisance, a factor. Cells from
               the two never pool, and no model has yet been run through both,
               so harness is confounded with size across the whole study.
 

@@ -394,7 +394,7 @@ def build_parser() -> argparse.ArgumentParser:
     # and build_card.py takes `*.jsonl` there with no roster filter. Writing
     # hosted cells beside local ones therefore does not add a row to a table --
     # it silently redefines every existing result as a pooled average over two
-    # different harnesses (a local vLLM sweep and a hosted API), which is the
+    # different harnesses (a local transformers sweep and a hosted API), which is the
     # confound the design exists to avoid. Pooling them has to be a decision
     # someone makes, so it costs a flag.
     ap.add_argument("--results", default="results_hosted",

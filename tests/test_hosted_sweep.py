@@ -7,7 +7,7 @@ enumerate models by globbing a results directory. `build_card.py` takes
 
 So a hosted cell written into `results/` does not add a row to a table. It
 silently redefines every existing pooled number as an average over two
-different harnesses: a local vLLM sweep and a hosted API, differing in
+different harnesses: a local transformers sweep and a hosted API, differing in
 sampling, chat template and serving stack. Nothing would look wrong, and no
 error would be raised -- which is exactly the failure mode this project's
 limitations section already documents once.

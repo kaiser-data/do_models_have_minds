@@ -907,7 +907,7 @@ def hosted_section(hosted: dict | None) -> str:
     """The larger models, reported apart from the nine-model roster.
 
     Kept out of every pooled number on this page for the reason the paper keeps
-    them out of its mean: these ran on a hosted API rather than our own vLLM,
+    them out of its mean: these ran on a hosted API rather than our own transformers stack,
     which is a different harness by construction. Presenting them in the same
     table would make that difference invisible at exactly the moment a reader
     is comparing sizes.
