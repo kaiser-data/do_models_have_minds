@@ -1097,13 +1097,49 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
         if "ue" in bp and "v2" in bp:
             out.append(_cmd("PcResidualShift",
                             f"{abs(bp['ue']['mean_residual'] - bp['v2']['mean_residual']):.4f}"))
+        # The 2x2. Emitted as main effects and an interaction rather than four
+        # cells, because the cells alone invite reading a difference as "the
+        # effect of a colon" when the interaction is the same size.
+        cells = {(c["model"].split("/")[-1], c["prompt"]): c["residual"]
+                 for c in contrast["cells"]}
+        models = sorted({m for m, _ in cells})
+        floors = {}
+        for t in card["tiles"]:
+            floors[t["model"].split("/")[-1]] = t.get("design_noise_floor")
+        for m in models:
+            need = [(m, k) for k in ("ue", "ue_break", "ue_colon", "ue_exact")]
+            if not all(k in cells for k in need):
+                continue
+            a, b = cells[(m, "ue")], cells[(m, "ue_break")]
+            cc, d4 = cells[(m, "ue_colon")], cells[(m, "ue_exact")]
+            colon = ((cc - a) + (d4 - b)) / 2
+            brk = ((b - a) + (d4 - cc)) / 2
+            inter = ((d4 - cc) - (b - a)) / 2
+            tag = _slug(m)
+            for name, v in (("Colon", colon), ("Break", brk), ("Inter", inter)):
+                out.append(_cmd(f"Typo{tag}{name}", f"{v:+.4f}"))
+                f = floors.get(m)
+                if f:
+                    out.append(_cmd(f"Typo{tag}{name}Floor", f"{v / f:+.1f}"))
+            f = floors.get(m)
+            if f:
+                out.append(_cmd(f"Typo{tag}Floor", f"{f:.4f}"))
+            for k, nm in (("ue", "Base"), ("ue_break", "Brk"),
+                          ("ue_colon", "Col"), ("ue_exact", "Both")):
+                out.append(_cmd(f"Typo{tag}{nm}", f"{cells[(m, k)]:+.4f}"))
+        out.append(_cmd("TypoNModels", str(len(models))))
+
         if "v2" in bp and "warned" in bp:
             out.append(_cmd("PcWarnedMove",
                             f"{bp['warned']['mean_residual'] - bp['v2']['mean_residual']:+.4f}"))
         # Per model, because the mean hides that one model reverses.
         for c in contrast["cells"]:
             short = _slug(c["model"].split("/")[-1])
-            tag = {"ue": "Ue", "v2": "Vtwo", "warned": "Warned"}[c["prompt"]]
+            # Total by construction: a new prompt level must not crash the
+            # generator, which is what a hardcoded dict did when the 2x2 added
+            # two. `_slug` already turns any id into a letters-only macro name.
+            tag = {"ue": "Ue", "v2": "Vtwo", "warned": "Warned"}.get(
+                c["prompt"], _slug(c["prompt"]))
             out.append(_cmd(f"Pc{short}{tag}Resid", f"{c['residual']:+.4f}"))
             out.append(_cmd(f"Pc{short}{tag}ConvR", f"{c['conviction_R']:.3f}"))
             out.append(_cmd(f"Pc{short}{tag}ConvN", f"{c['conviction_N_minus']:.3f}"))
