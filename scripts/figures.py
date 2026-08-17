@@ -198,11 +198,22 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
                     hosted=None):
     """Coherence against conviction, one path per model as meaning is stripped.
 
-    Both axes span their **full operating range** — accuracy from chance (0.5) to
-    1.0, conviction from 0 to its 0.5 maximum — rather than being zoomed to the
-    data. That matters: zooming x to the occupied band would exaggerate the
-    vertical tilt of the paths, and the tilt is the claim. On honest axes the
-    paths still fall far more than they shift.
+    The x-axis is **broken**, not zoomed. Both ends are kept at true scale: the
+    left panel holds the metric's floor and the predicted endpoint near chance,
+    the right panel holds the occupied band from 0.8 up, and the empty stretch
+    between 0.61 and 0.8 is cut with an explicit break mark.
+
+    The distinction matters. Zooming to the occupied band would silently rescale
+    the horizontal axis, which exaggerates how far the paths shift sideways --
+    and "they shift very little while falling a long way" is the claim. A break
+    leaves both regions at their own true scale and marks the removal, so the
+    reader can still see that the paths end nowhere near the prediction.
+
+    What is lost is the *visual* width of that gap, which is why the caption and
+    \\MovedTowardNullPct carry it as a number instead.
+
+    Conviction keeps its full 0 to 0.5 range with no break: it is the axis the
+    paths actually traverse.
     """
     th = THEMES[theme]; _style(th)
     # Hosted tiles are appended rather than merged: they go through the same
@@ -217,7 +228,11 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
             for i, f in enumerate(FAMILY_ORDER)}
     colour = _model_colours(rows, base)
 
-    fig, ax = plt.subplots(figsize=(9.6, 7.4))
+    # Broken x-axis: two panels, shared y, the dead stretch between them cut.
+    fig, (axL, axR) = plt.subplots(
+        1, 2, figsize=(9.6, 7.4), sharey=True,
+        gridspec_kw=dict(width_ratios=[1.0, 3.4], wspace=0.035))
+    both = (axL, axR)
 
     nulls = [r["null"] for r in rows if r["null"] is not None]
     if len(nulls) != len(rows):
@@ -225,13 +240,15 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
             f"{len(rows) - len(nulls)} model(s) have no shuffled null; refusing "
             f"to average over the rest and draw it as the roster's floor")
     mean_null = float(np.mean(nulls))
-    ax.axvspan(0.5, mean_null + 0.008, color=th["ink3"], alpha=0.12, zorder=0, lw=0)
-    ax.axvline(mean_null, color=th["ink3"], lw=1, ls=(0, (3, 3)), zorder=1)
-    ax.text(mean_null + 0.012, 0.44, "metric's floor\n(probabilities shuffled)",
-            fontsize=8.5, color=th["ink3"], ha="left", va="top", linespacing=1.45)
-
-    ax.text(0.505, 0.492, "maximum possible conviction", fontsize=8.5,
-            color=th["ink3"], ha="left", va="center")
+    for ax in both:
+        ax.axvspan(0.5, mean_null + 0.008, color=th["ink3"], alpha=0.12,
+                   zorder=0, lw=0)
+        ax.axvline(mean_null, color=th["ink3"], lw=1, ls=(0, (3, 3)), zorder=1)
+    axL.text(mean_null + 0.012, 0.44, "metric's floor\n(probabilities shuffled)",
+             fontsize=8.5, color=th["ink3"], ha="left", va="top",
+             linespacing=1.45)
+    axR.text(0.995, 0.492, "maximum possible conviction", fontsize=8.5,
+             color=th["ink3"], ha="right", va="center")
 
     # Where the inference under test says the paths should END. If a model's
     # preferences track what the outcomes mean, then on outcomes that mean
@@ -244,14 +261,14 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
     # could see paths running downward and have no way to judge whether that is
     # a lot or a little. With the target marked, the gap between where the paths
     # end and where they were predicted to end IS the result.
-    ax.scatter([mean_null], [0.012], s=190, marker="X",
-               color=th["ink3"], zorder=6, alpha=.75)
-    ax.annotate("if preferences tracked meaning,\nevery path would end here",
-                xy=(mean_null, 0.012), xytext=(mean_null + 0.055, 0.075),
-                fontsize=8.5, color=th["ink3"], ha="left", va="bottom",
-                linespacing=1.45,
-                arrowprops=dict(arrowstyle="-", color=th["ink3"], lw=.9,
-                                alpha=.6, shrinkA=2, shrinkB=6))
+    axL.scatter([mean_null], [0.012], s=190, marker="X",
+                color=th["ink3"], zorder=6, alpha=.75)
+    axL.annotate("if preferences\ntracked meaning,\nevery path\nwould end here",
+                 xy=(mean_null, 0.012), xytext=(mean_null + 0.012, 0.075),
+                 fontsize=8.5, color=th["ink3"], ha="left", va="bottom",
+                 linespacing=1.45,
+                 arrowprops=dict(arrowstyle="-", color=th["ink3"], lw=.9,
+                                 alpha=.6, shrinkA=2, shrinkB=6))
 
     # Labels: group points that would collide, then spread each group
     # symmetrically about its own mean, so no label travels far from its mark.
@@ -278,41 +295,67 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
         # points are never inside the ladder's mean.
         hosted = r.get("hosted", False)
         ls = (0, (4, 2)) if hosted else "-"
-        ax.plot([x0, x1], [y0, y1], color=c, lw=1.9, alpha=0.5, linestyle=ls,
-                solid_capstyle="round", zorder=2)
-        ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                    arrowprops=dict(arrowstyle="-|>,head_width=0.32,head_length=0.65",
-                                    color=c, lw=1.9, alpha=0.95, linestyle=ls,
-                                    shrinkA=2, shrinkB=0), zorder=3)
+        for ax in both:
+            ax.plot([x0, x1], [y0, y1], color=c, lw=1.9, alpha=0.5, linestyle=ls,
+                    solid_capstyle="round", zorder=2)
+        for ax in both:
+            ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
+                        arrowprops=dict(arrowstyle="-|>,head_width=0.32,head_length=0.65",
+                                        color=c, lw=1.9, alpha=0.95, linestyle=ls,
+                                        shrinkA=2, shrinkB=0), zorder=3)
         a = _area(r["params"])
-        ax.scatter([x0], [y0], s=a, color=c, zorder=5,
-                   marker="D" if hosted else "o",
-                   edgecolor=th["surface"], linewidth=1.6)
-        ax.scatter([x1], [y1], s=a * 0.30, color=c, zorder=5, alpha=0.9,
-                   edgecolor=th["surface"], linewidth=1.0)
+        for ax in both:
+            ax.scatter([x0], [y0], s=a, color=c, zorder=5,
+                       marker="D" if hosted else "o",
+                       edgecolor=th["surface"], linewidth=1.6)
+            ax.scatter([x1], [y1], s=a * 0.30, color=c, zorder=5, alpha=0.9,
+                       edgecolor=th["surface"], linewidth=1.0)
 
         # horizontal spread bars: how far each estimate moves across splits
         for (px, py), sp in zip(r["path"], r["spread"]):
             if sp > 0.005:
-                ax.plot([px - sp / 2, px + sp / 2], [py, py], color=c, lw=1.1,
-                        alpha=0.55, solid_capstyle="butt", zorder=4)
+                for ax in both:
+                    ax.plot([px - sp / 2, px + sp / 2], [py, py], color=c,
+                            lw=1.1, alpha=0.55, solid_capstyle="butt", zorder=4)
 
         ly = label_y[r["model"]]
-        ax.annotate(r["short"], xy=(x0, y0), xytext=(x0 + 0.020, ly),
-                    fontsize=9, color=th["ink2"], ha="left", va="center",
-                    zorder=6,
-                    arrowprops=(dict(arrowstyle="-", color=th["grid"], lw=0.8,
-                                     shrinkA=0, shrinkB=3)
-                                if abs(ly - y0) > 0.004 else None))
+        axR.annotate(r["short"], xy=(x0, y0), xytext=(x0 + 0.020, ly),
+                     fontsize=9, color=th["ink2"], ha="left", va="center",
+                     zorder=6,
+                     arrowprops=(dict(arrowstyle="-", color=th["grid"], lw=0.8,
+                                      shrinkA=0, shrinkB=3)
+                                 if abs(ly - y0) > 0.004 else None))
 
-    ax.set_xlabel("coherence  ·  held-out utility-model accuracy (the published metric)",
-                  fontsize=11)
-    ax.set_ylabel("conviction  ·  mean |P(prefer) - 0.5|", fontsize=11)
-    ax.set_xlim(0.5, 1.0); ax.set_ylim(0.0, 0.5)
-    ax.set_xticks([0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-    ax.set_yticks([0.0, 0.1, 0.2, 0.3, 0.4, 0.5])
-    ax.grid(True, color=th["grid"], lw=0.7, zorder=0); ax.set_axisbelow(True)
-    _despine(ax)
+    # The break. Left panel keeps chance and the prediction; right panel keeps
+    # the occupied band. Each is at its own true scale -- neither is stretched.
+    axL.set_xlim(0.495, 0.61); axR.set_xlim(0.80, 1.0)
+    axL.set_xticks([0.5, 0.6]); axR.set_xticks([0.8, 0.9, 1.0])
+    for ax in both:
+        ax.set_ylim(0.0, 0.5)
+        ax.set_yticks([0.0, 0.1, 0.2, 0.3, 0.4, 0.5])
+        ax.grid(True, color=th["grid"], lw=0.7, zorder=0)
+        ax.set_axisbelow(True)
+        _despine(ax)
+    # Hide the facing spines and ticks so the cut reads as a cut.
+    axL.spines["right"].set_visible(False)
+    axR.spines["left"].set_visible(False)
+    axR.tick_params(axis="y", which="both", left=False, labelleft=False)
+
+    # Break marks: two short diagonals on each side of the gap.
+    kw = dict(transform=fig.transFigure, color=th["ink3"], lw=1.1,
+              clip_on=False, zorder=10)
+    xb = (axL.get_position().x1 + axR.get_position().x0) / 2
+    y0f, y1f = axL.get_position().y0, axL.get_position().y1
+    for yy in (y0f, y1f):
+        for dx in (-0.006, 0.006):
+            fig.add_artist(plt.Line2D([xb + dx - 0.005, xb + dx + 0.005],
+                                      [yy - 0.011, yy + 0.011], **kw))
+
+    axL.set_ylabel("conviction  ·  mean |P(prefer) - 0.5|", fontsize=11)
+    fig.supxlabel(
+        "coherence  ·  held-out utility-model accuracy (the published metric)"
+        "        (x-axis broken, 0.61 to 0.80 removed)",
+        fontsize=11, y=0.045)
 
     ordered = sorted(rows, key=lambda r: (FAMILY_ORDER.index(r["family"])
                                           if r["family"] in FAMILY_ORDER else 99,

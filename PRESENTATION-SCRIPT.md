@@ -1,6 +1,6 @@
 # Presentation script
 
-For speaking live, with the deck. Target **9 minutes**, cut list at the end.
+For speaking live, with the deck. Target **10 minutes**, cut list at the end.
 `VIDEO-SCRIPT.md` is the shorter screen-recording version.
 
 **Read the glossary first.** Five terms carry the whole talk, and three of them
@@ -49,6 +49,24 @@ fine-tuning and the positive control sounds far stronger than it is.
 Coherence records which side of the coin it lands on. Conviction is how hard it
 lands."
 This is the mechanism. Get this across and the rest follows.
+
+---
+
+## 0 · Thanks — 20s
+
+*Slide: title. Say this before anything else, and mean it — then move.*
+
+> Before the work: thank you to **Apart Research** and **Foresight** for putting
+> this together. Special thanks to **Kamil** and **Beth** for organising us here
+> at CIC — the atmosphere all weekend has been genuinely good, and that is not
+> an accident. Thanks to **Kazik** for the discussions, which changed how we
+> framed part of this. And to everyone who presented before us — the talks have
+> been excellent.
+>
+> Right. Ours.
+
+**Keep it to twenty seconds.** Warm and specific beats long. If you overrun
+here you will rush the method slide, which is the one slide you cannot rush.
 
 ---
 
@@ -198,31 +216,69 @@ different instrument.
 
 > The first objection is always: these are small models.
 >
-> Each path here is one model. It starts on real outcomes, moves to invented
-> outcomes, ends with the numbers stripped too.
+**This is the hardest slide to narrate. Walk the room through the axes before
+you say anything about the result, or they will be decoding the picture while
+you are talking.**
+
+> First, what you are looking at. Two axes, and neither is the usual one.
 >
-> Now — the cross in the bottom-left corner. That is where every path *should*
-> end. Not our opinion: it is what the claim under test predicts. If a model's
-> preferences track what the outcomes mean, then on outcomes that mean nothing
-> there is nothing to prefer, the ordering is arbitrary, and the score falls to
-> what this metric gives you on arbitrary orderings — which we measure, by
-> shuffling the probabilities. Conviction goes to zero.
+> **Across** is the published metric — held-out accuracy of the fitted utility
+> model. That is the number the original paper reports as evidence of values.
+> Right is higher.
 >
-> So each model had about 0.39 of coherence available to lose.
+> **Up** is conviction. How far from a coin flip the model's preference actually
+> is. The metric never sees this axis. We are plotting the thing it discards
+> against the thing it reports.
 >
-> They lose 0.025. **Six and a half percent of the distance.** The best model
-> manages sixteen percent; two of the nine move the wrong way.
+> Note the break in the x-axis. Nothing lives between 0.61 and 0.80, so we cut
+> it — but the left sliver is kept, because that dashed line is the metric's
+> floor. It is what this metric returns when you shuffle the probabilities.
+> Chance, for this instrument.
+
+*Point at one path. Take your time.*
+
+> Each model is a **path**, not a point. It starts on real outcomes — the big
+> marker. It moves to invented outcomes with magnitudes kept. The arrowhead is
+> where it ends with the magnitudes stripped too.
 >
-> All that empty space between the arrowheads and the cross is the result.
+> So the direction a path travels tells you what removing meaning did to that
+> model.
+
+*Now the cross.*
+
+> And this cross, bottom left, is where every path **should** end.
 >
-> The four diamonds are the large models, 27 to 235 billion, over the hosted
-> API. Look where they sit: conviction 0.36 to 0.44, far above anything in the
+> That is not our opinion. It is what the claim under test predicts. If a
+> model's preferences track what the outcomes mean, then on outcomes that mean
+> nothing there is nothing to prefer. The ordering is arbitrary. So the score
+> falls to what the metric gives on arbitrary orderings — the floor — and
+> conviction falls to zero.
+>
+> Each model had about 0.39 of coherence available to lose.
+
+*Beat.*
+
+> Look where the paths actually go. **Almost straight down.**
+>
+> They lose 0.025. Six and a half percent of the distance. The best model
+> manages sixteen percent. Two of the nine move the *wrong way* — they score
+> higher on outcomes that refer to nothing.
+>
+> Conviction collapses. Coherence barely moves. That gap between the arrowheads
+> and the cross is the finding.
+
+*Then the diamonds.*
+
+> The four diamonds with dashed paths are the large models — 27 to 235 billion,
+> over a hosted API. Different serving stack, so they are drawn differently and
+> never averaged into the rest.
+>
+> They sit at the top: conviction 0.36 to 0.44, far above anything in the
 > ladder. These are much more decisive models. And their paths run down just the
-> same.
+> same. Of those four, none clears its own noise floor and three come out
+> negative.
 >
-> Of those four, measured against their own noise floors, *none* clears. Three
-> come out **negative** — they score higher on outcomes that refer to nothing
-> than on real ones.
+> Scale makes the models more certain. It does not make the metric notice.
 
 *Slide: the per-family table or fig6.*
 
