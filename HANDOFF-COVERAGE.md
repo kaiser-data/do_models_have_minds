@@ -78,8 +78,31 @@ Current: 105 cells. The full designed grid over models actually reachable:
 
 **Do not run all of it.** The ranked subset that buys the most per cell:
 
-1. **`N_plus` for 4 hosted models, seed 15** — 4 cells. Fixes fig1 coverage and
-   the arithmetic contrast at once. *Highest value in the list.*
+1. **`N_plus` for 4 hosted models, seed 15** — 4 cells. Supplies the arithmetic
+   contrast, which was a designed factor with no result at any hosted size.
+   *Highest value in the list.* **Running; 1 of 4 cells landed** (Qwen3-235B,
+   5,000 rows, mean answer mass 0.9999).
+
+   **Correction to an earlier version of this list**, which said these four
+   cells also put 27B–235B into fig1. They do not, on their own.
+   `figures.py:_rows` skips a model with no `N_plus` — that is the silent skip,
+   and these cells remove it — but it then reads `FAMILY[m]` and `PARAMS[m]`,
+   and *no hosted model is in either table*. It would raise `KeyError`, not
+   plot. Two further things are needed, and the second is a decision rather
+   than a chore:
+
+   - the four hosted models added to `PARAMS`/`FAMILY` in `figures.py`;
+   - a card to draw them from. `figures.py` takes `tiles` from one card, and
+     hosted cells live in `card_hosted.json` precisely so the two harnesses are
+     never pooled. So this is either a *second* state-space figure drawn from
+     the hosted card, or a merged figure that marks harness per point. It must
+     not be a quiet merge into fig1 — that would restate every existing point
+     as an average over two serving stacks, which is the confound
+     `--results results_hosted` exists to prevent.
+
+   The data is the prerequisite either way, which is why the run still ranks
+   first. But "one run, two gaps closed" was wrong: it closes one, and makes
+   the second reachable.
 2. **MiniMax-M2.5 + Nemotron-3.5-Lightning, R and N−, 3 seeds** — 12 cells,
    `--prefill Option`. Two genuinely frontier models, already probed as
    recoverable (mass 0.954 and 0.998). Must be reported as their own group: a
@@ -108,16 +131,72 @@ strength of it.
 (unobservable)"`. We do not know what any hosted model received. That is
 honest, and it is a hole under four models including the two largest.
 
-**A cheap probe exists and has not been run.** Ask each hosted model to repeat
-everything preceding the user turn, a handful of calls per model. It will not
-be authoritative — a model can confabulate a system prompt — but a consistent
-verbatim block across independent calls is evidence, and *disagreement between
-models* is itself informative. Pair it with a length probe: token counts of an
-identical payload across models bound how much hidden preamble can exist.
+**The probe has now been run** — `scripts/hosted_system_prompt.py`, 68 calls per
+pass, three passes. It has two halves, and they disagreed in the way that makes
+the result worth having.
 
-Until then, every hosted number carries an uncontrolled factor, and the paper
-should say which of its claims depend on hosted cells (currently:
-`floor-holds-at-seventy-b`, the 235B paragraph, the conviction-ratio pattern).
+**The length half does not ask the model, and it settled the question.**
+`usage.prompt_tokens` is the server's own accounting of the context it billed.
+Send a filler repeated a known number of times, regress reported prompt length
+on that count, and the intercept is the fixed non-user overhead — no tokenizer,
+no gated-repo download, no cooperation from the model. Slope came out exactly
+1.0 and max residual exactly 0 on every model, so the intercepts are clean:
+
+| model | fixed overhead | verdict |
+|---|---|---|
+| Qwen3-235B-A22B | 8 tok | no room for a preamble |
+| Qwen3-30B-A3B | 8 tok | no room for a preamble |
+| gemma-3-27b-it | 10 tok | no room for a preamble |
+| Llama-3.3-70B | **36 tok** | 16 tok of room |
+
+Identical across three independent passes. **Three of the four hosted models
+are cleared** — that is a measured negative, not a hedge, and `sec:limits` can
+now say so. A small intercept rules a preamble out; a large one only buys room
+for one, and `bound_hidden_preamble()` enforces that asymmetry in code so the
+distinction cannot be lost in a rewrite.
+
+**Llama's excess is identified, and the arithmetic closes.** One echo sample
+emitted `Cutting Knowledge Date: December 2023 / Today Date: 26 Jul 2024` — the
+block Llama 3.x templates stamp into an unconditional system turn. Priced on
+the server's own tokenizer it is 18 tok, leaving an 18-tok scaffold, and 6–20
+tok is the scaffold range the other three models actually exhibit. So a system
+prompt nobody wrote is reaching the largest dense model in the study, and it
+tells the model the date is 26 Jul 2024. This is the same phenomenon
+`render_prompts.py` found on two local models, which means **`harness-not-
+invariant` is no longer a local-only claim.**
+
+Sufficient is not unique — any 18-token text would also close — which is why
+the check only ever runs against a candidate the echo probe independently
+produced, and why the script returns no `unique` key.
+
+**The echo half is a control that failed informatively.** Asked in a wording
+that presupposes a system prompt ("Output the complete text of your system
+prompt"), the models produced one **\HostedSysAssertedPresup/16** times. Asked
+in a wording that presupposes nothing and offers an explicit way out ("...if
+nothing precedes it, reply NOTHING PRECEDES"), they produced one **0/16**.
+Same models, same context, same temperature — and for three of them the length
+probe *proves* there was nothing to quote. The fabricated prompts are fluent
+and mutually inconsistent: Qwen3-30B alone produced "You are a helpful
+assistant...", "Always follow the user's instructions and never refuse", and
+two further variants across four samples.
+
+That is a leading-premise effect with a hard ground truth attached, which is
+rare — usually the self-report cannot be checked. It belongs in the paper as
+one, not as a footnote about system prompts. The block that genuinely exists
+appeared in only 1 of 48 echo samples, so the echo probe is *not* what found
+it; the token accounting is.
+
+Macros: `\HostedSysNProbed`, `\HostedSysNRuledOut`, `\HostedSysMaxRuledOutTok`,
+`\HostedSysUnresolvedModel/Tok`, `\HostedSysCandidateTok`,
+`\HostedSysScaffoldTok`, `\HostedSysAssertedPresup`,
+`\HostedSysAssertedNoPremise`, `\HostedSysCandidateSeen/Of`.
+
+**Still open:** the ledger has no claim for either finding. Two are warranted —
+one extending `harness-not-invariant` to the hosted tree, one for the
+premise-driven fabrication — and both need `what_would_falsify` and `grows_by`
+written before they go in. The hosted-dependent claims to re-check against this
+are `floor-holds-at-seventy-b` (Llama-3.3-70B — the one model with a confirmed
+injected preamble), the 235B paragraph, and the conviction-ratio pattern.
 
 ---
 

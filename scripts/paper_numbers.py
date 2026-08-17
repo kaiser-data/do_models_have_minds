@@ -435,6 +435,81 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
             out.append(_cmd("PrefillBestUnrecoveredMass",
                             f"{max(pf[m]['mean_answer_mass'] for m in unrec):.3f}"))
 
+    # What the hosted models were actually sent. sec:limits recorded this as
+    # unobservable, which was true of the chat template and false of its SIZE:
+    # usage.prompt_tokens is the server's own accounting, so regressing it on a
+    # filler repeated a known number of times gives the fixed non-user overhead
+    # without a tokenizer and without the model's cooperation. Three of four
+    # models leave no room for an injected preamble; those are real negatives
+    # and the macros exist so the section can state them instead of hedging.
+    #
+    # The echo half is the opposite kind of number and is emitted beside them on
+    # purpose: asked in a wording that presupposes a system prompt, every model
+    # produced one, including the three that provably had none to produce.
+    hs_path = Path("site/hosted_system_prompt.json")
+    if hs_path.exists():
+        hs = json.loads(hs_path.read_text()).get("models", {})
+        hs = {m: v for m, v in hs.items() if "length" in v and "bound" in v["length"]}
+        ruled = {m: v for m, v in hs.items()
+                 if v["length"]["bound"].get("rules_out_preamble")}
+        unres = {m: v for m, v in hs.items()
+                 if not v["length"]["bound"].get("rules_out_preamble")}
+        if hs:
+            out.append(_cmd("HostedSysNProbed", str(len(hs))))
+            out.append(_cmd("HostedSysNRuledOut", str(len(ruled))))
+            out.append(_cmd("HostedSysRuledOutModels", ", ".join(
+                _tex(m.split("/")[-1]) for m in sorted(ruled))))
+            if ruled:
+                out.append(_cmd("HostedSysMaxRuledOutTok", str(max(
+                    v["length"]["bound"]["fixed_overhead_tokens"]
+                    for v in ruled.values()))))
+            # At most one model is expected to carry an unexplained overhead; if
+            # more ever do, the paper should not be quoting a single name for
+            # them, so the macro is only written when exactly one does.
+            if len(unres) == 1:
+                m, v = next(iter(unres.items()))
+                out.append(_cmd("HostedSysUnresolvedModel",
+                                _tex(m.split("/")[-1])))
+                out.append(_cmd("HostedSysUnresolvedTok", str(
+                    v["length"]["bound"]["fixed_overhead_tokens"])))
+                att = v.get("attribution", {})
+                if att.get("accounts_for_overhead"):
+                    out.append(_cmd("HostedSysCandidateTok",
+                                    str(att["candidate_tokens"])))
+                    out.append(_cmd("HostedSysScaffoldTok",
+                                    str(att["residual_scaffold_tokens"])))
+        # Fabrication, split by whether the question presupposed its answer.
+        # Pooled, this number would describe the mixture of wordings rather than
+        # either wording, which is the whole point of having asked both.
+        wor: dict[str, list[dict]] = {}
+        for v in hs.values():
+            for pid, c in v.get("echo", {}).get("by_wording", {}).items():
+                wor.setdefault(pid, []).append(c)
+        if wor:
+            presup = [c for cs in wor.values() for c in cs
+                      if c["presupposes_a_system_prompt"]]
+            # NOT `neutral`: that name is build()'s neutral_control.json
+            # parameter, and shadowing it here silently emptied the neutral-
+            # option macros further down.
+            no_premise = wor.get("repeat", [])
+            if presup:
+                out.append(_cmd("HostedSysEchoNPresup",
+                                str(sum(c["n"] for c in presup))))
+                out.append(_cmd("HostedSysAssertedPresup", str(
+                    sum(c["asserted_preamble"] for c in presup))))
+            if no_premise:
+                out.append(_cmd("HostedSysEchoNNoPremise",
+                                str(sum(c["n"] for c in no_premise))))
+                out.append(_cmd("HostedSysAssertedNoPremise", str(
+                    sum(c["asserted_preamble"] for c in no_premise))))
+            # How often the block the length probe actually confirmed showed up
+            # unprompted. Small, and stated as a rate so it cannot be read as
+            # the echo probe having worked.
+            seen = sum(c["contains_candidate"] for cs in wor.values() for c in cs)
+            total = sum(c["n"] for cs in wor.values() for c in cs)
+            out.append(_cmd("HostedSysCandidateSeen", str(seen)))
+            out.append(_cmd("HostedSysCandidateSeenOf", str(total)))
+
     # The frontier check. Read from card_hosted.json rather than card.json
     # because the hosted tree is deliberately not pooled with the self-hosted
     # one -- different serving stack, so these macros exist to be quoted BESIDE
