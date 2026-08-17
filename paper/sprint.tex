@@ -16,6 +16,18 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{array}
 \usepackage{subcaption}
+% Float packing. The appendix is six tables and a composite figure; at LaTeX's
+% default limits each float claims most of a page and the appendix spreads over
+% one page more than its content needs. These raise how much of a page a float
+% may occupy and how little text must accompany it -- layout only, no content
+% is cut and no type is shrunk.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.80}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
 
 \graphicspath{{figs/}}
 
@@ -112,7 +124,7 @@ in this document is emitted from the results card by
 \texttt{scripts/paper\_numbers.py} rather than typed. The pipeline end to end is
 Appendix Figure~\ref{fig:pipeline}; the claims ledger
 (\NClaimsEstablished{} established, \NClaimsProvisional{} provisional) is
-Appendix Table~\ref{tab:claims}.
+\texttt{claims.json}, checked against the generated numbers on every build.
 
 \textbf{Not covered here.} Two secondary tracks --- stated disposition
 (App.~Table~\ref{tab:stated}) and concealment under directive
@@ -150,7 +162,7 @@ rises with scale faster than the signal does (Appendix
 Figure~\ref{fig:scale}). It does not survive pooling across families, so this is
 a within-family statement and not a scaling law.
 
-\begin{table}[tb]
+\begin{table}[htbp]
 \centering
 \caption{\textbf{Per-model results against each model's own noise floor.}
 \armR{}, \armNp{}, \armNm{} are held-out accuracy on real outcomes, invented
@@ -392,38 +404,50 @@ or shows process rather than result.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=.72\textwidth]{fig1_state_space.pdf}
-\caption{\textbf{Every model is a path, not a point} --- the mechanism of
-\S\ref{sec:mech} as trajectories. Each starts on real outcomes, moves to
-invented outcomes with magnitudes kept, and ends with them removed. If the
-metric tracked meaning the paths would run down-\emph{and-left}; they run almost
-straight down.}
-\label{fig:state}
-\end{figure}
+\begin{subfigure}[t]{.49\textwidth}\centering
+  \includegraphics[width=\linewidth]{fig1_state_space.pdf}
+  \caption{Trajectories}\label{fig:state}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{.49\textwidth}\centering
+  \includegraphics[width=\linewidth]{fig2_scale.pdf}
+  \caption{Scale}\label{fig:scale}
+\end{subfigure}
 
-\begin{figure}[tb]
-\centering
-\includegraphics[width=.72\textwidth]{fig2_scale.pdf}
-\caption{\textbf{Held-out coherence against model size, with the hosted cells
-marked separately.} Within the one family that has a ladder, the floor rises
-with scale faster than the signal (\LadderResidFall{} across
-\LadderNSizes{} sizes). Hosted diamonds sit beside the ladder, never inside its
-mean --- \LadderHosted{} returns \HostedResidual{} against a
-\HostedReps-replicate floor of \HostedFloor{} and \HostedClears{} it.}
-\label{fig:scale}
-\end{figure}
-
-\begin{figure}[tb]
-\centering
-\includegraphics[width=.72\textwidth]{fig0_pipeline.pdf}
-\caption{\textbf{The measurement pipeline}, from battery to floor-corrected
-card. Process rather than finding, and here for that reason.}
-\label{fig:pipeline}
+\vspace{.8em}
+\begin{subfigure}[t]{.62\textwidth}\centering
+  \includegraphics[width=\linewidth]{fig0_pipeline.pdf}
+  \caption{Pipeline}\label{fig:pipeline}
+\end{subfigure}
+\caption{\textbf{Supporting views of results the body already states, plus the
+pipeline.}
+\textbf{(a)} Each model as a path, not a point. A path starts on real outcomes,
+moves to invented outcomes with magnitudes kept, and ends with magnitudes
+removed. Coherence is on the horizontal axis, conviction on the vertical. A
+metric that tracked meaning would produce paths running down \emph{and} left.
+They run almost straight down: conviction falls, coherence does not.
+\textbf{(b)} Held-out coherence against parameter count. Within the one family
+with a full ladder the floor rises with scale faster than the signal
+(\LadderResidFall{} across \LadderNSizes{} sizes). Hosted models are drawn as
+diamonds beside the ladder and never inside its mean, because a different
+serving stack is a different harness: \LadderHosted{} returns \HostedResidual{}
+against a \HostedReps-replicate floor of \HostedFloor{}, and \HostedClears{} it.
+\textbf{(c)} The measurement pipeline, battery to floor-corrected card. Process,
+not result.}
+\label{fig:appendix}
 \end{figure}
 
 \section{Additional tables}\label{app:tables}
 
-\begin{table}[tb]
+\noindent\textbf{The claims ledger} --- every claim in the archival paper with
+its status, the macros it rests on, and what would falsify it --- is
+\texttt{claims.json} in the repository, and is checked against the generated
+numbers on every build by \texttt{scripts/claims.py}. It is
+\NClaimsEstablished{} established and \NClaimsProvisional{} provisional. It is
+not reprinted here: it is machine-readable, it changes with every measurement,
+and a static copy in a PDF is the version that goes stale.
+
+
+\begin{table}[htbp]
 \centering
 \caption{Table~\ref{tab:main} with full HuggingFace model ids.}
 \footnotesize
@@ -431,7 +455,7 @@ card. Process rather than finding, and here for that reason.}
 \input{table_main}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}[htbp]
 \centering
 \caption{Self-report under instruction: what models say about a disposition they
 were given, against a no-persona baseline.}
@@ -440,7 +464,7 @@ were given, against a no-persona baseline.}
 \input{table_stated}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}[htbp]
 \centering
 \caption{The revealed channel: whether a concealment instruction that changes
 what a model says also changes what it chooses.}
@@ -449,7 +473,7 @@ what a model says also changes what it chooses.}
 \input{table_revealed}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}[htbp]
 \centering
 \caption{The neutral-option control --- what happens to the floor when
 ``neither'' becomes available. \NeutNModels{} models, \NeutNCells{} cells.}
@@ -458,23 +482,13 @@ what a model says also changes what it chooses.}
 \input{table_neutral}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}[htbp]
 \centering
 \caption{Compliance: which models obey a directive to prefer against their own
 ordering, and which decline.}
 \small
 \label{tab:comply}
 \input{table_comply}
-\end{table}
-
-\begin{table}[tb]
-\centering
-\caption{The claims ledger: every claim in the archival paper with its status,
-its evidence, and what would falsify it. \NClaimsEstablished{} established,
-\NClaimsProvisional{} provisional, \NClaimsTotal{} total.}
-\small
-\label{tab:claims}
-\input{table_claims}
 \end{table}
 
 \end{document}
