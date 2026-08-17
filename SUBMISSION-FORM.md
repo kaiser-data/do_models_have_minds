@@ -86,15 +86,15 @@ presupposition.
 | Presentation Recording | *not recorded* |
 | Project Code | `https://github.com/kaiser-data/do_models_have_minds` |
 | Upload your slideshow | `paper/slides.pdf` |
-| Upload your project image | *see below* |
+| Upload your project image | `paper/figs/project-image.png` |
 | Additional Material | `https://nullcard-preresults.netlify.app` |
 
-**Project image — outstanding.** The natural choice is the detector panel
-(`paper/figs/fig4_detector.pdf`, the 0.821-vs-0.596 result) or the state-space
-figure (`fig1_state_space.pdf`, every model as a path). Both are PDFs and the
-form wants an image; converting them to PNG kept hanging `qlmanage` on this
-machine. Quickest route: open the PDF in Preview and export as PNG, or
-screenshot page 3 of `sprint.pdf`.
+**Project image.** `paper/figs/project-image.png`, 1800x1388 --- the state-space
+figure. Each model is a path: it starts on real outcomes, moves to invented
+outcomes with the magnitudes kept, and ends with them removed. The paths run
+almost straight *down*, which is the whole finding in one picture --- conviction
+collapses, coherence does not. Both axes name what they are, so it reads without
+the caption.
 
 ---
 
