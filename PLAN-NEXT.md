@@ -1,31 +1,49 @@
 # Plan — remaining work, 17 Aug 2026
 
-Written after the Must-fix pass on `REVIEW-2026-08-17.md`. That pass is
-**done and verified but not committed** (the review says not to commit
-unless asked). This file is the job list for what is left, in the order I
-would do it.
+Written after the Must-fix pass on `REVIEW-2026-08-17.md`, and kept current
+since. That pass is **done, verified and committed**. This file is the job list
+for what is left, in the order I would do it.
 
 ---
 
-## 0. Uncommitted right now
+## 0. State
 
-Working tree carries the whole Must-fix pass plus the prefill probe:
+All work below the line is committed and pushed; the working tree is clean.
+360 tests, `claims.py` 0, `lint_paper.py` 8/8, `main.pdf` 40pp.
 
-    paper/main.tex              5 must-fix items
-    paper/numbers.tex           +15 macros (BigOver*, PersRef*, NClaims*)
-    scripts/paper_numbers.py    ratio, persona-denominator, ledger-count macros
-    scripts/persona_depth.py    force_bare (see §2)
-    tests/test_persona_depth.py +1 test
-    paper/refs.bib              schwartz1992, perez2022, durmus2023 now cited
-    site/persona_reference_compare.json      new
-    site/hosted_scoreability_prefill.json    new
-    PLAN-NEXT.md                this file
+**RUNNING, two jobs, do not start a third against the same key or GPU pool:**
 
-348 tests, `claims.py` 0, `lint_paper.py` 8/8, `main.pdf` 40pp.
+- `hosted_sweep.py` — Qwen3-235B and Qwen3-30B, seeds 20260815/16/17. Seeds 15
+  and 16 are complete for the 235B; 30B is mid-seed-16. Log: `nebius12.log`.
+- `modal run` — the 2×2's off-diagonal cells (`ue_colon`, `ue_break`) on
+  Qwen3.5-2B and granite. Log: `cross2x2.log`.
 
-**RUNNING:** `hosted_sweep.py`, 12 cells, Qwen3-235B and Qwen3-30B at
-seeds 20260815/16/17. Seed 15 is nearly done (30B N− at 3,700/5,000);
-eight cells remain. Log: scratchpad `nebius12.log`.
+**Session B** holds `review-shouldfix` at `../dmhm-session-b` for §2 below.
+Nothing pushed as of this writing.
+
+---
+
+## 0b. Done since this plan was written
+
+- **Read the upstream repo.** Battery verified byte-identical (510 outcomes, 30
+  categories, same order). Prompt found **not** verbatim — a dropped colon and
+  a line break — with a test that had claimed to check it pinning a hand-typed
+  copy of itself. `battery/upstream/` now vendors `templates.py` at commit
+  `a5821db` so verbatim is diffed against an artifact.
+- **Measured the drift.** `ue_exact` gives +0.0275 against `ue`'s +0.0262 —
+  1.9× the design floor on Qwen, 0.1× on granite, the smallest wording effect
+  in the study. **Comparability survives**; the footnote is owed, the
+  retraction is not.
+- **Crossed it into a 2×2** (`ue` / `ue_colon` / `ue_break` / `ue_exact`),
+  because the drift is two changes at once and their contrast is a composite.
+  Off-diagonal cells running.
+- **Roster records prefill recovery** via a third field rather than flipping
+  `first_token_ok`.
+- **Site carries the hosted models**, which it previously omitted entirely.
+
+**Qwen3-235B is at 2 of 3 seeds** and stable: −0.0235 at one seed, −0.0220 at
+two. No floor is emitted below three replicates, and that is deliberate —
+`training_noise_floor` raises rather than return a two-point range.
 
 ---
 

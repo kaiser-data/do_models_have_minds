@@ -100,6 +100,12 @@ class HostedModel:
     first_token_ok: bool
     latency_s: float
     notes: str = ""
+    # Measured under an "Option" prefill: does the answer move to the token
+    # AFTER a phrase we supply? None means never probed. This is deliberately
+    # a THIRD field rather than a fix to first_token_ok, because a prefilled
+    # cell is a different measurement and must not become poolable by having
+    # its flag flipped -- see call_first_token() in scripts/hosted_sweep.py.
+    prefill_ok: bool | None = None
 
 
 NEBIUS: list[HostedModel] = [
@@ -109,15 +115,22 @@ NEBIUS: list[HostedModel] = [
     HostedModel("Qwen/Qwen3-30B-A3B-Instruct-2507",   "qwen",    True,  True,  1.72),
     # --- measured NOT first-token-scoreable: reasoning preamble or control tokens
     HostedModel("openai/gpt-oss-120b",                "gpt-oss", True,  False, 0.40,
-                "emits <|channel|> — harmony format, needs prefill"),
+                "emits <|channel|> — harmony format; 'Option' prefill does not "
+                "recover it (mass 0.000), would need a harmony-shaped one",
+                prefill_ok=False),
     HostedModel("zai-org/GLM-5.2",                    "glm",     True,  False, 0.82,
-                "starts 'The'"),
+                "starts 'The'; resists three prefills — 'Option' 0.000, "
+                "'Answer:' 0.050, 'The answer is Option' 0.001",
+                prefill_ok=False),
     HostedModel("nvidia/Nemotron-3_5-Lightning",      "nemotron",True,  False, 0.86,
-                "starts 'Here'"),
+                "starts 'Here'; RECOVERED by an 'Option' prefill, mass 0.998",
+                prefill_ok=True),
     HostedModel("MiniMaxAI/MiniMax-M2.5",             "minimax", True,  False, 0.86,
-                "starts 'The'"),
+                "starts 'The'; RECOVERED by an 'Option' prefill, mass 0.954",
+                prefill_ok=True),
     HostedModel("deepseek-ai/DeepSeek-V4-Flash",      "deepseek",True,  False, 0.97,
-                "starts 'We'"),
+                "starts 'We'; unreachable 17 Aug 2026 — HTTP 500 then 404, "
+                "never probed under a prefill"),
     HostedModel("moonshotai/Kimi-K3",                 "kimi",    False, False, 0.96,
                 "API refuses logprobs: DFLASH speculative decoding"),
 ]
@@ -140,3 +153,16 @@ def scoreable_hosted() -> list[HostedModel]:
     it has one it does not go on a card next to these.
     """
     return [m for m in NEBIUS if m.logprobs and m.first_token_ok]
+
+
+def prefill_scoreable_hosted() -> list[HostedModel]:
+    """Hosted models readable ONLY with a prefill.
+
+    Deliberately not merged into `scoreable_hosted()`. A prefilled cell
+    measures the token after a phrase we supplied rather than how the model
+    chooses to begin; `prefill` is inside the harness hash for that reason, and
+    these models belong in their own group on a card, never pooled with the
+    models above and never inside the self-hosted mean.
+    """
+    return [m for m in NEBIUS
+            if m.logprobs and not m.first_token_ok and m.prefill_ok]

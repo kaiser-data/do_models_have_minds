@@ -42,6 +42,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -594,8 +595,15 @@ def main() -> int:
         # unprefilled file. Same reason hosted cells do not land in results/:
         # two measurements with one filename is how a comparison quietly
         # becomes a comparison of methods.
-        out = Path("site/hosted_scoreability_prefill.json" if args.prefill
-                   else "site/hosted_scoreability.json")
+        # The prefill goes in the NAME, for the reason it goes in the harness
+        # hash: two prefills are two measurements. A fixed filename let a
+        # second probe silently overwrite a first one that had recovered two
+        # models, and the macros then reported zero recovered.
+        if args.prefill:
+            slug = re.sub(r"[^a-z0-9]+", "-", args.prefill.lower()).strip("-")
+            out = Path(f"site/hosted_scoreability_prefill-{slug}.json")
+        else:
+            out = Path("site/hosted_scoreability.json")
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(report, indent=2) + "\n")
         print(f"wrote {out}")

@@ -3,41 +3,41 @@
     {
       "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
       "badge": "FLOOR_CORRECTED",
-      "value": -0.023455476414676824,
-      "raw_coherence": 0.9067999999999999,
-      "floor": 0.9302554764146768,
+      "value": -0.022049078075830564,
+      "raw_coherence": 0.9109999999999999,
+      "floor": 0.9330490780758305,
       "floor_magnitude": null,
       "arithmetic_component": null,
       "interval_raw": [
-        0.8772354441374409,
-        0.9285735914077787
+        0.8816905887106666,
+        0.9320574521108606
       ],
       "interval_floor": [
-        0.9042028101480832,
-        0.949240257054982
+        0.9087605988391466,
+        0.9526214736402262
       ],
       "decisive_fraction": {
-        "N_minus": 0.6536,
-        "R": 0.7568
+        "N_minus": 0.6604,
+        "R": 0.7598
       },
       "mean_abs_deviation": {
-        "N_minus": 0.3412648344989938,
-        "R": 0.3873689344936474
+        "N_minus": 0.34326705637143995,
+        "R": 0.3882447244483487
       },
-      "decisive_ratio_R_over_Nminus": 1.1578947368421053,
+      "decisive_ratio_R_over_Nminus": 1.1505148394912175,
       "shuffled_null": {
-        "N_minus": 0.6401670006680028,
-        "R": 0.5006666666666667
+        "N_minus": 0.6213527054108217,
+        "R": 0.49733333333333335
       },
       "split_spread": 0.028000000000000025,
-      "n_design_replicates": 1,
+      "n_design_replicates": 2,
       "design_noise_floor": null,
       "clears_floor": null,
       "floor_margin": null,
-      "slot_a_bias": 0.5879571818964743,
+      "slot_a_bias": 0.5846963274688947,
       "transitivity": {
-        "N_minus": 0.9922783272601076,
-        "R": 0.9820890381469043
+        "N_minus": 0.9919323807347463,
+        "R": 0.983812491522871
       },
       "mean_answer_mass": {
         "N_minus": 0.9998309616835493,
@@ -51,9 +51,52 @@
     },
     {
       "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
-      "badge": "NOT_ASSESSED",
-      "reason": "no N- floor cell for this model",
-      "raw_coherence": 0.9012
+      "badge": "FLOOR_CORRECTED",
+      "value": -0.03299127411449421,
+      "raw_coherence": 0.9012,
+      "floor": 0.9341912741144942,
+      "floor_magnitude": null,
+      "arithmetic_component": null,
+      "interval_raw": [
+        0.8727939491335183,
+        0.9250760811353939
+      ],
+      "interval_floor": [
+        0.9087605988391466,
+        0.9526214736402262
+      ],
+      "decisive_fraction": {
+        "N_minus": 0.5096,
+        "R": 0.6944
+      },
+      "mean_abs_deviation": {
+        "N_minus": 0.2808410948831759,
+        "R": 0.3575963955139533
+      },
+      "decisive_ratio_R_over_Nminus": 1.3626373626373625,
+      "shuffled_null": {
+        "N_minus": 0.6573333333333333,
+        "R": 0.49333333333333335
+      },
+      "split_spread": 0.04200000000000004,
+      "n_design_replicates": 1,
+      "design_noise_floor": null,
+      "clears_floor": null,
+      "floor_margin": null,
+      "slot_a_bias": 0.5885048165423316,
+      "transitivity": {
+        "N_minus": 0.9886077050178277,
+        "R": 0.9862223370360803
+      },
+      "mean_answer_mass": {
+        "N_minus": 0.9938280828533865,
+        "R": 0.9999724204818627
+      },
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": {
+        "N_minus": "6294730d415cc8ce",
+        "R": "55e4bbfa80fb5a4e"
+      }
     },
     {
       "model": "google/gemma-3-27b-it",
@@ -176,6 +219,25 @@
     },
     {
       "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "arm": "N_minus",
+      "design_seed": 20260816,
+      "coherence": 0.9358426797369841,
+      "coherence_spread": 0.018148296593186286,
+      "shuffled_null": 0.6025384101536405,
+      "decisive_fraction": 0.6672,
+      "mean_abs_deviation": 0.34526927824388604,
+      "sd_pair_prob": 0.3475767775345849,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9997887408269489,
+      "slot_a_bias": 0.44100188499120796,
+      "transitivity": 0.9915864342093851,
+      "completeness": 0.8236,
+      "frac_near_indifferent": 0.1208,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "2ada53588e975539"
+    },
+    {
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
       "arm": "R",
       "design_seed": 20260815,
       "coherence": 0.9067999999999999,
@@ -192,6 +254,44 @@
       "frac_near_indifferent": 0.1052,
       "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
       "harness_hash": "9f78e3be1c8f4e05"
+    },
+    {
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "arm": "R",
+      "design_seed": 20260816,
+      "coherence": 0.9151999999999999,
+      "coherence_spread": 0.018000000000000016,
+      "shuffled_null": 0.494,
+      "decisive_fraction": 0.7628,
+      "mean_abs_deviation": 0.3891205144030499,
+      "sd_pair_prob": 0.4256023906537614,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9999964531014691,
+      "slot_a_bias": 0.581435473041315,
+      "transitivity": 0.9855359448988377,
+      "completeness": 0.8568,
+      "frac_near_indifferent": 0.1032,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "d999e15ba8b7c2db"
+    },
+    {
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "arm": "N_minus",
+      "design_seed": 20260815,
+      "coherence": 0.9341912741144942,
+      "coherence_spread": 0.017919372882310824,
+      "shuffled_null": 0.6573333333333333,
+      "decisive_fraction": 0.5096,
+      "mean_abs_deviation": 0.2808410948831759,
+      "sd_pair_prob": 0.2903736260487232,
+      "n_pairs": 2500,
+      "mean_answer_mass": 0.9938280828533865,
+      "slot_a_bias": 0.6208789696627641,
+      "transitivity": 0.9886077050178277,
+      "completeness": 0.7612,
+      "frac_near_indifferent": 0.1412,
+      "battery_sha256": "342db046213099ad5f664fe9d644ddaf2085b372632dacf72bd06be7b8d08a6b",
+      "harness_hash": "6294730d415cc8ce"
     },
     {
       "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
