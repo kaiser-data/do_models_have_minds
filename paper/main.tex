@@ -1851,6 +1851,27 @@ under a rephrasing of the question (\S\ref{sec:rotation}). A measurement that
 survives the removal of meaning cannot, on its own, be evidence about meaning.
 That is a result about an instrument.
 
+\paragraph{The same failure on the instrument people trust most: asking.} The
+forced choice is an unusual way to interrogate a model; the usual way is to ask
+it. So we ran the asking against a property whose true value we could establish
+independently. \HostedSysNProbed{} hosted models were asked what preceded their
+turn, in wordings crossed on whether the question presupposes that a system
+prompt exists. Presupposing wordings drew a quoted prompt
+\HostedSysPremiseAsserted{} times in \HostedSysPremiseN{}; wordings presupposing
+nothing drew one \HostedSysNoPremiseAsserted{} times in \HostedSysNoPremiseN{}.
+For \HostedSysNRuledOut{} of the \HostedSysNProbed{} models the quotes are
+provably fabricated, because the provider's own prompt-token accounting bounds
+the fixed non-user overhead at \HostedSysMaxRuledOutTok{} tokens or fewer ---
+too little to hold the text produced (\S\ref{sec:limits}). Naming an exact
+string to reply with when the answer is ``nothing'' moves the rate
+(\HostedSysHatchPct{}\% against \HostedSysNoHatchPct{}\%) but only within the
+presupposing condition, so the premise and not the response format carries the
+effect. This is not a claim that models cannot introspect. It is the narrower
+and better-evidenced one that a fluent, confident, first-person report about a
+hidden state can be produced by the question alone, on a case where we happen to
+know the answer --- and the value-elicitation literature works almost entirely
+on cases where we do not.
+
 \paragraph{Why it cannot be disproof.} A system with rich inner states could
 still produce form-driven answers on a poorly-anchored instrument. Humans do:
 acquiescence bias, question-order effects and response sets are well documented,
@@ -2244,6 +2265,24 @@ whose chat template injects a large standing preamble is excluded from
 cross-model comparison of absolute values, though its within-model arm contrast
 is unaffected. No closed-weight model is included, and none can be: the method
 needs the first-token distribution.
+
+\paragraph{What the hosted models were actually sent, now measured.} Server-side
+templating leaves no artifact proving what a hosted model received, and this
+paper previously recorded that as unobservable. It is unobservable but not
+unmeasurable: the provider's own \texttt{prompt\_tokens}, regressed on a filler
+repeated a known number of times, identifies the fixed non-user overhead with no
+tokenizer and no cooperation from the model, and the fit is exact.
+\HostedSysNRuledOut{} of \HostedSysNProbed{} hosted models come to
+\HostedSysMaxRuledOutTok{} tokens or fewer, which leaves no room for an injected
+preamble --- a measured negative where there was a hedge.
+\HostedSysUnresolvedModel{} comes to \HostedSysUnresolvedTok{}, accounted for by
+the dated system block its template supplies unconditionally
+(\HostedSysCandidateTok{} tokens, priced on the server's own tokenizer, leaving
+\HostedSysScaffoldTok{} of scaffold). That model carries the hosted scaling
+result of \S\ref{sec:scale}, so the one hosted cell this paper leans on is the
+one answering under a preamble we did not send, and under a date stamp that is
+not the date. The bound is one-directional by construction: a small overhead
+rules a preamble out, a large one only leaves room for one.
 
 \paragraph{A correction, recorded rather than quietly fixed.} An earlier version
 of this analysis was built partly on truncated result files --- cells killed

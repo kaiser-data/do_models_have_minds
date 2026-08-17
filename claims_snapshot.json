@@ -152,7 +152,10 @@
       "LlamaThreeThreeSevenZeroBInstructHostN": "0.920",
       "LlamaThreeThreeSevenZeroBInstructHostR": "0.928",
       "LlamaThreeThreeSevenZeroBInstructHostReps": "3",
-      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.008"
+      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.008",
+      "HostedSysUnresolvedModel": "Llama-3.3-70B-Instruct",
+      "HostedSysUnresolvedTok": "36",
+      "HostedSysMaxRuledOutTok": "10"
     },
     "persona-needs-an-empty-slot-control": {
       "PdNegMagR": "4.61",

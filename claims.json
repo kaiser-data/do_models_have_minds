@@ -475,12 +475,15 @@
         "LlamaThreeThreeSevenZeroBInstructHostN",
         "LlamaThreeThreeSevenZeroBInstructHostR",
         "LlamaThreeThreeSevenZeroBInstructHostReps",
-        "LlamaThreeThreeSevenZeroBInstructHostResid"
+        "LlamaThreeThreeSevenZeroBInstructHostResid",
+        "HostedSysUnresolvedModel",
+        "HostedSysUnresolvedTok",
+        "HostedSysMaxRuledOutTok"
       ],
       "evidence": {
         "models": "1",
         "replicates_per_cell": "\\LlamaThreeThreeSevenZeroBInstructHostReps",
-        "note": "Now at \\HostedReps independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of \\HostedFloor. The residual \\HostedClears that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design seed with no floor, where only a directional statement was available. Served by a hosted API, a different serving stack with a different harness hash, so it is reported beside the self-hosted ladder and never inside its mean. The mechanism reproduces here too: decisiveness \\LlamaThreeThreeSevenZeroBInstructHostDecR percent on real pairs against \\LlamaThreeThreeSevenZeroBInstructHostDecN percent on invented ones.",
+        "note": "Now at \\HostedReps independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of \\HostedFloor. The residual \\HostedClears that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design seed with no floor, where only a directional statement was available. Served by a hosted API, a different serving stack with a different harness hash, so it is reported beside the self-hosted ladder and never inside its mean. The mechanism reproduces here too: decisiveness \\LlamaThreeThreeSevenZeroBInstructHostDecR percent on real pairs against \\LlamaThreeThreeSevenZeroBInstructHostDecN percent on invented ones. The harness under this cell is now measured rather than assumed: \\HostedSysUnresolvedModel is the one hosted model whose template supplies a dated system block we did not send (\\HostedSysUnresolvedTok tokens of fixed overhead against \\HostedSysMaxRuledOutTok or fewer on the cleared models), so this claim's model is the one carrying an uncontrolled preamble -- see hosted-preamble-measurable. It is stated here because the claim rests on a single model and that model is the exception.",
         "computed_by": "scripts/hosted_sweep.py then scripts/build_card.py --results results_hosted"
       },
       "what_would_falsify": "A residual at this scale that clears its own design noise floor, or a floor that collapses with more replicates while the residual holds.",
