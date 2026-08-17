@@ -63,6 +63,35 @@ THEMES = {
 PARAMS = {m.hf_id: m.params_b for m in SELF_HOSTED}
 FAMILY = {m.hf_id: m.family for m in SELF_HOSTED}
 
+# The hosted models, for both the state-space and the scale figure. This was
+# defined twice for a while -- once here and once above fig_scale_ladder -- with
+# the same keys, so nothing broke and nothing would have warned if they had
+# drifted apart. One definition.
+#
+# The hosted models, so the state-space figure can draw them. Sizes are the
+# published totals; the MoE entries are total rather than active parameters,
+# which is the number the x-axis of a scale figure is read as. HostedModel
+# carries no parameter count -- the roster deliberately does not invent one for
+# models whose size is not public -- so these four are listed here, where the
+# figure that needs them lives, and only these four because only these four have
+# a size anyone published.
+HOSTED_PARAMS = {
+    "google/gemma-3-27b-it": 27.0,
+    "Qwen/Qwen3-30B-A3B-Instruct-2507": 30.0,
+    "meta-llama/Llama-3.3-70B-Instruct": 70.0,
+    "Qwen/Qwen3-235B-A22B-Instruct-2507": 235.0,
+}
+HOSTED_FAMILY = {
+    "google/gemma-3-27b-it": "gemma",
+    "Qwen/Qwen3-30B-A3B-Instruct-2507": "qwen",
+    "meta-llama/Llama-3.3-70B-Instruct": "llama",
+    "Qwen/Qwen3-235B-A22B-Instruct-2507": "qwen",
+}
+PARAMS.update(HOSTED_PARAMS)
+FAMILY.update(HOSTED_FAMILY)
+if "llama" not in FAMILY_ORDER:
+    FAMILY_ORDER.append("llama")
+
 
 def _shade(hex_colour: str, lightness: float) -> str:
     """Step a hue's lightness. Used for size-within-family.
@@ -142,6 +171,11 @@ def _rows(tiles, cells=None):
             continue
         out.append({
             "model": m, "short": m.split("/")[-1],
+            # Which serving stack produced this path. Hosted cells are drawn in
+            # the same axes because the question "does scale rescue it" is asked
+            # of one picture, and drawn with a different marker because they are
+            # a different harness and are never pooled into the ladder's mean.
+            "hosted": m in HOSTED_PARAMS,
             # No defaults. A model missing from PARAMS would silently plot at a
             # guessed size on a SCALE figure, which is the one axis the figure
             # exists to argue about; "other" would quietly merge families.
@@ -160,7 +194,8 @@ def _rows(tiles, cells=None):
     return out
 
 
-def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
+def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
+                    hosted=None):
     """Coherence against conviction, one path per model as meaning is stripped.
 
     Both axes span their **full operating range** — accuracy from chance (0.5) to
@@ -170,10 +205,16 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
     paths still fall far more than they shift.
     """
     th = THEMES[theme]; _style(th)
-    rows = _rows(tiles, cells)
+    # Hosted tiles are appended rather than merged: they go through the same
+    # _rows() so the geometry is identical, and _rows tags them so they draw
+    # dashed with a diamond start. Nothing here averages the two harnesses.
+    rows = _rows(tiles, cells) + _rows(hosted or [], cells)
     if not rows:
         return
-    base = {f: th["cat"][i] for i, f in enumerate(FAMILY_ORDER)}
+    # Cyclic: FAMILY_ORDER grew past the palette when llama joined via the
+    # hosted models, and a bare index raises rather than reusing a colour.
+    base = {f: th["cat"][i % len(th["cat"])]
+            for i, f in enumerate(FAMILY_ORDER)}
     colour = _model_colours(rows, base)
 
     fig, ax = plt.subplots(figsize=(9.6, 7.4))
@@ -211,14 +252,21 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
     for r in order:
         (x0, y0), (x1, y1), (x2, y2) = r["path"]
         c = colour[r["model"]]
-        ax.plot([x0, x1], [y0, y1], color=c, lw=1.9, alpha=0.5,
+        # Hosted paths are dashed and their start marker is a diamond. Same
+        # axes, because "does scale rescue it" is one question; different mark,
+        # because a different serving stack is a different harness and these
+        # points are never inside the ladder's mean.
+        hosted = r.get("hosted", False)
+        ls = (0, (4, 2)) if hosted else "-"
+        ax.plot([x0, x1], [y0, y1], color=c, lw=1.9, alpha=0.5, linestyle=ls,
                 solid_capstyle="round", zorder=2)
         ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
                     arrowprops=dict(arrowstyle="-|>,head_width=0.32,head_length=0.65",
-                                    color=c, lw=1.9, alpha=0.95,
+                                    color=c, lw=1.9, alpha=0.95, linestyle=ls,
                                     shrinkA=2, shrinkB=0), zorder=3)
         a = _area(r["params"])
         ax.scatter([x0], [y0], s=a, color=c, zorder=5,
+                   marker="D" if hosted else "o",
                    edgecolor=th["surface"], linewidth=1.6)
         ax.scatter([x1], [y1], s=a * 0.30, color=c, zorder=5, alpha=0.9,
                    edgecolor=th["surface"], linewidth=1.0)
@@ -271,16 +319,6 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None):
     fig.savefig(out, format=Path(out).suffix.lstrip(".") or "svg",
                 bbox_inches="tight", transparent=True)
     plt.close(fig)
-
-
-# Params for hosted models, which the card does not carry. Only used to place
-# a marker on a log axis; nothing is computed from these.
-HOSTED_PARAMS = {
-    "google/gemma-3-27b-it": 27,
-    "meta-llama/Llama-3.3-70B-Instruct": 70,
-    "Qwen/Qwen3-235B-A22B-Instruct-2507": 235,
-    "Qwen/Qwen3-30B-A3B-Instruct-2507": 30,
-}
 
 
 def fig_scale_ladder(tiles, out: Path, theme: str = "light", hosted=None):
@@ -417,7 +455,8 @@ def main() -> None:
     made = []
     for theme in [t.strip() for t in args.themes.split(",") if t.strip()]:
         sfx = "" if theme == "light" else "-dark"
-        fig_state_space(tiles, out / f"fig1_state_space{sfx}.{ext}", theme, card['cells'])
+        fig_state_space(tiles, out / f"fig1_state_space{sfx}.{ext}", theme,
+                        card['cells'], hosted=hosted_tiles)
         fig_scale_ladder(tiles, out / f"fig2_scale{sfx}.{ext}", theme,
                          hosted=hosted_tiles)
         fig_strength_distribution(Path(args.results), args.exemplar,
