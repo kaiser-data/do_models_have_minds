@@ -15,6 +15,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{array}
+\usepackage{subcaption}
 
 \graphicspath{{figs/}}
 
@@ -41,53 +42,49 @@ them.}
 
 \begin{abstract}
 \noindent
-Preference-coherence fits a Thurstonian model to a model's pairwise choices and
-reads high held-out accuracy as evidence of emergent values. We add the missing
-control: the same battery with every referent replaced by an invented word,
-holding the prompt, pair set, fit and metric fixed. On
+Preference-coherence fits a Thurstonian model to pairwise choices. High
+held-out accuracy is read as evidence of emergent values. We add the missing
+control: the same battery with every referent replaced by an invented word.
+Prompt, pair set, fit and metric are held fixed. On
 \NModels{} open-weight models at \NDesignReps{} design seeds each, coherence is
 \MeanFloor{} on outcomes that refer to nothing against \MeanR{} on real ones ---
-a residual of \MeanResidual{}, and \NFailsFloor{} of \NModels{} models do not
-clear their own replicate floor. The metric keeps only choice direction:
-conviction collapses \MedianDecisiveRatio$\times$ on nonsense while
-direction accuracy barely moves. A discarded channel of the same forward pass
-separates the arms at AUROC \DetBestAuroc{} against
-\DetKeptAuroc{} for the channel coherence keeps. Installed personas still
-displace real outcomes further than invented ones, so the instrument is not
-blunt. The metric is not broken. It is unanchored.
+a residual of \MeanResidual{}. \NFailsFloor{} of \NModels{} models do not clear
+their own replicate floor. The metric keeps only choice direction: conviction
+collapses \MedianDecisiveRatio$\times$ on nonsense, while direction accuracy
+barely moves. A discarded channel of the same forward pass separates the arms at
+AUROC \DetBestAuroc{}, against \DetKeptAuroc{} for the channel coherence keeps.
+Installed personas still displace real outcomes further than invented ones, so
+the instrument is not blunt. The metric is not broken. It is unanchored.
 \end{abstract}
 
 \section{What we established}
 
 \textbf{A coherence score of \MeanR{} survives the removal of all meaning,
-falling only to \MeanFloor{}.} We built the null arm that preference-coherence
-work has not had --- the same outcomes with invented referents --- and ran it as
-a measurement rather than a demonstration: \NModels{} models across
-\NFamilies{} families, \NCells{} cells, \NSplits{} splits and \NDesignReps{}
-independent design replicates per cell, every cell scored against its own
-replicate noise floor. The result is a card, not a headline.
+falling only to \MeanFloor{}.} The null arm is the same outcomes with invented
+referents. It is run as a measurement, not a demonstration: \NModels{} models,
+\NFamilies{} families, \NCells{} cells, \NSplits{} splits, \NDesignReps{}
+design replicates per cell. Every cell is scored against its own replicate
+noise floor.
 
-\textbf{Three findings, in the order we would defend them.} The mechanism is
-firm: thresholding a preference to a hard label keeps direction and discards
-strength, so a model that is uniformly near-indifferent about gibberish scores
-as coherent about it (\S\ref{sec:mech}). The dissociation is firm: the
-information the metric throws away separates real from invented outcomes far
-better than the information it keeps (\S\ref{sec:det}). The headline residual is
-marginal and we report it as such --- \MeanResidual{}, bootstrap 95\% CI
+\textbf{Three findings, in defensibility order.} The mechanism is
+firm. Thresholding a preference to a hard label keeps direction and discards
+strength. A model uniformly near-indifferent about gibberish therefore scores as
+coherent about it (\S\ref{sec:mech}). The dissociation is firm. What the metric
+discards separates real from invented outcomes better than what it keeps
+(\S\ref{sec:det}). The headline residual is marginal --- \MeanResidual{},
+bootstrap 95\% CI
 [\ResidCiLo, \ResidCiHi], \NPositiveModels{} of \NModels{} positive at a
-sign-test $p$ of \ResidSignP{} (\S\ref{sec:resid}). That the residual is small
-\emph{is} the claim; it is not a caveat on one.
+sign-test $p$ of \ResidSignP{} (\S\ref{sec:resid}). The small residual is the
+claim, not a caveat on one.
 
 \textbf{The instrument is not simply blunt, which is what makes the flat result
 mean something.} An installed persona displaces real outcomes substantially
 further than invented ones in \PersonaAbovePointThree{} of \NPersonaCells{}
-conditions (\S\ref{sec:persona}), so the pipeline does register a real change of
-preference when one is induced. A metric that could not detect anything would
-explain the flatness away.
+conditions (\S\ref{sec:persona}): the pipeline registers an induced change of
+preference, so the flat result is not insensitivity.
 
-\textbf{The practical recommendation is one line.} Any claim that a coherence
-number reflects values should carry the same number computed on outcomes that
-mean nothing. That arm cost one battery and a few dollars of compute.
+\textbf{Recommendation.} Any claim that a coherence number reflects values
+should report the same number on outcomes that mean nothing.
 
 \section{Method}\label{sec:method}
 
@@ -96,15 +93,15 @@ battery; \armNp{} replaces every referent with an invented word but keeps the
 magnitudes; \armNm{} removes the magnitudes too. The prompt, the pair set, the
 fit, the split scheme and the metric are held fixed across arms, so
 $\armR \to \armNp$ isolates the referent and $\armNp \to \armNm$ the arithmetic.
-Choices are read from the first-token logit distribution rather than sampled,
-which removes temperature and seed from the design and restricts the study to
+Choices are read from the first-token logit distribution, not sampled. This
+removes temperature and seed from the design. It also restricts the study to
 models that expose logprobs.
 
 \textbf{Every cell is scored against its own noise floor, not against zero.} A
 design replicate redraws the outcome subsample and the pair set under a new
-seed; the spread of a cell across \NDesignReps{} such replicates is that cell's
-design noise floor. A residual smaller than that floor is not a finding about
-the model, and we say so per model rather than in aggregate. \NHosted{} larger
+seed. The spread across \NDesignReps{} replicates is that cell's design noise
+floor. A residual below its floor is not a finding about the model. We report
+this per model, not in aggregate. \NHosted{} larger
 models reached over a hosted API are reported \emph{beside} the ladder and never
 inside its mean: different serving stack, different harness hash
 (Appendix~\ref{app:figs}).
@@ -117,13 +114,10 @@ Appendix Figure~\ref{fig:pipeline}; the claims ledger
 (\NClaimsEstablished{} established, \NClaimsProvisional{} provisional) is
 Appendix Table~\ref{tab:claims}.
 
-\textbf{What this document leaves out.} Two tracks run in the archival paper and
-not here: what models \emph{say} about a disposition they were given
-(Appendix Table~\ref{tab:stated}), and whether an instruction to conceal a
-disposition changes what they choose as well as what they say
-(Appendix Table~\ref{tab:revealed}, with directive compliance in
-Table~\ref{tab:comply}). They are secondary to the claim above and are reported
-in full rather than summarised here.
+\textbf{Not covered here.} Two secondary tracks --- stated disposition
+(App.~Table~\ref{tab:stated}) and concealment under directive
+(App.~Tables~\ref{tab:revealed},~\ref{tab:comply}) --- are reported in full in
+the archival paper.
 
 \section{Results}
 
@@ -142,13 +136,13 @@ deviation (\ResidSD) is larger than the mean.
 real outcomes and go near-indifferent on invented ones. The other
 \NClearsFlat{}, daggered in Table~\ref{tab:main}, are decisive on under
 \FlatDecisiveThreshPct\% of pairs on \emph{both} arms: they clear by being
-uniformly near-indifferent, which is not a value system losing its grip.
+uniformly near-indifferent on both.
 
 \textbf{The residual is the referent step alone.} Splitting it at the middle
 arm, replacing the referents costs \MeanReferent{} while removing the magnitudes
 on top of that costs \MeanArith{} (SD \ArithSD{}, \NArithPositive{} of
-\ArmNPlusModels{} positive). On this battery the arithmetic carries none of the
-effect, and a study varying only the numbers would have measured nothing.
+\ArmNPlusModels{} positive). The arithmetic carries none of the effect on this
+battery.
 
 \textbf{Within the one family that has a ladder, the residual falls as models
 grow} --- \LadderResidFall{} across \LadderNSizes{} sizes, because the floor
@@ -182,33 +176,24 @@ $p = 0.99$. On real outcomes the \NDecisiveModels{} models that commit anywhere
 at all commit on \MeanDecisiveR\% of pairs; on invented outcomes the same six
 commit on \MeanDecisiveN\% --- a median collapse of
 \MedianDecisiveRatio$\times$ --- while direction accuracy barely moves
-(Figure~\ref{fig:strength}). A model almost perfectly indifferent about
-gibberish, but \emph{consistently} so, scores as coherent about it. This is a
-property of the metric, not a failure of the fit.
+(Fig.~\ref{fig:channels}a). Consistent near-indifference therefore scores as
+coherence. This is a property of the metric, not of the fit.
 
-\begin{figure}[tb]
-\centering
-\includegraphics[width=.80\textwidth]{fig3_strength.pdf}
-\caption{\textbf{On real outcomes preference mass moves to the edges; on
-invented outcomes it piles up at indifference.} Coherence reads only which side
-of $0.5$ each pair falls on, so both distributions score alike. The same story
-appears as trajectories in Appendix Figure~\ref{fig:state}.}
-\label{fig:strength}
-\end{figure}
+
 
 \subsection{The model can tell. The metric does not look.}\label{sec:det}
 
 \textbf{A channel of the same forward pass that coherence discards separates
 real from invented outcomes at AUROC \DetBestAuroc{}, against \DetKeptAuroc{}
 for the channel coherence keeps.} Every pair was run in both arms, so for one
-model and one pair index there are two forward passes differing only in whether
-the outcomes refer to anything --- verified-clean negatives and verified
-positives, matched by construction rather than by selection
-(Figure~\ref{fig:detector}). Thresholding to a hard label discards magnitude and
-renormalising over the two options discards the mass placed on neither; those
-are precisely the quantities the hallucination-detection literature reads
-\citep{farquhar2024semantic,kossen2024sep}. The information is in the forward
-pass. The metric declines to look at it.
+model and pair index there are two forward passes, differing only in whether the
+outcomes refer to anything. Negatives and positives are matched by construction,
+not by selection (Fig.~\ref{fig:channels}b). Thresholding to a hard label
+discards magnitude; renormalising over the two options discards the mass placed
+on neither. These are the quantities the hallucination-detection literature
+reads
+\citep{farquhar2024semantic,kossen2024sep}: the information is present in the
+forward pass and unused by the metric.
 
 \textbf{This is an oracle bound, not a deployable detector.} The arm labels are
 in hand, so \DetBestAuroc{} is an upper bound on what such a channel could do
@@ -218,11 +203,31 @@ at the nonsense.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=.80\textwidth]{fig4_detector.pdf}
-\caption{\textbf{The discarded channel separates the arms; the kept channel does
-not.} Per-model separation for each channel of one forward pass. Arm labels are
-in hand, so these are oracle upper bounds and are labelled as such.}
-\label{fig:detector}
+\begin{subfigure}[t]{.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{fig3_strength.pdf}
+  \caption{What the metric keeps}\label{fig:strength}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{fig4_detector.pdf}
+  \caption{What it discards}\label{fig:detector}
+\end{subfigure}
+\caption{\textbf{The information that separates real from invented outcomes is
+in the forward pass, in the channel coherence throws away.}
+\textbf{(a)} Distribution of per-pair preference $p$ on real outcomes (mass at
+the edges) and on invented ones (mass at indifference), pooled over models.
+Coherence reads only which side of $p=0.5$ a pair falls on, so the two
+distributions score alike: direction is preserved while strength collapses
+\MedianDecisiveRatio$\times$.
+\textbf{(b)} Per-model separation of the two arms, one point per model, for the
+channel coherence keeps (hard label, AUROC \DetKeptAuroc{}) against a channel it
+discards (AUROC \DetBestAuroc{}). Every pair appears in both arms, so positives
+and negatives are matched by construction rather than selection.
+Arm labels are in hand throughout, making (b) an oracle upper bound on what such
+a channel could achieve without them, not a deployable detector. Per-model
+trajectories through this space: App.~Fig.~\ref{fig:state}.}
+\label{fig:channels}
 \end{figure}
 
 \section{The instrument is not blunt: personas move wanting, not only prose}
@@ -231,15 +236,14 @@ in hand, so these are oracle upper bounds and are labelled as such.}
 \textbf{An installed persona displaces real outcomes far more than invented ones
 in \PersonaAbovePointThree{} of \NPersonaCells{} conditions.} We install a
 dispositional trait (\emph{cautious} or \emph{ambitious}) at two depths --- user
-turn and system prompt, with a length-matched neutral system prompt so the two
-differ only in \emph{where} the trait sits --- and measure displacement on both
+turn and system prompt. A length-matched neutral system prompt makes the two
+differ only in \emph{where} the trait sits. Displacement is measured on both
 arms. The statistic
 $1 - \lVert \Delta_{\text{invented}} \rVert / \lVert \Delta_{\text{real}} \rVert$
 is $1.0$ for a pure change of preference and $0.0$ for a pure change of style
-(Figure~\ref{fig:persona}). One model under one persona is the informative
-exception at \PersonaMin{}: it moves invented outcomes \emph{further} than real
-ones, which is what pure style looks like, while behaving like the others under
-the opposite trait.
+(Figure~\ref{fig:persona}). One model under one persona reaches \PersonaMin{},
+moving invented outcomes further than real ones --- pure style --- while
+behaving like the rest under the opposite trait.
 
 \textbf{Which persona is installed matters about two and a half times more than
 where it is installed} --- \DepthSpread{} average shift between depths against
@@ -249,12 +253,12 @@ where it is installed} --- \DepthSpread{} average shift between depths against
 baseline the effect reads \PersRefBare{} (\PersRefBarePct\% of
 \PersRefTotal{} conditions below the diagonal); against the length-matched
 neutral prompt it reads \PersRefNeutral{} (\PersRefNeutralPct\%). We report the
-second. The empty-slot control is what separates "the persona changed the
-preferences" from "any system prompt at all changed them".
+second: the empty-slot control separates the trait's effect from that of
+installing any system prompt.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=.78\textwidth]{fig5_persona.pdf}
+\includegraphics[width=.66\textwidth]{fig5_persona.pdf}
 \caption{\textbf{Points below the diagonal are personas that moved preference,
 not prose.} Displacement on invented outcomes against displacement on real ones,
 one point per model $\times$ persona $\times$ depth. On the diagonal a persona
@@ -263,38 +267,37 @@ writing.}
 \label{fig:persona}
 \end{figure}
 
-\section{Three checks that came out in the metric's favour}\label{sec:favour}
+\section{Three controls that favoured the metric}\label{sec:favour}
 
 \textbf{Put a real outcome and a meaningless one in the same comparison and
 models prefer the real one, in proportion to how much they like it.}
 Preference for the real outcome runs \MixPreferRealLo{} to \MixPreferRealHi{}
-across \MixNModels{} models --- above indifference everywhere. With a meaningful
-option present, the choice does read outcome content; the flat result is about
-what the \emph{fit} certifies, not about blindness.
+across \MixNModels{} models, above indifference everywhere. Choice reads outcome
+content when a meaningful option is present; the flat result concerns what the
+fit certifies, not comprehension.
 
 \textbf{Given the option to decline, the floor does not survive as an
 artifact of forced choice.} Adding a ``neither'' option across \NeutNCells{}
 cells on \NeutNModels{} models shifts the floor by \NeutFloorShift{} on the one
 model where the comparison is clean, and \NeutNRefuse{} models refuse the
-invented arm outright --- which is the honest reading of the arm, not a failure
-of it (Appendix Table~\ref{tab:neutral}).
+invented arm outright (App.~Table~\ref{tab:neutral}).
 
 \textbf{One of our own effects did not survive its control, and we withdrew
 it.} Individual pairs where an invented outcome beats a real one number
 \AvoidFlipsRaw{} of \AvoidNPairsTotal{} on the counterbalanced mean, but only
 \AvoidFlipsRobust{} (\AvoidFlipsPct\%) flip in \emph{both} presentation orders,
-and \AvoidNoFlipModels{} of \AvoidNModels{} models have none. The first draft of
-that section reported the larger number as a finding.
+and \AvoidNoFlipModels{} of \AvoidNModels{} models have none. An earlier draft
+reported the raw count as a finding; it is withdrawn.
 
 \section{What is new here}\label{sec:new}
 
 \textbf{The foil arm, the noise floor, and the detector dissociation are this
 weekend's contribution; the control discipline is borrowed and cited.}
-\citet{riossialer2026loyalties}, from the previous sprint, report that group
-spread alone is worthless as evidence without a base-model control. We take that
-principle --- draw the null as an explicit locus rather than an invisible zero
---- and not its construction: their control is a base model and their null a
-point in a PCA plane, ours is an invented-outcome arm and our null a diagonal.
+\citet{riossialer2026loyalties} report that group spread alone is not evidence
+without a base-model control. We take the principle --- draw the null as an
+explicit locus, not an invisible zero --- and not its construction. Their
+control is a base model and their null a point in a PCA plane; ours is an
+invented-outcome arm and a diagonal.
 Relative to published preference-coherence work \citep{mazeika2025utility}, what
 is new is that the outcomes' meaning is varied at all, that each cell carries a
 replicate floor, and that the arms are contrasted through a channel the metric
@@ -302,9 +305,9 @@ discards. The Thurstonian measurement itself is theirs, reimplemented from the
 published equations.
 
 \textbf{A self-report checked against ground truth, which coherence work cannot
-do.} We applied the same discipline to a second instrument. Asked what preceded
-their turn, \HostedSysNProbed{} hosted models were given wordings crossed on
-whether the question presupposes that a system prompt exists. Presupposing
+do.} The same discipline, on a second instrument. \HostedSysNProbed{} hosted
+models were asked what preceded their turn. Wordings were crossed on whether the
+question presupposes that a system prompt exists. Presupposing
 wordings elicited a quoted prompt \HostedSysPremiseAsserted{} times in
 \HostedSysPremiseN{}; wordings presupposing nothing, \HostedSysNoPremiseAsserted{}
 in \HostedSysNoPremiseN{}. The quotes are fluent, mutually inconsistent, and for
@@ -313,10 +316,9 @@ the provider's own prompt-token accounting fixes the fixed non-user overhead at
 \HostedSysMaxRuledOutTok{} tokens or fewer, too little to hold what was quoted.
 Naming an exact string to reply with when the answer is ``nothing'' moves the
 rate (\HostedSysHatchPct{}\% against \HostedSysNoHatchPct{}\%), but only inside
-the presupposing condition and accounts for none of the effect alone. A
-confident self-report about a hidden state is evidence about the question, not
-about the state --- which is the foil arm's lesson on an instrument where the
-truth happens to be checkable.
+the presupposing condition and accounts for none of the effect alone. A confident
+self-report about a hidden state is evidence about the question, not the
+state.
 
 \section{Limitations and Dual-Use / Ethical Considerations}\label{sec:limits}
 
