@@ -154,7 +154,7 @@ factor with its own cells and harness hash.</li>
 <figure><img src="fig0_pipeline.svg" alt="fig0_pipeline"><figcaption><b>The measurement pipeline.</b> One rented GPU stage; everything to its right is a pure fold over files on disk. Each arrow carries the gate that guards it.</figcaption></figure>
 
 <h2 id="results">Results</h2>
-<p>13 established and
+<p>15 established and
 11 provisional statements.
 Full evidence and per-claim numbers are on the
 <a href="statements.html">statements page</a>.</p>
@@ -194,6 +194,10 @@ Full evidence and per-claim numbers are on the
   <span class="fid">harness-not-invariant</span></td>
 <td class="obs">Cross-model comparisons in this literature may be comparing chat templates. &#x27;No system prompt&#x27; is a claim about what was sent, not about what was received.</td>
 <td class="unc">A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.</td></tr><tr>
+<td class="find"><b>What a hosted model is sent before our message is unobservable but not unmeasurable: the provider&#x27;s own prompt-token accounting fixes the non-user overhead at 10 tokens or fewer for 3 of 4 hosted models, which is too little to hold an injected preamble, and at 36 tokens for Llama-3.3-70B-Instruct, whose excess is accounted for by a dated system block its template supplies unconditionally.</b>
+  <span class="fid">hosted-preamble-measurable</span></td>
+<td class="obs">&#x27;We did not send a system prompt&#x27; is a claim about what was sent. For hosted models the paper could previously say nothing about what was received; it can now say that most of them received nothing extra, and name the one that did.</td>
+<td class="unc">A reported prompt length that does not move when a system message of known size is added, which would make the intercept an artifact of billing rather than of context; or a fit whose residual is non-z</td></tr><tr>
 <td class="find"><b>The forced choice is read from the first sampled token, and on most of the frontier that token is not the answer: of 10 hosted models measured under the verbatim prompt, 4 are scoreable and 6 are not.</b>
   <span class="fid">metric-cannot-read-most-frontier</span></td>
 <td class="obs">The method has a coverage limit that grows over time: newer models increasingly spend the first token elsewhere, so first-token scoring silently excludes the frontier.</td>
@@ -210,6 +214,10 @@ Full evidence and per-claim numbers are on the
   <span class="fid">persona-displacement</span></td>
 <td class="obs">The instrument is not merely insensitive: content-linked preference structure is detectable when it is present, and inducible.</td>
 <td class="unc">Persona cells clustering on the diagonal once more models are added.</td></tr><tr>
+<td class="find"><b>Asked what preceded their turn in a wording that presupposes a system prompt exists, hosted models quoted one 20 times in 32; asked in wordings that presuppose nothing, 0 times in 32 -- including on models whose token accounting shows there was no system prompt to quote.</b>
+  <span class="fid">premise-manufactures-a-preamble</span></td>
+<td class="obs">The paper asks models about their own hidden properties throughout. Here is the same procedure run against a property whose true value is known, and the answer tracks the question&#x27;s presupposition rather than the fact. A fluent, confident self-report is not evidence that the thing being reported on exists.</td>
+<td class="unc">A no-premise wording that elicits fabricated preambles at a comparable rate, which would make the effect a property of being asked at all rather than of the presupposition; or the pattern failing to r</td></tr><tr>
 <td class="find"><b>Conviction collapses on invented outcomes while the coherence score barely moves, because the metric thresholds to a hard label.</b>
   <span class="fid">strength-collapse</span></td>
 <td class="obs">The metric&#x27;s own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content.</td>
@@ -369,7 +377,7 @@ procedure returns on outcomes that refer to nothing &mdash; and that it survives
 a rewording. That raises the evidential bar rather than settling what sits
 behind it.</p>
 
-<p class="sub" style="margin-top:32px">Generated 17 Aug 2026 from
+<p class="sub" style="margin-top:32px">Generated  from
 <code>claims.json</code> and <code>paper/numbers.tex</code>. Raw cells:
 235 cells, 1{,}164{,}554 scored comparisons,
 653&nbsp;MB, published at

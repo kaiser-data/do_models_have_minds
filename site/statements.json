@@ -110,7 +110,7 @@
     "finding": "The floor is not an artifact of small models: on Llama-3.3-70B-Instruct, roughly eight times the largest model in our ladder, real-outcome coherence is 0.928 and the invented-outcome floor is 0.920, a residual of +0.008.",
     "interpretation": "Scale does not rescue the metric. The objection that this is a small-model artifact fails at the largest size we could measure with a noise floor.",
     "observation": {
-      "models": "4",
+      "models": "1",
       "replicates_per_cell": "3",
       "computed_by": "scripts/hosted_sweep.py then scripts/build_card.py --results results_hosted"
     },
@@ -123,12 +123,15 @@
       "LlamaThreeThreeSevenZeroBInstructHostN": "0.920",
       "LlamaThreeThreeSevenZeroBInstructHostR": "0.928",
       "LlamaThreeThreeSevenZeroBInstructHostReps": "3",
-      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.008"
+      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.008",
+      "HostedSysUnresolvedModel": "Llama-3.3-70B-Instruct",
+      "HostedSysUnresolvedTok": "36",
+      "HostedSysMaxRuledOutTok": "10"
     },
-    "note": "Now at 3 independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of 0.0208. The residual does not clear that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design seed with no floor, where only a directional statement was available. Served by a hosted API, a different serving stack with a different harness hash, so it is reported beside the self-hosted ladder and never inside its mean. The mechanism reproduces here too: decisiveness 87 percent on real pairs against 64 percent on invented ones.",
+    "note": "Now at 3 independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of 0.0208. The residual does not clear that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design seed with no floor, where only a directional statement was available. Served by a hosted API, a different serving stack with a different harness hash, so it is reported beside the self-hosted ladder and never inside its mean. The mechanism reproduces here too: decisiveness 87 percent on real pairs against 64 percent on invented ones. The harness under this cell is now measured rather than assumed: Llama-3.3-70B-Instruct is the one hosted model whose template supplies a dated system block we did not send (36 tokens of fixed overhead against 10 or fewer on the cleared models), so this claim's model is the one carrying an uncontrolled preamble -- see hosted-preamble-measurable. It is stated here because the claim rests on a single model and that model is the exception.",
     "source": "",
     "falsifier": "A residual at this scale that clears its own design noise floor, or a floor that collapses with more replicates while the residual holds.",
-    "grows_by": "Design seeds on this cell first -- one replicate is what keeps this provisional rather than established. Then a second frontier family at comparable scale, so the result is not one model's recipe.",
+    "grows_by": "The design seeds that made this established have been run, so what remains is breadth rather than depth: a second family at comparable scale, so the result is not one model's recipe, and the same model through both serving stacks, because hosted and self-hosted differ by harness hash and nothing here separates scale from stack.",
     "n_missing_macros": 0
   },
   {
@@ -202,6 +205,32 @@
     "source": "",
     "falsifier": "A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.",
     "grows_by": "Nothing; it is a fact about the templates. It is DISCHARGED, not grown. 1 of the injecting models can be equalised by supplying an explicit system prompt and re-running its cells. SmolLM3-3B cannot be equalised at all, so the honest options there are to exclude it from cross-family contrasts or to report the difference permanently -- and that choice has not been made.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "hosted-preamble-measurable",
+    "status": "established",
+    "section": "sec:limits",
+    "finding": "What a hosted model is sent before our message is unobservable but not unmeasurable: the provider's own prompt-token accounting fixes the non-user overhead at 10 tokens or fewer for 3 of 4 hosted models, which is too little to hold an injected preamble, and at 36 tokens for Llama-3.3-70B-Instruct, whose excess is accounted for by a dated system block its template supplies unconditionally.",
+    "interpretation": "'We did not send a system prompt' is a claim about what was sent. For hosted models the paper could previously say nothing about what was received; it can now say that most of them received nothing extra, and name the one that did.",
+    "observation": {
+      "hosted_models_probed": "4",
+      "cleared": "3",
+      "validity": "A provider billing a flat per-request overhead would look exactly like a clean intercept and nothing in the fit could reveal it, so the accounting is tested rather than assumed: adding a system message of known token cost moves the reported length by at least that much on every model. It does. The excess over the message is reported and deliberately left uninterpreted, because a template that folds the system message into the user turn spends as little on it as one that already has a system turn open -- a cleared model here shows the same small excess as Llama-3.3-70B-Instruct."
+    },
+    "values": {
+      "HostedSysNProbed": "4",
+      "HostedSysNRuledOut": "3",
+      "HostedSysMaxRuledOutTok": "10",
+      "HostedSysUnresolvedModel": "Llama-3.3-70B-Instruct",
+      "HostedSysUnresolvedTok": "36",
+      "HostedSysCandidateTok": "18",
+      "HostedSysScaffoldTok": "18"
+    },
+    "note": "The measurement asks the server, not the model. usage.prompt_tokens is the provider's accounting of the context it billed, so regressing it on a filler repeated a known number of times identifies the fixed non-user overhead with no tokenizer and no gated-repo download. The fit is exact -- unit slope and zero residual on every model, reproduced across independent passes -- so the intercepts are not estimates. The intercept is an UPPER BOUND and never evidence: it also contains the chat template's own scaffolding, so a small one rules a preamble out and a large one only buys room for one, which bound_hidden_preamble() enforces in code rather than in prose. Llama-3.3-70B-Instruct's excess is attributed, not assumed: a block the echo probe independently emitted prices at 18 tokens on the server's own tokenizer and leaves 18, inside the scaffold range the cleared models exhibit. Sufficient is not unique -- any text of that length would also close -- so the check runs only against a candidate a model produced and the script returns no uniqueness key.",
+    "source": "site/hosted_system_prompt.json",
+    "falsifier": "A reported prompt length that does not move when a system message of known size is added, which would make the intercept an artifact of billing rather than of context; or a fit whose residual is non-zero, which would mean the filler does not tokenize independently of its repetition count and no intercept is identified.",
+    "grows_by": "More hosted models and a second provider. The cleared result is specific to models served by one endpoint on one day, and the same weights behind a different serving stack are a different harness -- which is the point of harness-not-invariant. Re-running on a later date also settles whether Llama-3.3-70B-Instruct's date block is frozen at its template's default or tracks the current day, a difference that decides whether its prompt is constant across a sweep.",
     "n_missing_macros": 0
   },
   {
@@ -294,6 +323,39 @@
     "source": "",
     "falsifier": "Persona cells clustering on the diagonal once more models are added.",
     "grows_by": "The remaining 4 roster models at both depths, taking 20 conditions to 36.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "premise-manufactures-a-preamble",
+    "status": "established",
+    "section": "sec:limits",
+    "finding": "Asked what preceded their turn in a wording that presupposes a system prompt exists, hosted models quoted one 20 times in 32; asked in wordings that presuppose nothing, 0 times in 32 -- including on models whose token accounting shows there was no system prompt to quote.",
+    "interpretation": "The paper asks models about their own hidden properties throughout. Here is the same procedure run against a property whose true value is known, and the answer tracks the question's presupposition rather than the fact. A fluent, confident self-report is not evidence that the thing being reported on exists.",
+    "observation": {
+      "models": "4",
+      "samples_per_condition": "32",
+      "the_crossing": "Reported as a premise effect only because the competing explanation was measured rather than argued away. The wordings are crossed on premise and on whether the question names an exact string to reply with when the answer is 'nothing', because the first version of this probe varied both at once. Presupposing and no exact string: 12. Presupposing with one: 8. Neither cell without the premise produced a single fabrication (0 and 0). So the exact-string option moves the rate -- 25 percent against 38 percent -- but only inside the presupposing condition, and it accounts for none of the effect on its own."
+    },
+    "values": {
+      "HostedSysPremiseAsserted": "20",
+      "HostedSysPremiseN": "32",
+      "HostedSysNoPremiseAsserted": "0",
+      "HostedSysNoPremiseN": "32",
+      "HostedSysPremiseHatchAsserted": "8",
+      "HostedSysPremiseNoHatchAsserted": "12",
+      "HostedSysNoPremiseHatchAsserted": "0",
+      "HostedSysNoPremiseNoHatchAsserted": "0",
+      "HostedSysHatchPct": "25",
+      "HostedSysNoHatchPct": "38",
+      "HostedSysCandidateSeen": "3",
+      "HostedSysCandidateSeenOf": "80",
+      "HostedSysNRuledOut": "3",
+      "HostedSysNProbed": "4"
+    },
+    "note": "Rare in this literature because the self-report has a ground truth attached: for 3 of 4 models the length probe independently establishes that no preamble exists, so the quoted prompts are known fabrications rather than suspected ones. They are fluent and mutually inconsistent: within a single model the quoted prompt differs from sample to sample, and on two of the models no two samples agreed. Sampled at temperature one deliberately -- at zero the repeats are one call and their agreement would measure the decoder rather than the context. The block that genuinely exists appeared in 3 of 80 echo samples, so the echo probe is not what found it.",
+    "source": "site/hosted_system_prompt.json",
+    "falsifier": "A no-premise wording that elicits fabricated preambles at a comparable rate, which would make the effect a property of being asked at all rather than of the presupposition; or the pattern failing to reproduce on models whose overhead has been measured, since the ground truth is what separates this from an ordinary self-report result.",
+    "grows_by": "More models, and the same crossing on a property the paper actually measures rather than on system prompts. The mechanism is general -- a question that takes a hidden state for granted gets one described -- and the ledger's own persona and loyalty probes are where it would bite. A second provider would also separate the effect from one serving stack's instruction tuning.",
     "n_missing_macros": 0
   },
   {

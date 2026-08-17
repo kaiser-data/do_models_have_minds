@@ -343,7 +343,6 @@
       "arm": "N_plus",
       "group": "hosted_direct",
       "missing_seeds": [
-        20260815,
         20260816,
         20260817
       ],
@@ -369,51 +368,16 @@
       "model": "meta-llama/Llama-3.3-70B-Instruct"
     },
     {
-      "arm": "R",
-      "group": "hosted_direct",
-      "missing_seeds": [
-        20260817
-      ],
-      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507"
-    },
-    {
       "arm": "N_plus",
       "group": "hosted_direct",
       "missing_seeds": [
-        20260815,
         20260816,
         20260817
       ],
       "model": "Qwen/Qwen3-235B-A22B-Instruct-2507"
     },
     {
-      "arm": "N_minus",
-      "group": "hosted_direct",
-      "missing_seeds": [
-        20260817
-      ],
-      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507"
-    },
-    {
-      "arm": "R",
-      "group": "hosted_direct",
-      "missing_seeds": [
-        20260817
-      ],
-      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507"
-    },
-    {
       "arm": "N_plus",
-      "group": "hosted_direct",
-      "missing_seeds": [
-        20260815,
-        20260816,
-        20260817
-      ],
-      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507"
-    },
-    {
-      "arm": "N_minus",
       "group": "hosted_direct",
       "missing_seeds": [
         20260816,
@@ -910,20 +874,24 @@
     {
       "group": "hosted_direct",
       "has_noise_floor": false,
-      "in_state_space_figure": false,
+      "in_state_space_figure": true,
       "model": "google/gemma-3-27b-it",
-      "n_cells": 2,
+      "n_cells": 3,
       "n_cells_designed": 9,
       "seeds_by_arm": {
         "N_minus": [
           20260815
         ],
-        "N_plus": [],
+        "N_plus": [
+          20260815
+        ],
         "R": [
           20260815
         ]
       },
-      "seeds_with_all_arms": []
+      "seeds_with_all_arms": [
+        20260815
+      ]
     },
     {
       "group": "hosted_direct",
@@ -949,42 +917,55 @@
     },
     {
       "group": "hosted_direct",
-      "has_noise_floor": false,
-      "in_state_space_figure": false,
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
       "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
-      "n_cells": 4,
+      "n_cells": 7,
       "n_cells_designed": 9,
       "seeds_by_arm": {
         "N_minus": [
           20260815,
-          20260816
+          20260816,
+          20260817
         ],
-        "N_plus": [],
+        "N_plus": [
+          20260815
+        ],
         "R": [
           20260815,
-          20260816
+          20260816,
+          20260817
         ]
       },
-      "seeds_with_all_arms": []
+      "seeds_with_all_arms": [
+        20260815
+      ]
     },
     {
       "group": "hosted_direct",
-      "has_noise_floor": false,
-      "in_state_space_figure": false,
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
       "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
-      "n_cells": 3,
+      "n_cells": 7,
       "n_cells_designed": 9,
       "seeds_by_arm": {
         "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
           20260815
         ],
-        "N_plus": [],
         "R": [
           20260815,
-          20260816
+          20260816,
+          20260817
         ]
       },
-      "seeds_with_all_arms": []
+      "seeds_with_all_arms": [
+        20260815
+      ]
     },
     {
       "group": "hosted_prefill",
@@ -1091,9 +1072,9 @@
   "summary": {
     "harness_overlap": [],
     "n_cells_designed": 234,
-    "n_cells_present": 105,
+    "n_cells_present": 113,
     "n_models_designed": 26,
-    "n_models_in_figure": 9,
-    "n_models_with_floor": 10
+    "n_models_in_figure": 12,
+    "n_models_with_floor": 12
   }
 }

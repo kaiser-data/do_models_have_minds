@@ -25,7 +25,8 @@ behind it. Do not start a second sweep against the same key.
 
 ## 1. The finding that reorders everything else
 
-    105 of 234 designed cells exist
+    113 of 234 designed cells exist   (105 when this was written;
+                                       +3 hosted N_plus, +5 from session-b)
     9 of 26 roster models appear in fig1_state_space
     10 models have a design-replicate noise floor
     missing by arm: N_plus 51, N_minus 44, R 43
@@ -67,21 +68,24 @@ roster is the sample.
 
 ## 2. What "all models on all conditions" would actually cost
 
-Current: 105 cells. The full designed grid over models actually reachable:
+Current: 113 cells. The full designed grid over models actually reachable:
 
 | group | models | arms | seeds | cells |
 |---|---|---|---|---|
 | self-hosted, already run | 9 | 3 | 3 | 81 ✓ |
 | self-hosted, never started | 17 | 3 | 3 | 153 |
-| hosted, direct | 4 | 3 | 3 | 36 (12 exist) |
+| hosted, direct | 4 | 3 | 3 | 36 (15 exist) |
 | hosted, prefill-only | 2 | 3 | 3 | 18 (0 exist) |
 
 **Do not run all of it.** The ranked subset that buys the most per cell:
 
 1. **`N_plus` for 4 hosted models, seed 15** — 4 cells. Supplies the arithmetic
    contrast, which was a designed factor with no result at any hosted size.
-   *Highest value in the list.* **Running; 1 of 4 cells landed** (Qwen3-235B,
-   5,000 rows, mean answer mass 0.9999).
+   *Highest value in the list.* **3 of 4 cells landed** --- Qwen3-235B,
+   Qwen3-30B and gemma-27b, 5,000 rows each, answer mass 0.9999.
+   Llama-3.3-70B was still running at submission at ~67 rows/min and is the
+   one cell outstanding. Nothing in either PDF depends on these; they are the
+   arithmetic contrast for the next version.
 
    **Correction to an earlier version of this list**, which said these four
    cells also put 27B–235B into fig1. They do not, on their own.
