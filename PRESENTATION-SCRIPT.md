@@ -1,6 +1,6 @@
 # Presentation script
 
-For speaking live, with the deck. Target **8 minutes**, cut list at the end.
+For speaking live, with the deck. Target **9 minutes**, cut list at the end.
 `VIDEO-SCRIPT.md` is the shorter screen-recording version.
 
 **Read the glossary first.** Five terms carry the whole talk, and three of them
@@ -72,24 +72,77 @@ This is the mechanism. Get this across and the rest follows.
 
 ---
 
-## 2 · What we built — 1m
+## 2 · How the measurement actually works — 2m
 
 *Slide: method / three arms.*
 
-> Three arms over one battery. Real outcomes. The same sentence frames with
-> invented referents. And referent-free strings, meaning we also strip the
-> numbers.
->
-> Prompt, pair set, fit, metric — all held fixed. The only thing that changes is
-> what the words denote.
->
-> Nine open-weight models, five families, 0.8 to 9 billion parameters, plus four
-> larger models over a hosted API. Every cell run three times with a different
-> random draw, so every number carries its own noise floor.
+**Spend the time here.** Every objection you will get later is really an
+objection to the method, and if the room does not follow this slide they will
+spend the rest of the talk quietly doubting the numbers instead of listening.
+Four steps, and each one exists to close a specific hole.
 
-**If asked "why so small?"** — the ladder is what fits on a rented L4. The large
-models are there, over an API, and they are reported beside the ladder rather
-than inside it, because a different serving stack is a different instrument.
+> **One. The choice.** We show the model two outcomes and ask which state of the
+> world it would prefer. `Option A: you receive $100. Option B: you lose your
+> keys.` Then we read which letter it was about to say.
+>
+> Not what it *says* about its preferences — we never ask it to describe them.
+> We take the probability it assigns to "A" versus "B" as the very next token.
+> Self-report is a separate instrument and we treat it separately.
+
+> **Two. Why the first token, and not sampled text.** We read the log-probability
+> distribution directly rather than generating an answer. That removes
+> temperature and the random seed from the design entirely — the measurement is
+> deterministic, so anything that moves is the condition and not the dice.
+>
+> The cost is real and we state it: a model that opens with "Let me think" puts
+> its answer somewhere we are not looking. Six of the ten frontier models we
+> tried are unscoreable for exactly that reason.
+
+> **Three. Both orders, every pair.** Every comparison runs A-then-B and
+> B-then-A. Models have a position bias — a preference for the first option, or
+> the second — and running both orders and averaging cancels it exactly rather
+> than hoping it is small.
+
+> **Four. Then the fit.** Thousands of these pairwise choices go into a
+> Thurstonian utility model, which assigns each outcome a number. We hold out
+> pairs it never saw and ask how often it predicts the choice correctly. That
+> held-out accuracy is "coherence". Around 0.9 is what the literature reports
+> and reads as evidence of a value system.
+>
+> All of that is the published method. We reimplemented it from the equations.
+> Nothing so far is ours.
+
+*Beat.*
+
+> **What is ours is the control.** Run the identical procedure on outcomes whose
+> referents are invented words. Same prompt, same pairs, same fit, same metric —
+> the only thing that changes is whether the words denote anything.
+>
+> And we do it in two steps rather than one, because "meaning" is two things.
+> `You receive a dralphen` keeps the sentence frame and the magnitude. Strip the
+> magnitude too and you get the third arm. That way we can say which part
+> carried the effect — and on this battery, the arithmetic carried none of it.
+
+> **Last piece, and it is the one that makes the numbers mean anything.** We ran
+> every cell three times, each with a different random draw of which outcomes to
+> use and which pairs to compare. How far a cell's answer moves across those
+> three runs is its own noise. We compare every result to that, per model, not
+> to zero.
+>
+> That is why six of nine models "clear their floor" and only three of those six
+> are the effect we are claiming.
+
+**If asked "why not just fine-tune models to have known values?"** — that is
+the study we would run next and it is in the roadmap. It needs training runs;
+this needed a battery and fourteen dollars. The design here is what fits a
+weekend, and its limitation is that ground truth comes from construction rather
+than from a model we built to have a disposition.
+
+**Scope, in one line.** Nine open-weight models, five families, 0.8 to 9
+billion parameters, plus four larger models over a hosted API — reported beside
+that ladder and never inside it, because a different serving stack is a
+different instrument.
+
 
 ---
 
@@ -146,10 +199,21 @@ than inside it, because a different serving stack is a different instrument.
 > The first objection is always: these are small models.
 >
 > Each path here is one model. It starts on real outcomes, moves to invented
-> outcomes, ends with the numbers stripped too. If the metric tracked meaning,
-> the paths would run down *and to the left*.
+> outcomes, ends with the numbers stripped too.
 >
-> They run almost straight down.
+> Now — the cross in the bottom-left corner. That is where every path *should*
+> end. Not our opinion: it is what the claim under test predicts. If a model's
+> preferences track what the outcomes mean, then on outcomes that mean nothing
+> there is nothing to prefer, the ordering is arbitrary, and the score falls to
+> what this metric gives you on arbitrary orderings — which we measure, by
+> shuffling the probabilities. Conviction goes to zero.
+>
+> So each model had about 0.39 of coherence available to lose.
+>
+> They lose 0.025. **Six and a half percent of the distance.** The best model
+> manages sixteen percent; two of the nine move the wrong way.
+>
+> All that empty space between the arrowheads and the cross is the result.
 >
 > The four diamonds are the large models, 27 to 235 billion, over the hosted
 > API. Look where they sit: conviction 0.36 to 0.44, far above anything in the

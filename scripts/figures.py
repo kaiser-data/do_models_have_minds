@@ -233,6 +233,26 @@ def fig_state_space(tiles, out: Path, theme: str = "light", cells=None,
     ax.text(0.505, 0.492, "maximum possible conviction", fontsize=8.5,
             color=th["ink3"], ha="left", va="center")
 
+    # Where the inference under test says the paths should END. If a model's
+    # preferences track what the outcomes mean, then on outcomes that mean
+    # nothing there is nothing to prefer: the fitted ordering is arbitrary, so
+    # held-out accuracy falls to what this metric returns on arbitrary orderings
+    # -- the shuffled null, already drawn as the vertical line -- and conviction
+    # goes to zero. That corner, bottom-left, is the prediction.
+    #
+    # Drawn because the figure was not self-interpreting without it. A reader
+    # could see paths running downward and have no way to judge whether that is
+    # a lot or a little. With the target marked, the gap between where the paths
+    # end and where they were predicted to end IS the result.
+    ax.scatter([mean_null], [0.012], s=190, marker="X",
+               color=th["ink3"], zorder=6, alpha=.75)
+    ax.annotate("if preferences tracked meaning,\nevery path would end here",
+                xy=(mean_null, 0.012), xytext=(mean_null + 0.055, 0.075),
+                fontsize=8.5, color=th["ink3"], ha="left", va="bottom",
+                linespacing=1.45,
+                arrowprops=dict(arrowstyle="-", color=th["ink3"], lw=.9,
+                                alpha=.6, shrinkA=2, shrinkB=6))
+
     # Labels: group points that would collide, then spread each group
     # symmetrically about its own mean, so no label travels far from its mark.
     order = sorted(rows, key=lambda r: -r["path"][0][1])

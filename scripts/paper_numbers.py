@@ -245,6 +245,49 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("MeanR", f"{mean_r:.3f}"))
     out.append(_cmd("MeanFloor", f"{mean_f:.3f}"))
     out.append(_cmd("MeanResidual", f"{mean_r - mean_f:+.3f}"))
+
+    # How far the score moved toward where the inference under test predicts it
+    # should land. This is the residual expressed as a fraction of the distance
+    # it had available, and it exists because "+0.025" is not interpretable on
+    # its own -- a reader cannot tell whether that is most of the effect or a
+    # rounding error.
+    #
+    # The prediction is not ours and is not a guess. If a model's preferences
+    # track what the outcomes MEAN, then on outcomes that mean nothing there is
+    # nothing to prefer, so the fitted ordering should be arbitrary and held-out
+    # accuracy should fall to what this metric returns on arbitrary orderings --
+    # which we already measure per model, by shuffling the probabilities. So the
+    # available distance is R minus that shuffled null, and the observed distance
+    # is R minus the invented arm.
+    #
+    # NOT framed as what "a conscious model" would answer. The prediction is a
+    # property of the inference the paper tests -- that a stable ordering
+    # evidences values -- and consciousness is a claim this paper declines in
+    # both directions. A model with rich inner states could still fail this
+    # prediction on a badly anchored instrument, which is the point of
+    # sec:minds.
+    moves = []
+    for tile in tiles:
+        nul = tile["shuffled_null"].get("R")
+        if nul is None:
+            continue
+        predicted = tile["raw_coherence"] - nul
+        if predicted <= 0:
+            continue
+        moves.append((tile["model"], tile["raw_coherence"] - tile["floor"],
+                      predicted))
+    if moves:
+        obs = sum(m[1] for m in moves)
+        pred = sum(m[2] for m in moves)
+        fracs = sorted((m[1] / m[2], m[0]) for m in moves)
+        out.append(_cmd("MovedTowardNullPct", f"{100 * obs / pred:.1f}"))
+        out.append(_cmd("MovedTowardNullBestPct", f"{100 * fracs[-1][0]:.1f}"))
+        out.append(_cmd("MovedTowardNullBestModel",
+                        _tex(fracs[-1][1].split("/")[-1])))
+        out.append(_cmd("MovedTowardNullNegative",
+                        str(sum(1 for f, _ in fracs if f < 0))))
+        out.append(_cmd("PredictedDropMean", f"{pred / len(moves):.3f}"))
+        out.append(_cmd("MovedTowardNullNModels", str(len(moves))))
     # MeanR and MeanFloor are rounded independently, so their printed
     # difference is not MeanResidual: 0.906 - 0.880 reads as 0.026 where the
     # residual is +0.0255. The fourth decimal is the one that reconciles them,

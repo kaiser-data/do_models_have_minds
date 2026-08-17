@@ -156,6 +156,18 @@ real outcomes and go near-indifferent on invented ones. The other
 \FlatDecisiveThreshPct\% of pairs on \emph{both} arms: they clear by being
 uniformly near-indifferent on both.
 
+\textbf{Expressed as a fraction of the distance it had to travel, the score
+moved \MovedTowardNullPct\%.} The inference under test makes a specific
+prediction: if a model's preferences track what the outcomes mean, then on
+outcomes that mean nothing there is nothing to prefer, the fitted ordering is
+arbitrary, and held-out accuracy should fall to what this metric returns on
+arbitrary orderings --- its shuffled null, which we measure per model. That is a
+mean drop of \PredictedDropMean{} available. The observed drop is
+\MeanResidual{}. Across \MovedTowardNullNModels{} models the score covered
+\MovedTowardNullPct\% of it; the best, \MovedTowardNullBestModel{}, covered
+\MovedTowardNullBestPct\%, and \MovedTowardNullNegative{} moved away from the
+prediction rather than toward it (Fig.~\ref{fig:appendix}a).
+
 \textbf{The residual is the referent step alone.} Splitting it at the middle
 arm, replacing the referents costs \MeanReferent{} while removing the magnitudes
 on top of that costs \MeanArith{} (SD \ArithSD{}, \NArithPositive{} of
@@ -461,7 +473,10 @@ on real outcomes,
 moves to invented outcomes with magnitudes kept, and ends with magnitudes
 removed. Coherence is on the horizontal axis, conviction on the vertical. A
 metric that tracked meaning would produce paths running down \emph{and} left.
-They run almost straight down: conviction falls, coherence does not. The hosted
+They run almost straight down: conviction falls, coherence does not. The cross
+marks where every path would end if preferences tracked meaning --- the metric's
+own shuffled null at zero conviction --- so the gap between the arrowheads and
+that cross is the result, and the paths cover \MovedTowardNullPct\% of it. The hosted
 models sit far higher on conviction than anything in the ladder and their paths
 run down just the same, which is the scale objection answered in one picture.
 \textbf{(b)} Held-out coherence against parameter count. Within the one family
