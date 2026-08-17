@@ -301,6 +301,23 @@ replicate floor, and that the arms are contrasted through a channel the metric
 discards. The Thurstonian measurement itself is theirs, reimplemented from the
 published equations.
 
+\textbf{A self-report checked against ground truth, which coherence work cannot
+do.} We applied the same discipline to a second instrument. Asked what preceded
+their turn, \HostedSysNProbed{} hosted models were given wordings crossed on
+whether the question presupposes that a system prompt exists. Presupposing
+wordings elicited a quoted prompt \HostedSysPremiseAsserted{} times in
+\HostedSysPremiseN{}; wordings presupposing nothing, \HostedSysNoPremiseAsserted{}
+in \HostedSysNoPremiseN{}. The quotes are fluent, mutually inconsistent, and for
+\HostedSysNRuledOut{} of the \HostedSysNProbed{} models provably invented ---
+the provider's own prompt-token accounting fixes the fixed non-user overhead at
+\HostedSysMaxRuledOutTok{} tokens or fewer, too little to hold what was quoted.
+Naming an exact string to reply with when the answer is ``nothing'' moves the
+rate (\HostedSysHatchPct{}\% against \HostedSysNoHatchPct{}\%), but only inside
+the presupposing condition and accounts for none of the effect alone. A
+confident self-report about a hidden state is evidence about the question, not
+about the state --- which is the foil arm's lesson on an instrument where the
+truth happens to be checkable.
+
 \section{Limitations and Dual-Use / Ethical Considerations}\label{sec:limits}
 
 \textbf{No moral-status claim is made or implied.} The foil arm refutes an
@@ -321,6 +338,18 @@ across families. First-token scoring excludes models that do not place their
 answer in the first token, and that exclusion correlates with how recent a model
 is. One battery, one wording as the primary instrument; a rewording moves the
 ordering measurably, so "outcome" here means what this battery means by it.
+
+\textbf{What the hosted models were actually sent.} Server-side templating
+leaves no artifact proving what a hosted model received, which this project
+previously recorded as unobservable. It is not unmeasurable: the provider's
+prompt-token accounting, regressed on a filler of known length, fixes the
+non-user overhead without a tokenizer. \HostedSysNRuledOut{} of
+\HostedSysNProbed{} hosted models leave no room for an injected preamble.
+\HostedSysUnresolvedModel{} carries \HostedSysUnresolvedTok{} tokens, accounted
+for by the dated system block its template supplies unconditionally --- so one
+model in this paper answers under a stale date stamp in a prompt we did not
+send, and ``no system prompt'' was a claim about what we transmitted rather
+than about what arrived.
 
 \textbf{Distressing content, handled conservatively.} The battery contains
 harm-like real outcomes (bankruptcy, weapons). We tested whether models avoid
