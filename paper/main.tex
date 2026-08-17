@@ -45,7 +45,7 @@ barely move,\\ at every size we tested. The coherence number does not notice
 \author{Martin Kaiser \and Gellért Bodorkós\\
 \small Apart Research Digital Minds Sprint}
 
-\date{16 August 2026}
+\date{17 August 2026}
 
 \begin{document}
 \maketitle
@@ -76,8 +76,8 @@ design but restricts the study to models that expose logprobs: \NModels{}
 open-weight models across \NFamilies{} families on rented L4 and A10G GPUs,
 including a within-family ladder from \LadderSmall{} to \LadderLarge{}, and
 \NHosted{} larger models reached over a hosted API --- up to
-\LadderHosted{}, which returns a residual of \HostedResidual{} against its own
-\HostedReps-replicate noise floor of \HostedFloor{} --- it \HostedClears{} it.
+\LadderHosted{}, whose residual of \HostedResidual{} \HostedClears{} its own
+\HostedReps-replicate noise floor of \HostedFloor{}.
 Frontier
 models are absent by construction rather than by choice: without access to the
 distribution over the first token there is no way to read a preference off the
@@ -91,8 +91,11 @@ yields a card rather than a headline. On these models the metric returns
 \MeanFloor{} on invented outcomes against \MeanR{} on real ones (\NCells{}
 cells, \NSplits{} splits, three design replicates each) --- a residual of
 \MeanResidual{}, bootstrap 95\% CI [\ResidCiLo, \ResidCiHi], with \NClears{}
-of \NModels{} models clearing their own replicate floor and two falling below
-it. That the residual is only marginally separable from zero \emph{is} the
+of \NModels{} models clearing their own replicate floor, \NFailsFloor{} not
+clearing it, and \NNegative{} of those \NFailsFloor{} scoring \emph{higher} on
+invented outcomes than on real ones. Of the \NClears{} that clear,
+\NClearsConviction{} do so by losing conviction when the referents go away and
+\NClearsFlat{} by never having been decisive on either arm. That the residual is only marginally separable from zero \emph{is} the
 claim, not a caveat on it; but it means the firmest results here are the
 mechanisms underneath rather than the residual itself, and
 \S\ref{sec:weight} ranks all of them by how much weight they bear. The two
@@ -528,7 +531,9 @@ What the three arms do buy is a partial factorial the analysis can use:
 $\armR \to \armNp$ removes the referent while \emph{keeping} the numerals, and
 $\armNp \to \armNm$ removes the numerals at near-constant length. Claims about
 arithmetic are licensed by the second contrast; claims about meaning need the
-first, and carry the length gap as a caveat.
+first, and carry the length gap as a caveat. Both contrasts are reported in
+\S\ref{sec:flat}: on this battery the first carries the residual and the second
+returns nothing distinguishable from noise.
 
 \paragraph{Measurement.} Preferences are read directly off the first-token
 logit distribution rather than sampled, which removes sampling noise but is only
@@ -640,25 +645,67 @@ $\mu\,(1 - P(\text{neither}))$: below $0.05$ there is no ordering to fit.
 \label{sec:flat}
 
 Across \NModels{} models, coherence on real outcomes averages \MeanR{} and on
-meaningless outcomes \MeanFloor{} --- a residual of \MeanResidual{}. Table
+meaningless outcomes \MeanFloor{} --- a residual of \MeanResidual{}
+(\MeanResidualPrecise{} before the means are rounded). Table
 \ref{tab:main} gives the per-model breakdown against each model's own noise
 floor. \NClears{} of \NModels{} models clear their floor; \NNegative{} score
 \emph{below} their own floor, meaning the fit was marginally better on invented
 outcomes than on real ones.
 
+\textbf{The \NClears{} clears are two different things.} \NClearsConviction{}
+of them are the collapse this paper is about: the model commits on real
+outcomes and goes nearly indifferent on invented ones, so the residual is
+bought with conviction it had to begin with. The other \NClearsFlat{} ---
+marked $^{\dagger}$ in Table \ref{tab:main} --- are decisive on at most
+\FlatDecisiveMaxPct\% of pairs on \emph{either} arm. They clear the floor
+honestly, by being very slightly more near-indifferent about gibberish than
+about anything else, and nothing in that is a value system losing its grip.
+The count of clears is \NClears{}; the number of them the collapse explains is
+\NClearsConviction{}, and the paper does not claim the other \NClearsFlat{} as
+instances of it. The collapse itself is visible on more models than that ---
+including models that do not clear their floor at all (\S\ref{sec:strength})
+--- but on those it does not produce a residual large enough to separate from
+the design's own noise.
+
+\textbf{Where in the design the residual comes from.} The invented arm has two
+steps, and both were collected: \armNp{} replaces the referents but
+keeps the magnitudes, \armNm{} removes the magnitudes as well. The
+headline residual is the sum of the two, and it is not evenly split. Across the
+\ArmNPlusModels{} models, replacing the referents costs \MeanReferent{} while
+removing the magnitudes on top of that costs \MeanArith{} (SD \ArithSD{} across
+models, \NArithPositive{} of \ArmNPlusModels{} positive --- a coin flip, and
+only \NArithAboveFloor{} models move further than their own design floor, against
+\NReferentAboveFloor{} for the referent step). Whatever survives into the
+invented arm survives the arithmetic too: on this battery the magnitudes are
+carrying essentially none of the residual, and a study that varied only them
+would have measured nothing. Per-model values are the
+\texttt{arithmetic\_component} field of each tile in the card.
+
 \begin{table}[t]
 \centering
-\caption{Per-model results. \textbf{R} and \textbf{N\textsuperscript{--}} are
-held-out utility-model accuracy on real and invented outcomes, averaged over
-\NSplits{} train/test splits and three design replicates. \textbf{floor} is the
+\caption{Per-model results. \armR{}, \armNp{} and
+\armNm{} are held-out utility-model accuracy on real
+outcomes, on invented outcomes with the magnitudes kept, and on invented
+outcomes with the magnitudes removed, averaged over
+\NSplits{} train/test splits and three design replicates. The headline
+residual is \armR{}$-$\armNm{}; \armR{}$-$\armNp{} and
+\armNp{}$-$\armNm{} are its referent and arithmetic
+components. \textbf{floor} is the
 range of the same cell across those replicates. \textbf{clears} reports whether
 the residual exceeds that floor and by what factor; $^{*}$ marks a floor too
-near zero for a ratio to be meaningful. \textbf{decisive} is the share of pairs
-at $p<0.2$ or $p>0.8$.}
+near zero for a ratio to be meaningful, and $^{\dagger}$ marks a model decisive
+on under \FlatDecisiveThreshPct\% of pairs on \emph{both} arms --- it clears by
+being consistently near-indifferent, not by losing conviction it had.
+\textbf{decisive} is the share of pairs at $p<0.2$ or $p>0.8$.}
 \label{tab:main}
 % \footnotesize, not \small: the full HuggingFace ids are long enough that the
-% eight-column table overfills the text block by ~8pt at \small.
+% table overfills the text block by ~8pt at \small. The N+ column added the
+% same ~8pt back at \footnotesize, so the inter-column padding comes down
+% rather than the type size -- 4.5pt over nine columns buys 27pt, and the
+% columns are numeric and narrow enough to stay legible at it. Both settings
+% are local to this float; \tabcolsep is global otherwise.
 \footnotesize
+\setlength{\tabcolsep}{4.5pt}
 % The whole tabular, column spec included, comes from
 % scripts/paper_numbers.py. Regenerate rather than edit.
 \input{table_main}
@@ -1687,7 +1734,11 @@ $\NModels-1$ degrees of freedom, and the across-model standard deviation
 (\ResidSD) is larger than the mean. \NPositiveModels{} of \NModels{} models
 are positive, which is a sign-test $p$ of \ResidSignP{} --- \emph{not}
 significant. \NClears{} of \NModels{} clear their own design-replicate floor,
-so three do not, and two are negative.
+so \NFailsFloor{} do not, and \NNegative{} of those \NFailsFloor{} are
+negative outright. Of the \NClears{} that do clear, \NClearsFlat{} were never
+decisive on either arm (\S\ref{sec:flat}), so \NClearsConviction{} of the
+\NClears{} are instances of the collapse and the rest clear by being uniformly
+near-indifferent.
 
 None of this undermines the claim being made, because the claim is that the
 residual is \textbf{small}, not that it is zero. A confidence interval whose

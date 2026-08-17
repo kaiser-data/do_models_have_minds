@@ -468,12 +468,20 @@ barely move}
 
 \begin{frame}{Backup --- all numbers}
   \scriptsize
+  % Nine columns of a table sized for the paper's text block; the slide is
+  % wider but the type is smaller. 3pt of padding is what keeps the model ids
+  % from running off the frame. Local to this frame.
+  \setlength{\tabcolsep}{3pt}
   \begin{center}
   \input{table_main}
   \end{center}
   \vspace{.5em}
   \tiny \textbf{floor} = range of the same cell across three independent
-  designs. $^{*}$ = floor too near zero for a ratio to mean anything.
+  designs. \textbf{N\textsuperscript{+}} = invented outcomes with the
+  magnitudes kept. $^{*}$ = floor too near zero for a ratio to mean anything.
+  $^{\dagger}$ = decisive on under \FlatDecisiveThreshPct\% of pairs on
+  \emph{both} arms: clears by being consistently near-indifferent, not by
+  losing conviction it had.
 \end{frame}
 
 \begin{frame}{Backup --- the mechanism, directly}

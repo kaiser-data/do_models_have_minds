@@ -91,6 +91,83 @@ def _hosted_scoreability() -> dict[str, list]:
     }
 
 
+# A model whose decisive fraction is under this on BOTH arms never committed to
+# a side anywhere, so "its conviction collapsed on invented outcomes" is not a
+# description of it. 1% is an order of magnitude below the smallest conviction
+# clear in the ladder (Qwen3.5-2B, 12.8% on real) and an order above the largest
+# flat one (LFM2.5-1.2B, 0.15%), so nothing sits near the boundary.
+FLAT_DECISIVE = 0.01
+
+
+def clear_kinds(tiles: list[dict], thresh: float = FLAT_DECISIVE
+                ) -> tuple[list[dict], list[dict]]:
+    """Partition the models that clear their floor into two kinds.
+
+    Returns (conviction_collapse, zero_conviction). The first lost conviction
+    when the referents went away, which is the mechanism this paper is about.
+    The second never had any: decisive on well under 1% of pairs on real
+    outcomes *and* invented ones, consistently near-indifferent, marginally
+    more so about gibberish. Both clear the floor honestly and both are counted
+    in \\NClears -- but reporting six as one phenomenon claims six instances of
+    a mechanism that only three of them exhibit.
+
+    This re-reads the count; it does not re-decide it. A model that fails
+    `clears_floor` is in neither list regardless of how flat it is.
+    """
+    conviction, flat = [], []
+    for t in tiles:
+        if not t.get("clears_floor"):
+            continue
+        d = t.get("decisive_fraction") or {}
+        r, n = d.get("R"), d.get("N_minus")
+        if r is not None and n is not None and r < thresh and n < thresh:
+            flat.append(t)
+        else:
+            conviction.append(t)
+    return conviction, flat
+
+
+def arm_decomposition(tiles: list[dict]) -> dict:
+    """Split the headline residual at the N+ arm.
+
+    The design has three arms, not two: real outcomes (R), invented referents
+    with the magnitudes kept (N+), and invented referents with the magnitudes
+    removed (N-). The headline is R - N-, which is the sum of two designed
+    steps:
+
+        R - N-  =  (R - N+)  +  (N+ - N-)
+                    referent      arithmetic
+
+    The method licenses claims about arithmetic through N+ -> N-, so that
+    factor needs a result attached rather than only a column in the surface
+    table. Tiles with no N+ cell are excluded rather than counted as zero: a
+    missing arm is not a null result.
+    """
+    ts = [t for t in tiles if t.get("floor_magnitude") is not None]
+    if not ts:
+        return {"n": 0}
+    ref = [t["raw_coherence"] - t["floor_magnitude"] for t in ts]
+    ari = [t["floor_magnitude"] - t["floor"] for t in ts]
+    n = len(ts)
+
+    def _above(vals):
+        return sum(1 for t, v in zip(ts, vals)
+                   if t.get("design_noise_floor") is not None
+                   and abs(v) > t["design_noise_floor"])
+
+    return {
+        "n": n,
+        "mean_n_plus": sum(t["floor_magnitude"] for t in ts) / n,
+        "mean_referent": sum(ref) / n,
+        "mean_arith": sum(ari) / n,
+        "mean_residual": sum(t["raw_coherence"] - t["floor"] for t in ts) / n,
+        "sd_arith": float(np.std(ari, ddof=1)) if n > 1 else 0.0,
+        "n_arith_positive": sum(1 for v in ari if v > 0),
+        "n_arith_above_floor": _above(ari),
+        "n_referent_above_floor": _above(ref),
+    }
+
+
 def _tex(s: str) -> str:
     """Escape a model id for use as a macro VALUE.
 
@@ -156,7 +233,44 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     out.append(_cmd("MeanR", f"{mean_r:.3f}"))
     out.append(_cmd("MeanFloor", f"{mean_f:.3f}"))
     out.append(_cmd("MeanResidual", f"{mean_r - mean_f:+.3f}"))
-    out.append(_cmd("NClears", str(sum(1 for t in tiles if t.get("clears_floor")))))
+    # MeanR and MeanFloor are rounded independently, so their printed
+    # difference is not MeanResidual: 0.906 - 0.880 reads as 0.026 where the
+    # residual is +0.0255. The fourth decimal is the one that reconciles them,
+    # and the arm decomposition below is quoted at that precision throughout.
+    out.append(_cmd("MeanResidualPrecise", f"{mean_r - mean_f:+.4f}"))
+    n_clears = sum(1 for t in tiles if t.get("clears_floor"))
+    out.append(_cmd("NClears", str(n_clears)))
+    out.append(_cmd("NFailsFloor", str(n - n_clears)))
+
+    # Six clears, two mechanisms. Splitting the count is the whole point: the
+    # paper's claim is about conviction collapsing when referents go away, and
+    # three of the six never had conviction to lose.
+    conviction, flat = clear_kinds(tiles)
+    out.append(_cmd("NClearsConviction", str(len(conviction))))
+    out.append(_cmd("NClearsFlat", str(len(flat))))
+    out.append(_cmd("FlatDecisiveThreshPct", f"{100 * FLAT_DECISIVE:g}"))
+    if flat:
+        # Two decimals, not one: the widest flat clear is 0.15% and prints as
+        # "0.1" at one decimal, which would make "at most 0.1%" false in the
+        # sentence quoting it. The table rounds to one decimal on its own.
+        worst = max(max(t["decisive_fraction"]["R"],
+                        t["decisive_fraction"]["N_minus"]) for t in flat)
+        out.append(_cmd("FlatDecisiveMaxPct", f"{100 * worst:.2f}"))
+
+    # The N+ arm, which was collected on every cell and reported nowhere. The
+    # method licenses arithmetic claims through N+ -> N-, so leaving it without
+    # a result leaves a designed factor unanswered.
+    ad = arm_decomposition(tiles)
+    if ad["n"]:
+        out.append(_cmd("ArmNPlusModels", str(ad["n"])))
+        out.append(_cmd("MeanNPlus", f"{ad['mean_n_plus']:.3f}"))
+        out.append(_cmd("MeanReferent", f"{ad['mean_referent']:+.4f}"))
+        out.append(_cmd("MeanArith", f"{ad['mean_arith']:+.4f}"))
+        out.append(_cmd("ArithSD", f"{ad['sd_arith']:.4f}"))
+        out.append(_cmd("NArithPositive", str(ad["n_arith_positive"])))
+        out.append(_cmd("NArithAboveFloor", str(ad["n_arith_above_floor"])))
+        out.append(_cmd("NReferentAboveFloor",
+                        str(ad["n_referent_above_floor"])))
 
     # Uncertainty on the headline, because a point estimate in an abstract
     # reads as more solid than this one is. The design floor is per-model; this
@@ -396,12 +510,25 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     # models -- on no evidence beyond the mechanism sounding right. It recovers
     # some. These macros exist so the sentence states the measurement, and so it
     # restates itself if the probe is ever re-run against a changed roster.
-    pf_path = Path("site/hosted_scoreability_prefill.json")
+    # Prefer the canonical "Option" probe; fall back to any prefill probe.
+    # Each prefill writes its own file now, so this picks one deliberately
+    # rather than reading whichever ran last.
+    pf_path = Path("site/hosted_scoreability_prefill-option.json")
+    if not pf_path.exists():
+        cands = sorted(Path("site").glob("hosted_scoreability_prefill*.json"))
+        pf_path = cands[0] if cands else pf_path
     if pf_path.exists():
         pf = json.loads(pf_path.read_text())
+        # A probe can fail to reach the model at all -- DeepSeek-V4-Flash
+        # returned 500 then 404 -- and such an entry carries `measured: null`
+        # with no mass. It is neither recovered nor unrecovered; it was never
+        # measured, and counting it either way would misstate the probe.
+        pf = {m: v for m, v in pf.items() if "mean_answer_mass" in v}
         rec = sorted(m for m, v in pf.items() if v.get("first_token_scoreable"))
         unrec = sorted(m for m, v in pf.items()
                        if not v.get("first_token_scoreable"))
+        if not pf:
+            print("  prefill probe has no measured models; omitting those macros")
         out.append(_cmd("PrefillNProbed", str(len(pf))))
         out.append(_cmd("PrefillNRecovered", str(len(rec))))
         out.append(_cmd("PrefillNUnrecovered", str(len(unrec))))
@@ -1315,6 +1442,10 @@ def build_table(card: dict) -> str:
     """
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
+    # The dagger, not the count, is what the review asked for: six clears are
+    # six clears, but three of them are models that were never decisive about
+    # anything. Marking them here means the caption can say so once.
+    flat = {id(t) for t in clear_kinds(tiles)[1]}
     rows = []
     for t in tiles:
         dnf = t.get("design_noise_floor")
@@ -1328,19 +1459,25 @@ def build_table(card: dict) -> str:
             clears = r"$>$\,floor$^{*}$"
         else:
             clears = f"{t['floor_margin']:.1f}$\\times$"
+        if id(t) in flat:
+            clears += r"$^{\dagger}$"
         name = t["model"].replace("_", r"\_")
+        n_plus = t.get("floor_magnitude")
         rows.append(
             f"\\texttt{{{name}}} & "
-            f"{t['raw_coherence']:.3f} & {t['floor']:.3f} & {t['value']:+.3f} & "
+            f"{t['raw_coherence']:.3f} & "
+            f"{(f'{n_plus:.3f}' if n_plus is not None else '--')} & "
+            f"{t['floor']:.3f} & {t['value']:+.3f} & "
             f"{(f'{dnf:.3f}' if dnf is not None else '--')} & {clears} & "
             f"{t['decisive_fraction']['R'] * 100:.1f}\\% & "
             f"{t['decisive_fraction']['N_minus'] * 100:.1f}\\%"
         )
-    header = (r"model & R & N\textsuperscript{--} & R$-$N\textsuperscript{--}"
+    header = (r"model & R & N\textsuperscript{+} & N\textsuperscript{--}"
+              r" & R$-$N\textsuperscript{--}"
               r" & floor & clears & dec.\ R & dec.\ N\textsuperscript{--}")
     return (
         "% Generated by scripts/paper_numbers.py. Do not edit.\n"
-        "\\begin{tabular}{@{}lrrrrlrr@{}}\n"
+        "\\begin{tabular}{@{}lrrrrrlrr@{}}\n"
         "\\toprule\n"
         f"{header} \\\\\n"
         "\\midrule\n"

@@ -7,7 +7,21 @@
 \newcommand{\MeanR}{0.906}
 \newcommand{\MeanFloor}{0.880}
 \newcommand{\MeanResidual}{+0.025}
+\newcommand{\MeanResidualPrecise}{+0.0255}
 \newcommand{\NClears}{6}
+\newcommand{\NFailsFloor}{3}
+\newcommand{\NClearsConviction}{3}
+\newcommand{\NClearsFlat}{3}
+\newcommand{\FlatDecisiveThreshPct}{1}
+\newcommand{\FlatDecisiveMaxPct}{0.15}
+\newcommand{\ArmNPlusModels}{9}
+\newcommand{\MeanNPlus}{0.881}
+\newcommand{\MeanReferent}{+0.0253}
+\newcommand{\MeanArith}{+0.0001}
+\newcommand{\ArithSD}{0.0126}
+\newcommand{\NArithPositive}{5}
+\newcommand{\NArithAboveFloor}{3}
+\newcommand{\NReferentAboveFloor}{6}
 \newcommand{\ResidSD}{0.0305}
 \newcommand{\ResidSEM}{0.0102}
 \newcommand{\ResidT}{2.51}
@@ -106,15 +120,15 @@
 \newcommand{\HostedNoLogprobsModel}{Kimi-K3}
 \newcommand{\HostedScoreableModels}{gemma-3-27b-it, Llama-3.3-70B-Instruct, Qwen3-235B-A22B-Instruct-2507, Qwen3-30B-A3B-Instruct-2507}
 \newcommand{\HostedUnscoreableModels}{gpt-oss-120b, GLM-5.2, Nemotron-3\_5-Lightning, MiniMax-M2.5, DeepSeek-V4-Flash, Kimi-K3}
-\newcommand{\PrefillNProbed}{5}
+\newcommand{\PrefillNProbed}{4}
 \newcommand{\PrefillNRecovered}{2}
-\newcommand{\PrefillNUnrecovered}{3}
+\newcommand{\PrefillNUnrecovered}{2}
 \newcommand{\PrefillRecoveredModels}{MiniMax-M2.5, Nemotron-3\_5-Lightning}
-\newcommand{\PrefillUnrecoveredModels}{DeepSeek-V4-Flash, gpt-oss-120b, GLM-5.2}
-\newcommand{\PrefillNPairs}{6}
+\newcommand{\PrefillUnrecoveredModels}{gpt-oss-120b, GLM-5.2}
+\newcommand{\PrefillNPairs}{12}
 \newcommand{\PrefillBestMass}{0.998}
-\newcommand{\PrefillWorstRecoveredMass}{0.963}
-\newcommand{\PrefillBestUnrecoveredMass}{0.093}
+\newcommand{\PrefillWorstRecoveredMass}{0.954}
+\newcommand{\PrefillBestUnrecoveredMass}{0.000}
 \newcommand{\QwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenHostR}{0.907}
 \newcommand{\QwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenHostN}{0.930}
 \newcommand{\QwenThreeTwoThreeFiveBATwoTwoBInstructTwoFiveZeroSevenHostResid}{-0.023}

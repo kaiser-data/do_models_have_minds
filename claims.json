@@ -453,13 +453,16 @@
         "LlamaThreeThreeSevenZeroBInstructHostResid"
       ],
       "evidence": {
-        "models": "\\HostedNScored",
+        "models": "1",
         "replicates_per_cell": "\\LlamaThreeThreeSevenZeroBInstructHostReps",
         "note": "Now at \\HostedReps independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of \\HostedFloor. The residual \\HostedClears that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design seed with no floor, where only a directional statement was available. Served by a hosted API, a different serving stack with a different harness hash, so it is reported beside the self-hosted ladder and never inside its mean. The mechanism reproduces here too: decisiveness \\LlamaThreeThreeSevenZeroBInstructHostDecR percent on real pairs against \\LlamaThreeThreeSevenZeroBInstructHostDecN percent on invented ones.",
         "computed_by": "scripts/hosted_sweep.py then scripts/build_card.py --results results_hosted"
       },
       "what_would_falsify": "A residual at this scale that clears its own design noise floor, or a floor that collapses with more replicates while the residual holds.",
-      "grows_by": "Design seeds on this cell first -- one replicate is what keeps this provisional rather than established. Then a second frontier family at comparable scale, so the result is not one model's recipe.",
+      "grows_by": "The design seeds that made this established have been run, so what remains is breadth rather than depth: a second family at comparable scale, so the result is not one model's recipe, and the same model through both serving stacks, because hosted and self-hosted differ by harness hash and nothing here separates scale from stack.",
+      "literals": {
+        "1": "the number of models this claim rests on -- Llama-3.3-70B-Instruct alone. \\HostedNScored counts every scored hosted tile and read as this claim's n while it was one model at three seeds."
+      },
       "priority": 1
     },
     {
