@@ -29,6 +29,30 @@ eight cells remain. Log: scratchpad `nebius12.log`.
 
 ---
 
+## 0b. Done since this plan was written
+
+- **Read the upstream repo.** Battery verified byte-identical (510 outcomes, 30
+  categories, same order). Prompt found **not** verbatim — a dropped colon and
+  a line break — with a test that had claimed to check it pinning a hand-typed
+  copy of itself. `battery/upstream/` now vendors `templates.py` at commit
+  `a5821db` so verbatim is diffed against an artifact.
+- **Measured the drift.** `ue_exact` gives +0.0275 against `ue`'s +0.0262 —
+  1.9× the design floor on Qwen, 0.1× on granite, the smallest wording effect
+  in the study. **Comparability survives**; the footnote is owed, the
+  retraction is not.
+- **Crossed it into a 2×2** (`ue` / `ue_colon` / `ue_break` / `ue_exact`),
+  because the drift is two changes at once and their contrast is a composite.
+  Off-diagonal cells running.
+- **Roster records prefill recovery** via a third field rather than flipping
+  `first_token_ok`.
+- **Site carries the hosted models**, which it previously omitted entirely.
+
+**Qwen3-235B is at 2 of 3 seeds** and stable: −0.0235 at one seed, −0.0220 at
+two. No floor is emitted below three replicates, and that is deliberate —
+`training_noise_floor` raises rather than return a two-point range.
+
+---
+
 ## 1. Frontier models: two are reachable, and it is worth doing
 
 The roster lists six hosted models as unscoreable. Five of them **do**
