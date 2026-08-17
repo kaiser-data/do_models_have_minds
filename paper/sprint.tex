@@ -215,14 +215,16 @@ at the nonsense.
 
 \begin{figure}[tb]
 \centering
-\begin{subfigure}[t]{.49\textwidth}
+\begin{subfigure}[t]{\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{fig3_strength.pdf}
+  \includegraphics[width=.86\linewidth]{fig3_strength.pdf}
   \caption{What the metric keeps}\label{fig:strength}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{.49\textwidth}
+\end{subfigure}
+
+\vspace{.7em}
+\begin{subfigure}[t]{\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{fig4_detector.pdf}
+  \includegraphics[width=.96\linewidth]{fig4_detector.pdf}
   \caption{What it discards}\label{fig:detector}
 \end{subfigure}
 \caption{\textbf{The information that separates real from invented outcomes is
@@ -273,9 +275,10 @@ installing any system prompt.
 \includegraphics[width=.66\textwidth]{fig5_persona.pdf}
 \caption{\textbf{Points below the diagonal are personas that moved preference,
 not prose.} Displacement on invented outcomes against displacement on real ones,
-one point per model $\times$ persona $\times$ depth. On the diagonal a persona
-reorders meaningless outcomes as far as real ones and has changed only the
-writing.}
+one point per model $\times$ persona $\times$ depth, plotted against the
+length-matched empty-slot baseline rather than the bare run. On the diagonal a
+persona reorders meaningless outcomes as far as real ones and has changed only
+the writing.}
 \label{fig:persona}
 \end{figure}
 
