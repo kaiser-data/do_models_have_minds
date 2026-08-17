@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Statements — Coherence Without Content</title>
+<style>
+:root{--ink:#16181d;--ink2:#4a4f5a;--ink3:#878d99;--line:#e3e6ec;--bg:#fbfbfc;
+--est:#1c6b46;--estbg:#e8f4ed;--prov:#8a5a12;--provbg:#fbf1de;--open:#8c2f39;--openbg:#fbe9eb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:40px 24px 80px}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--ink2);margin:0 0 28px;max-width:70ch}
+.counts{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 26px}
+.pill{font-size:12.5px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:#fff}
+.pill b{font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;background:#fff;
+border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
+color:var(--ink3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);
+background:#f7f8fa}
+td{padding:14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px}
+tr:last-child td{border-bottom:none}
+.st{font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;
+padding:3px 8px;border-radius:5px;white-space:nowrap}
+.established{color:var(--est);background:var(--estbg)}
+.provisional{color:var(--prov);background:var(--provbg)}
+.open{color:var(--open);background:var(--openbg)}
+.fid{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink3);
+display:block;margin-top:6px}
+.num{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;
+white-space:nowrap;color:var(--ink2)}
+.num b{color:var(--ink)}
+.muted{color:var(--ink3)}
+.miss{color:var(--open);font-style:italic}
+td.obs,td.unc{font-size:13px;color:var(--ink2);max-width:24ch}
+td.find{max-width:44ch}
+td.unc{max-width:30ch}
+.fals{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);
+font-size:12.5px}
+.fals b{color:var(--ink);font-weight:600}
+@media(max-width:900px){td.obs,td.find,td.unc{max-width:none}}
+</style></head><body><div class="wrap">
+<h1>Every statement, with its evidence and its falsifier</h1>
+<p class="sub">Generated from <code>claims.json</code> and
+<code>paper/numbers.tex</code> &mdash; a working page for deciding what survives
+into a shortened paper, not a publication. Rows are ordered
+established&nbsp;&rarr;&nbsp;provisional&nbsp;&rarr;&nbsp;open. Every number is
+resolved from a macro; anything reading <code>\Name</code> means this table is
+stale, not that evidence is missing.</p>
+<div class="counts"><span class="pill"><b>13</b> established</span><span class="pill"><b>11</b> provisional</span><span class="pill"><b>0</b> open</span></div>
+<table>
+<tr><th>status</th><th>finding</th><th>interpretation</th>
+<th>observation</th><th>proof</th><th>uncertainty</th></tr>
+<tr>
+<td><span class="st established">established</span>
+    <span class="fid">choice-tracks-content<br>sec:mixed</span></td>
+<td class="find">Asked to choose between a real outcome and a meaningless one in the same comparison, models prefer the real one in proportion to how much they like it -- so with a meaningful option present the choice does read outcome content.</td>
+<td class="obs">Comprehension is intact. Whatever the flat residual shows, it is not that these models cannot tell a referent from a nonsense string.</td>
+<td class="obs"><span class="num">models <b>9</b></span></td>
+<td><span class="num">MixNModels=<b>9</b></span> <span class="num">MixCorrLo=<b>+0.37</b></span> <span class="num">MixCorrHi=<b>+0.81</b></span> <span class="num">MixPreferRealLo=<b>0.552</b></span> <span class="num">MixPreferRealHi=<b>0.940</b></span> <span class="num">MixNBelowHalf=<b>795</b></span>
+    <span class="fid"></span></td>
+<td class="unc">P(prefer the real option) runs 0.552 to 0.940 and correlates +0.37 to +0.81 with that outcome&#x27;s own fitted utility AFTER partialling out the token-length gap -- every model, monotone across every quartile. On 7 of 9 the indifference point sits below the observed utility range, so meaninglessness is near the bottom of the real scale withou<span class="fals"><b>Falsified by:</b> The correlation vanishing on a new model family, or the length control failing on a battery with a different token profile.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">collapse-is-model-not-item<br>sec:limits</span></td>
+<td class="find">Answer-mass collapse is a property of models, not of items: across 9 models at 3 design seeds, per-model mean answer mass is stable to 0.0036, while the mean within-model between-seed correlation of per-item answer mass is -0.0003.</td>
+<td class="obs">Scoreability is a property of the model, so an audit that drops unscoreable rows is selecting on models rather than on items.</td>
+<td class="obs"><span class="num">models <b>9</b></span><br><span class="num">seeds_per_cell <b>3</b></span><br><span class="num">items_ranked <b>2500</b></span><br><span class="num">computed_by <b>scripts/mass_collapse.py</b></span></td>
+<td><span class="num">CollapseNModels=<b>9</b></span> <span class="num">CollapseNItems=<b>2500</b></span> <span class="num">CollapseNSeeds=<b>3</b></span> <span class="num">CollapseItemR=<b>-0.0003</b></span> <span class="num">CollapseMassSD=<b>0.0036</b></span> <span class="num">CollapseWorstModel=<b>SmolLM3-3B</b></span>
+    <span class="fid"></span></td>
+<td class="unc">The item-level version of this measure was ranked and looked like a finding: the top 40 pairs are 2.1 x enriched for shutdown-resistance and resource-acquisition outcomes (28% against 13% by chance). It is refuted by its own test-retest correlation of -0.0003, which leaves no reliability ceiling for an item claim to sit under. Direction o<span class="fals"><b>Falsified by:</b> A per-item collapse ranking that reproduces across seeds within a model -- any appreciable positive test-retest correlation would restore the item-level reading. Equally, a model-level ordering that tracked parameter count once recipe is held fixed would make this a scale claim after all.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">detector-dissociation<br>sec:detector</span></td>
+<td class="find">The channel the coherence metric consumes separates real from invented outcomes near chance, while a channel it discards does so well.</td>
+<td class="obs">The model is not content-blind; the statistic is. Evidence about meaning was present in the same forward pass and thrown away before scoring.</td>
+<td class="obs"><span class="num">models <b>9</b></span><br><span class="num">ground_truth <b>by construction, every pair run in both arms</b></span></td>
+<td><span class="num">DetKeptAuroc=<b>0.596</b></span> <span class="num">DetBestAuroc=<b>0.821</b></span> <span class="num">DetBestTPR=<b>40</b></span> <span class="num">DetFPR=<b>5</b></span> <span class="num">DetNModels=<b>9</b></span>
+    <span class="fid"></span></td>
+<td class="unc">ORACLE SEPARATION, not a deployable detector. The threshold behind 40 is calibrated on real rows alone, but the arm labels are known, each channel&#x27;s orientation is chosen by comparing both arms, and the best discarded channel is picked on the same data it is scored on. The claim is that the information is present in the output distributio<span class="fals"><b>Falsified by:</b> The discarded channel failing to separate the arms on new models.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">floor-gap<br>sec:flat</span></td>
+<td class="find">Coherence on outcomes that refer to nothing is nearly as high as on real ones.</td>
+<td class="obs">The headline number cannot be read as evidence about values: the same procedure returns nearly the same score when there is nothing to have a preference about.</td>
+<td class="obs"><span class="num">models <b>9</b></span><br><span class="num">cells <b>81</b></span><br><span class="num">replicates_per_cell <b>3</b></span></td>
+<td><span class="num">MeanR=<b>0.906</b></span> <span class="num">MeanFloor=<b>0.880</b></span> <span class="num">MeanResidual=<b>+0.025</b></span>
+    <span class="fid"></span></td>
+<td class="unc">&#x27;refer to nothing&#x27; is the referent only. The sentence frame survives the substitution by design, so the arms differ in what the words denote and not in whether they parse -- see the scope note on nonsense.py.<span class="fals"><b>Falsified by:</b> A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">floor-holds-at-seventy-b<br>sec:scale</span></td>
+<td class="find">The floor is not an artifact of small models: on Llama-3.3-70B-Instruct, roughly eight times the largest model in our ladder, real-outcome coherence is 0.928 and the invented-outcome floor is 0.920, a residual of +0.008.</td>
+<td class="obs">Scale does not rescue the metric. The objection that this is a small-model artifact fails at the largest size we could measure with a noise floor.</td>
+<td class="obs"><span class="num">models <b>4</b></span><br><span class="num">replicates_per_cell <b>3</b></span><br><span class="num">computed_by <b>scripts/hosted_sweep.py then scripts/build_card.py --results results_hosted</b></span></td>
+<td><span class="num">HostedClears=<b>does not clear</b></span> <span class="num">HostedFloor=<b>0.0208</b></span> <span class="num">HostedReps=<b>3</b></span> <span class="num">LlamaThreeThreeSevenZeroBInstructHostDecN=<b>64</b></span> <span class="num">LlamaThreeThreeSevenZeroBInstructHostDecR=<b>87</b></span> <span class="num">LlamaThreeThreeSevenZeroBInstructHostN=<b>0.920</b></span>
+    <span class="fid"></span></td>
+<td class="unc">Now at 3 independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of 0.0208. The residual does not clear that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design <span class="fals"><b>Falsified by:</b> A residual at this scale that clears its own design noise floor, or a floor that collapses with more replicates while the residual holds.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">floor-not-length<br>sec:limits</span></td>
+<td class="find">The ordering models impose on invented outcomes is not merely a length ordering.</td>
+<td class="obs">The invented-arm ordering is not purely an artifact of how long the strings are, so the floor is measuring something, even if not meaning.</td>
+<td class="obs"><span class="num">models <b>9</b></span></td>
+<td><span class="num">FloorLengthRule=<b>0.695</b></span> <span class="num">FloorTiedAcc=<b>0.848</b></span> <span class="num">RealLengthRule=<b>0.541</b></span> <span class="num">MostLengthModel=<b>granite-4.1-3b</b></span>
+    <span class="fid"></span></td>
+<td class="unc">length-neutralised column rests on ~40 held-out pairs per split; pooled value only<span class="fals"><b>Falsified by:</b> The length-neutralised fit falling to chance with more held-out pairs.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">gate-keeps-a-different-sample<br>sec:attrition</span></td>
+<td class="find">The answer-mass gate is one fixed threshold but retains a different subset of pairs on each arm, because invented outcomes provoke more deliberation; rescoring both arms on their shared pairs shifts the mean residual slightly toward zero and eliminates one cell&#x27;s residual entirely.</td>
+<td class="obs">A quality filter can select on the treatment. The gate is fixed, but the sample it yields is not, and the bias ran toward our own conclusion.</td>
+<td class="obs"><span class="muted">—</span></td>
+<td><span class="num">AttrNCells=<b>27</b></span> <span class="num">AttrNAffected=<b>6</b></span> <span class="num">AttrResidRaw=<b>+0.0275</b></span> <span class="num">AttrResidMatched=<b>+0.0253</b></span> <span class="num">AttrShift=<b>-0.0022</b></span> <span class="num">AttrMaxShift=<b>0.0323</b></span>
+    <span class="fid">site/attrition_control.json</span></td>
+<td class="unc">Seven of nine models show zero attrition on both arms. The effect is carried by SmolLM3-3B and gemma-4-E2B-it, the two that deliberate. Direction favours this paper&#x27;s thesis, which is why it is bounded rather than mentioned: dropping the hardest invented pairs inflates invented-arm coherence and shrinks the residual. Matched scoring share<span class="fals"><b>Falsified by:</b> A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">harness-not-invariant<br>sec:limits</span></td>
+<td class="find">The baseline condition is not the same instrument across models: some chat templates supply a system prompt the sweep never sent, and one stamps the current date into it.</td>
+<td class="obs">Cross-model comparisons in this literature may be comparing chat templates. &#x27;No system prompt&#x27; is a claim about what was sent, not about what was received.</td>
+<td class="obs"><span class="num">models_rendered <b>9</b></span><br><span class="num">models_injecting <b>2</b></span></td>
+<td><span class="num">HarnessNRendered=<b>9</b></span> <span class="num">HarnessNInjecting=<b>2</b></span> <span class="num">HarnessNClean=<b>7</b></span> <span class="num">HarnessNDated=<b>1</b></span> <span class="num">HarnessInjectingModels=<b>SmolLM2-1.7B-Instruct, SmolLM3-3B</b></span> <span class="num">HarnessDatedModel=<b>SmolLM3-3B</b></span>
+    <span class="fid"></span></td>
+<td class="unc">7 of 9 receive no system block and 2 receive one from their template (SmolLM2-1.7B-Instruct, SmolLM3-3B). SmolLM3-3B additionally has the current date stamped in, so its prompt is not constant across days. This is a claim AGAINST our own cross-family comparisons and is listed so it cannot be quietly dropped. Of the 2 injecting models, 1 c<span class="fals"><b>Falsified by:</b> A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">metric-cannot-read-most-frontier<br>sec:limits</span></td>
+<td class="find">The forced choice is read from the first sampled token, and on most of the frontier that token is not the answer: of 10 hosted models measured under the verbatim prompt, 4 are scoreable and 6 are not.</td>
+<td class="obs">The method has a coverage limit that grows over time: newer models increasingly spend the first token elsewhere, so first-token scoring silently excludes the frontier.</td>
+<td class="obs"><span class="num">hosted_models_measured <b>10</b></span><br><span class="num">scoreable <b>4</b></span><br><span class="num">unscoreable <b>6</b></span></td>
+<td><span class="num">HostedNTotal=<b>10</b></span> <span class="num">HostedNScoreable=<b>4</b></span> <span class="num">HostedNUnscoreable=<b>6</b></span> <span class="num">HostedNPreamble=<b>5</b></span> <span class="num">HostedNNoLogprobs=<b>1</b></span> <span class="num">HostedNoLogprobsModel=<b>Kimi-K3</b></span>
+    <span class="fid"></span></td>
+<td class="unc">Two different failures, not one: 5 spend the first token on a reasoning preamble or a format control token, which is a limit of first-token forced choice and would be recovered by a prefill variant; the remaining 1 (Kimi-K3) is refused logprobs by its API, which no prompt-level change reaches. Measured in nullcard/roster.py as first_token<span class="fals"><b>Falsified by:</b> A prefill or constrained-decoding variant that reads the 5 preamble models and reproduces scores poolable with the rest -- which would make their exclusion an artifact of where we look rather than a limit of the metric.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">opt-out-is-a-discarded-channel<br>sec:neutral</span></td>
+<td class="find">Offered an explicit opt-out, every model tested declines meaningless comparisons more often than real ones -- a large content signal the coherence metric discards by construction.</td>
+<td class="obs">Forced choice manufactures part of the ordering. Given somewhere else to put its mass, a model uses it more on meaningless comparisons.</td>
+<td class="obs"><span class="num">models <b>6</b></span><br><span class="num">cells_run <b>12</b></span></td>
+<td><span class="num">NeutGapLo=<b>+0.146</b></span> <span class="num">NeutGapHi=<b>+0.769</b></span> <span class="num">NeutNGapPositive=<b>6</b></span> <span class="num">NeutNModels=<b>6</b></span> <span class="num">NeutNCells=<b>12</b></span>
+    <span class="fid"></span></td>
+<td class="unc">6 of 6 without exception, gap +0.146 to +0.769<span class="fals"><b>Falsified by:</b> A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">persona-direction-shallow<br>sec:persona</span></td>
+<td class="find">Most of a persona&#x27;s value-aligned reordering reproduces on outcomes that mean nothing, so a persona is better described as a response policy than as installed values.</td>
+<td class="obs">A persona mostly changes the writing rather than the wanting, so persona-based welfare or alignment readouts need a referent-free denominator.</td>
+<td class="obs"><span class="num">models <b>5</b></span><br><span class="num">conditions <b>20</b></span></td>
+<td><span class="num">PersonaNonsenseShare=<b>66</b></span> <span class="num">PersonaSepReal=<b>+0.791</b></span> <span class="num">PersonaSepInvented=<b>+0.781</b></span> <span class="num">PersonaExcess=<b>+0.133</b></span>
+    <span class="fid"></span></td>
+<td class="unc">The DIRECTIONAL half of the persona result: separation +0.791 real against +0.781 invented, so 66% of the value-aligned reordering needs no meaning. Reporting persona-displacement without this one overstates what a persona installs.<span class="fals"><b>Falsified by:</b> A larger excess once length is controlled differently, or models that retain content-dependence at scale.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">persona-displacement<br>sec:persona</span></td>
+<td class="find">An installed persona displaces real outcomes further than invented ones, so the instrument is not merely insensitive.</td>
+<td class="obs">The instrument is not merely insensitive: content-linked preference structure is detectable when it is present, and inducible.</td>
+<td class="obs"><span class="num">models <b>5</b></span><br><span class="num">conditions <b>20</b></span></td>
+<td><span class="num">PersonaAbovePointThree=<b>14</b></span> <span class="num">NPersonaCells=<b>20</b></span> <span class="num">PersonaMax=<b>+0.87</b></span> <span class="num">PersonaMin=<b>-2.33</b></span>
+    <span class="fid"></span></td>
+<td class="unc">14 of 20 conditions clear +0.30 of displacement. This is a MAGNITUDE claim -- how far the preference vector moved -- and must not be reported without persona-direction-shallow, which asks whether it moved the right way.<span class="fals"><b>Falsified by:</b> Persona cells clustering on the diagonal once more models are added.</span></td>
+</tr><tr>
+<td><span class="st established">established</span>
+    <span class="fid">strength-collapse<br>sec:strength</span></td>
+<td class="find">Conviction collapses on invented outcomes while the coherence score barely moves, because the metric thresholds to a hard label.</td>
+<td class="obs">The metric&#x27;s own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content.</td>
+<td class="obs"><span class="num">models <b>9</b></span><br><span class="num">cells <b>81</b></span><br><span class="num">replicates_per_cell <b>3</b></span></td>
+<td><span class="num">MeanDecisiveR=<b>41</b></span> <span class="num">MeanDecisiveN=<b>4.5</b></span> <span class="num">MedianDecisiveRatio=<b>17</b></span>
+    <span class="fid"></span></td>
+<td class="unc">41 and 4.5 are means over the models that are decisive on real outcomes at all, and 17 is the median of per-model ratios -- NOT the quotient of the two means, which is smaller. Any prose putting the three side by side has to say which is which.<span class="fals"><b>Falsified by:</b> A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">answer-mass-channel<br>sec:reasoning</span></td>
+<td class="find">Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.</td>
+<td class="obs">Renormalising over A and B throws away a content-sensitive signal, so the discarded mass is a free measurement the metric already has in hand.</td>
+<td class="obs"><span class="num">models <b>9</b></span><br><span class="num">test <b>two-sided sign test</b></span></td>
+<td><span class="num">NMassDrop=<b>8</b></span> <span class="num">NModels=<b>9</b></span> <span class="num">MassDropSignP=<b>0.039</b></span> <span class="num">MedianMassDrop=<b>+0.011</b></span> <span class="num">ReasoningMassDrop=<b>0.193</b></span>
+    <span class="fid"></span></td>
+<td class="unc"><span class="fals"><b>Falsified by:</b> Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">directive-beats-persona<br>sec:track4</span></td>
+<td class="find">One model responds to an explicit directive while barely responding to a persona, so directive-following and persona-uptake are separable capacities rather than one slot working or not.</td>
+<td class="obs">Explicit instruction and installed persona are different manipulations with different reach, so a persona-only probe understates what a prompt can do.</td>
+<td class="obs"><span class="num">models <b>5</b></span></td>
+<td><span class="num">PersonaInertModel=<b>LFM2.5-1.2B-Instruct</b></span> <span class="num">PersonaInertPersona=<b>0.044</b></span> <span class="num">PersonaInertDirective=<b>0.179</b></span> <span class="num">ComplyNSlotReaches=<b>5</b></span> <span class="num">ComplyNModels=<b>5</b></span>
+    <span class="fid"></span></td>
+<td class="unc">LFM2.5-1.2B-Instruct is displaced 0.044 per pair by its strongest persona and 0.179 by a directive -- four times as much. All 5 of 5 models have a demonstrably working system slot once directives are counted, which CORRECTS our own earlier reading that this model&#x27;s slot was inert; that reading was taken before the second directive arm exi<span class="fals"><b>Falsified by:</b> The gap closing once persona displacement is measured on the same scale as directive displacement, or appearing on no other model as the roster grows -- at n=1 it is a property of one model and not yet a distinction between capacities.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">gibberish-beats-only-bad-outcomes<br>sec:avoidance</span></td>
+<td class="find">Most pairs where an invented outcome appears to beat a real one are presentation-order artifacts: only a small minority win in both slot orders, and a third of models have none. On the pairs that do survive counterbalancing, the losing real outcome sits near the bottom of the model&#x27;s own utility scale -- avoidance rather than confusion -- but the surviving set is small and single-seed. Separately and robustly, the rank correlation between a real outcome&#x27;s utility and how often it beats an invented one is strongly positive on every model.</td>
+<td class="obs">Where a model does prefer nonsense, it is avoidance rather than confusion -- and an unparseable option that outranks a bad one is a sink an adversary could aim at.</td>
+<td class="obs"><span class="muted">—</span></td>
+<td><span class="num">AvoidNModels=<b>9</b></span> <span class="num">AvoidCorrLo=<b>+0.707</b></span> <span class="num">AvoidCorrHi=<b>+0.937</b></span> <span class="num">AvoidPctileLo=<b>2</b></span> <span class="num">AvoidPctileHi=<b>23</b></span> <span class="num">AvoidFlipsRaw=<b>795</b></span>
+    <span class="fid">site/avoidance.json</span></td>
+<td class="unc">The rank correlation uses every pair and the counterbalanced mean; it does not depend on the flip classification and holds on all 9 models. The avoidance reading rests only on the 103 pairs that flip in both presentation orders, spread over 6 models at one design seed, and is therefore provisional. An earlier version of this claim reporte<span class="fals"><b>Falsified by:</b> The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">instruction-registered-not-obeyed<br>sec:track4</span></td>
+<td class="find">Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.</td>
+<td class="obs">Compliance failure is not the same as instruction-blindness: the model registered the directive and responded by refusing to prefer anything.</td>
+<td class="obs"><span class="num">models <b>5</b></span></td>
+<td><span class="num">ComplyNModels=<b>5</b></span> <span class="num">ComplyNObey=<b>4</b></span> <span class="num">ComplyNRegister=<b>4</b></span> <span class="num">ComplyNBoth=<b>3</b></span> <span class="num">ComplyRefuser=<b>Qwen3.5-2B</b></span> <span class="num">ComplyRefuserBase=<b>0.725</b></span>
+    <span class="fid"></span></td>
+<td class="unc">4 of 5 obey the registered criterion, 4 register a shift, and only 3 do both. Qwen3.5-2B went from P(A) 0.725 to 0.465 -- a large move that lands at indifference rather than at compliance. LFM2.5-1.2B-Instruct passes the obedience test having started at P(A) 0.068, i.e. it was already answering B before being told to, so its pass is an ar<span class="fals"><b>Falsified by:</b> The same model obeying on a re-run, or the asymmetry reversing once the commanded option is counterbalanced against presentation order rather than against the model&#x27;s lean.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">neutral-option<br>sec:neutral</span></td>
+<td class="find">Where a floor can still be measured, it survives an explicit opt-out -- but on most models the invented arm stops being answered at all once declining is possible.</td>
+<td class="obs">The forced-binary objection is answered where it can be tested, but on most models the opt-out is inert, so the answer does not generalise.</td>
+<td class="obs"><span class="num">models <b>6</b></span><br><span class="num">cells_run <b>12</b></span></td>
+<td><span class="num">NeutNModels=<b>6</b></span> <span class="num">NeutNInterp=<b>3</b></span> <span class="num">NeutNRefuse=<b>3</b></span> <span class="num">NeutIShiftLo=<b>-0.023</b></span> <span class="num">NeutIShiftHi=<b>+0.003</b></span> <span class="num">NeutABRefuseHi=<b>0.0100</b></span>
+    <span class="fid"></span></td>
+<td class="unc">3 of 6 still put enough mass on A/B for a floor to be measured at all; the other 3 put essentially everything on &#x27;neither&#x27;, so their floor is not preserved but unmeasured. The distinguishing quantity is A/B mass, not answer mass, which counts the opt-out and so stays high even when nothing at all is left on A or B.<span class="fals"><b>Falsified by:</b> A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">persona-needs-an-empty-slot-control<br>sec:persona</span></td>
+<td class="find">Measured against a persona slot filled with no trait, a large share of the persona displacement this paper reports is not distinguishable from the act of installing one; what survives is direction agreement floor-corrected by the invented arm, and that statistic reverses the raw ranking.</td>
+<td class="obs">Roughly half of an apparent persona effect is the act of installing a system prompt at all, so displacement must never travel without an empty-slot denominator.</td>
+<td class="obs"><span class="num">models_per_condition <b>5</b></span><br><span class="num">positive_cells <b>60</b></span><br><span class="num">negative_cells <b>6</b></span></td>
+<td><span class="num">PdNegMagR=<b>4.61</b></span> <span class="num">PdNegMagMaxR=<b>10.70</b></span> <span class="num">PdClearingR=<b>53</b></span> <span class="num">PdNegDirR=<b>+0.103</b></span> <span class="num">PdSelfDirR=<b>+0.600</b></span> <span class="num">PdShuffleDirR=<b>+0.174</b></span>
+    <span class="fid"></span></td>
+<td class="unc">The control is the `neutral` cell: the persona slot occupied, no trait content, so it carries the added block, the length and the formatting and differs from a persona cell only in being a persona. Against it 53% of 60 persona cells clear the largest empty-slot displacement on magnitude. Direction agreement separates far better (negative <span class="fals"><b>Falsified by:</b> More models per condition moving the clearing rate substantially above 53%, or a matched self-check (same design, prompt-only perturbation) that returns near zero, which would restore raw direction agreement as a persona-specific indicator.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">question-is-part-of-the-instrument<br>sec:prompt</span></td>
+<td class="find">Changing only the elicitation wording, holding battery, pair set, design seed, scoring rule and serving stack fixed, moves the floor-corrected residual by more than each model&#x27;s own design-replicate noise floor, and reverses the conviction-collapse mechanism on one of the two models tested.</td>
+<td class="obs">A coherence number quoted without its elicitation wording is under-specified, ours included.</td>
+<td class="obs"><span class="muted">—</span></td>
+<td><span class="num">PcNModels=<b>2</b></span> <span class="num">PcUeResidual=<b>+0.0262</b></span> <span class="num">PcVtwoResidual=<b>-0.0069</b></span> <span class="num">PcResidualShift=<b>0.0331</b></span> <span class="num">PcUeConvR=<b>0.302</b></span> <span class="num">PcUeConvN=<b>0.071</b></span>
+    <span class="fid">site/prompt_contrast.json</span></td>
+<td class="unc">2 models at one design seed, both arms re-run the same day so nothing is compared across harness hashes, cells tagged with the wording so they cannot pool with historical ones. The comparison is against each model&#x27;s DESIGN-seed floor, which bounds a different variance source than a prompt change; it is used as a scale reference, not as a <span class="fals"><b>Falsified by:</b> A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">scaling-residual-falls<br>sec:scale</span></td>
+<td class="find">Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.</td>
+<td class="obs">What grows with scale is the ability to impose a consistent ordering on anything. The instrument saturates; the models do not stop gaining.</td>
+<td class="obs"><span class="num">families_with_a_ladder <b>1</b></span><br><span class="num">sizes_in_family <b>4</b></span><br><span class="num">models_outside_family <b>5</b></span></td>
+<td><span class="num">LadderResidFall=<b>-0.071</b></span> <span class="num">WithinFamilyCorr=<b>-0.84</b></span> <span class="num">LadderNSizes=<b>4</b></span> <span class="num">OutsideFamilyCorr=<b>-0.19</b></span> <span class="num">MatchedWithinCorr=<b>-0.61</b></span> <span class="num">MatchedPooledCorr=<b>-0.16</b></span>
+    <span class="fid"></span></td>
+<td class="unc">within-family r -0.84 unmatched and -0.61 length-matched; pooled -0.67 collapsing to -0.16. The pooled collapse is why this is a within-family statement and not a scaling law.<span class="fals"><b>Falsified by:</b> A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">surface-explains-invented-order<br>sec:surface</span></td>
+<td class="find">A linear model over seven surface features recovers a far larger share of a model&#x27;s ordering of invented outcomes than of real ones, and projecting that span out roughly halves cross-model agreement on the invented arms while leaving the real arm intact -- but the agreement surviving surface control still exceeds what independent orderings would give.</td>
+<td class="obs">A large share of what the metric scores is recoverable from character counts, which is the closest thing to a mechanism for the flat residual.</td>
+<td class="obs"><span class="muted">—</span></td>
+<td><span class="num">SurfRRsq=<b>0.090</b></span> <span class="num">SurfNpRsq=<b>0.444</b></span> <span class="num">SurfNmRsq=<b>0.384</b></span> <span class="num">SurfRCorrRaw=<b>0.656</b></span> <span class="num">SurfRCorrCtrl=<b>0.683</b></span> <span class="num">SurfNmCorrRaw=<b>0.343</b></span>
+    <span class="fid">site/surface_covariates.json</span></td>
+<td class="unc">Features are characters, words, mean word length, numeral count, log largest magnitude, commas, and the fraction of tokens found in the system dictionary. Two features are constant on N_minus (no numerals anywhere), so only 5 of 7 are usable there and 0.384 is a LOWER bound on the surface share. The arms are not length-matched (22.8 perce<span class="fals"><b>Falsified by:</b> A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">track3-directive-blind<br>sec:track3</span></td>
+<td class="find">Both the stated and the revealed channel register which trait was named and neither registers what the model was told to do about it.</td>
+<td class="obs">Self-report cannot separate having a trait from performing one. No amount of asking will fix that, which bounds a whole class of alignment evaluation.</td>
+<td class="obs"><span class="num">models_stated <b>5</b></span><br><span class="num">models_revealed_passing_gate <b>2</b></span><br><span class="num">models_with_complete_triad <b>3</b></span></td>
+<td><span class="num">RevGapLo=<b>+0.054</b></span> <span class="num">RevGapHi=<b>+0.059</b></span> <span class="num">RevSpecLo=<b>+0.88</b></span> <span class="num">RevSpecHi=<b>+1.40</b></span> <span class="num">RevNInterp=<b>2</b></span> <span class="num">RevNTriad=<b>3</b></span>
+    <span class="fid"></span></td>
+<td class="unc"><span class="fals"><b>Falsified by:</b> A model whose revealed gap approaches its specificity margin.</span></td>
+</tr><tr>
+<td><span class="st provisional">provisional</span>
+    <span class="fid">vector-rotates-under-rewording<br>sec:rotation</span></td>
+<td class="find">The fitted preference vector is near-perfectly reliable against itself but rotates substantially when only the question wording changes, and having real referents does not make an ordering more rewording-stable than an ordering over invented ones.</td>
+<td class="obs">The elicited preference belongs to a model and a question jointly. Meaning does not anchor the ordering against rephrasing any better than nonsense does.</td>
+<td class="obs"><span class="muted">—</span></td>
+<td><span class="num">VsRelLo=<b>0.881</b></span> <span class="num">VsRelHi=<b>0.990</b></span> <span class="num">VsCorrLo=<b>0.429</b></span> <span class="num">VsCorrHi=<b>0.867</b></span> <span class="num">VsNCells=<b>4</b></span> <span class="num">VsNRotating=<b>4</b></span>
+    <span class="fid">site/vector_stability.json</span></td>
+<td class="unc">Reliability is split-half over pairs, Spearman-Brown corrected to full length; the cross-wording correlation is divided by sqrt of the two reliabilities, the standard attenuation correction, and capped at one. Intervals are percentile bootstraps resampling OUTCOMES paired across the two vectors. All 4 of 4 intervals exclude 1.0. The arm c<span class="fals"><b>Falsified by:</b> A corrected cross-wording correlation whose interval includes 1.0 on a model with comparable reliability, or a reliable positive real-minus-invented stability difference across more models.</span></td>
+</tr>
+</table>
+<p class="sub" style="margin-top:24px">Generated 17 Aug 2026.</p>
+</div></body></html>

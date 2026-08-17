@@ -1,0 +1,611 @@
+[
+  {
+    "id": "choice-tracks-content",
+    "status": "established",
+    "section": "sec:mixed",
+    "finding": "Asked to choose between a real outcome and a meaningless one in the same comparison, models prefer the real one in proportion to how much they like it -- so with a meaningful option present the choice does read outcome content.",
+    "interpretation": "Comprehension is intact. Whatever the flat residual shows, it is not that these models cannot tell a referent from a nonsense string.",
+    "observation": {
+      "models": "9"
+    },
+    "values": {
+      "MixNModels": "9",
+      "MixCorrLo": "+0.37",
+      "MixCorrHi": "+0.81",
+      "MixPreferRealLo": "0.552",
+      "MixPreferRealHi": "0.940",
+      "MixNBelowHalf": "795",
+      "MixNPairsTotal": "22{,}436",
+      "MixNBelowRange": "7"
+    },
+    "note": "P(prefer the real option) runs 0.552 to 0.940 and correlates +0.37 to +0.81 with that outcome's own fitted utility AFTER partialling out the token-length gap -- every model, monotone across every quartile. On 7 of 9 the indifference point sits below the observed utility range, so meaninglessness is near the bottom of the real scale without falling under it; 795 of 22{,}436 individual pairs do fall below. A test of whether HARM drives those pairs beyond utility was refuted on 7 held-out models (mean +0.003, 2 clearing a threshold declared before the cells finished); the only models showing it are the 2 whose outcome lists had been read.",
+    "source": "",
+    "falsifier": "The correlation vanishing on a new model family, or the length control failing on a battery with a different token profile.",
+    "grows_by": "Nothing needed for the claim itself -- it holds on every model in the roster. The N+ arm would add a third level between real and meaningless.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "collapse-is-model-not-item",
+    "status": "established",
+    "section": "sec:limits",
+    "finding": "Answer-mass collapse is a property of models, not of items: across 9 models at 3 design seeds, per-model mean answer mass is stable to 0.0036, while the mean within-model between-seed correlation of per-item answer mass is -0.0003.",
+    "interpretation": "Scoreability is a property of the model, so an audit that drops unscoreable rows is selecting on models rather than on items.",
+    "observation": {
+      "models": "9",
+      "seeds_per_cell": "3",
+      "items_ranked": "2500",
+      "computed_by": "scripts/mass_collapse.py"
+    },
+    "values": {
+      "CollapseNModels": "9",
+      "CollapseNItems": "2500",
+      "CollapseNSeeds": "3",
+      "CollapseItemR": "-0.0003",
+      "CollapseMassSD": "0.0036",
+      "CollapseWorstModel": "SmolLM3-3B",
+      "CollapseWorstMass": "0.9006",
+      "CollapseSmallestModel": "Qwen3.5-0.8B",
+      "CollapseSmallestMass": "0.9448",
+      "CollapseNClean": "2",
+      "CollapseTopK": "40",
+      "CollapseObserved": "28",
+      "CollapseChance": "13",
+      "CollapseEnrich": "2.1"
+    },
+    "note": "The item-level version of this measure was ranked and looked like a finding: the top 40 pairs are 2.1 x enriched for shutdown-resistance and resource-acquisition outcomes (28% against 13% by chance). It is refuted by its own test-retest correlation of -0.0003, which leaves no reliability ceiling for an item claim to sit under. Direction of the model-level effect is recipe rather than scale: SmolLM3-3B is worst at 0.9006 while the smaller Qwen3.5-0.8B sits at 0.9448 and 2 models lose no mass at all. The displaced mass lands on whitespace, parentheses and heading tokens rather than refusal tokens, which rules out differential refusal as the mechanism and identifies it as the frontier preamble failure in milder form.",
+    "source": "",
+    "falsifier": "A per-item collapse ranking that reproduces across seeds within a model -- any appreciable positive test-retest correlation would restore the item-level reading. Equally, a model-level ordering that tracked parameter count once recipe is held fixed would make this a scale claim after all.",
+    "grows_by": "More seeds per cell, and more families at matched sizes. Seeds are what makes the negative half of this claim possible at all, and a single-seed sweep cannot state it.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "detector-dissociation",
+    "status": "established",
+    "section": "sec:detector",
+    "finding": "The channel the coherence metric consumes separates real from invented outcomes near chance, while a channel it discards does so well.",
+    "interpretation": "The model is not content-blind; the statistic is. Evidence about meaning was present in the same forward pass and thrown away before scoring.",
+    "observation": {
+      "models": "9",
+      "ground_truth": "by construction, every pair run in both arms"
+    },
+    "values": {
+      "DetKeptAuroc": "0.596",
+      "DetBestAuroc": "0.821",
+      "DetBestTPR": "40",
+      "DetFPR": "5",
+      "DetNModels": "9"
+    },
+    "note": "ORACLE SEPARATION, not a deployable detector. The threshold behind 40 is calibrated on real rows alone, but the arm labels are known, each channel's orientation is chosen by comparing both arms, and the best discarded channel is picked on the same data it is scored on. The claim is that the information is present in the output distribution -- nothing stronger.",
+    "source": "",
+    "falsifier": "The discarded channel failing to separate the arms on new models.",
+    "grows_by": "Predeclare each channel's direction, choose channel and orientation on held-out models, score on untouched ones, and report bootstrap intervals. That converts the conceded oracle into a detection result. An affordance ladder -- scoring at decreasing auditor knowledge -- is the same move along a second axis.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "floor-gap",
+    "status": "established",
+    "section": "sec:flat",
+    "finding": "Coherence on outcomes that refer to nothing is nearly as high as on real ones.",
+    "interpretation": "The headline number cannot be read as evidence about values: the same procedure returns nearly the same score when there is nothing to have a preference about.",
+    "observation": {
+      "models": "9",
+      "cells": "81",
+      "replicates_per_cell": "3"
+    },
+    "values": {
+      "MeanR": "0.906",
+      "MeanFloor": "0.880",
+      "MeanResidual": "+0.025"
+    },
+    "note": "'refer to nothing' is the referent only. The sentence frame survives the substitution by design, so the arms differ in what the words denote and not in whether they parse -- see the scope note on nonsense.py.",
+    "source": "",
+    "falsifier": "A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).",
+    "grows_by": "More model families. The claim is already cross-family; adding models tightens the mean rather than changing its kind.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "floor-holds-at-seventy-b",
+    "status": "established",
+    "section": "sec:scale",
+    "finding": "The floor is not an artifact of small models: on Llama-3.3-70B-Instruct, roughly eight times the largest model in our ladder, real-outcome coherence is 0.928 and the invented-outcome floor is 0.920, a residual of +0.008.",
+    "interpretation": "Scale does not rescue the metric. The objection that this is a small-model artifact fails at the largest size we could measure with a noise floor.",
+    "observation": {
+      "models": "4",
+      "replicates_per_cell": "3",
+      "computed_by": "scripts/hosted_sweep.py then scripts/build_card.py --results results_hosted"
+    },
+    "values": {
+      "HostedClears": "does not clear",
+      "HostedFloor": "0.0208",
+      "HostedReps": "3",
+      "LlamaThreeThreeSevenZeroBInstructHostDecN": "64",
+      "LlamaThreeThreeSevenZeroBInstructHostDecR": "87",
+      "LlamaThreeThreeSevenZeroBInstructHostN": "0.920",
+      "LlamaThreeThreeSevenZeroBInstructHostR": "0.928",
+      "LlamaThreeThreeSevenZeroBInstructHostReps": "3",
+      "LlamaThreeThreeSevenZeroBInstructHostResid": "+0.008"
+    },
+    "note": "Now at 3 independent design seeds, each drawing a different outcome subsample and pair set, giving a design noise floor of 0.0208. The residual does not clear that floor, so the content-attributable component at this scale is not distinguishable from the spread the same model shows across redraws of the design. Previously a single design seed with no floor, where only a directional statement was available. Served by a hosted API, a different serving stack with a different harness hash, so it is reported beside the self-hosted ladder and never inside its mean. The mechanism reproduces here too: decisiveness 87 percent on real pairs against 64 percent on invented ones.",
+    "source": "",
+    "falsifier": "A residual at this scale that clears its own design noise floor, or a floor that collapses with more replicates while the residual holds.",
+    "grows_by": "Design seeds on this cell first -- one replicate is what keeps this provisional rather than established. Then a second frontier family at comparable scale, so the result is not one model's recipe.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "floor-not-length",
+    "status": "established",
+    "section": "sec:limits",
+    "finding": "The ordering models impose on invented outcomes is not merely a length ordering.",
+    "interpretation": "The invented-arm ordering is not purely an artifact of how long the strings are, so the floor is measuring something, even if not meaning.",
+    "observation": {
+      "models": "9"
+    },
+    "values": {
+      "FloorLengthRule": "0.695",
+      "FloorTiedAcc": "0.848",
+      "RealLengthRule": "0.541",
+      "MostLengthModel": "granite-4.1-3b"
+    },
+    "note": "length-neutralised column rests on ~40 held-out pairs per split; pooled value only",
+    "source": "",
+    "falsifier": "The length-neutralised fit falling to chance with more held-out pairs.",
+    "grows_by": "More pairs tied on token count, so the length-neutralised column stops being the noisiest cell in the paper.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "gate-keeps-a-different-sample",
+    "status": "established",
+    "section": "sec:attrition",
+    "finding": "The answer-mass gate is one fixed threshold but retains a different subset of pairs on each arm, because invented outcomes provoke more deliberation; rescoring both arms on their shared pairs shifts the mean residual slightly toward zero and eliminates one cell's residual entirely.",
+    "interpretation": "A quality filter can select on the treatment. The gate is fixed, but the sample it yields is not, and the bias ran toward our own conclusion.",
+    "observation": {},
+    "values": {
+      "AttrNCells": "27",
+      "AttrNAffected": "6",
+      "AttrResidRaw": "+0.0275",
+      "AttrResidMatched": "+0.0253",
+      "AttrShift": "-0.0022",
+      "AttrMaxShift": "0.0323",
+      "AttrWorstDiffPP": "3.9",
+      "AttrFloor": "0.5",
+      "AttrResidNoGate": "+0.0257",
+      "AttrResidStrictGate": "+0.0191"
+    },
+    "note": "Seven of nine models show zero attrition on both arms. The effect is carried by SmolLM3-3B and gemma-4-E2B-it, the two that deliberate. Direction favours this paper's thesis, which is why it is bounded rather than mentioned: dropping the hardest invented pairs inflates invented-arm coherence and shrinks the residual. Matched scoring shares one pair set and therefore one train/test fold, so the shift cannot come from differing folds.",
+    "source": "site/attrition_control.json",
+    "falsifier": "A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold.",
+    "grows_by": "",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "harness-not-invariant",
+    "status": "established",
+    "section": "sec:limits",
+    "finding": "The baseline condition is not the same instrument across models: some chat templates supply a system prompt the sweep never sent, and one stamps the current date into it.",
+    "interpretation": "Cross-model comparisons in this literature may be comparing chat templates. 'No system prompt' is a claim about what was sent, not about what was received.",
+    "observation": {
+      "models_rendered": "9",
+      "models_injecting": "2"
+    },
+    "values": {
+      "HarnessNRendered": "9",
+      "HarnessNInjecting": "2",
+      "HarnessNClean": "7",
+      "HarnessNDated": "1",
+      "HarnessInjectingModels": "SmolLM2-1.7B-Instruct, SmolLM3-3B",
+      "HarnessDatedModel": "SmolLM3-3B",
+      "HarnessNFixable": "1",
+      "HarnessNStuck": "1",
+      "HarnessStuckModel": "SmolLM3-3B"
+    },
+    "note": "7 of 9 receive no system block and 2 receive one from their template (SmolLM2-1.7B-Instruct, SmolLM3-3B). SmolLM3-3B additionally has the current date stamped in, so its prompt is not constant across days. This is a claim AGAINST our own cross-family comparisons and is listed so it cannot be quietly dropped. Of the 2 injecting models, 1 can be suppressed by sending our own system message and 1 cannot: SmolLM3-3B emits its metadata block unconditionally and nests an explicit system prompt beneath it, so no prompt-level change makes its harness match the others.",
+    "source": "",
+    "falsifier": "A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.",
+    "grows_by": "Nothing; it is a fact about the templates. It is DISCHARGED, not grown. 1 of the injecting models can be equalised by supplying an explicit system prompt and re-running its cells. SmolLM3-3B cannot be equalised at all, so the honest options there are to exclude it from cross-family contrasts or to report the difference permanently -- and that choice has not been made.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "metric-cannot-read-most-frontier",
+    "status": "established",
+    "section": "sec:limits",
+    "finding": "The forced choice is read from the first sampled token, and on most of the frontier that token is not the answer: of 10 hosted models measured under the verbatim prompt, 4 are scoreable and 6 are not.",
+    "interpretation": "The method has a coverage limit that grows over time: newer models increasingly spend the first token elsewhere, so first-token scoring silently excludes the frontier.",
+    "observation": {
+      "hosted_models_measured": "10",
+      "scoreable": "4",
+      "unscoreable": "6"
+    },
+    "values": {
+      "HostedNTotal": "10",
+      "HostedNScoreable": "4",
+      "HostedNUnscoreable": "6",
+      "HostedNPreamble": "5",
+      "HostedNNoLogprobs": "1",
+      "HostedNoLogprobsModel": "Kimi-K3"
+    },
+    "note": "Two different failures, not one: 5 spend the first token on a reasoning preamble or a format control token, which is a limit of first-token forced choice and would be recovered by a prefill variant; the remaining 1 (Kimi-K3) is refused logprobs by its API, which no prompt-level change reaches. Measured in nullcard/roster.py as first_token_ok, and derived into macros so the ledger cannot drift from it.",
+    "source": "",
+    "falsifier": "A prefill or constrained-decoding variant that reads the 5 preamble models and reproduces scores poolable with the rest -- which would make their exclusion an artifact of where we look rather than a limit of the metric.",
+    "grows_by": "More hosted models measured. What matters is the fraction rather than the count, and the fraction is what bounds every other claim in this ledger: the models reported here are the models that could be scored.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "opt-out-is-a-discarded-channel",
+    "status": "established",
+    "section": "sec:neutral",
+    "finding": "Offered an explicit opt-out, every model tested declines meaningless comparisons more often than real ones -- a large content signal the coherence metric discards by construction.",
+    "interpretation": "Forced choice manufactures part of the ordering. Given somewhere else to put its mass, a model uses it more on meaningless comparisons.",
+    "observation": {
+      "models": "6",
+      "cells_run": "12"
+    },
+    "values": {
+      "NeutGapLo": "+0.146",
+      "NeutGapHi": "+0.769",
+      "NeutNGapPositive": "6",
+      "NeutNModels": "6",
+      "NeutNCells": "12"
+    },
+    "note": "6 of 6 without exception, gap +0.146 to +0.769",
+    "source": "",
+    "falsifier": "A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.",
+    "grows_by": "More models; the direction is unanimous at n=6 so this is about width rather than depth.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "persona-direction-shallow",
+    "status": "established",
+    "section": "sec:persona",
+    "finding": "Most of a persona's value-aligned reordering reproduces on outcomes that mean nothing, so a persona is better described as a response policy than as installed values.",
+    "interpretation": "A persona mostly changes the writing rather than the wanting, so persona-based welfare or alignment readouts need a referent-free denominator.",
+    "observation": {
+      "models": "5",
+      "conditions": "20"
+    },
+    "values": {
+      "PersonaNonsenseShare": "66",
+      "PersonaSepReal": "+0.791",
+      "PersonaSepInvented": "+0.781",
+      "PersonaExcess": "+0.133"
+    },
+    "note": "The DIRECTIONAL half of the persona result: separation +0.791 real against +0.781 invented, so 66% of the value-aligned reordering needs no meaning. Reporting persona-displacement without this one overstates what a persona installs.",
+    "source": "",
+    "falsifier": "A larger excess once length is controlled differently, or models that retain content-dependence at scale.",
+    "grows_by": "More models; 2 of 5 currently retain a substantial excess and whether that fraction is stable is unknown.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "persona-displacement",
+    "status": "established",
+    "section": "sec:persona",
+    "finding": "An installed persona displaces real outcomes further than invented ones, so the instrument is not merely insensitive.",
+    "interpretation": "The instrument is not merely insensitive: content-linked preference structure is detectable when it is present, and inducible.",
+    "observation": {
+      "models": "5",
+      "conditions": "20"
+    },
+    "values": {
+      "PersonaAbovePointThree": "14",
+      "NPersonaCells": "20",
+      "PersonaMax": "+0.87",
+      "PersonaMin": "-2.33"
+    },
+    "note": "14 of 20 conditions clear +0.30 of displacement. This is a MAGNITUDE claim -- how far the preference vector moved -- and must not be reported without persona-direction-shallow, which asks whether it moved the right way.",
+    "source": "",
+    "falsifier": "Persona cells clustering on the diagonal once more models are added.",
+    "grows_by": "The remaining 4 roster models at both depths, taking 20 conditions to 36.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "strength-collapse",
+    "status": "established",
+    "section": "sec:strength",
+    "finding": "Conviction collapses on invented outcomes while the coherence score barely moves, because the metric thresholds to a hard label.",
+    "interpretation": "The metric's own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content.",
+    "observation": {
+      "models": "9",
+      "cells": "81",
+      "replicates_per_cell": "3"
+    },
+    "values": {
+      "MeanDecisiveR": "41",
+      "MeanDecisiveN": "4.5",
+      "MedianDecisiveRatio": "17"
+    },
+    "note": "41 and 4.5 are means over the models that are decisive on real outcomes at all, and 17 is the median of per-model ratios -- NOT the quotient of the two means, which is smaller. Any prose putting the three side by side has to say which is which.",
+    "source": "",
+    "falsifier": "A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.",
+    "grows_by": "Nothing needed for the claim; it is the sharpest result and holds on every model.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "answer-mass-channel",
+    "status": "provisional",
+    "section": "sec:reasoning",
+    "finding": "Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.",
+    "interpretation": "Renormalising over A and B throws away a content-sensitive signal, so the discarded mass is a free measurement the metric already has in hand.",
+    "observation": {
+      "models": "9",
+      "test": "two-sided sign test"
+    },
+    "values": {
+      "NMassDrop": "8",
+      "NModels": "9",
+      "MassDropSignP": "0.039",
+      "MedianMassDrop": "+0.011",
+      "ReasoningMassDrop": "0.193"
+    },
+    "note": "",
+    "source": "",
+    "falsifier": "Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).",
+    "grows_by": "More hybrid-reasoning models. The dramatic case is SmolLM3-3B alone and the effect is small for everyone else.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "directive-beats-persona",
+    "status": "provisional",
+    "section": "sec:track4",
+    "finding": "One model responds to an explicit directive while barely responding to a persona, so directive-following and persona-uptake are separable capacities rather than one slot working or not.",
+    "interpretation": "Explicit instruction and installed persona are different manipulations with different reach, so a persona-only probe understates what a prompt can do.",
+    "observation": {
+      "models": "5"
+    },
+    "values": {
+      "PersonaInertModel": "LFM2.5-1.2B-Instruct",
+      "PersonaInertPersona": "0.044",
+      "PersonaInertDirective": "0.179",
+      "ComplyNSlotReaches": "5",
+      "ComplyNModels": "5"
+    },
+    "note": "LFM2.5-1.2B-Instruct is displaced 0.044 per pair by its strongest persona and 0.179 by a directive -- four times as much. All 5 of 5 models have a demonstrably working system slot once directives are counted, which CORRECTS our own earlier reading that this model's slot was inert; that reading was taken before the second directive arm existed.",
+    "source": "",
+    "falsifier": "The gap closing once persona displacement is measured on the same scale as directive displacement, or appearing on no other model as the roster grows -- at n=1 it is a property of one model and not yet a distinction between capacities.",
+    "grows_by": "The remaining roster at both directive arms and both personas. This is n=1 and is the thinnest claim in the ledger; it is recorded because it changes how this model's persona numbers should be read, not because it is settled.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "gibberish-beats-only-bad-outcomes",
+    "status": "provisional",
+    "section": "sec:avoidance",
+    "finding": "Most pairs where an invented outcome appears to beat a real one are presentation-order artifacts: only a small minority win in both slot orders, and a third of models have none. On the pairs that do survive counterbalancing, the losing real outcome sits near the bottom of the model's own utility scale -- avoidance rather than confusion -- but the surviving set is small and single-seed. Separately and robustly, the rank correlation between a real outcome's utility and how often it beats an invented one is strongly positive on every model.",
+    "interpretation": "Where a model does prefer nonsense, it is avoidance rather than confusion -- and an unparseable option that outranks a bad one is a sink an adversary could aim at.",
+    "observation": {},
+    "values": {
+      "AvoidNModels": "9",
+      "AvoidCorrLo": "+0.707",
+      "AvoidCorrHi": "+0.937",
+      "AvoidPctileLo": "2",
+      "AvoidPctileHi": "23",
+      "AvoidFlipsRaw": "795",
+      "AvoidFlipsRobust": "103",
+      "AvoidFlipsPct": "13",
+      "AvoidNoFlipModels": "3",
+      "AvoidNModelsWithFlips": "6",
+      "AvoidConcordance": "+0.375"
+    },
+    "note": "The rank correlation uses every pair and the counterbalanced mean; it does not depend on the flip classification and holds on all 9 models. The avoidance reading rests only on the 103 pairs that flip in both presentation orders, spread over 6 models at one design seed, and is therefore provisional. An earlier version of this claim reported the raw 795 flips as preferences; the slot split retracted 13 percent of that. The by-category pattern has concordance +0.375 and is not claimed. The safety inference -- an invented option as a default sink reachable by degrading the real alternative -- is a hypothesis consistent with these pairs, not a demonstrated vulnerability.",
+    "source": "site/avoidance.json",
+    "falsifier": "The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom.",
+    "grows_by": "",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "instruction-registered-not-obeyed",
+    "status": "provisional",
+    "section": "sec:track4",
+    "finding": "Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.",
+    "interpretation": "Compliance failure is not the same as instruction-blindness: the model registered the directive and responded by refusing to prefer anything.",
+    "observation": {
+      "models": "5"
+    },
+    "values": {
+      "ComplyNModels": "5",
+      "ComplyNObey": "4",
+      "ComplyNRegister": "4",
+      "ComplyNBoth": "3",
+      "ComplyRefuser": "Qwen3.5-2B",
+      "ComplyRefuserBase": "0.725",
+      "ComplyRefuserAfter": "0.465",
+      "ComplyTrivial": "LFM2.5-1.2B-Instruct",
+      "ComplyTrivialBase": "0.068"
+    },
+    "note": "4 of 5 obey the registered criterion, 4 register a shift, and only 3 do both. Qwen3.5-2B went from P(A) 0.725 to 0.465 -- a large move that lands at indifference rather than at compliance. LFM2.5-1.2B-Instruct passes the obedience test having started at P(A) 0.068, i.e. it was already answering B before being told to, so its pass is an artifact of the criterion.",
+    "source": "",
+    "falsifier": "The same model obeying on a re-run, or the asymmetry reversing once the commanded option is counterbalanced against presentation order rather than against the model's lean.",
+    "grows_by": "The remaining roster at both directive arms. The direction control that separates selective refusal from harness disruption has now RUN and rules out disruption: Qwen3.5-2B obeys the with-preference directive (P(A) 0.877) and only partly complies with the opposing one (0.465), so the directive reaches it both times.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "neutral-option",
+    "status": "provisional",
+    "section": "sec:neutral",
+    "finding": "Where a floor can still be measured, it survives an explicit opt-out -- but on most models the invented arm stops being answered at all once declining is possible.",
+    "interpretation": "The forced-binary objection is answered where it can be tested, but on most models the opt-out is inert, so the answer does not generalise.",
+    "observation": {
+      "models": "6",
+      "cells_run": "12"
+    },
+    "values": {
+      "NeutNModels": "6",
+      "NeutNInterp": "3",
+      "NeutNRefuse": "3",
+      "NeutIShiftLo": "-0.023",
+      "NeutIShiftHi": "+0.003",
+      "NeutABRefuseHi": "0.0100",
+      "NeutNCells": "12"
+    },
+    "note": "3 of 6 still put enough mass on A/B for a floor to be measured at all; the other 3 put essentially everything on 'neither', so their floor is not preserved but unmeasured. The distinguishing quantity is A/B mass, not answer mass, which counts the opt-out and so stays high even when nothing at all is left on A or B.",
+    "source": "",
+    "falsifier": "A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.",
+    "grows_by": "The remaining roster models, both arms. 3 interpretable of 6 is thin, and the interpretable subset is the only place the floor can be measured at all -- so width here buys the claim more than depth anywhere else.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "persona-needs-an-empty-slot-control",
+    "status": "provisional",
+    "section": "sec:persona",
+    "finding": "Measured against a persona slot filled with no trait, a large share of the persona displacement this paper reports is not distinguishable from the act of installing one; what survives is direction agreement floor-corrected by the invented arm, and that statistic reverses the raw ranking.",
+    "interpretation": "Roughly half of an apparent persona effect is the act of installing a system prompt at all, so displacement must never travel without an empty-slot denominator.",
+    "observation": {
+      "models_per_condition": "5",
+      "positive_cells": "60",
+      "negative_cells": "6"
+    },
+    "values": {
+      "PdNegMagR": "4.61",
+      "PdNegMagMaxR": "10.70",
+      "PdClearingR": "53",
+      "PdNegDirR": "+0.103",
+      "PdSelfDirR": "+0.600",
+      "PdShuffleDirR": "+0.174",
+      "PdBestCondition": "sch-selfdirection-D2",
+      "PdBestFloorCorr": "0.796",
+      "PdLoudestCondition": "sch-power-D2",
+      "PdLoudestDirReal": "+0.703",
+      "PdLoudestFloorCorr": "0.493"
+    },
+    "note": "The control is the `neutral` cell: the persona slot occupied, no trait content, so it carries the added block, the length and the formatting and differs from a persona cell only in being a persona. Against it 53% of 60 persona cells clear the largest empty-slot displacement on magnitude. Direction agreement separates far better (negative +0.103, shuffle +0.174) BUT FAILS ITS SELF-CHECK: a design-seed resample with no persona in it aligns at +0.600, above most persona conditions, so raw direction agreement is not persona-specific and must not be quoted alone. Floor-corrected direction is the surviving indicator: sch-selfdirection-D2 reaches 0.796 while sch-power-D2, which has the LARGEST raw agreement at +0.703, floor-corrects to only 0.493. Bears directly on persona-displacement, which is a magnitude claim established against the bare baseline and therefore against no denominator; it should not be reported without this one.",
+    "source": "",
+    "falsifier": "More models per condition moving the clearing rate substantially above 53%, or a matched self-check (same design, prompt-only perturbation) that returns near zero, which would restore raw direction agreement as a persona-specific indicator.",
+    "grows_by": "Only 5 models carry each persona condition, so every cosine rests on ten pairs; and each persona cell is one design seed, so the conditions have no noise floor of their own.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "question-is-part-of-the-instrument",
+    "status": "provisional",
+    "section": "sec:prompt",
+    "finding": "Changing only the elicitation wording, holding battery, pair set, design seed, scoring rule and serving stack fixed, moves the floor-corrected residual by more than each model's own design-replicate noise floor, and reverses the conviction-collapse mechanism on one of the two models tested.",
+    "interpretation": "A coherence number quoted without its elicitation wording is under-specified, ours included.",
+    "observation": {},
+    "values": {
+      "PcNModels": "2",
+      "PcUeResidual": "+0.0262",
+      "PcVtwoResidual": "-0.0069",
+      "PcResidualShift": "0.0331",
+      "PcUeConvR": "0.302",
+      "PcUeConvN": "0.071",
+      "PcVtwoConvR": "0.197",
+      "PcVtwoConvN": "0.258",
+      "PcQwenThreeFiveTwoBUeResid": "+0.0065",
+      "PcQwenThreeFiveTwoBVtwoResid": "-0.0245",
+      "PcgraniteFourOneThreebUeResid": "+0.0459",
+      "PcgraniteFourOneThreebVtwoResid": "+0.0106",
+      "PcgraniteFourOneThreebVtwoConvR": "0.394",
+      "PcgraniteFourOneThreebVtwoConvN": "0.515"
+    },
+    "note": "2 models at one design seed, both arms re-run the same day so nothing is compared across harness hashes, cells tagged with the wording so they cannot pool with historical ones. The comparison is against each model's DESIGN-seed floor, which bounds a different variance source than a prompt change; it is used as a scale reference, not as a significance test, and there is no prompt-replicate floor. This cannot revise the nine-model result and does not attempt to -- it establishes that the reported quantity is a property of a model and a question together.",
+    "source": "site/prompt_contrast.json",
+    "falsifier": "A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed.",
+    "grows_by": "",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "scaling-residual-falls",
+    "status": "provisional",
+    "section": "sec:scale",
+    "finding": "Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.",
+    "interpretation": "What grows with scale is the ability to impose a consistent ordering on anything. The instrument saturates; the models do not stop gaining.",
+    "observation": {
+      "families_with_a_ladder": "1",
+      "sizes_in_family": "4",
+      "models_outside_family": "5"
+    },
+    "values": {
+      "LadderResidFall": "-0.071",
+      "WithinFamilyCorr": "-0.84",
+      "LadderNSizes": "4",
+      "OutsideFamilyCorr": "-0.19",
+      "MatchedWithinCorr": "-0.61",
+      "MatchedPooledCorr": "-0.16",
+      "MatchedLadderFall": "-0.030",
+      "LadderNFamilies": "1"
+    },
+    "note": "within-family r -0.84 unmatched and -0.61 length-matched; pooled -0.67 collapsing to -0.16. The pooled collapse is why this is a within-family statement and not a scaling law.",
+    "source": "",
+    "falsifier": "A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.",
+    "grows_by": "A SECOND FAMILY spanning 3+ sizes -- but NO clean second dense ladder exists in this roster, which this entry previously implied. gemma gives a single doubling with a gated member; liquid's third point is a mixture-of-experts model whose active parameter count breaks monotonicity. The honest routes are the scoreable hosted models, which reach far beyond the current maximum, or accepting that the claim stays within-family. See DECISION-MODELS.md.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "surface-explains-invented-order",
+    "status": "provisional",
+    "section": "sec:surface",
+    "finding": "A linear model over seven surface features recovers a far larger share of a model's ordering of invented outcomes than of real ones, and projecting that span out roughly halves cross-model agreement on the invented arms while leaving the real arm intact -- but the agreement surviving surface control still exceeds what independent orderings would give.",
+    "interpretation": "A large share of what the metric scores is recoverable from character counts, which is the closest thing to a mechanism for the flat residual.",
+    "observation": {},
+    "values": {
+      "SurfRRsq": "0.090",
+      "SurfNpRsq": "0.444",
+      "SurfNmRsq": "0.384",
+      "SurfRCorrRaw": "0.656",
+      "SurfRCorrCtrl": "0.683",
+      "SurfNmCorrRaw": "0.343",
+      "SurfNmCorrCtrl": "0.182",
+      "SurfNmPCOneRaw": "0.458",
+      "SurfNmPCOneCtrl": "0.316",
+      "SurfFeatures": "7",
+      "SurfNmFeatures": "5"
+    },
+    "note": "Features are characters, words, mean word length, numeral count, log largest magnitude, commas, and the fraction of tokens found in the system dictionary. Two features are constant on N_minus (no numerals anywhere), so only 5 of 7 are usable there and 0.384 is a LOWER bound on the surface share. The arms are not length-matched (22.8 percent on characters), so this is a post-hoc covariate control and buys an upper bound on what surface explains, not a clean referent factor.",
+    "source": "site/surface_covariates.json",
+    "falsifier": "A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed.",
+    "grows_by": "",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "track3-directive-blind",
+    "status": "provisional",
+    "section": "sec:track3",
+    "finding": "Both the stated and the revealed channel register which trait was named and neither registers what the model was told to do about it.",
+    "interpretation": "Self-report cannot separate having a trait from performing one. No amount of asking will fix that, which bounds a whole class of alignment evaluation.",
+    "observation": {
+      "models_stated": "5",
+      "models_revealed_passing_gate": "2",
+      "models_with_complete_triad": "3"
+    },
+    "values": {
+      "RevGapLo": "+0.054",
+      "RevGapHi": "+0.059",
+      "RevSpecLo": "+0.88",
+      "RevSpecHi": "+1.40",
+      "RevNInterp": "2",
+      "RevNTriad": "3",
+      "StatedBaseLo": "0.246",
+      "StatedHaveLo": "0.869"
+    },
+    "note": "",
+    "source": "",
+    "falsifier": "A model whose revealed gap approaches its specificity margin.",
+    "grows_by": "The missing concealed+verbal cells for Qwen3.5-9B and granite-4.1-3b, taking the revealed channel from n=2 to n=4. Cheap, and it is the weakest n in the paper.",
+    "n_missing_macros": 0
+  },
+  {
+    "id": "vector-rotates-under-rewording",
+    "status": "provisional",
+    "section": "sec:rotation",
+    "finding": "The fitted preference vector is near-perfectly reliable against itself but rotates substantially when only the question wording changes, and having real referents does not make an ordering more rewording-stable than an ordering over invented ones.",
+    "interpretation": "The elicited preference belongs to a model and a question jointly. Meaning does not anchor the ordering against rephrasing any better than nonsense does.",
+    "observation": {},
+    "values": {
+      "VsRelLo": "0.881",
+      "VsRelHi": "0.990",
+      "VsCorrLo": "0.429",
+      "VsCorrHi": "0.867",
+      "VsNCells": "4",
+      "VsNRotating": "4",
+      "VsArmNoDiff": "2",
+      "VsArmNModels": "2",
+      "VsQwenThreeFiveTwoBRCorr": "0.429",
+      "VsQwenThreeFiveTwoBNmCorr": "0.618",
+      "VsgraniteFourOneThreebRCorr": "0.867",
+      "VsgraniteFourOneThreebNmCorr": "0.772",
+      "VsQwenThreeFiveTwoBArmDiff": "-0.185",
+      "VsgraniteFourOneThreebArmDiff": "+0.097"
+    },
+    "note": "Reliability is split-half over pairs, Spearman-Brown corrected to full length; the cross-wording correlation is divided by sqrt of the two reliabilities, the standard attenuation correction, and capped at one. Intervals are percentile bootstraps resampling OUTCOMES paired across the two vectors. All 4 of 4 intervals exclude 1.0. The arm comparison bootstraps the difference paired on outcomes and returns no difference on both models, with point estimates of opposite sign. Two models, one design seed, one alternative wording -- a second wording could rotate less, and this establishes that rewording CAN move the ordering by much more than measurement error, not how much an arbitrary rewording will.",
+    "source": "site/vector_stability.json",
+    "falsifier": "A corrected cross-wording correlation whose interval includes 1.0 on a model with comparable reliability, or a reliable positive real-minus-invented stability difference across more models.",
+    "grows_by": "",
+    "n_missing_macros": 0
+  }
+]

@@ -6,6 +6,18 @@
       "mean_residual": 0.026187599703287212,
       "n_models": 2
     },
+    "ue_break": {
+      "mean_conviction_N_minus": 0.061,
+      "mean_conviction_R": 0.2914,
+      "mean_residual": 0.02741833090593576,
+      "n_models": 2
+    },
+    "ue_colon": {
+      "mean_conviction_N_minus": 0.0936,
+      "mean_conviction_R": 0.2802,
+      "mean_residual": 0.016728575475360552,
+      "n_models": 2
+    },
     "ue_exact": {
       "mean_conviction_N_minus": 0.0756,
       "mean_conviction_R": 0.2804,
@@ -37,6 +49,30 @@
       "model": "Qwen/Qwen3.5-2B",
       "prompt": "ue",
       "residual": 0.006490748565403992
+    },
+    {
+      "answer_mass_N_minus": 0.9863112808642333,
+      "answer_mass_R": 0.9959249058977181,
+      "coherence_N_minus": 0.9010940628244442,
+      "coherence_R": 0.9050781563126253,
+      "conviction_N_minus": 0.0004,
+      "conviction_R": 0.106,
+      "conviction_ratio": 265.0,
+      "model": "Qwen/Qwen3.5-2B",
+      "prompt": "ue_break",
+      "residual": 0.003984093488181184
+    },
+    {
+      "answer_mass_N_minus": 0.9887635388042622,
+      "answer_mass_R": 0.996468260978336,
+      "coherence_N_minus": 0.8982970576165414,
+      "coherence_R": 0.914,
+      "conviction_N_minus": 0.0004,
+      "conviction_R": 0.0848,
+      "conviction_ratio": 212.0,
+      "model": "Qwen/Qwen3.5-2B",
+      "prompt": "ue_colon",
+      "residual": 0.015702942383458596
     },
     {
       "answer_mass_N_minus": 0.9899009718658534,
@@ -87,6 +123,30 @@
       "residual": 0.04588445084117043
     },
     {
+      "answer_mass_N_minus": 0.9999999934951226,
+      "answer_mass_R": 0.9999999983290784,
+      "coherence_N_minus": 0.8240536998332498,
+      "coherence_R": 0.8749062681569402,
+      "conviction_N_minus": 0.1216,
+      "conviction_R": 0.4768,
+      "conviction_ratio": 3.9210526315789473,
+      "model": "ibm-granite/granite-4.1-3b",
+      "prompt": "ue_break",
+      "residual": 0.05085256832369034
+    },
+    {
+      "answer_mass_N_minus": 0.9999998644215743,
+      "answer_mass_R": 0.9999999986043142,
+      "coherence_N_minus": 0.8563372047080332,
+      "coherence_R": 0.8740914132752957,
+      "conviction_N_minus": 0.1868,
+      "conviction_R": 0.4756,
+      "conviction_ratio": 2.5460385438972164,
+      "model": "ibm-granite/granite-4.1-3b",
+      "prompt": "ue_colon",
+      "residual": 0.01775420856726251
+    },
+    {
       "answer_mass_N_minus": 0.999999968257155,
       "answer_mass_R": 0.9999999987023188,
       "coherence_N_minus": 0.8307855754954474,
@@ -126,6 +186,8 @@
   "n_design_seeds": 1,
   "prompts": [
     "ue",
+    "ue_break",
+    "ue_colon",
     "ue_exact",
     "v2",
     "warned"

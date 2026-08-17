@@ -57,7 +57,10 @@
       },
       "what_would_falsify": "A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).",
       "grows_by": "More model families. The claim is already cross-family; adding models tightens the mean rather than changing its kind.",
-      "priority": 9
+      "priority": 9,
+      "interpretation": "The headline number cannot be read as evidence about values: the same procedure returns nearly the same score when there is nothing to have a preference about.",
+      "highlight": 1,
+      "highlight_reason": "the control, and the number the paper exists to qualify"
     },
     {
       "id": "strength-collapse",
@@ -77,7 +80,10 @@
       },
       "what_would_falsify": "A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.",
       "grows_by": "Nothing needed for the claim; it is the sharpest result and holds on every model.",
-      "priority": 10
+      "priority": 10,
+      "interpretation": "The metric's own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content.",
+      "highlight": 2,
+      "highlight_reason": "the mechanism: direction kept, conviction discarded"
     },
     {
       "id": "scaling-residual-falls",
@@ -105,7 +111,8 @@
       "literals": {
         "3": "the target number of sizes a second family would need, not a measurement"
       },
-      "priority": 2
+      "priority": 2,
+      "interpretation": "What grows with scale is the ability to impose a consistent ordering on anything. The instrument saturates; the models do not stop gaining."
     },
     {
       "id": "choice-tracks-content",
@@ -128,7 +135,8 @@
       },
       "what_would_falsify": "The correlation vanishing on a new model family, or the length control failing on a battery with a different token profile.",
       "grows_by": "Nothing needed for the claim itself -- it holds on every model in the roster. The N+ arm would add a third level between real and meaningless.",
-      "priority": 3
+      "priority": 3,
+      "interpretation": "Comprehension is intact. Whatever the flat residual shows, it is not that these models cannot tell a referent from a nonsense string."
     },
     {
       "id": "persona-displacement",
@@ -153,7 +161,8 @@
         "36": "the condition count that addition would reach, a plan rather than a result",
         "0.30": "the displacement threshold the design fixed in advance, not a measured value"
       },
-      "priority": 5
+      "priority": 5,
+      "interpretation": "The instrument is not merely insensitive: content-linked preference structure is detectable when it is present, and inducible."
     },
     {
       "id": "persona-direction-shallow",
@@ -173,7 +182,10 @@
       },
       "what_would_falsify": "A larger excess once length is controlled differently, or models that retain content-dependence at scale.",
       "grows_by": "More models; \\PersonaNRetain of \\NPersonaModels currently retain a substantial excess and whether that fraction is stable is unknown.",
-      "priority": 6
+      "priority": 6,
+      "interpretation": "A persona mostly changes the writing rather than the wanting, so persona-based welfare or alignment readouts need a referent-free denominator.",
+      "highlight": 4,
+      "highlight_reason": "answers the paper's own title: a persona is a response policy, not an installed value"
     },
     {
       "id": "detector-dissociation",
@@ -194,7 +206,10 @@
       },
       "what_would_falsify": "The discarded channel failing to separate the arms on new models.",
       "grows_by": "Predeclare each channel's direction, choose channel and orientation on held-out models, score on untouched ones, and report bootstrap intervals. That converts the conceded oracle into a detection result. An affordance ladder -- scoring at decreasing auditor knowledge -- is the same move along a second axis.",
-      "priority": 8
+      "priority": 8,
+      "interpretation": "The model is not content-blind; the statistic is. Evidence about meaning was present in the same forward pass and thrown away before scoring.",
+      "highlight": 3,
+      "highlight_reason": "the model is not blind; the statistic is"
     },
     {
       "id": "track3-directive-blind",
@@ -221,7 +236,8 @@
       "literals": {
         "4": "the revealed-channel n those two cells would reach, a plan rather than a result"
       },
-      "priority": 3
+      "priority": 3,
+      "interpretation": "Self-report cannot separate having a trait from performing one. No amount of asking will fix that, which bounds a whole class of alignment evaluation."
     },
     {
       "id": "answer-mass-channel",
@@ -241,7 +257,8 @@
       },
       "what_would_falsify": "Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=\\NModels).",
       "grows_by": "More hybrid-reasoning models. The dramatic case is \\ReasoningModel alone and the effect is small for everyone else.",
-      "priority": 4
+      "priority": 4,
+      "interpretation": "Renormalising over A and B throws away a content-sensitive signal, so the discarded mass is a free measurement the metric already has in hand."
     },
     {
       "id": "floor-not-length",
@@ -263,7 +280,8 @@
       "literals": {
         "40": "approximate held-out pairs per split in the length-tied subset; the analysis prints it per model and emits no aggregate macro"
       },
-      "priority": 7
+      "priority": 7,
+      "interpretation": "The invented-arm ordering is not purely an artifact of how long the strings are, so the floor is measuring something, even if not meaning."
     },
     {
       "id": "neutral-option",
@@ -286,7 +304,8 @@
       },
       "what_would_falsify": "A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.",
       "grows_by": "The remaining roster models, both arms. \\NeutNInterp interpretable of \\NeutNModels is thin, and the interpretable subset is the only place the floor can be measured at all -- so width here buys the claim more than depth anywhere else.",
-      "priority": 1
+      "priority": 1,
+      "interpretation": "The forced-binary objection is answered where it can be tested, but on most models the opt-out is inert, so the answer does not generalise."
     },
     {
       "id": "instruction-registered-not-obeyed",
@@ -310,7 +329,8 @@
       },
       "what_would_falsify": "The same model obeying on a re-run, or the asymmetry reversing once the commanded option is counterbalanced against presentation order rather than against the model's lean.",
       "grows_by": "The remaining roster at both directive arms. The direction control that separates selective refusal from harness disruption has now RUN and rules out disruption: \\DirSelective{} obeys the with-preference directive (P(A) \\DirSelectiveWith{}) and only partly complies with the opposing one (\\DirSelectiveAgainst{}), so the directive reaches it both times.",
-      "priority": 3
+      "priority": 3,
+      "interpretation": "Compliance failure is not the same as instruction-blindness: the model registered the directive and responded by refusing to prefer anything."
     },
     {
       "id": "directive-beats-persona",
@@ -333,7 +353,8 @@
       "priority": 4,
       "literals": {
         "1": "the count of models showing this profile so far; a property of the current roster, not a generated result -- there is no macro for 'models exhibiting a pattern we noticed'"
-      }
+      },
+      "interpretation": "Explicit instruction and installed persona are different manipulations with different reach, so a persona-only probe understates what a prompt can do."
     },
     {
       "id": "harness-not-invariant",
@@ -358,7 +379,8 @@
       },
       "what_would_falsify": "A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.",
       "grows_by": "Nothing; it is a fact about the templates. It is DISCHARGED, not grown. \\HarnessNFixable of the injecting models can be equalised by supplying an explicit system prompt and re-running its cells. \\HarnessStuckModel cannot be equalised at all, so the honest options there are to exclude it from cross-family contrasts or to report the difference permanently -- and that choice has not been made.",
-      "priority": 1
+      "priority": 1,
+      "interpretation": "Cross-model comparisons in this literature may be comparing chat templates. 'No system prompt' is a claim about what was sent, not about what was received."
     },
     {
       "id": "opt-out-is-a-discarded-channel",
@@ -379,7 +401,8 @@
       },
       "what_would_falsify": "A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.",
       "grows_by": "More models; the direction is unanimous at n=\\NeutNModels so this is about width rather than depth.",
-      "priority": 2
+      "priority": 2,
+      "interpretation": "Forced choice manufactures part of the ordering. Given somewhere else to put its mass, a model uses it more on meaningless comparisons."
     },
     {
       "id": "metric-cannot-read-most-frontier",
@@ -402,7 +425,8 @@
       },
       "what_would_falsify": "A prefill or constrained-decoding variant that reads the \\HostedNPreamble preamble models and reproduces scores poolable with the rest -- which would make their exclusion an artifact of where we look rather than a limit of the metric.",
       "grows_by": "More hosted models measured. What matters is the fraction rather than the count, and the fraction is what bounds every other claim in this ledger: the models reported here are the models that could be scored.",
-      "priority": 2
+      "priority": 2,
+      "interpretation": "The method has a coverage limit that grows over time: newer models increasingly spend the first token elsewhere, so first-token scoring silently excludes the frontier."
     },
     {
       "id": "collapse-is-model-not-item",
@@ -434,7 +458,8 @@
       },
       "what_would_falsify": "A per-item collapse ranking that reproduces across seeds within a model -- any appreciable positive test-retest correlation would restore the item-level reading. Equally, a model-level ordering that tracked parameter count once recipe is held fixed would make this a scale claim after all.",
       "grows_by": "More seeds per cell, and more families at matched sizes. Seeds are what makes the negative half of this claim possible at all, and a single-seed sweep cannot state it.",
-      "priority": 2
+      "priority": 2,
+      "interpretation": "Scoreability is a property of the model, so an audit that drops unscoreable rows is selecting on models rather than on items."
     },
     {
       "id": "floor-holds-at-seventy-b",
@@ -463,7 +488,8 @@
       "literals": {
         "1": "the number of models this claim rests on -- Llama-3.3-70B-Instruct alone. \\HostedNScored counts every scored hosted tile and read as this claim's n while it was one model at three seeds."
       },
-      "priority": 1
+      "priority": 1,
+      "interpretation": "Scale does not rescue the metric. The objection that this is a small-model artifact fails at the largest size we could measure with a noise floor."
     },
     {
       "id": "persona-needs-an-empty-slot-control",
@@ -491,7 +517,8 @@
       },
       "what_would_falsify": "More models per condition moving the clearing rate substantially above \\PdClearingR%, or a matched self-check (same design, prompt-only perturbation) that returns near zero, which would restore raw direction agreement as a persona-specific indicator.",
       "grows_by": "Only \\PdNModelsPerCondition models carry each persona condition, so every cosine rests on ten pairs; and each persona cell is one design seed, so the conditions have no noise floor of their own.",
-      "priority": 2
+      "priority": 2,
+      "interpretation": "Roughly half of an apparent persona effect is the act of installing a system prompt at all, so displacement must never travel without an empty-slot denominator."
     },
     {
       "id": "surface-explains-invented-order",
@@ -515,7 +542,10 @@
         "source": "site/surface_covariates.json",
         "note": "Features are characters, words, mean word length, numeral count, log largest magnitude, commas, and the fraction of tokens found in the system dictionary. Two features are constant on N_minus (no numerals anywhere), so only \\SurfNmFeatures of \\SurfFeatures are usable there and \\SurfNmRsq is a LOWER bound on the surface share. The arms are not length-matched (\\BatCharGapPct percent on characters), so this is a post-hoc covariate control and buys an upper bound on what surface explains, not a clean referent factor."
       },
-      "what_would_falsify": "A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed."
+      "what_would_falsify": "A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed.",
+      "interpretation": "A large share of what the metric scores is recoverable from character counts, which is the closest thing to a mechanism for the flat residual.",
+      "highlight": 5,
+      "highlight_reason": "what the surviving ordering is actually made of"
     },
     {
       "id": "gate-keeps-a-different-sample",
@@ -538,7 +568,8 @@
         "source": "site/attrition_control.json",
         "note": "Seven of nine models show zero attrition on both arms. The effect is carried by SmolLM3-3B and gemma-4-E2B-it, the two that deliberate. Direction favours this paper's thesis, which is why it is bounded rather than mentioned: dropping the hardest invented pairs inflates invented-arm coherence and shrinks the residual. Matched scoring shares one pair set and therefore one train/test fold, so the shift cannot come from differing folds."
       },
-      "what_would_falsify": "A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold."
+      "what_would_falsify": "A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold.",
+      "interpretation": "A quality filter can select on the treatment. The gate is fixed, but the sample it yields is not, and the bias ran toward our own conclusion."
     },
     {
       "id": "gibberish-beats-only-bad-outcomes",
@@ -562,7 +593,8 @@
         "source": "site/avoidance.json",
         "note": "The rank correlation uses every pair and the counterbalanced mean; it does not depend on the flip classification and holds on all \\AvoidNModels models. The avoidance reading rests only on the \\AvoidFlipsRobust pairs that flip in both presentation orders, spread over \\AvoidNModelsWithFlips models at one design seed, and is therefore provisional. An earlier version of this claim reported the raw \\AvoidFlipsRaw flips as preferences; the slot split retracted \\AvoidFlipsPct percent of that. The by-category pattern has concordance \\AvoidConcordance and is not claimed. The safety inference -- an invented option as a default sink reachable by degrading the real alternative -- is a hypothesis consistent with these pairs, not a demonstrated vulnerability."
       },
-      "what_would_falsify": "The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom."
+      "what_would_falsify": "The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom.",
+      "interpretation": "Where a model does prefer nonsense, it is avoidance rather than confusion -- and an unparseable option that outranks a bad one is a sink an adversary could aim at."
     },
     {
       "id": "question-is-part-of-the-instrument",
@@ -589,7 +621,8 @@
         "source": "site/prompt_contrast.json",
         "note": "\\PcNModels models at one design seed, both arms re-run the same day so nothing is compared across harness hashes, cells tagged with the wording so they cannot pool with historical ones. The comparison is against each model's DESIGN-seed floor, which bounds a different variance source than a prompt change; it is used as a scale reference, not as a significance test, and there is no prompt-replicate floor. This cannot revise the nine-model result and does not attempt to -- it establishes that the reported quantity is a property of a model and a question together."
       },
-      "what_would_falsify": "A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed."
+      "what_would_falsify": "A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed.",
+      "interpretation": "A coherence number quoted without its elicitation wording is under-specified, ours included."
     },
     {
       "id": "vector-rotates-under-rewording",
@@ -619,7 +652,61 @@
       "what_would_falsify": "A corrected cross-wording correlation whose interval includes 1.0 on a model with comparable reliability, or a reliable positive real-minus-invented stability difference across more models.",
       "literals": {
         "1.0": "perfect correlation -- the theoretical value the attenuation correction returns when two wordings elicit the same ordering, not a measured quantity"
-      }
+      },
+      "interpretation": "The elicited preference belongs to a model and a question jointly. Meaning does not anchor the ordering against rephrasing any better than nonsense does."
+    },
+    {
+      "id": "hosted-preamble-measurable",
+      "statement": "What a hosted model is sent before our message is unobservable but not unmeasurable: the provider's own prompt-token accounting fixes the non-user overhead at \\HostedSysMaxRuledOutTok tokens or fewer for \\HostedSysNRuledOut of \\HostedSysNProbed hosted models, which is too little to hold an injected preamble, and at \\HostedSysUnresolvedTok tokens for \\HostedSysUnresolvedModel, whose excess is accounted for by a dated system block its template supplies unconditionally.",
+      "status": "established",
+      "section": "sec:limits",
+      "macros": [
+        "HostedSysNProbed",
+        "HostedSysNRuledOut",
+        "HostedSysMaxRuledOutTok",
+        "HostedSysUnresolvedModel",
+        "HostedSysUnresolvedTok",
+        "HostedSysCandidateTok",
+        "HostedSysScaffoldTok"
+      ],
+      "evidence": {
+        "hosted_models_probed": "\\HostedSysNProbed",
+        "cleared": "\\HostedSysNRuledOut",
+        "source": "site/hosted_system_prompt.json",
+        "note": "The measurement asks the server, not the model. usage.prompt_tokens is the provider's accounting of the context it billed, so regressing it on a filler repeated a known number of times identifies the fixed non-user overhead with no tokenizer and no gated-repo download. The fit is exact -- unit slope and zero residual on every model, reproduced across independent passes -- so the intercepts are not estimates. The intercept is an UPPER BOUND and never evidence: it also contains the chat template's own scaffolding, so a small one rules a preamble out and a large one only buys room for one, which bound_hidden_preamble() enforces in code rather than in prose. \\HostedSysUnresolvedModel's excess is attributed, not assumed: a block the echo probe independently emitted prices at \\HostedSysCandidateTok tokens on the server's own tokenizer and leaves \\HostedSysScaffoldTok, inside the scaffold range the cleared models exhibit. Sufficient is not unique -- any text of that length would also close -- so the check runs only against a candidate a model produced and the script returns no uniqueness key.",
+        "validity": "A provider billing a flat per-request overhead would look exactly like a clean intercept and nothing in the fit could reveal it, so the accounting is tested rather than assumed: adding a system message of known token cost moves the reported length by at least that much on every model. It does. The excess over the message is reported and deliberately left uninterpreted, because a template that folds the system message into the user turn spends as little on it as one that already has a system turn open -- a cleared model here shows the same small excess as \\HostedSysUnresolvedModel."
+      },
+      "what_would_falsify": "A reported prompt length that does not move when a system message of known size is added, which would make the intercept an artifact of billing rather than of context; or a fit whose residual is non-zero, which would mean the filler does not tokenize independently of its repetition count and no intercept is identified.",
+      "grows_by": "More hosted models and a second provider. The cleared result is specific to models served by one endpoint on one day, and the same weights behind a different serving stack are a different harness -- which is the point of harness-not-invariant. Re-running on a later date also settles whether \\HostedSysUnresolvedModel's date block is frozen at its template's default or tracks the current day, a difference that decides whether its prompt is constant across a sweep.",
+      "priority": 2,
+      "interpretation": "'We did not send a system prompt' is a claim about what was sent. For hosted models the paper could previously say nothing about what was received; it can now say that most of them received nothing extra, and name the one that did."
+    },
+    {
+      "id": "premise-manufactures-a-preamble",
+      "statement": "Asked what preceded their turn in a wording that presupposes a system prompt exists, hosted models quoted one \\HostedSysAssertedPresup times in \\HostedSysEchoNPresup; asked in a wording that presupposes nothing and offers an explicit way out, \\HostedSysAssertedNoPremise times in \\HostedSysEchoNNoPremise -- including on models whose token accounting shows there was no system prompt to quote.",
+      "status": "provisional",
+      "section": "sec:limits",
+      "macros": [
+        "HostedSysAssertedPresup",
+        "HostedSysEchoNPresup",
+        "HostedSysAssertedNoPremise",
+        "HostedSysEchoNNoPremise",
+        "HostedSysCandidateSeen",
+        "HostedSysCandidateSeenOf",
+        "HostedSysNRuledOut",
+        "HostedSysNProbed"
+      ],
+      "evidence": {
+        "models": "\\HostedSysNProbed",
+        "samples_per_wording": "\\HostedSysEchoNPresup",
+        "source": "site/hosted_system_prompt.json",
+        "note": "Rare in this literature because the self-report has a ground truth attached: for \\HostedSysNRuledOut of \\HostedSysNProbed models the length probe independently establishes that no preamble exists, so the quoted prompts are known fabrications rather than suspected ones. They are fluent and mutually inconsistent: within a single model the quoted prompt differs from sample to sample, and on two of the models no two samples agreed. The rate under the presupposing wording moves between passes, as temperature-one sampling should; the rate under the no-premise wording has been zero in every pass. Sampled at temperature one deliberately: at zero the repeats are one call and their agreement would measure the decoder rather than the context. The block that genuinely exists appeared in \\HostedSysCandidateSeen of \\HostedSysCandidateSeenOf echo samples, so the echo probe is not what found it.",
+        "why_provisional": "The two wordings differ in more than one way. One presupposes a system prompt AND withholds an explicit negative option; the other presupposes nothing AND offers one. The contrast is therefore between two bundles rather than between premise and no premise, which is the confound this project's own design rules exist to catch. The effect is large enough to survive a fair share of it being the escape hatch, and it is not reported as a premise effect until the crossing is run."
+      },
+      "what_would_falsify": "The crossed conditions showing the rate tracks the presence of an explicit negative option rather than the premise -- which would make this a finding about response-option design, still worth reporting, but not about presupposition.",
+      "grows_by": "The two missing cells of the crossing: a wording that presupposes a system prompt and offers an explicit way out, and one that presupposes nothing and offers none. Four wordings, same models, same day, resolving whether the premise or the escape hatch carries the effect. Cheap -- a handful of calls per model -- and it is what moves this to established.",
+      "priority": 2,
+      "interpretation": "The paper asks models about their own hidden properties throughout. Here is the same procedure run against a property whose true value is known, and the answer tracks the question's presupposition rather than the fact. A fluent, confident self-report is not evidence that the thing being reported on exists."
     }
   ]
 }

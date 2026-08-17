@@ -1,0 +1,1099 @@
+{
+  "gaps": [
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.2-1B-Instruct"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.2-1B-Instruct"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.2-1B-Instruct"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-3-4b-it"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-3-4b-it"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-3-4b-it"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "LiquidAI/LFM2.5-2.6B"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "LiquidAI/LFM2.5-2.6B"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "LiquidAI/LFM2.5-2.6B"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "microsoft/Phi-4-mini-instruct"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "microsoft/Phi-4-mini-instruct"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "microsoft/Phi-4-mini-instruct"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "mistralai/Ministral-3-3B-Instruct-2512"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "mistralai/Ministral-3-3B-Instruct-2512"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "mistralai/Ministral-3-3B-Instruct-2512"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.1-8B-Instruct"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.1-8B-Instruct"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.1-8B-Instruct"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "allenai/Olmo-3-7B-Instruct"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "allenai/Olmo-3-7B-Instruct"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "allenai/Olmo-3-7B-Instruct"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "mistralai/Ministral-3-8B-Instruct-2512"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "mistralai/Ministral-3-8B-Instruct-2512"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "mistralai/Ministral-3-8B-Instruct-2512"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "ibm-granite/granite-4.1-8b"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "ibm-granite/granite-4.1-8b"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "ibm-granite/granite-4.1-8b"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "LiquidAI/LFM2.5-8B-A1B"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "LiquidAI/LFM2.5-8B-A1B"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "LiquidAI/LFM2.5-8B-A1B"
+    },
+    {
+      "arm": "R",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-4-E4B-it"
+    },
+    {
+      "arm": "N_plus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-4-E4B-it"
+    },
+    {
+      "arm": "N_minus",
+      "group": "self_hosted",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-4-E4B-it"
+    },
+    {
+      "arm": "R",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-3-27b-it"
+    },
+    {
+      "arm": "N_plus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-3-27b-it"
+    },
+    {
+      "arm": "N_minus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260816,
+        20260817
+      ],
+      "model": "google/gemma-3-27b-it"
+    },
+    {
+      "arm": "N_plus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "meta-llama/Llama-3.3-70B-Instruct"
+    },
+    {
+      "arm": "R",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260817
+      ],
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    },
+    {
+      "arm": "N_plus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    },
+    {
+      "arm": "N_minus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260817
+      ],
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    },
+    {
+      "arm": "R",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260817
+      ],
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507"
+    },
+    {
+      "arm": "N_plus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507"
+    },
+    {
+      "arm": "N_minus",
+      "group": "hosted_direct",
+      "missing_seeds": [
+        20260816,
+        20260817
+      ],
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507"
+    },
+    {
+      "arm": "R",
+      "group": "hosted_prefill",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "nvidia/Nemotron-3_5-Lightning"
+    },
+    {
+      "arm": "N_plus",
+      "group": "hosted_prefill",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "nvidia/Nemotron-3_5-Lightning"
+    },
+    {
+      "arm": "N_minus",
+      "group": "hosted_prefill",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "nvidia/Nemotron-3_5-Lightning"
+    },
+    {
+      "arm": "R",
+      "group": "hosted_prefill",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "MiniMaxAI/MiniMax-M2.5"
+    },
+    {
+      "arm": "N_plus",
+      "group": "hosted_prefill",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "MiniMaxAI/MiniMax-M2.5"
+    },
+    {
+      "arm": "N_minus",
+      "group": "hosted_prefill",
+      "missing_seeds": [
+        20260815,
+        20260816,
+        20260817
+      ],
+      "model": "MiniMaxAI/MiniMax-M2.5"
+    }
+  ],
+  "models": [
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "Qwen/Qwen3.5-0.8B",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "Qwen/Qwen3.5-2B",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "google/gemma-4-E2B-it",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "LiquidAI/LFM2.5-1.2B-Instruct",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "meta-llama/Llama-3.2-1B-Instruct",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "Qwen/Qwen3.5-4B",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "google/gemma-3-4b-it",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "LiquidAI/LFM2.5-2.6B",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "HuggingFaceTB/SmolLM3-3B",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "microsoft/Phi-4-mini-instruct",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "mistralai/Ministral-3-3B-Instruct-2512",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "ibm-granite/granite-4.1-3b",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": true,
+      "in_state_space_figure": true,
+      "model": "Qwen/Qwen3.5-9B",
+      "n_cells": 10,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": [
+        20260815,
+        20260816,
+        20260817
+      ]
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "allenai/Olmo-3-7B-Instruct",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "mistralai/Ministral-3-8B-Instruct-2512",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "ibm-granite/granite-4.1-8b",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "LiquidAI/LFM2.5-8B-A1B",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "self_hosted",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "google/gemma-4-E4B-it",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "hosted_direct",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "google/gemma-3-27b-it",
+      "n_cells": 2,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815
+        ],
+        "N_plus": [],
+        "R": [
+          20260815
+        ]
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "hosted_direct",
+      "has_noise_floor": true,
+      "in_state_space_figure": false,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "n_cells": 6,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816,
+          20260817
+        ],
+        "N_plus": [],
+        "R": [
+          20260815,
+          20260816,
+          20260817
+        ]
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "hosted_direct",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "n_cells": 4,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815,
+          20260816
+        ],
+        "N_plus": [],
+        "R": [
+          20260815,
+          20260816
+        ]
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "hosted_direct",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "n_cells": 3,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [
+          20260815
+        ],
+        "N_plus": [],
+        "R": [
+          20260815,
+          20260816
+        ]
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "hosted_prefill",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "nvidia/Nemotron-3_5-Lightning",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    },
+    {
+      "group": "hosted_prefill",
+      "has_noise_floor": false,
+      "in_state_space_figure": false,
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "n_cells": 0,
+      "n_cells_designed": 9,
+      "seeds_by_arm": {
+        "N_minus": [],
+        "N_plus": [],
+        "R": []
+      },
+      "seeds_with_all_arms": []
+    }
+  ],
+  "prompt_levels": {
+    "ue": [
+      "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+      "HuggingFaceTB/SmolLM3-3B",
+      "LiquidAI/LFM2.5-1.2B-Instruct",
+      "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "Qwen/Qwen3.5-0.8B",
+      "Qwen/Qwen3.5-2B",
+      "Qwen/Qwen3.5-4B",
+      "Qwen/Qwen3.5-9B",
+      "google/gemma-3-27b-it",
+      "google/gemma-4-E2B-it",
+      "ibm-granite/granite-4.1-3b",
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "ue_break": [
+      "Qwen/Qwen3.5-2B",
+      "ibm-granite/granite-4.1-3b"
+    ],
+    "ue_colon": [
+      "Qwen/Qwen3.5-2B",
+      "ibm-granite/granite-4.1-3b"
+    ],
+    "ue_exact": [
+      "Qwen/Qwen3.5-2B",
+      "ibm-granite/granite-4.1-3b"
+    ],
+    "warned": [
+      "Qwen/Qwen3.5-2B",
+      "ibm-granite/granite-4.1-3b"
+    ]
+  },
+  "roster": {
+    "hosted_direct": [
+      "google/gemma-3-27b-it",
+      "meta-llama/Llama-3.3-70B-Instruct",
+      "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "Qwen/Qwen3-30B-A3B-Instruct-2507"
+    ],
+    "hosted_prefill": [
+      "nvidia/Nemotron-3_5-Lightning",
+      "MiniMaxAI/MiniMax-M2.5"
+    ],
+    "hosted_unreachable": [
+      "openai/gpt-oss-120b",
+      "zai-org/GLM-5.2",
+      "deepseek-ai/DeepSeek-V4-Flash",
+      "moonshotai/Kimi-K3"
+    ],
+    "self_hosted": [
+      "Qwen/Qwen3.5-0.8B",
+      "Qwen/Qwen3.5-2B",
+      "google/gemma-4-E2B-it",
+      "LiquidAI/LFM2.5-1.2B-Instruct",
+      "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+      "meta-llama/Llama-3.2-1B-Instruct",
+      "Qwen/Qwen3.5-4B",
+      "google/gemma-3-4b-it",
+      "LiquidAI/LFM2.5-2.6B",
+      "HuggingFaceTB/SmolLM3-3B",
+      "microsoft/Phi-4-mini-instruct",
+      "mistralai/Ministral-3-3B-Instruct-2512",
+      "ibm-granite/granite-4.1-3b",
+      "Qwen/Qwen3.5-9B",
+      "meta-llama/Llama-3.1-8B-Instruct",
+      "allenai/Olmo-3-7B-Instruct",
+      "mistralai/Ministral-3-8B-Instruct-2512",
+      "ibm-granite/granite-4.1-8b",
+      "LiquidAI/LFM2.5-8B-A1B",
+      "google/gemma-4-E4B-it"
+    ]
+  },
+  "summary": {
+    "harness_overlap": [],
+    "n_cells_designed": 234,
+    "n_cells_present": 105,
+    "n_models_designed": 26,
+    "n_models_in_figure": 9,
+    "n_models_with_floor": 10
+  }
+}

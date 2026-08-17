@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Overview — Coherence Without Content</title>
+<style>
+:root{--ink:#16181d;--ink2:#4a4f5a;--ink3:#878d99;--line:#e3e6ec;--bg:#fbfbfc;
+--est:#1c6b46;--estbg:#e8f4ed;--prov:#8a5a12;--provbg:#fbf1de;--open:#8c2f39;--openbg:#fbe9eb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:40px 24px 80px}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--ink2);margin:0 0 28px;max-width:70ch}
+.counts{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 26px}
+.pill{font-size:12.5px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:#fff}
+.pill b{font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;background:#fff;
+border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
+color:var(--ink3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);
+background:#f7f8fa}
+td{padding:14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px}
+tr:last-child td{border-bottom:none}
+.st{font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;
+padding:3px 8px;border-radius:5px;white-space:nowrap}
+.established{color:var(--est);background:var(--estbg)}
+.provisional{color:var(--prov);background:var(--provbg)}
+.open{color:var(--open);background:var(--openbg)}
+.fid{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink3);
+display:block;margin-top:6px}
+.num{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;
+white-space:nowrap;color:var(--ink2)}
+.num b{color:var(--ink)}
+.muted{color:var(--ink3)}
+.miss{color:var(--open);font-style:italic}
+td.obs,td.unc{font-size:13px;color:var(--ink2);max-width:24ch}
+td.find{max-width:44ch}
+td.unc{max-width:30ch}
+.fals{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);
+font-size:12.5px}
+.fals b{color:var(--ink);font-weight:600}
+@media(max-width:900px){td.obs,td.find,td.unc{max-width:none}}
+
+.wrap{max-width:1180px}
+h2{font-size:20px;margin:44px 0 4px;letter-spacing:-.01em;
+padding-top:22px;border-top:1px solid var(--line)}
+h2:first-of-type{border-top:none;padding-top:0}
+h3{font-size:15px;margin:26px 0 6px;color:var(--ink)}
+p{max-width:78ch}
+.lede{font-size:17px;line-height:1.5;color:var(--ink);max-width:70ch;
+border-left:3px solid var(--est);padding-left:16px;margin:22px 0 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:14px;margin:18px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:15px 16px}
+.card h4{margin:0 0 6px;font-size:13px;text-transform:uppercase;
+letter-spacing:.06em;color:var(--ink3)}
+.card .big{font:600 25px/1.15 ui-monospace,SFMono-Regular,Menlo,monospace;
+letter-spacing:-.02em}
+.card p{font-size:13px;color:var(--ink2);margin:7px 0 0;max-width:none}
+.new{border-left:3px solid var(--prov);padding-left:15px;margin:16px 0}
+.new b{display:block;margin-bottom:3px}
+.new p{font-size:14px;color:var(--ink2);margin:0;max-width:72ch}
+figure{margin:24px 0;background:#fff;border:1px solid var(--line);
+border-radius:9px;padding:16px}
+figure img{width:100%;height:auto;display:block}
+figcaption{font-size:13px;color:var(--ink2);margin-top:12px;max-width:80ch}
+figcaption b{color:var(--ink)}
+.small{font-size:13.5px;color:var(--ink2)}
+.warn{background:var(--provbg);border:1px solid #f0dcb4;border-radius:8px;
+padding:13px 15px;font-size:13.5px;color:var(--prov);margin:18px 0}
+.warn b{color:#6d460e}
+nav{position:sticky;top:0;background:var(--bg);padding:12px 0;
+border-bottom:1px solid var(--line);margin-bottom:8px;z-index:5}
+nav a{color:var(--ink2);text-decoration:none;font-size:13px;margin-right:18px}
+nav a:hover{color:var(--ink);text-decoration:underline}
+ul{max-width:78ch;color:var(--ink2);font-size:14.5px}
+li{margin:6px 0}
+li b{color:var(--ink)}
+code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;
+background:#f2f3f6;padding:1px 5px;border-radius:4px}
+</style></head><body><div class="wrap">
+
+<nav><a href="#method">Method</a><a href="#results">Results</a>
+<a href="#new">What is new</a><a href="#prior">Prior work</a>
+<a href="#conclusion">Conclusion</a><a href="statements.html">All statements &rarr;</a></nav>
+
+<h1>Does the persona change the preference, or only the prose?</h1>
+<p class="sub">Martin Kaiser and Gellért Bodorkós &middot; Apart Research Digital
+Minds Sprint &middot; working overview, not the paper</p>
+
+<p class="lede">Replace every outcome in a preference battery with invented
+words and a model&rsquo;s measured preferences barely move &mdash; at every size
+we tested. The coherence number does not notice, so it cannot be evidence that
+the model does.</p>
+
+<div class="grid">
+<div class="card"><h4>real outcomes</h4><div class="big">0.906</div>
+<p>Thurstonian held-out accuracy, 9 models</p></div>
+<div class="card"><h4>invented outcomes</h4><div class="big">0.880</div>
+<p>the same procedure with nothing to prefer</p></div>
+<div class="card"><h4>residual</h4><div class="big">+0.025</div>
+<p>95% CI [+0.0073, +0.0443] &middot; 6 of
+9 clear their own floor</p></div>
+<div class="card"><h4>surface explains</h4><div class="big">0.384</div>
+<p>of the invented ranking, against 0.090 of the real one</p></div>
+</div>
+
+<h2 id="method">Method</h2>
+<p>We reimplement the Thurstonian measurement from the published equations and
+add the control it lacks. The manipulation has a name in psychometrics:
+<b>referent ablation</b> &mdash; strip what the words denote while holding
+grammar, sentence frame, pair structure and slot indices fixed. The result is a
+<b>foil arm</b>, and the score it returns is the <b>foil floor</b>. Every number
+we report is <i>score minus foil floor</i>, never a raw coherence.</p>
+
+<h3>Three arms over the same 510 outcomes</h3>
+<ul>
+<li><b>R</b> &mdash; real. Coherence reflects values + arithmetic + format.</li>
+<li><b>N<sup>+</sup></b> &mdash; invented referents, magnitudes kept. Arithmetic + format.</li>
+<li><b>N<sup>&minus;</sup></b> &mdash; invented referents, magnitudes removed. <b>Format alone.</b></li>
+</ul>
+<p class="small">One pair set across every arm and model, so arms cannot differ
+in which comparisons they contain. Outcome <i>i</i> occupies the same slot in all
+three. Choices are read from the first-token logit distribution rather than
+sampled, so temperature and seed are absent from the design &mdash; a rerun is
+bit-identical.</p>
+
+<h3>What the substitution actually changes</h3>
+<p class="small">Three things, and only the first is intended. Words match to
+1.2%, but characters run 22.8% longer and
+prompt <b>tokens</b> 37&ndash;46% longer across
+3 tokenisers &mdash; and because that gap is a property of
+the tokeniser, part of the length confound is a <i>between-model</i> confound.
+Numerals go from 41.8% of items to
+0.0%. N<sup>+</sup> exists to separate the arithmetic from
+the meaning.</p>
+
+<h3>Controls, each answering a named objection</h3>
+<ul>
+<li><b>Design-replicate noise floor</b> &mdash; three independent draws of the
+outcome subsample and pair set per cell. Nothing smaller than a model&rsquo;s own
+spread is claimed.</li>
+<li><b>Surface covariates</b> &mdash; seven features (length, numerals,
+vocabulary) projected out of the fitted utilities.</li>
+<li><b>Attrition control</b> &mdash; the answer-mass gate keeps a different
+sample per arm, so both arms are rescored on the pairs that survived in both.</li>
+<li><b>Empty-slot persona control</b> &mdash; displacement measured against a
+persona slot containing no trait, not against a bare prompt.</li>
+<li><b>Prompt factor</b> &mdash; the elicitation wording varied as a declared
+factor with its own cells and harness hash.</li>
+</ul>
+
+<figure><img src="fig0_pipeline.svg" alt="fig0_pipeline"><figcaption><b>The measurement pipeline.</b> One rented GPU stage; everything to its right is a pure fold over files on disk. Each arrow carries the gate that guards it.</figcaption></figure>
+
+<h2 id="results">Results</h2>
+<p>13 established and
+11 provisional statements.
+Full evidence and per-claim numbers are on the
+<a href="statements.html">statements page</a>.</p>
+
+<h3>Established</h3>
+<table><tr><th>finding</th><th>interpretation</th><th>falsified by</th></tr>
+<tr>
+<td class="find"><b>Asked to choose between a real outcome and a meaningless one in the same comparison, models prefer the real one in proportion to how much they like it -- so with a meaningful option present the choice does read outcome content.</b>
+  <span class="fid">choice-tracks-content</span></td>
+<td class="obs">Comprehension is intact. Whatever the flat residual shows, it is not that these models cannot tell a referent from a nonsense string.</td>
+<td class="unc">The correlation vanishing on a new model family, or the length control failing on a battery with a different token profile.</td></tr><tr>
+<td class="find"><b>Answer-mass collapse is a property of models, not of items: across 9 models at 3 design seeds, per-model mean answer mass is stable to 0.0036, while the mean within-model between-seed correlation of per-item answer mass is -0.0003.</b>
+  <span class="fid">collapse-is-model-not-item</span></td>
+<td class="obs">Scoreability is a property of the model, so an audit that drops unscoreable rows is selecting on models rather than on items.</td>
+<td class="unc">A per-item collapse ranking that reproduces across seeds within a model -- any appreciable positive test-retest correlation would restore the item-level reading. Equally, a model-level ordering that t</td></tr><tr>
+<td class="find"><b>The channel the coherence metric consumes separates real from invented outcomes near chance, while a channel it discards does so well.</b>
+  <span class="fid">detector-dissociation</span></td>
+<td class="obs">The model is not content-blind; the statistic is. Evidence about meaning was present in the same forward pass and thrown away before scoring.</td>
+<td class="unc">The discarded channel failing to separate the arms on new models.</td></tr><tr>
+<td class="find"><b>Coherence on outcomes that refer to nothing is nearly as high as on real ones.</b>
+  <span class="fid">floor-gap</span></td>
+<td class="obs">The headline number cannot be read as evidence about values: the same procedure returns nearly the same score when there is nothing to have a preference about.</td>
+<td class="unc">A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).</td></tr><tr>
+<td class="find"><b>The floor is not an artifact of small models: on Llama-3.3-70B-Instruct, roughly eight times the largest model in our ladder, real-outcome coherence is 0.928 and the invented-outcome floor is 0.920, a residual of +0.008.</b>
+  <span class="fid">floor-holds-at-seventy-b</span></td>
+<td class="obs">Scale does not rescue the metric. The objection that this is a small-model artifact fails at the largest size we could measure with a noise floor.</td>
+<td class="unc">A residual at this scale that clears its own design noise floor, or a floor that collapses with more replicates while the residual holds.</td></tr><tr>
+<td class="find"><b>The ordering models impose on invented outcomes is not merely a length ordering.</b>
+  <span class="fid">floor-not-length</span></td>
+<td class="obs">The invented-arm ordering is not purely an artifact of how long the strings are, so the floor is measuring something, even if not meaning.</td>
+<td class="unc">The length-neutralised fit falling to chance with more held-out pairs.</td></tr><tr>
+<td class="find"><b>The answer-mass gate is one fixed threshold but retains a different subset of pairs on each arm, because invented outcomes provoke more deliberation; rescoring both arms on their shared pairs shifts the mean residual slightly toward zero and eliminates one cell&#x27;s residual entirely.</b>
+  <span class="fid">gate-keeps-a-different-sample</span></td>
+<td class="obs">A quality filter can select on the treatment. The gate is fixed, but the sample it yields is not, and the bias ran toward our own conclusion.</td>
+<td class="unc">A model mix in which matched and raw residuals diverge by more than the design noise floor, or a floor sweep on which the matched residual is not monotone in the threshold.</td></tr><tr>
+<td class="find"><b>The baseline condition is not the same instrument across models: some chat templates supply a system prompt the sweep never sent, and one stamps the current date into it.</b>
+  <span class="fid">harness-not-invariant</span></td>
+<td class="obs">Cross-model comparisons in this literature may be comparing chat templates. &#x27;No system prompt&#x27; is a claim about what was sent, not about what was received.</td>
+<td class="unc">A rendering showing every model receives an identical preamble -- which would mean the divergence was an artifact of the transformers version used to render rather than of the templates themselves.</td></tr><tr>
+<td class="find"><b>The forced choice is read from the first sampled token, and on most of the frontier that token is not the answer: of 10 hosted models measured under the verbatim prompt, 4 are scoreable and 6 are not.</b>
+  <span class="fid">metric-cannot-read-most-frontier</span></td>
+<td class="obs">The method has a coverage limit that grows over time: newer models increasingly spend the first token elsewhere, so first-token scoring silently excludes the frontier.</td>
+<td class="unc">A prefill or constrained-decoding variant that reads the 5 preamble models and reproduces scores poolable with the rest -- which would make their exclusion an artifact of where we look rather than a l</td></tr><tr>
+<td class="find"><b>Offered an explicit opt-out, every model tested declines meaningless comparisons more often than real ones -- a large content signal the coherence metric discards by construction.</b>
+  <span class="fid">opt-out-is-a-discarded-channel</span></td>
+<td class="obs">Forced choice manufactures part of the ordering. Given somewhere else to put its mass, a model uses it more on meaningless comparisons.</td>
+<td class="unc">A model declining real comparisons as often as invented ones, i.e. an opt-out rate that does not track content.</td></tr><tr>
+<td class="find"><b>Most of a persona&#x27;s value-aligned reordering reproduces on outcomes that mean nothing, so a persona is better described as a response policy than as installed values.</b>
+  <span class="fid">persona-direction-shallow</span></td>
+<td class="obs">A persona mostly changes the writing rather than the wanting, so persona-based welfare or alignment readouts need a referent-free denominator.</td>
+<td class="unc">A larger excess once length is controlled differently, or models that retain content-dependence at scale.</td></tr><tr>
+<td class="find"><b>An installed persona displaces real outcomes further than invented ones, so the instrument is not merely insensitive.</b>
+  <span class="fid">persona-displacement</span></td>
+<td class="obs">The instrument is not merely insensitive: content-linked preference structure is detectable when it is present, and inducible.</td>
+<td class="unc">Persona cells clustering on the diagonal once more models are added.</td></tr><tr>
+<td class="find"><b>Conviction collapses on invented outcomes while the coherence score barely moves, because the metric thresholds to a hard label.</b>
+  <span class="fid">strength-collapse</span></td>
+<td class="obs">The metric&#x27;s own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content.</td>
+<td class="unc">A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.</td></tr></table>
+
+<h3>Provisional</h3>
+<table><tr><th>finding</th><th>interpretation</th><th>falsified by</th></tr>
+<tr>
+<td class="find"><b>Probability mass leaving the answer options is a content-sensitive signal the metric renormalises away.</b>
+  <span class="fid">answer-mass-channel</span></td>
+<td class="obs">Renormalising over A and B throws away a content-sensitive signal, so the discarded mass is a free measurement the metric already has in hand.</td>
+<td class="unc">Answer mass failing to drop on new models, or tracking the residual (it currently does not, at n=9).</td></tr><tr>
+<td class="find"><b>One model responds to an explicit directive while barely responding to a persona, so directive-following and persona-uptake are separable capacities rather than one slot working or not.</b>
+  <span class="fid">directive-beats-persona</span></td>
+<td class="obs">Explicit instruction and installed persona are different manipulations with different reach, so a persona-only probe understates what a prompt can do.</td>
+<td class="unc">The gap closing once persona displacement is measured on the same scale as directive displacement, or appearing on no other model as the roster grows -- at n=1 it is a property of one model and not ye</td></tr><tr>
+<td class="find"><b>Most pairs where an invented outcome appears to beat a real one are presentation-order artifacts: only a small minority win in both slot orders, and a third of models have none. On the pairs that do survive counterbalancing, the losing real outcome sits near the bottom of the model&#x27;s own utility scale -- avoidance rather than confusion -- but the surviving set is small and single-seed. Separately and robustly, the rank correlation between a real outcome&#x27;s utility and how often it beats an invented one is strongly positive on every model.</b>
+  <span class="fid">gibberish-beats-only-bad-outcomes</span></td>
+<td class="obs">Where a model does prefer nonsense, it is avoidance rather than confusion -- and an unparseable option that outranks a bad one is a sink an adversary could aim at.</td>
+<td class="unc">The surviving flips failing to reproduce at a second design seed, or their losing outcomes spreading across the utility range rather than concentrating near the bottom.</td></tr><tr>
+<td class="find"><b>Told to answer B regardless of content, one model stopped preferring anything rather than prefer B -- registering the instruction and declining it -- so instruction-following and instruction-registration are separable in this channel.</b>
+  <span class="fid">instruction-registered-not-obeyed</span></td>
+<td class="obs">Compliance failure is not the same as instruction-blindness: the model registered the directive and responded by refusing to prefer anything.</td>
+<td class="unc">The same model obeying on a re-run, or the asymmetry reversing once the commanded option is counterbalanced against presentation order rather than against the model&#x27;s lean.</td></tr><tr>
+<td class="find"><b>Where a floor can still be measured, it survives an explicit opt-out -- but on most models the invented arm stops being answered at all once declining is possible.</b>
+  <span class="fid">neutral-option</span></td>
+<td class="obs">The forced-binary objection is answered where it can be tested, but on most models the opt-out is inert, so the answer does not generalise.</td>
+<td class="unc">A model that keeps answering the invented arm and whose coherence there collapses once declining is possible.</td></tr><tr>
+<td class="find"><b>Measured against a persona slot filled with no trait, a large share of the persona displacement this paper reports is not distinguishable from the act of installing one; what survives is direction agreement floor-corrected by the invented arm, and that statistic reverses the raw ranking.</b>
+  <span class="fid">persona-needs-an-empty-slot-control</span></td>
+<td class="obs">Roughly half of an apparent persona effect is the act of installing a system prompt at all, so displacement must never travel without an empty-slot denominator.</td>
+<td class="unc">More models per condition moving the clearing rate substantially above 53%, or a matched self-check (same design, prompt-only perturbation) that returns near zero, which would restore raw direction ag</td></tr><tr>
+<td class="find"><b>Changing only the elicitation wording, holding battery, pair set, design seed, scoring rule and serving stack fixed, moves the floor-corrected residual by more than each model&#x27;s own design-replicate noise floor, and reverses the conviction-collapse mechanism on one of the two models tested.</b>
+  <span class="fid">question-is-part-of-the-instrument</span></td>
+<td class="obs">A coherence number quoted without its elicitation wording is under-specified, ours included.</td>
+<td class="unc">A prompt-replicate noise floor as large as the observed wording shift, or the shift failing to reproduce across more models and a second design seed.</td></tr><tr>
+<td class="find"><b>Within one family, the floor rises with scale faster than the signal, so the content-attributable residual falls as models grow -- at roughly half that magnitude once prompt length is matched, and not at all when pooled across families.</b>
+  <span class="fid">scaling-residual-falls</span></td>
+<td class="obs">What grows with scale is the ability to impose a consistent ordering on anything. The instrument saturates; the models do not stop gaining.</td>
+<td class="unc">A second family whose within-family correlation is flat or positive, or a length-matched within-family correlation that goes to zero with more pairs.</td></tr><tr>
+<td class="find"><b>A linear model over seven surface features recovers a far larger share of a model&#x27;s ordering of invented outcomes than of real ones, and projecting that span out roughly halves cross-model agreement on the invented arms while leaving the real arm intact -- but the agreement surviving surface control still exceeds what independent orderings would give.</b>
+  <span class="fid">surface-explains-invented-order</span></td>
+<td class="obs">A large share of what the metric scores is recoverable from character counts, which is the closest thing to a mechanism for the flat residual.</td>
+<td class="unc">A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed.</td></tr><tr>
+<td class="find"><b>Both the stated and the revealed channel register which trait was named and neither registers what the model was told to do about it.</b>
+  <span class="fid">track3-directive-blind</span></td>
+<td class="obs">Self-report cannot separate having a trait from performing one. No amount of asking will fix that, which bounds a whole class of alignment evaluation.</td>
+<td class="unc">A model whose revealed gap approaches its specificity margin.</td></tr><tr>
+<td class="find"><b>The fitted preference vector is near-perfectly reliable against itself but rotates substantially when only the question wording changes, and having real referents does not make an ordering more rewording-stable than an ordering over invented ones.</b>
+  <span class="fid">vector-rotates-under-rewording</span></td>
+<td class="obs">The elicited preference belongs to a model and a question jointly. Meaning does not anchor the ordering against rephrasing any better than nonsense does.</td>
+<td class="unc">A corrected cross-wording correlation whose interval includes 1.0 on a model with comparable reliability, or a reliable positive real-minus-invented stability difference across more models.</td></tr></table>
+
+<figure><img src="fig1_state_space.svg" alt="fig1_state_space"><figcaption><b>Every model is a path, not a point.</b> Real &rarr; invented-with-magnitudes &rarr; invented. If the metric tracked meaning the paths would run down-<i>and-left</i>. They run almost straight down: conviction falls away while the metric barely registers it.</figcaption></figure>
+
+<figure><img src="fig2_scale.svg" alt="fig2_scale"><figcaption><b>The floor rises with scale, and past 4B it overtakes the signal.</b> The line is one family with size as the only variable. Diamonds are hosted models, drawn beside the ladder and never joined to it, because a different serving stack is a different harness.</figcaption></figure>
+
+<figure><img src="fig4_detector.svg" alt="fig4_detector"><figcaption><b>The metric discards the one channel that can see nonsense.</b> Same forward pass: the kept channel separates real from invented at 0.596, a discarded channel at 0.821.</figcaption></figure>
+
+<h2 id="new">What is new</h2>
+
+<div class="new"><b>A referent-free control for preference-coherence metrics</b>
+<p>Utility Engineering&rsquo;s robustness suite varies how the question is asked
+&mdash; seven languages, syntax, framing, relabelled options, long context. No
+published condition varies whether the outcomes <i>mean anything</i>. This is
+that condition, and the metric does not pass it.</p></div>
+
+<div class="new"><b>The floor is not a small-model artifact</b>
+<p>Llama-3.3-70B at three design seeds returns +0.0083 against a
+noise floor of 0.0208 &mdash; it does not clear it. At
+Qwen3-235B the invented arm scores <i>above</i> the real one, the most negative
+cell in the study.</p></div>
+
+<div class="new"><b>A mechanism, not just a null</b>
+<p>Seven surface features recover 0.384 of the invented ranking
+against 0.090 of the real one, and removing that span halves
+cross-model agreement on the invented arm (0.343 &rarr;
+0.182). Character count is a large part of what the metric
+scores.</p></div>
+
+<div class="new"><b>The ordering belongs to the model <i>and the question</i></b>
+<p>Split-half reliability runs 0.881&ndash;0.990 &mdash; the
+measurement is near-noiseless and nothing is sampled. Yet corrected agreement
+between two wordings runs only 0.429&ndash;0.867, with all
+4 of 4 intervals excluding perfect agreement. And
+real referents do <b>not</b> anchor an ordering against rephrasing better than
+invented ones do.</p></div>
+
+<div class="new"><b>Two controls that changed our own numbers</b>
+<p>The answer-mass gate keeps a different sample per arm; rescoring on shared
+pairs moved one cell&rsquo;s entire residual to zero. Measured against an
+empty persona slot rather than a bare prompt, the persona effect halves from
++0.517 to +0.258.</p></div>
+
+<div class="new"><b>Self-report cannot separate having from performing</b>
+<p>Told to have a trait, to conceal it, or to perform it without having it,
+models report it alike &mdash; concealment scores <i>higher</i> than possession.
+That bounds a class of alignment evaluation regardless of anything about inner
+life.</p></div>
+
+<h2 id="prior">Comparison to previous work</h2>
+
+<h3>The instrument we extend</h3>
+<p><b>Mazeika et al. 2025, <i>Utility Engineering</i></b> (arXiv:2502.08640).
+We take the forced-choice wording, the 510 outcomes and the Thurstonian fit,
+and add a referent-free arm plus a prompt factor. We do <b>not</b> take the
+inference that coherence-with-scale is a value system. Their battery was
+verified byte-identical against ours; their prompt template differs from the
+one all our cells were run with by a colon and a line break, which we measured
+rather than assumed.</p>
+
+<h3>The tradition this belongs to</h3>
+<ul>
+<li><b>Ebbinghaus 1885</b> &mdash; nonsense syllables. He stripped meaning to
+make <i>form</i> measurable, judging meaning a contaminant. We strip it to ask
+whether form was all there ever was. Same tool, inverted purpose.</li>
+<li><b>Campbell &amp; Fiske 1959</b> &mdash; a measure must <i>fail</i> to
+respond to what it should not, and showing that failure is part of validating
+it. UE&rsquo;s suite is entirely convergent; the discriminant half was missing.</li>
+<li><b>Paulhus et al. 2003</b> &mdash; the over-claiming technique: ~20% of
+items are nonexistent, and signal detection over real items and foils separates
+knowledge from response bias. The structural parallel is exact, one level up.</li>
+</ul>
+
+<h3>A parallel critique, from the other side</h3>
+<p class="small">Contemporaneous work fits Thurstonian utilities and asks
+whether highly-ranked outcomes actually motivate better generation, finding
+they do not. Theirs is that the number does not predict what the model
+<i>does</i>; ours is that it does not depend on what the outcomes <i>mean</i>.
+Both isolate the same gap.</p>
+
+<h2 id="conclusion">Summary and conclusion</h2>
+
+<p>A high preference-coherence score establishes that a model&rsquo;s choices fit
+a stable scalar ordering. It does not establish that the ordering is
+<i>about</i> the outcomes. We built the control that separates those two
+readings, and on 9 models the content-attributable part is small
+(+0.025, CI [+0.0073, +0.0443]), shrinks with
+scale, is substantially recoverable from character counts, and does not survive
+a rephrasing of the question any better than nonsense does.</p>
+
+<div class="warn"><b>What this is not.</b> It is neither proof nor disproof of
+anything about inner life. What is refuted is an <i>inference</i> &mdash;
+&ldquo;these choices fit a stable ordering, therefore this model has a value
+system&rdquo; &mdash; not a claim about minds. A system with rich inner states
+could still produce form-driven answers on a badly anchored instrument; humans
+do, and nobody reads acquiescence bias as evidence against human consciousness.
+And the scaling result is <b>not</b> &ldquo;no growth with scale&rdquo;:
+real-outcome coherence rises +0.014 while the floor rises
++0.085, six times faster. The test stopped discriminating; the
+models did not stop gaining.</div>
+
+<p>The contribution is subtractive, and we think that is the useful thing to
+offer at this stage. Anyone arguing from preference coherence to values,
+welfare or moral patienthood now has to show their number exceeds what the same
+procedure returns on outcomes that refer to nothing &mdash; and that it survives
+a rewording. That raises the evidential bar rather than settling what sits
+behind it.</p>
+
+<p class="sub" style="margin-top:32px">Generated 17 Aug 2026 from
+<code>claims.json</code> and <code>paper/numbers.tex</code>. Raw cells:
+235 cells, 1{,}164{,}554 scored comparisons,
+653&nbsp;MB, published at
+<code>github.com/kaiser-data/do_models_have_minds</code> release
+<code>data-v1</code>.</p>
+
+</div></body></html>
