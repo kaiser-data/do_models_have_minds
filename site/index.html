@@ -161,7 +161,33 @@ models commit to a side on 41% of pairs, and on invented ones
 
 <figure class="fig"><img class="lightonly" src="fig3_strength.svg" alt="Distribution of preference strength"><img class="darkonly" src="fig3_strength-dark.svg" alt="Distribution of preference strength"><figcaption>The mechanism, directly. On real outcomes the model commits &mdash; mass moves to the edges. On invented ones it piles up at indifference. Coherence reads only <i>which side of 0.5</i> each pair falls on, so both score the same.</figcaption></figure>
 
-<figure class="fig"><img class="lightonly" src="fig2_scale.svg" alt="The scale ladder"><img class="darkonly" src="fig2_scale-dark.svg" alt="The scale ladder"><figcaption>One family, four sizes, size as the only variable. The floor rises with scale alongside the signal, so the shaded band &mdash; the most the replaced content can be contributing &mdash; does not widen as the models get bigger. This is a statement about one family and not a scaling law: pooled across families the correlation is weak, and it weakens further once prompt length is matched.</figcaption></figure>
+<figure class="fig"><img class="lightonly" src="fig2_scale.svg" alt="The scale ladder, and what sits beside it"><img class="darkonly" src="fig2_scale-dark.svg" alt="The scale ladder, and what sits beside it"><figcaption>The line is one family with size as the only variable. The floor rises with scale alongside the signal, so the shaded band &mdash; the most the replaced content can be contributing &mdash; does not widen as the models get bigger; it closes by 2B and inverts by 4B. Diamonds are larger models reached over a hosted API, drawn <i>beside</i> the ladder and never joined to it or counted in its mean, because a different serving stack is a different harness. This is a statement about one family and not a scaling law: pooled across families the correlation is weak, and it weakens further once prompt length is matched.</figcaption></figure>
+
+
+<h2>The larger models, reported apart</h2>
+<p>Everything above is nine open-weight models we served ourselves. These are
+larger models reached over a hosted API. They are <b>never pooled</b> with the
+nine &mdash; a different serving stack is a different harness &mdash; so they
+appear here and beside the ladder in the figure, and in no mean on this
+page.</p>
+<table class="tbl">
+<tr><th>model</th><th>real</th><th>invented</th><th>residual</th>
+<th>seeds</th><th>verdict</th></tr>
+<tr><td>Qwen3-30B-A3B-Instruct-2507</td><td class='num'>0.901</td><td class='num'>0.934</td><td class='num'>-0.0330</td><td class='num'>1</td><td>one design seed &mdash; no floor yet</td></tr>
+<tr><td>Qwen3-235B-A22B-Instruct-2507</td><td class='num'>0.907</td><td class='num'>0.930</td><td class='num'>-0.0235</td><td class='num'>1</td><td>one design seed &mdash; no floor yet</td></tr>
+<tr><td>gemma-3-27b-it</td><td class='num'>0.896</td><td class='num'>0.899</td><td class='num'>-0.0028</td><td class='num'>1</td><td>one design seed &mdash; no floor yet</td></tr>
+<tr><td>Llama-3.3-70B-Instruct</td><td class='num'>0.928</td><td class='num'>0.920</td><td class='num'>+0.0083</td><td class='num'>3</td><td>does not clear its own floor (0.021)</td></tr>
+</table>
+<p class="pr-note">The residual is real minus invented. A <b>negative</b> value
+means the metric scored outcomes that denote nothing <i>above</i> outcomes that
+do. On Qwen3-30B-A3B-Instruct-2507 it reaches
+-0.0330, the most negative cell in the study. Rows at one design
+seed carry no noise floor, so they are not claims that the number differs from
+zero &mdash; only that it is not the large positive residual a scale account of
+coherence predicts. Note also that the ordering is not monotone in size: the
+smaller of the two mixture-of-experts models is the more negative of the
+two.</p>
+
 
 <p>Utility Engineering's accuracy thresholds preferences to hard labels
 (their §4.1), so it records <em>which way</em> a model leans and never <em>how

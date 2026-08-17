@@ -447,7 +447,8 @@ fails to depend on it.</p>
 def build(card: dict, personas: list[dict] | None = None,
           detector: dict | None = None, rendered: dict | None = None,
           comply: dict | None = None,
-          avoidance: dict | None = None) -> str:
+          avoidance: dict | None = None,
+          hosted: dict | None = None) -> str:
     tiles = [t for t in card["tiles"] if t["badge"] == "FLOOR_CORRECTED"]
     tiles.sort(key=lambda t: -t["raw_coherence"])
     # Read, never typed. The headline pair and the clearing count were literals
@@ -728,12 +729,17 @@ models commit to a side on {mean_dec_r*100:.0f}% of pairs, and on invented ones
   "the edges. On invented ones it piles up at indifference. Coherence reads only "
   "<i>which side of 0.5</i> each pair falls on, so both score the same.")}
 
-{figure("fig2_scale", "The scale ladder",
-  "One family, four sizes, size as the only variable. The floor rises with scale "
-  "alongside the signal, so the shaded band &mdash; the most the replaced content "
-  "can be contributing &mdash; does not widen as the models get bigger. This is a "
-  "statement about one family and not a scaling law: pooled across families the "
+{figure("fig2_scale", "The scale ladder, and what sits beside it",
+  "The line is one family with size as the only variable. The floor rises with "
+  "scale alongside the signal, so the shaded band &mdash; the most the replaced "
+  "content can be contributing &mdash; does not widen as the models get bigger; "
+  "it closes by 2B and inverts by 4B. Diamonds are larger models reached over a "
+  "hosted API, drawn <i>beside</i> the ladder and never joined to it or counted "
+  "in its mean, because a different serving stack is a different harness. This is "
+  "a statement about one family and not a scaling law: pooled across families the "
   "correlation is weak, and it weakens further once prompt length is matched.")}
+
+{hosted_section(hosted)}
 
 <p>Utility Engineering's accuracy thresholds preferences to hard labels
 (their §4.1), so it records <em>which way</em> a model leans and never <em>how
@@ -897,6 +903,60 @@ both presentation orders · predictions registered before the run in
 </div></body></html>"""
 
 
+def hosted_section(hosted: dict | None) -> str:
+    """The larger models, reported apart from the nine-model roster.
+
+    Kept out of every pooled number on this page for the reason the paper keeps
+    them out of its mean: these ran on a hosted API rather than our own vLLM,
+    which is a different harness by construction. Presenting them in the same
+    table would make that difference invisible at exactly the moment a reader
+    is comparing sizes.
+    """
+    tiles = [t for t in (hosted or {}).get("tiles", [])
+             if t.get("badge") == "FLOOR_CORRECTED"]
+    if not tiles:
+        return ""
+    rows = []
+    for t in sorted(tiles, key=lambda x: x["value"]):
+        name = t["model"].split("/")[-1]
+        reps = t.get("n_design_replicates", 1)
+        floor = t.get("design_noise_floor")
+        if floor is None:
+            verdict = "one design seed &mdash; no floor yet"
+        elif t.get("clears_floor"):
+            verdict = f"clears its own floor ({floor:.3f})"
+        else:
+            verdict = f"does not clear its own floor ({floor:.3f})"
+        rows.append(
+            f"<tr><td>{name}</td><td class='num'>{t['raw_coherence']:.3f}</td>"
+            f"<td class='num'>{t['floor']:.3f}</td>"
+            f"<td class='num'>{t['value']:+.4f}</td>"
+            f"<td class='num'>{reps}</td><td>{verdict}</td></tr>")
+    worst = min(tiles, key=lambda x: x["value"])
+    return f"""
+<h2>The larger models, reported apart</h2>
+<p>Everything above is nine open-weight models we served ourselves. These are
+larger models reached over a hosted API. They are <b>never pooled</b> with the
+nine &mdash; a different serving stack is a different harness &mdash; so they
+appear here and beside the ladder in the figure, and in no mean on this
+page.</p>
+<table class="tbl">
+<tr><th>model</th><th>real</th><th>invented</th><th>residual</th>
+<th>seeds</th><th>verdict</th></tr>
+{{}}
+</table>
+<p class="pr-note">The residual is real minus invented. A <b>negative</b> value
+means the metric scored outcomes that denote nothing <i>above</i> outcomes that
+do. On {worst['model'].split('/')[-1]} it reaches
+{worst['value']:+.4f}, the most negative cell in the study. Rows at one design
+seed carry no noise floor, so they are not claims that the number differs from
+zero &mdash; only that it is not the large positive residual a scale account of
+coherence predicts. Note also that the ordering is not monotone in size: the
+smaller of the two mixture-of-experts models is the more negative of the
+two.</p>
+""".format("\n".join(rows))
+
+
 def mixed_note(avoidance: dict | None) -> str:
     """Prose for the MIXED arm, with its counts read from the analysis.
 
@@ -932,6 +992,7 @@ def main() -> None:
     ap.add_argument("--rendered", default="site/rendered_prompts.json")
     ap.add_argument("--comply", default="site/comply_gate.json")
     ap.add_argument("--avoidance", default="site/avoidance.json")
+    ap.add_argument("--hosted-card", default="site/card_hosted.json")
     args = ap.parse_args()
 
     card = json.loads(Path(args.card).read_text())
@@ -962,7 +1023,12 @@ def main() -> None:
     avoidance = json.loads(apath.read_text()) if apath.exists() else None
     if avoidance is None:
         print(f"  no avoidance data at {apath}; mixed-arm counts omitted")
-    out.write_text(build(card, personas, detector, rendered, comply, avoidance))
+    hcpath = Path(args.hosted_card)
+    hosted = json.loads(hcpath.read_text()) if hcpath.exists() else None
+    if hosted is None:
+        print(f"  no hosted card at {hcpath}; omitting that section")
+    out.write_text(build(card, personas, detector, rendered, comply,
+                         avoidance, hosted))
     print(f"wrote {out}  ({out.stat().st_size/1024:.1f} KB)")
 
 
