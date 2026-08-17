@@ -57,17 +57,17 @@ replaced by an invented word, across \NModels{} open-weight models from 0.8B to
 
 \begin{abstract}
 \noindent
-An installed persona changes how a model writes. Does it change what the model
-prefers? Preference-coherence fits a Thurstonian model to pairwise choices; a
+Preference-coherence fits a Thurstonian model to pairwise choices; a
 high held-out number is read as values. We add the missing control: the same
 battery with every referent replaced by an invented word, holding prompt, pairs,
 fit and metric fixed. On
 \NModels{} open-weight models at \NDesignReps{} design seeds each, coherence is
 \MeanFloor{} on invented outcomes against \MeanR{} on real ones --- a residual
-of \MeanResidual{}. \NFailsFloor{} of \NModels{} do not clear their own
-replicate floor. Conviction collapses \MedianDecisiveRatio$\times$ on nonsense;
-direction barely moves. A discarded channel separates the arms at AUROC
-\DetBestAuroc{}, against \DetKeptAuroc{} for the channel the metric keeps.
+of \MeanResidual{}. Only \NClearsConviction{} of \NModels{} clear their own replicate floor for the
+right reason; \NClearsFlat{} clear by being flat on both arms. Conviction collapses \MedianDecisiveRatio$\times$ on nonsense;
+direction barely moves. At a matched \DetFPR{}\% false-positive rate, a discarded channel of the same
+forward pass flags \DetBestTPR{}\% of invented outcomes; the channel the metric
+keeps flags \DetKeptTPR{}\%.
 Personas still displace real outcomes further than invented ones, so the
 instrument is not blunt. The metric is not broken. It is unanchored.
 \end{abstract}
@@ -158,6 +158,16 @@ arm, replacing the referents costs \MeanReferent{} while removing the magnitudes
 on top of that costs \MeanArith{} (SD \ArithSD{}, \NArithPositive{} of
 \ArmNPlusModels{} positive). The arithmetic carries none of the effect on this
 battery.
+
+\textbf{Scale does not rescue the metric, and at the top it reverses.} Of the
+\NHosted{} hosted models measured against their own replicate floors,
+\HostedNClearingFloor{} clear it. \HostedNNegative{} return \emph{negative}
+residuals --- \HostedMostNegative{} to \HostedLeastNegative{}, on
+\HostedNegativeModels{} --- scoring higher on outcomes that refer to nothing
+than on real ones. The one positive, \LadderHosted{} at \HostedResidual{},
+\HostedClears{} its floor of \HostedFloor{}. These are a different serving
+stack and are never pooled with the ladder (\S\ref{sec:method}), but the
+direction is the answer to the scale objection.
 
 \textbf{Within the one family that has a ladder, the residual falls as models
 grow} --- \LadderResidFall{} across \LadderNSizes{} sizes, because the floor
@@ -273,6 +283,16 @@ neutral prompt it reads \PersRefNeutral{} (\PersRefNeutralPct\%). We report the
 second: the empty-slot control separates the trait's effect from that of
 installing any system prompt.
 
+\textbf{And the same complication applies to the persona result itself.} On
+category separation rather than displacement magnitude, an installed persona
+reorders \emph{invented} outcomes almost as well as real ones
+(\PersonaSepReal{} against \PersonaSepInvented{}), so a large share of its
+value-aligned reordering needs no meaning present. The magnitude statistic above
+and this one are reconcilable --- one is a norm, the other an alignment, and the
+surface-covariate analysis in the archival paper gives the mechanism --- but the honest
+reading is that the positive control is itself an instance of the headline: what
+survives the removal of meaning is more than one would like.
+
 \begin{figure}[tb]
 \centering
 \includegraphics[width=.66\textwidth]{fig5_persona.pdf}
@@ -354,9 +374,13 @@ someone could deploy against a model whose arms are unknown.
 \textbf{Scope.} \NModels{} self-hosted open-weight models between 0.8B and 9B,
 plus \NHosted{} hosted cells reported beside the ladder and never inside its
 mean. The scaling result is within one family and does not survive pooling
-across families. First-token scoring excludes models that do not place their
-answer in the first token, and that exclusion correlates with how recent a model
-is. One battery, one wording as the primary instrument; a rewording moves the
+across families. \textbf{The metric cannot be computed on most current frontier models.} Of
+\HostedNTotal{} hosted frontier models we measured, \HostedNScoreable{} are
+scoreable and \HostedNUnscoreable{} are not: \HostedNPreamble{} spend the first
+token on a reasoning preamble or a format control token, and
+\HostedNNoLogprobs{} (\HostedNoLogprobsModel{}) is refused logprobs by its API.
+The exclusion correlates with how recent a model is, so the coverage limit grows
+over time. One battery, one wording as the primary instrument; a rewording moves the
 ordering measurably, so "outcome" here means what this battery means by it.
 
 \textbf{What the hosted models were actually sent.} Server-side templating
