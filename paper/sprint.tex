@@ -521,4 +521,27 @@ ordering, and which decline.}
 \input{table_comply}
 \end{table}
 
+
+\section*{AI usage}
+
+A coding agent (Claude, Anthropic) wrote most of the implementation --- the
+Thurstonian fit, the sweep runners, the analysis scripts and their tests ---
+under direction, ran the analyses, and drafted prose the authors revised. The
+authors chose the question and the three-arm design, set the standard of
+evidence (pre-registration before the first run, a replicate floor before any
+comparison, a claims ledger carrying falsification conditions) and enforced it.
+Every retraction here came from a human declining a clean result: a clustering
+analysis was withdrawn after one of us insisted on a cluster-tendency test, and
+a per-model cell after one of us asked what the answer-mass gate was doing to
+reasoning models.
+
+The failure mode of this arrangement is not fabrication. Every number in this
+document resolves through a macro to a file on disk, and that pipeline exists
+because prose about results is cheap to generate and expensive to check. The
+failure mode is \emph{fluent completeness}: analyses that run, produce tables,
+and answer the wrong question. Two reached a draft and are recorded as
+retractions rather than quietly removed. A reader weighing this paper should
+know that its error-correction came from human scepticism applied to fast
+machine output, and should discount wherever we have not shown the control.
+
 \end{document}
