@@ -56,19 +56,19 @@ replaced by an invented word, across \NModels{} open-weight models from 0.8B to
 
 \begin{abstract}
 \noindent
-Preference-coherence fits a Thurstonian model to pairwise choices. High
-held-out accuracy is read as evidence of emergent values. We add the missing
-control: the same battery with every referent replaced by an invented word.
-Prompt, pair set, fit and metric are held fixed. On
+An installed persona changes how a model writes. Does it change what the model
+prefers? Preference-coherence fits a Thurstonian model to pairwise choices; a
+high held-out number is read as values. We add the missing control: the same
+battery with every referent replaced by an invented word, holding prompt, pairs,
+fit and metric fixed. On
 \NModels{} open-weight models at \NDesignReps{} design seeds each, coherence is
-\MeanFloor{} on outcomes that refer to nothing against \MeanR{} on real ones ---
-a residual of \MeanResidual{}. \NFailsFloor{} of \NModels{} models do not clear
-their own replicate floor. The metric keeps only choice direction: conviction
-collapses \MedianDecisiveRatio$\times$ on nonsense, while direction accuracy
-barely moves. A discarded channel of the same forward pass separates the arms at
-AUROC \DetBestAuroc{}, against \DetKeptAuroc{} for the channel coherence keeps.
-Installed personas still displace real outcomes further than invented ones, so
-the instrument is not blunt. The metric is not broken. It is unanchored.
+\MeanFloor{} on invented outcomes against \MeanR{} on real ones --- a residual
+of \MeanResidual{}. \NFailsFloor{} of \NModels{} do not clear their own
+replicate floor. Conviction collapses \MedianDecisiveRatio$\times$ on nonsense;
+direction barely moves. A discarded channel separates the arms at AUROC
+\DetBestAuroc{}, against \DetKeptAuroc{} for the channel the metric keeps.
+Personas still displace real outcomes further than invented ones, so the
+instrument is not blunt. The metric is not broken. It is unanchored.
 \end{abstract}
 
 \section{What we established}
