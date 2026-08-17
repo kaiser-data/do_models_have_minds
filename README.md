@@ -31,11 +31,14 @@ forward pass that coherence discards separates real from invented outcomes at
 AUROC **0.821**, against **0.596** for the channel it
 keeps. The information is there. The statistic declines to read it.
 
-**3. Scale does not rescue it.** Llama-3.3-70B-Instruct, at 3 design
-seeds, returns a residual of **+0.0083** against its own replicate
-floor of **0.0208** --- it **does not clear** that floor. The
-objection that this is a small-model artifact fails at the largest size we
-could measure with a floor under it.
+**3. Scale does not rescue it, and at the top it reverses.** Of 4
+hosted models measured against their own replicate floors,
+0 clear it --- and 3 return **negative**
+residuals, -0.033 to -0.003, scoring *higher* on
+outcomes that refer to nothing than on real ones. The single positive,
+Llama-3.3-70B-Instruct at +0.0083, does not clear its floor of
+0.0208. The small-model-artifact objection fails at every size we could
+measure with a floor under it.
 
 **4. The instrument is not blunt.** A persona prompt --- a trait written into the user turn or system prompt --- displaces real
 outcomes further than invented ones in **14 of

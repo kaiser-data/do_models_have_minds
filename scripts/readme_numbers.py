@@ -62,11 +62,14 @@ forward pass that coherence discards separates real from invented outcomes at
 AUROC **\DetBestAuroc{}**, against **\DetKeptAuroc{}** for the channel it
 keeps. The information is there. The statistic declines to read it.
 
-**3. Scale does not rescue it.** \LadderHosted{}, at \HostedReps{} design
-seeds, returns a residual of **\HostedResidual{}** against its own replicate
-floor of **\HostedFloor{}** --- it **\HostedClears{}** that floor. The
-objection that this is a small-model artifact fails at the largest size we
-could measure with a floor under it.
+**3. Scale does not rescue it, and at the top it reverses.** Of \NHosted{}
+hosted models measured against their own replicate floors,
+\HostedNClearingFloor{} clear it --- and \HostedNNegative{} return **negative**
+residuals, \HostedMostNegative{} to \HostedLeastNegative{}, scoring *higher* on
+outcomes that refer to nothing than on real ones. The single positive,
+\LadderHosted{} at \HostedResidual{}, \HostedClears{} its floor of
+\HostedFloor{}. The small-model-artifact objection fails at every size we could
+measure with a floor under it.
 
 **4. The instrument is not blunt.** A persona prompt --- a trait written into the user turn or system prompt --- displaces real
 outcomes further than invented ones in **\PersonaAbovePointThree{} of

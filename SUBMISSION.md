@@ -25,8 +25,10 @@ real from invented outcomes far better than the information it keeps.** The
 model can tell. The statistic does not look.
 
 **The instrument is not simply blunt, which is what makes the flat result mean
-something.** A persona prompt --- a trait written into the user turn or system prompt --- displaces real outcomes substantially further
-than invented ones in 14 of 20 conditions.
+something.** A persona prompt --- a dispositional trait written into the user
+turn or the system prompt, with no change to the weights --- displaces real
+outcomes substantially further than invented ones in
+14 of 20 conditions.
 A metric that could detect nothing would explain the flatness away; this one
 registers a real change of preference when one is induced.
 
@@ -81,8 +83,10 @@ against a model whose arms are unknown.
 **Scope.** 9 self-hosted models between 0.8B and 9B carry every pooled
 statistic, plus 4 hosted models reported beside them. The scaling
 result is within one family and does not survive pooling across families.
-First-token scoring excludes models that do not place their answer in the first
-token, and that exclusion correlates with how recent a model is.
+**The metric cannot be computed on most current frontier models:** of
+10 hosted frontier models measured, 4 are
+scoreable and 6 are not, and the exclusion correlates with
+how recent a model is.
 
 **The harness is not invariant, and one case is measured.**
 3 of 4 hosted models leave no room for an
