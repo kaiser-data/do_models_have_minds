@@ -73,10 +73,29 @@ records status and falsifiers per claim, and nothing here is embargoed.
 
 ## Pick one or more tracks*
 
-The six names are on the event's Guidelines tab and are not in the repo, so
-match these to whatever they are called:
+From the sprint page (apartresearch.com/sprints/digital-minds-research-sprint-2026-08-14-to-2026-08-16):
 
-1. **Evaluations / measurement** --- the primary fit. The whole deliverable is a
+**Track 1 — Model Preferences & Trade-offs.** Select this. The track is
+described as "testing the coherence and stability of model preferences ...
+comparing stated vs. revealed preferences." That is this paper's subject
+sentence, not an approximation of it: we test whether a coherence score over
+model preferences survives the removal of meaning, and we run stated and
+revealed channels as separate instruments.
+
+**Track 6 — Open / Novel Considerations.** Select this as the second. The
+premise result — a first-person report about a hidden state manufactured by the
+question, on a case where token accounting proves there was nothing to report —
+is not a preferences finding and does not belong under Track 1.
+
+**Track 2 — Distress, Flourishing & Valence Signals.** Do not select. We measure
+none of these.
+
+**Tracks 3, 4 and 5** were not returned by the search and are not in the repo.
+Check them on the Guidelines tab: if any is about **introspection or
+self-report**, it fits the premise result better than Track 6 does, and you
+should take it instead.
+
+--- the primary fit. The whole deliverable is a
    control for an existing evaluation, plus the noise-floor machinery to say
    when its numbers mean anything.
 2. **Digital minds / model welfare** --- the venue's own theme. The paper is a
