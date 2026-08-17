@@ -58,7 +58,9 @@
       "what_would_falsify": "A residual that grows with more models, or a floor that collapses once a neutral option exists (see neutral-option).",
       "grows_by": "More model families. The claim is already cross-family; adding models tightens the mean rather than changing its kind.",
       "priority": 9,
-      "interpretation": "The headline number cannot be read as evidence about values: the same procedure returns nearly the same score when there is nothing to have a preference about."
+      "interpretation": "The headline number cannot be read as evidence about values: the same procedure returns nearly the same score when there is nothing to have a preference about.",
+      "highlight": 1,
+      "highlight_reason": "the control, and the number the paper exists to qualify"
     },
     {
       "id": "strength-collapse",
@@ -79,7 +81,9 @@
       "what_would_falsify": "A model with a large decisive-fraction on invented outcomes, or a metric variant that recovers the gap.",
       "grows_by": "Nothing needed for the claim; it is the sharpest result and holds on every model.",
       "priority": 10,
-      "interpretation": "The metric's own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content."
+      "interpretation": "The metric's own thresholding is the mechanism. It records which side of a coin-flip each choice fell on and discards how hard the model leaned, which is the part that carries content.",
+      "highlight": 2,
+      "highlight_reason": "the mechanism: direction kept, conviction discarded"
     },
     {
       "id": "scaling-residual-falls",
@@ -179,7 +183,9 @@
       "what_would_falsify": "A larger excess once length is controlled differently, or models that retain content-dependence at scale.",
       "grows_by": "More models; \\PersonaNRetain of \\NPersonaModels currently retain a substantial excess and whether that fraction is stable is unknown.",
       "priority": 6,
-      "interpretation": "A persona mostly changes the writing rather than the wanting, so persona-based welfare or alignment readouts need a referent-free denominator."
+      "interpretation": "A persona mostly changes the writing rather than the wanting, so persona-based welfare or alignment readouts need a referent-free denominator.",
+      "highlight": 4,
+      "highlight_reason": "answers the paper's own title: a persona is a response policy, not an installed value"
     },
     {
       "id": "detector-dissociation",
@@ -201,7 +207,9 @@
       "what_would_falsify": "The discarded channel failing to separate the arms on new models.",
       "grows_by": "Predeclare each channel's direction, choose channel and orientation on held-out models, score on untouched ones, and report bootstrap intervals. That converts the conceded oracle into a detection result. An affordance ladder -- scoring at decreasing auditor knowledge -- is the same move along a second axis.",
       "priority": 8,
-      "interpretation": "The model is not content-blind; the statistic is. Evidence about meaning was present in the same forward pass and thrown away before scoring."
+      "interpretation": "The model is not content-blind; the statistic is. Evidence about meaning was present in the same forward pass and thrown away before scoring.",
+      "highlight": 3,
+      "highlight_reason": "the model is not blind; the statistic is"
     },
     {
       "id": "track3-directive-blind",
@@ -532,7 +540,9 @@
         "note": "Features are characters, words, mean word length, numeral count, log largest magnitude, commas, and the fraction of tokens found in the system dictionary. Two features are constant on N_minus (no numerals anywhere), so only \\SurfNmFeatures of \\SurfFeatures are usable there and \\SurfNmRsq is a LOWER bound on the surface share. The arms are not length-matched (\\BatCharGapPct percent on characters), so this is a post-hoc covariate control and buys an upper bound on what surface explains, not a clean referent factor."
       },
       "what_would_falsify": "A length-matched battery on which the surface-explained share of variance is comparable across arms, or cross-model r on the invented arm falling to the independence null once surface is removed.",
-      "interpretation": "A large share of what the metric scores is recoverable from character counts, which is the closest thing to a mechanism for the flat residual."
+      "interpretation": "A large share of what the metric scores is recoverable from character counts, which is the closest thing to a mechanism for the flat residual.",
+      "highlight": 5,
+      "highlight_reason": "what the surviving ordering is actually made of"
     },
     {
       "id": "gate-keeps-a-different-sample",
