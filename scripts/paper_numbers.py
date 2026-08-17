@@ -677,6 +677,24 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                             f"{100 * t['decisive_fraction']['N_minus']:.0f}"))
             out.append(_cmd(f"{s}HostReps", str(t.get("n_design_replicates", 1))))
         out.append(_cmd("HostedNScored", str(len(scored))))
+        # The aggregate the body needs, and the paper did not have. Only one
+        # hosted model has a positive residual at all and it fails its own
+        # floor, so "does scale rescue the metric" has an answer here rather
+        # than an appendix caption about a single cell. Emitted as counts and a
+        # range so the sentence cannot drift from the card.
+        neg = sorted((tt for tt in scored if tt["value"] < 0),
+                     key=lambda tt: tt["value"])
+        pos = [tt for tt in scored if tt["value"] >= 0]
+        out.append(_cmd("HostedNNegative", str(len(neg))))
+        out.append(_cmd("HostedNPositive", str(len(pos))))
+        if neg:
+            out.append(_cmd("HostedNegativeModels", ", ".join(
+                _tex(tt["model"].split("/")[-1]) for tt in neg)))
+            out.append(_cmd("HostedMostNegative", f"{neg[0]['value']:+.3f}"))
+            out.append(_cmd("HostedLeastNegative", f"{neg[-1]['value']:+.3f}"))
+        # Zero if none of them clears, which is the fact worth stating.
+        out.append(_cmd("HostedNClearingFloor", str(sum(
+            1 for tt in scored if tt["value"] > tt["floor"]))))
 
     # The persona indicators against their denominator. Emitted because the
     # magnitude claim (persona-displacement) was established against the bare
