@@ -74,3 +74,56 @@ def test_model_names_are_latex_safe_as_macro_values():
 def test_tex_escape_leaves_ordinary_names_alone():
     assert _tex("Llama-3.3-70B-Instruct") == "Llama-3.3-70B-Instruct"
     assert _tex("Nemotron-3_5-Lightning") == r"Nemotron-3\_5-Lightning"
+
+
+# ---------------------------------------------------------------------------
+# The prefill group (measured 17 Aug 2026)
+# ---------------------------------------------------------------------------
+
+def test_prefill_group_never_overlaps_the_directly_scoreable_one():
+    """The two groups are different MEASUREMENTS, not two tiers of quality.
+
+    A prefilled cell reads the token after a phrase we supplied. If a model
+    appeared in both groups its cells could be pooled by a caller that took
+    either list, which is the confound `prefill` sits in the harness hash to
+    prevent.
+    """
+    from nullcard.roster import prefill_scoreable_hosted, scoreable_hosted
+    direct = {m.api_id for m in scoreable_hosted()}
+    prefill = {m.api_id for m in prefill_scoreable_hosted()}
+    assert not (direct & prefill)
+
+
+def test_prefill_recovery_does_not_flip_first_token_ok():
+    """first_token_ok stays False for a prefill-recovered model.
+
+    Flipping it would be the tempting one-line "fix" and would silently make
+    these models eligible for every unprefilled sweep in the repo.
+    """
+    from nullcard.roster import prefill_scoreable_hosted
+    for m in prefill_scoreable_hosted():
+        assert m.first_token_ok is False
+        assert m.prefill_ok is True
+
+
+def test_a_model_that_refuses_logprobs_is_in_neither_group():
+    """Kimi-K3 cannot be reached by any prefill; the API withholds logprobs."""
+    from nullcard.roster import (NEBIUS, prefill_scoreable_hosted,
+                                 scoreable_hosted)
+    no_lp = [m for m in NEBIUS if not m.logprobs]
+    assert no_lp, "expected at least one logprob-refusing model in the roster"
+    ids = {m.api_id for m in scoreable_hosted()} | {
+        m.api_id for m in prefill_scoreable_hosted()}
+    for m in no_lp:
+        assert m.api_id not in ids
+
+
+def test_unprobed_models_are_not_counted_as_failures():
+    """`prefill_ok is None` means never probed, which is not the same as
+    probed-and-failed. DeepSeek-V4-Flash went 500 then 404 mid-session."""
+    from nullcard.roster import NEBIUS, prefill_scoreable_hosted
+    unprobed = [m for m in NEBIUS if m.prefill_ok is None and not m.first_token_ok]
+    prefill = {m.api_id for m in prefill_scoreable_hosted()}
+    for m in unprobed:
+        assert m.api_id not in prefill
+        assert m.prefill_ok is not False
