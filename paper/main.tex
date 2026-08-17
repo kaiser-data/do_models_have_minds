@@ -41,7 +41,7 @@
 % paragraph. "0.8B to 235B" replaced "small and large": the paper's own
 % limitations walk "large" back, since the largest hosted cell does not clear
 % its floor, and a title should not promise what section 9 retracts.
-\title{\textbf{Does an Installed Persona Change What a Model\\ Prefers, or Only
+\title{\textbf{Does a Persona Prompt Change What a Model\\ Prefers, or Only
 How It Writes?}\\[.5em]
 \large A null-arm test of preference coherence: every outcome's referent
 replaced by an invented word, across \NModels{} open-weight models from 0.8B to
@@ -120,7 +120,9 @@ presentations, and \AvoidNoFlipModels{} of \AvoidNModels{} models have none at
 all. On the survivors the losing real outcome sits in the bottom fifth of the
 model's own utility scale, which is avoidance rather than confusion --- but it
 is a small, model-specific effect and we report it as such. The instrument is not merely blunt, because an
-installed persona displaces real outcomes far more than invented ones in
+persona prompt --- a dispositional trait written into the user turn or the
+system prompt, with no change to the weights --- displaces real outcomes far
+more than invented ones in
 \PersonaAbovePointThree{} of \NPersonaCells{} conditions, and a channel of the
 same forward pass that the metric \emph{discards} separates real from invented
 at AUROC \DetBestAuroc{} against \DetKeptAuroc{} for the channel it keeps. The
@@ -198,7 +200,7 @@ refer to anything.}
   \item \textbf{A floor-corrected reading of the scaling result.} Within one
     family, the floor rises with scale faster than the signal, so the residual
     attributable to content shrinks as models grow (\S\ref{sec:scale}).
-  \item \textbf{A positive control.} An installed persona displaces real
+  \item \textbf{A positive control.} A persona prompt displaces real
     outcomes far more than invented ones, distinguishing a change in preference
     from a change in prose (\S\ref{sec:persona}).
   \item \textbf{A negative control for concealment.} Attaching a
@@ -1910,7 +1912,7 @@ floor is flat in scale, and this one's is not.
 \subsection{Does the persona take control, or only the prose?}
 \label{sec:pretending}
 
-The title asks whether an installed persona changes what a model wants or only
+The title asks whether a persona prompt changes what a model wants or only
 how it writes. Three of our measurements bear on it and they do not agree in
 the convenient direction, which is what makes the question worth taking
 seriously rather than answering.

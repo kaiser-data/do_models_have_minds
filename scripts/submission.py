@@ -60,7 +60,7 @@ real from invented outcomes far better than the information it keeps.** The
 model can tell. The statistic does not look.
 
 **The instrument is not simply blunt, which is what makes the flat result mean
-something.** An installed persona displaces real outcomes substantially further
+something.** A persona prompt --- a trait written into the user turn or system prompt --- displaces real outcomes substantially further
 than invented ones in \PersonaAbovePointThree{} of \NPersonaCells{} conditions.
 A metric that could detect nothing would explain the flatness away; this one
 registers a real change of preference when one is induced.

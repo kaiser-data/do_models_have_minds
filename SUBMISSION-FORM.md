@@ -38,7 +38,7 @@ AUROC 0.821, against 0.596 for the channel it keeps -- the model can tell, the
 statistic does not look. Scale does not rescue it: Llama-3.3-70B returns +0.0083
 against a floor of 0.0208.
 
-The instrument is not blunt -- installed personas still displace real outcomes
+The instrument is not blunt -- persona prompts still displace real outcomes
 further than invented ones in 14 of 20 conditions -- so the flat result is not
 insensitivity. The metric is not broken. It is unanchored.
 ```

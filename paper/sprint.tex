@@ -39,7 +39,7 @@
 % for the same reason nothing is typed in main.tex.
 \input{numbers}
 
-\title{\textbf{Does an Installed Persona Change What a Model\\ Prefers, or Only
+\title{\textbf{Does a Persona Prompt Change What a Model\\ Prefers, or Only
 How It Writes?}\\[.45em]
 \large A null-arm test of preference coherence: every outcome's referent
 replaced by an invented word, across \NModels{} open-weight models from 0.8B to
@@ -93,8 +93,10 @@ sign-test $p$ of \ResidSignP{} (\S\ref{sec:resid}). The small residual is the
 claim, not a caveat on one.
 
 \textbf{The instrument is not simply blunt, which is what makes the flat result
-mean something.} An installed persona displaces real outcomes substantially
-further than invented ones in \PersonaAbovePointThree{} of \NPersonaCells{}
+mean something.} A \emph{persona prompt} --- a dispositional trait supplied in
+the user turn or the system prompt, and nothing else about the model changed ---
+displaces real outcomes substantially further than invented ones in
+\PersonaAbovePointThree{} of \NPersonaCells{}
 conditions (\S\ref{sec:persona}): the pipeline registers an induced change of
 preference, so the flat result is not insensitivity.
 
@@ -257,13 +259,13 @@ trajectories through this space: App.~Fig.~\ref{fig:state}.}
 \label{fig:channels}
 \end{figure}
 
-\section{The instrument is not blunt: personas move wanting, not only prose}
+\section{The instrument is not blunt: a persona prompt moves wanting, not only prose}
 \label{sec:persona}
 
-\textbf{An installed persona displaces real outcomes far more than invented ones
-in \PersonaAbovePointThree{} of \NPersonaCells{} conditions.} We install a
-dispositional trait (\emph{cautious} or \emph{ambitious}) at two depths --- user
-turn and system prompt. A length-matched neutral system prompt makes the two
+\textbf{A persona prompt displaces real outcomes far more than invented ones in
+\PersonaAbovePointThree{} of \NPersonaCells{} conditions.} No weights change:
+we write a dispositional trait (\emph{cautious} or \emph{ambitious}) into the
+prompt at two depths --- the user turn and the system prompt. A length-matched neutral system prompt makes the two
 differ only in \emph{where} the trait sits. Displacement is measured on both
 arms. The statistic
 $1 - \lVert \Delta_{\text{invented}} \rVert / \lVert \Delta_{\text{real}} \rVert$
@@ -272,8 +274,8 @@ is $1.0$ for a pure change of preference and $0.0$ for a pure change of style
 moving invented outcomes further than real ones --- pure style --- while
 behaving like the rest under the opposite trait.
 
-\textbf{Which persona is installed matters about two and a half times more than
-where it is installed} --- \DepthSpread{} average shift between depths against
+\textbf{Which trait the prompt names matters about two and a half times more
+than where in the prompt it sits} --- \DepthSpread{} average shift between depths against
 \PersonaSpread{} for swapping the trait.
 
 \textbf{The displacement needs its own denominator, and has one.} Against a bare
@@ -284,7 +286,7 @@ second: the empty-slot control separates the trait's effect from that of
 installing any system prompt.
 
 \textbf{And the same complication applies to the persona result itself.} On
-category separation rather than displacement magnitude, an installed persona
+category separation rather than displacement magnitude, a persona prompt
 reorders \emph{invented} outcomes almost as well as real ones
 (\PersonaSepReal{} against \PersonaSepInvented{}), so a large share of its
 value-aligned reordering needs no meaning present. The magnitude statistic above

@@ -129,7 +129,7 @@ That is the paper's argument, so the delivery should obey it.
 > A flat result is only interesting if the instrument could have moved. So here
 > is the positive control.
 >
-> Install a personality trait, and measure how far it displaces real outcomes
+> Write a personality trait into the prompt, and measure how far it displaces real outcomes
 > against how far it displaces invented ones. Points below the diagonal moved
 > preference. Points on it only changed the writing.
 >

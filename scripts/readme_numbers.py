@@ -68,7 +68,7 @@ floor of **\HostedFloor{}** --- it **\HostedClears{}** that floor. The
 objection that this is a small-model artifact fails at the largest size we
 could measure with a floor under it.
 
-**4. The instrument is not blunt.** An installed persona displaces real
+**4. The instrument is not blunt.** A persona prompt --- a trait written into the user turn or system prompt --- displaces real
 outcomes further than invented ones in **\PersonaAbovePointThree{} of
 \NPersonaCells{}** conditions, measured against a length-matched empty-slot
 control. The pipeline registers a real change of preference when one is
