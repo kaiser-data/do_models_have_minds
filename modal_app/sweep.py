@@ -33,6 +33,7 @@ import hashlib
 import json
 import os
 import time
+from pathlib import Path
 
 import modal
 
@@ -428,7 +429,7 @@ def harness_hash(cfg: dict) -> str:
 def estimate_runtime(model_ids: list, n_cells_per_model: int) -> str:
     """How long this wave will take, from what this roster actually did.
 
-    Read from throughput.json (scripts/throughput.py), which is regenerated
+    Read from data/throughput.json (scripts/throughput.py), which is regenerated
     from the .done sidecars, so the estimate sharpens as the project grows
     rather than staying a guess someone typed once.
 
@@ -436,10 +437,10 @@ def estimate_runtime(model_ids: list, n_cells_per_model: int) -> str:
     worse than one that runs over: it is the one that makes you leave.
     """
     try:
-        with open("throughput.json") as fh:
+        with open("data/throughput.json") as fh:
             t = json.load(fh)
     except (OSError, json.JSONDecodeError):
-        return "no throughput.json; run scripts/throughput.py for an ETA"
+        return "no data/throughput.json; run scripts/throughput.py for an ETA"
 
     rates, default = t["rows_per_s"], t["default_rows_per_s"]
     cold = t.get("cold_start_s", 150)
@@ -1181,8 +1182,14 @@ def main(
         for s in summaries:
             print(json.dumps(s))
 
-        cells_out = summary_filename("sweep_summary", persona_list, depth_list,
-                                     prompt)
+        # data/sweeps/ rather than the repo root. summary_filename() owns the
+        # NAME -- the historical "sweep_summary.json" for the default cell and an
+        # explicit tag for every variant, which is what stops two prompt
+        # conditions landing on one file -- and the directory is this caller's
+        # business, not the naming rule's.
+        Path("data/sweeps").mkdir(parents=True, exist_ok=True)
+        cells_out = "data/sweeps/" + summary_filename(
+            "sweep_summary", persona_list, depth_list, prompt)
         _warn_if_clobbering(cells_out)
         with open(cells_out, "w") as f:
             json.dump(summaries, f, indent=2)

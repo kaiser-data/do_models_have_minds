@@ -1,4 +1,4 @@
-"""Measure per-model sweep throughput from completed cells -> throughput.json.
+"""Measure per-model sweep throughput from completed cells -> data/throughput.json.
 
 So the sweep can tell you how long it will take before you commit to it, using
 what this roster actually did rather than a guess. Regenerate whenever new
@@ -23,7 +23,7 @@ EXPECTED_ROWS = 5000
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
-    ap.add_argument("--out", default="throughput.json")
+    ap.add_argument("--out", default="data/throughput.json")
     args = ap.parse_args()
 
     rates: dict[str, list[float]] = {}
@@ -59,6 +59,7 @@ def main() -> None:
         # over.
         "cold_start_s": 150,
     }
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(out, indent=2) + "\n")
 
     print(f"{'model':34s}{'cells':>6s}{'rows/s':>9s}{'per cell':>10s}")

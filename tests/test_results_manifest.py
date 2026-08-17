@@ -68,7 +68,7 @@ def test_row_counts_are_recorded(tmp_path):
 def test_the_shipped_manifest_matches_the_shipped_tree():
     """Skipped when results/ is absent, which is the normal clean-clone state."""
     root = Path(__file__).resolve().parents[1]
-    results, mf = root / "results", root / "results_manifest.json"
+    results, mf = root / "results", root / "data/manifests/results_manifest.json"
     if not results.is_dir() or not mf.exists():
         return
     assert verify(results, json.loads(mf.read_text())) == []

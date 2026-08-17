@@ -341,8 +341,9 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     # "how much data is this" should get the answer the SHA-256 tree covers,
     # not a number someone remembered.
     tf = tr = tb = 0
-    for name in ("results_manifest.json", "results_hosted_manifest.json",
-                 "results_v2_manifest.json"):
+    for name in ("data/manifests/results_manifest.json",
+                 "data/manifests/results_hosted_manifest.json",
+                 "data/manifests/results_v2_manifest.json"):
         mp = Path(name)
         if not mp.exists():
             continue
@@ -1649,8 +1650,8 @@ def main() -> None:
     ap.add_argument("--reasoning", default="site/reasoning_effect.json")
     ap.add_argument("--validity", default="site/persona_validity.json")
     ap.add_argument("--detector", default="site/nonsense_detector.json")
-    ap.add_argument("--stated", default="self_report_summary_personas.json")
-    ap.add_argument("--stated-base", default="self_report_summary.json")
+    ap.add_argument("--stated", default="data/self_report_summary_personas.json")
+    ap.add_argument("--stated-base", default="data/self_report_summary.json")
     ap.add_argument("--revealed", default="site/deception.json")
     ap.add_argument("--neutral", default="site/neutral_control.json")
     ap.add_argument("--rendered", default="site/rendered_prompts.json")

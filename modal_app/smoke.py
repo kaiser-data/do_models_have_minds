@@ -321,7 +321,7 @@ def main(dry_run: bool = False):
         print(f"{sys_name:<10} {item_id:<26} {item['premise_level']:<9} "
               f"{item['target']:<9} {item['polarity']:<9} {p_yes:.3f}")
 
-    out = "results_smoke.jsonl"
+    out = "data/results_smoke.jsonl"
     with open(out, "w") as f:
         for r in gpu_result["rows"]:
             f.write(json.dumps(r) + "\n")

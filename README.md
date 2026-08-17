@@ -117,7 +117,7 @@ cannot disagree with each other.
 | stage | what happens | what guards the exit |
 |---|---|---|
 | **Modal GPU sweep** | one cell per model × arm × design seed, on L4/A10G. Answers are read from **first-token logits**, never sampled, so there is no temperature and no seed to vary. Cells are resumable and append-only. | a CPU-only gate runs the whole battery shape before any GPU is rented, and an ETA is printed from measured throughput |
-| **`results/`** | one `.jsonl` per cell, never mutated. Not committed — 402 MB — but pinned by SHA in `results_manifest.json`. | a cell must have its full row count **and** clear the answer-mass validity gate before it enters the card |
+| **`results/`** | one `.jsonl` per cell, never mutated. Not committed — 402 MB — but pinned by SHA in `data/manifests/results_manifest.json`. | a cell must have its full row count **and** clear the answer-mass validity gate before it enters the card |
 | **`card.json`** | the only analysed artifact. Every number in the paper and on the site folds from here. | `claims.py` fails the build if any claim's macros drift past tolerance; `lint_paper.py` fails on a missing macro |
 | **paper + site** | `paper_numbers.py` emits every figure as a LaTeX macro; `build_site.py` renders the same card to HTML. | no number may be typed by hand in either |
 
@@ -145,7 +145,7 @@ and no network**. The raw `results/` tree is **not** committed: it is 402 MB of 
 rows across 235 cells (1,164,554 scored comparisons, 653 MB), too large for git. Rebuilding the derived artifacts *from raw
 outputs* therefore needs that archive first.
 
-`results_manifest.json` pins every cell by SHA-256 so a fetched copy can be verified as
+`data/manifests/results_manifest.json` pins every cell by SHA-256 so a fetched copy can be verified as
 the one this paper was built from, rather than trusted:
 
 ```bash
@@ -215,7 +215,8 @@ folder, set `main.tex` as root.
 | `modal_app/sweep.py` | the GPU sweep: CPU gate, resumable cells, self-report probe |
 | `scripts/` | every analysis; each writes JSON the site and paper read |
 | `results/` | append-only `.jsonl` per cell — never mutated, **not committed** (402 MB) |
-| `results_manifest.json` | SHA-256 per cell, so a fetched `results/` can be verified |
+| `data/manifests/` | SHA-256 per cell, so a fetched `results/` can be verified |
+| `data/sweeps/` | per-run cell summaries emitted by the GPU sweep |
 | `docs/ARCHITECTURE.html` | standalone code-structure walkthrough |
 | `docs/methods-map.html` | standalone map of the four tracks and how they relate |
 | `docs/notes/` | working documents: plans, handoffs, study designs, the pitch |
@@ -228,8 +229,11 @@ folder, set `main.tex` as root.
 Only submission-facing documents sit in the root: this file, `SUBMISSION.md`,
 `SUBMISSION-FORM.md`, `VIDEO-SCRIPT.md`, `PREREGISTRATION.md`, `REFERENCES.md`
 and `ROADMAP.md`. Everything else that used to live there is under `docs/`.
-Loose `*.json` artifacts stay in the root because nine scripts resolve them by
-default path; moving them is a refactor, not a tidy.
+Data artifacts live under `data/` --- manifests, sweep summaries, self-report
+summaries. Only `card.json`, `claims.json` and `claims_snapshot.json` stay in
+the root, because those three are the project's contract: the card every figure
+and table is a function of, the ledger, and the snapshot the drift check
+compares against.
 
 The site and the paper are both pure functions of the same `card.json`, so **the demo
 cannot disagree with the report**. Figures come from matplotlib, never from the page, so
@@ -268,7 +272,7 @@ all analyses, paper, slides, live site. ~$14 of GPU total.
 
 Also complete: the **Track 3 deception arm** — genuine trait vs. concealed trait vs.
 claimed-but-absent trait, the last being the clean negative that yields a false-positive
-rate. Both the stated channel (`self_report_summary_personas.json`) and the revealed
+rate. Both the stated channel (`data/self_report_summary_personas.json`) and the revealed
 channel (`scripts/deception.py` → `site/deception.json`) land, and agree: the measurement
 registers which trait was named, not what the model was told to do about it. Reportable
 on the 2 models that pass the specificity gate; see `paper/main.tex` §"A directive

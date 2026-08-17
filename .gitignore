@@ -21,7 +21,7 @@ results_hosted/
 # Exact name on purpose. `sweep_summary.json` is the transient target every
 # sweep overwrites; the config-named `sweep_summary__<cells>-<design>.json`
 # files identify which sweep produced them and ARE tracked.
-sweep_summary.json
+data/sweeps/sweep_summary.json
 .netlify/
 
 # LaTeX build intermediates. The PDFs and the GENERATED inputs

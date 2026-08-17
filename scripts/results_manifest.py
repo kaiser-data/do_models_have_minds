@@ -12,7 +12,7 @@ So the manifest is committed and the data is not. It records, per cell, the
 SHA-256 of the file, its size, its row count, and whether a `.done` marker sits
 beside it. Verifying is then a content check rather than a promise:
 
-    python3 scripts/results_manifest.py            # write results_manifest.json
+    python3 scripts/results_manifest.py            # write data/manifests/results_manifest.json
     python3 scripts/results_manifest.py --verify   # check the tree against it
 
 --verify exits non-zero on any mismatch, and names which kind: changed, missing,
@@ -89,7 +89,7 @@ def verify(results: Path, manifest: dict) -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
-    ap.add_argument("--out", default="results_manifest.json")
+    ap.add_argument("--out", default="data/manifests/results_manifest.json")
     ap.add_argument("--verify", action="store_true")
     args = ap.parse_args()
 
@@ -116,6 +116,7 @@ def main() -> int:
         return 0
 
     manifest = build(results)
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"wrote {out}  ({manifest['n_files']} files, "
           f"{manifest['total_bytes'] / 1e6:.0f} MB, "

@@ -361,7 +361,6 @@
       "arm": "N_plus",
       "group": "hosted_direct",
       "missing_seeds": [
-        20260815,
         20260816,
         20260817
       ],
@@ -896,9 +895,9 @@
     {
       "group": "hosted_direct",
       "has_noise_floor": true,
-      "in_state_space_figure": false,
+      "in_state_space_figure": true,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
-      "n_cells": 6,
+      "n_cells": 7,
       "n_cells_designed": 9,
       "seeds_by_arm": {
         "N_minus": [
@@ -906,14 +905,18 @@
           20260816,
           20260817
         ],
-        "N_plus": [],
+        "N_plus": [
+          20260815
+        ],
         "R": [
           20260815,
           20260816,
           20260817
         ]
       },
-      "seeds_with_all_arms": []
+      "seeds_with_all_arms": [
+        20260815
+      ]
     },
     {
       "group": "hosted_direct",
@@ -1072,9 +1075,9 @@
   "summary": {
     "harness_overlap": [],
     "n_cells_designed": 234,
-    "n_cells_present": 113,
+    "n_cells_present": 114,
     "n_models_designed": 26,
-    "n_models_in_figure": 12,
+    "n_models_in_figure": 13,
     "n_models_with_floor": 12
   }
 }
