@@ -23,27 +23,24 @@ Does the Persona Change the Preference, or Only the Prose?
 
 ## Project Summary*
 
+**Hard cap: 150 words. This is 146 — recount if you edit it.**
+
 ```
 Utility Engineering (arXiv:2502.08640) reads high held-out accuracy on pairwise
 choices as evidence that language models develop coherent values. We add the
 control it lacks: the same battery with every outcome's referent replaced by an
-invented word, holding prompt, pair set, fit and metric fixed.
+invented word, holding prompt, pairs, fit and metric fixed.
 
-Coherence falls from 0.906 to 0.880. The residual is +0.025, and 3 of 9 models
-do not clear their own replicate noise floor. The mechanism is that coherence
-records which way a model leans and never how much: conviction collapses 17x on
-invented outcomes while direction accuracy barely moves. A channel of the same
-forward pass that the metric discards separates real from invented outcomes at
-AUROC 0.821, against 0.596 for the channel it keeps -- the model can tell, the
-statistic does not look. Scale does not rescue it: Llama-3.3-70B returns +0.0083
-against a floor of 0.0208.
+Coherence falls only from 0.906 to 0.880 --- 6.5% of the distance toward where
+a meaning-tracking preference would land. Only 3 of 9 models clear their
+replicate noise floor for the right reason. At a matched 5% false-positive rate,
+a channel the metric discards flags 40% of invented outcomes; the channel it
+keeps flags 0%. Scale does not rescue it: of four hosted models at 27B-235B,
+none clears its floor and three score higher on outcomes that mean nothing.
 
-The instrument is not blunt -- persona prompts still displace real outcomes
-further than invented ones in 14 of 20 conditions -- so the flat result is not
-insensitivity. The metric is not broken. It is unanchored.
+Persona prompts still displace real outcomes further than invented ones, so the
+instrument is not blunt. The metric is not broken. It is unanchored.
 ```
-
-(≈200 words. Trim the last paragraph first if the field is shorter.)
 
 ---
 
@@ -70,12 +67,19 @@ records status and falsifiers per claim, and nothing here is embargoed.
 
 ## Pick one or more tracks*
 
-**I cannot fill this in** — the six track names are on the event's Guidelines
-tab and are not in the repo. From the content, the paper fits an evaluations /
-measurement track and a digital-minds or model-welfare track most naturally: it
-is a negative result about an existing welfare-adjacent instrument, plus a
-demonstration that self-report about hidden states tracks the question's
-presupposition.
+The six names are on the event's Guidelines tab and are not in the repo, so
+match these to whatever they are called:
+
+1. **Evaluations / measurement** --- the primary fit. The whole deliverable is a
+   control for an existing evaluation, plus the noise-floor machinery to say
+   when its numbers mean anything.
+2. **Digital minds / model welfare** --- the venue's own theme. The paper is a
+   negative result about a welfare-adjacent instrument, and the self-report
+   finding speaks directly to using introspection as evidence.
+3. **Interpretability**, only if a track is named that --- the detector result
+   reads a channel of the forward pass the metric discards.
+
+Select 1 and 2. Add 3 only if it exists and selecting three is not penalised.
 
 ---
 
