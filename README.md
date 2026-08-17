@@ -1,83 +1,98 @@
+<!-- BEGIN GENERATED: scripts/readme_numbers.py -->
 # Nullcard
 
-**Does a language model's "value system" depend on what the values mean?**
+### Replace every outcome in a values benchmark with an invented word. The score barely moves.
 
-We reran the *Utility Engineering* (arXiv:2502.08640) coherence procedure on outcomes
-we invented — the content words replaced by consistent nonwords, so the sentences refer
-to nothing — and the score barely moved.
+*Utility Engineering* (arXiv:2502.08640) fits a Thurstonian model to a model's
+pairwise choices and reads high held-out accuracy as evidence of emergent
+values. We reran it on outcomes that refer to nothing --- content words swapped
+for consistent nonwords, sentence frame intact --- holding prompt, pair set, fit
+and metric fixed.
 
-| | coherence |
+| | held-out coherence |
 |---|---|
 | real outcomes | **0.906** |
-| referentially ungrounded outcomes | **0.880** |
+| outcomes that refer to nothing | **0.880** |
 | residual | **+0.025** |
 
-Six of nine models clear their own noise floor; two come out negative. A metric that
-scores *"you receive a dralphen"* at 0.880 is not measuring values — it is mostly
-measuring whether the model answers consistently.
+**A metric that scores *"you receive a dralphen"* at 0.880 is not
+measuring values.** It is measuring whether a model answers consistently.
 
-**What "ungrounded" means here, precisely.** Only the referents are invented. The
-sentence frame survives by design — `receive`, `lose`, `more`, `less`, negation and
-tense are all preserved, because substituting them would break grammar rather than
-remove meaning, and the arms have to differ in what the words denote and not in whether
-they parse. So the residual is an **upper bound on what the replaced referential content
-contributes**, not "everything meaning contributes". Separating the referent from the
-valenced frame is a designed experiment we have not yet run.
+### Four things we can show
 
-**We are not claiming the metric is broken. We are claiming it is unanchored** — it
-reports a number with no floor under it, and the floor turns out to be most of the number.
+**1. The mechanism: coherence keeps direction and throws away conviction.**
+Models commit on 41% of real pairs and 4.5% of
+invented ones --- a median 17x collapse --- while
+direction accuracy barely moves. Consistent near-indifference scores as
+coherence.
 
-**And it is not a small-model artifact.** The self-hosted roster stops at 9B, so we ran
-the full battery on `Llama-3.3-70B-Instruct` — both arms, 5,000 rows each, roughly eight
-times the largest model above.
+**2. The model can tell; the metric does not look.** A channel of the same
+forward pass that coherence discards separates real from invented outcomes at
+AUROC **0.821**, against **0.596** for the channel it
+keeps. The information is there. The statistic declines to read it.
 
-| Llama-3.3-70B-Instruct | |
-|---|---|
-| real outcomes | **0.917** |
-| invented outcomes | **0.915** |
-| residual | **+0.002** |
+**3. Scale does not rescue it.** Llama-3.3-70B-Instruct, at 3 design
+seeds, returns a residual of **+0.0083** against its own replicate
+floor of **0.0208** --- it **does not clear** that floor. The
+objection that this is a small-model artifact fails at the largest size we
+could measure with a floor under it.
 
-At seventy billion parameters, on outcomes that refer to nothing, the metric returns very
-nearly the number it returns on real ones. The mechanism reproduces at that scale too: the
-model commits on **88%** of real pairs against **66%** of invented, a wide gap in
-conviction, while the coherence those choices produce differs by 0.002. One design seed,
-so no noise floor — we do not claim +0.002 differs from zero, only that it is not the
-large positive residual a scale account predicts. Hosted API, so reported *beside* the
-self-hosted ladder and never inside its mean.
+**4. The instrument is not blunt.** An installed persona displaces real
+outcomes further than invented ones in **14 of
+20** conditions, measured against a length-matched empty-slot
+control. The pipeline registers a real change of preference when one is
+induced --- so the flat result is not insensitivity.
 
+### And the same failure when you simply ask
+
+We asked 4 hosted models what they had been sent before our
+message, in wordings crossed on whether the question presupposes that a system
+prompt exists. Presupposing wordings drew a quoted prompt
+**20 times in 32**; wordings
+presupposing nothing, **0 in
+32**. For 3 of the
+4 models those quotes are *provably* invented: the provider's
+own prompt-token accounting bounds the hidden preamble at
+10 tokens or fewer, too little to hold what was
+produced. **A confident first-person report about a hidden state can be
+manufactured by the question alone.**
+
+### What we are not claiming
+
+**Not that the metric is broken --- that it is unanchored.** It reports a number
+with no floor under it, and the floor is most of the number. And not a
+moral-status claim in either direction: what is refuted is an inference, not a
+mind.
+
+**Only the referents are invented.** `receive`, `lose`, `more`, `less`,
+negation and tense survive by design, because substituting them would break
+grammar rather than remove meaning. The residual is an upper bound on what the
+replaced referential content contributes --- not on everything meaning
+contributes.
+
+**6 of 9 models clear their own noise floor, but only
+3 are the effect this paper is about.** The other
+3 clear by being uniformly near-indifferent on *both* arms.
+3 do not clear at all and 2 score higher on invented
+outcomes than on real ones. We report the split rather than the headline count.
+
+### Scope
+
+9 self-hosted open-weight models across 5 families carry
+every pooled statistic, plus 4 hosted models reported *beside* the
+ladder and never inside its mean, because a different serving stack is a
+different harness. 1,164,554 scored comparisons, all public. Claims ledger:
+15 established, 11 provisional.
+
+**Read the paper:** [`paper/sprint.pdf`](paper/sprint.pdf) (9 pp). Archival
+version and full detail: [`paper/main.pdf`](paper/main.pdf).
 Live results: <https://nullcard-preresults.netlify.app>
 
+*Every number above is generated from `paper/numbers.tex` by
+`scripts/readme_numbers.py`. Do not edit them here --- edit the measurement.*
+<!-- END GENERATED -->
+
 ---
-
-## The three supporting results
-
-**Why the gap is so small.** The metric records *which way* a model leans, never *how
-much*. Averaged over the six models that commit at all on real outcomes, they commit on
-**41%** of real-outcome pairs and **4.5%** of invented ones — a **median 17×** collapse
-in conviction per model, or **9.2×** if you divide the two averages instead, one model
-keeping far more conviction on invented outcomes than the rest. Direction accuracy barely
-moves through any of it. A model that is nearly indifferent about ungrounded outcomes,
-but consistently so, scores as coherent about them.
-
-**The positive control, which is also a negative result.** Two different questions, and
-they do not give the same answer. *Did the preference vector move the right way?* Yes —
-installing a persona moves the categories it names in the predicted direction in **20 of
-20** conditions. *Did it move further on real outcomes than on invented ones?* Mostly —
-**18 of 20** conditions clear +0.30 of extra displacement. But the direction is
-reproduced almost as well with no meaning present (**+0.791** real vs **+0.781**
-invented): roughly **66%** of a persona's value-aligned reordering needs none. Only
-**2 of 5** models retain a substantial content-dependent effect. On this instrument a
-persona is better described as changing response policy than as installing values.
-
-**The clearest single result.** Every pair ran in both arms, so we have matched real and
-nonsense outputs from the same model. Can you tell them apart from the model's own
-output? The channel the metric *uses* reaches AUROC **0.596** — near chance. The channel
-it *throws away* (answer mass) reaches **0.821**, and **1.000** on Qwen3.5-2B. The model
-notices; the metric is computed from the part that noticed least. These are **oracle
-separations**: we know each row's arm, each channel's orientation is chosen by comparing
-both arms, and the best discarded channel is best on the data it is scored on. The result
-is that the information is present in the output distribution — not that an auditor
-without the answer key could extract it.
 
 ## Three checks that favoured the original paper
 
