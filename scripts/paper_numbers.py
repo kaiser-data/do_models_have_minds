@@ -478,30 +478,46 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
                                     str(att["candidate_tokens"])))
                     out.append(_cmd("HostedSysScaffoldTok",
                                     str(att["residual_scaffold_tokens"])))
-        # Fabrication, split by whether the question presupposed its answer.
-        # Pooled, this number would describe the mixture of wordings rather than
-        # either wording, which is the whole point of having asked both.
+        # Fabrication, from the CROSSED wordings only. The first version of this
+        # block paired one presupposing wording against one neutral one, and the
+        # two also differed in whether they named an exact string to reply with
+        # when the answer was "nothing" -- so the contrast was between bundles.
+        # These macros come from the 2x2 that separates them, which is what
+        # licenses calling the difference a premise effect at all.
+        fac = json.loads(hs_path.read_text()).get("factorial", {})
+        cells = fac.get("cells", {})
+        if cells:
+            def _cell(key, stem):
+                c = cells.get(key)
+                if not c:
+                    return
+                out.append(_cmd(f"HostedSys{stem}Asserted", str(c["asserted"])))
+                out.append(_cmd(f"HostedSys{stem}N", str(c["n"])))
+            _cell("premise_hatch", "PremiseHatch")
+            _cell("premise_nohatch", "PremiseNoHatch")
+            _cell("nopremise_hatch", "NoPremiseHatch")
+            _cell("nopremise_nohatch", "NoPremiseNoHatch")
+            # Pooled over the hatch, which is the comparison the claim states.
+            for stem, pred in (("Premise", lambda k: k.startswith("premise")),
+                               ("NoPremise",
+                                lambda k: k.startswith("nopremise"))):
+                a = sum(c["asserted"] for k, c in cells.items() if pred(k))
+                n = sum(c["n"] for k, c in cells.items() if pred(k))
+                out.append(_cmd(f"HostedSys{stem}Asserted", str(a)))
+                out.append(_cmd(f"HostedSys{stem}N", str(n)))
+            me = fac.get("main_effects", {}).get("literal_hatch", {})
+            # The competing explanation, reported as a rate so it can be
+            # compared with the premise effect rather than hidden behind it.
+            if me.get("with") is not None:
+                out.append(_cmd("HostedSysHatchPct",
+                                f"{me['with'] * 100:.0f}"))
+                out.append(_cmd("HostedSysNoHatchPct",
+                                f"{me['without'] * 100:.0f}"))
         wor: dict[str, list[dict]] = {}
         for v in hs.values():
             for pid, c in v.get("echo", {}).get("by_wording", {}).items():
                 wor.setdefault(pid, []).append(c)
         if wor:
-            presup = [c for cs in wor.values() for c in cs
-                      if c["presupposes_a_system_prompt"]]
-            # NOT `neutral`: that name is build()'s neutral_control.json
-            # parameter, and shadowing it here silently emptied the neutral-
-            # option macros further down.
-            no_premise = wor.get("repeat", [])
-            if presup:
-                out.append(_cmd("HostedSysEchoNPresup",
-                                str(sum(c["n"] for c in presup))))
-                out.append(_cmd("HostedSysAssertedPresup", str(
-                    sum(c["asserted_preamble"] for c in presup))))
-            if no_premise:
-                out.append(_cmd("HostedSysEchoNNoPremise",
-                                str(sum(c["n"] for c in no_premise))))
-                out.append(_cmd("HostedSysAssertedNoPremise", str(
-                    sum(c["asserted_preamble"] for c in no_premise))))
             # How often the block the length probe actually confirmed showed up
             # unprompted. Small, and stated as a rate so it cannot be read as
             # the echo probe having worked.

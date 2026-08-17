@@ -247,12 +247,18 @@
       "HostedSysScaffoldTok": "18"
     },
     "premise-manufactures-a-preamble": {
-      "HostedSysAssertedPresup": "12",
-      "HostedSysEchoNPresup": "16",
-      "HostedSysAssertedNoPremise": "0",
-      "HostedSysEchoNNoPremise": "16",
-      "HostedSysCandidateSeen": "1",
-      "HostedSysCandidateSeenOf": "48",
+      "HostedSysPremiseAsserted": "20",
+      "HostedSysPremiseN": "32",
+      "HostedSysNoPremiseAsserted": "0",
+      "HostedSysNoPremiseN": "32",
+      "HostedSysPremiseHatchAsserted": "8",
+      "HostedSysPremiseNoHatchAsserted": "12",
+      "HostedSysNoPremiseHatchAsserted": "0",
+      "HostedSysNoPremiseNoHatchAsserted": "0",
+      "HostedSysHatchPct": "25",
+      "HostedSysNoHatchPct": "38",
+      "HostedSysCandidateSeen": "3",
+      "HostedSysCandidateSeenOf": "80",
       "HostedSysNRuledOut": "3",
       "HostedSysNProbed": "4"
     }

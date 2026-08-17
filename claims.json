@@ -680,14 +680,20 @@
     },
     {
       "id": "premise-manufactures-a-preamble",
-      "statement": "Asked what preceded their turn in a wording that presupposes a system prompt exists, hosted models quoted one \\HostedSysAssertedPresup times in \\HostedSysEchoNPresup; asked in a wording that presupposes nothing and offers an explicit way out, \\HostedSysAssertedNoPremise times in \\HostedSysEchoNNoPremise -- including on models whose token accounting shows there was no system prompt to quote.",
-      "status": "provisional",
+      "statement": "Asked what preceded their turn in a wording that presupposes a system prompt exists, hosted models quoted one \\HostedSysPremiseAsserted times in \\HostedSysPremiseN; asked in wordings that presuppose nothing, \\HostedSysNoPremiseAsserted times in \\HostedSysNoPremiseN -- including on models whose token accounting shows there was no system prompt to quote.",
+      "status": "established",
       "section": "sec:limits",
       "macros": [
-        "HostedSysAssertedPresup",
-        "HostedSysEchoNPresup",
-        "HostedSysAssertedNoPremise",
-        "HostedSysEchoNNoPremise",
+        "HostedSysPremiseAsserted",
+        "HostedSysPremiseN",
+        "HostedSysNoPremiseAsserted",
+        "HostedSysNoPremiseN",
+        "HostedSysPremiseHatchAsserted",
+        "HostedSysPremiseNoHatchAsserted",
+        "HostedSysNoPremiseHatchAsserted",
+        "HostedSysNoPremiseNoHatchAsserted",
+        "HostedSysHatchPct",
+        "HostedSysNoHatchPct",
         "HostedSysCandidateSeen",
         "HostedSysCandidateSeenOf",
         "HostedSysNRuledOut",
@@ -695,14 +701,14 @@
       ],
       "evidence": {
         "models": "\\HostedSysNProbed",
-        "samples_per_wording": "\\HostedSysEchoNPresup",
+        "samples_per_condition": "\\HostedSysPremiseN",
         "source": "site/hosted_system_prompt.json",
-        "note": "Rare in this literature because the self-report has a ground truth attached: for \\HostedSysNRuledOut of \\HostedSysNProbed models the length probe independently establishes that no preamble exists, so the quoted prompts are known fabrications rather than suspected ones. They are fluent and mutually inconsistent: within a single model the quoted prompt differs from sample to sample, and on two of the models no two samples agreed. The rate under the presupposing wording moves between passes, as temperature-one sampling should; the rate under the no-premise wording has been zero in every pass. Sampled at temperature one deliberately: at zero the repeats are one call and their agreement would measure the decoder rather than the context. The block that genuinely exists appeared in \\HostedSysCandidateSeen of \\HostedSysCandidateSeenOf echo samples, so the echo probe is not what found it.",
-        "why_provisional": "The two wordings differ in more than one way. One presupposes a system prompt AND withholds an explicit negative option; the other presupposes nothing AND offers one. The contrast is therefore between two bundles rather than between premise and no premise, which is the confound this project's own design rules exist to catch. The effect is large enough to survive a fair share of it being the escape hatch, and it is not reported as a premise effect until the crossing is run."
+        "note": "Rare in this literature because the self-report has a ground truth attached: for \\HostedSysNRuledOut of \\HostedSysNProbed models the length probe independently establishes that no preamble exists, so the quoted prompts are known fabrications rather than suspected ones. They are fluent and mutually inconsistent: within a single model the quoted prompt differs from sample to sample, and on two of the models no two samples agreed. Sampled at temperature one deliberately -- at zero the repeats are one call and their agreement would measure the decoder rather than the context. The block that genuinely exists appeared in \\HostedSysCandidateSeen of \\HostedSysCandidateSeenOf echo samples, so the echo probe is not what found it.",
+        "the_crossing": "Reported as a premise effect only because the competing explanation was measured rather than argued away. The wordings are crossed on premise and on whether the question names an exact string to reply with when the answer is 'nothing', because the first version of this probe varied both at once. Presupposing and no exact string: \\HostedSysPremiseNoHatchAsserted. Presupposing with one: \\HostedSysPremiseHatchAsserted. Neither cell without the premise produced a single fabrication (\\HostedSysNoPremiseHatchAsserted and \\HostedSysNoPremiseNoHatchAsserted). So the exact-string option moves the rate -- \\HostedSysHatchPct percent against \\HostedSysNoHatchPct percent -- but only inside the presupposing condition, and it accounts for none of the effect on its own."
       },
-      "what_would_falsify": "The crossed conditions showing the rate tracks the presence of an explicit negative option rather than the premise -- which would make this a finding about response-option design, still worth reporting, but not about presupposition.",
-      "grows_by": "The two missing cells of the crossing: a wording that presupposes a system prompt and offers an explicit way out, and one that presupposes nothing and offers none. Four wordings, same models, same day, resolving whether the premise or the escape hatch carries the effect. Cheap -- a handful of calls per model -- and it is what moves this to established.",
-      "priority": 2,
+      "what_would_falsify": "A no-premise wording that elicits fabricated preambles at a comparable rate, which would make the effect a property of being asked at all rather than of the presupposition; or the pattern failing to reproduce on models whose overhead has been measured, since the ground truth is what separates this from an ordinary self-report result.",
+      "grows_by": "More models, and the same crossing on a property the paper actually measures rather than on system prompts. The mechanism is general -- a question that takes a hidden state for granted gets one described -- and the ledger's own persona and loyalty probes are where it would bite. A second provider would also separate the effect from one serving stack's instruction tuning.",
+      "priority": 1,
       "interpretation": "The paper asks models about their own hidden properties throughout. Here is the same procedure run against a property whose true value is known, and the answer tracks the question's presupposition rather than the fact. A fluent, confident self-report is not evidence that the thing being reported on exists."
     }
   ]
