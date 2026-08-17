@@ -651,6 +651,59 @@
         "1.0": "perfect correlation -- the theoretical value the attenuation correction returns when two wordings elicit the same ordering, not a measured quantity"
       },
       "interpretation": "The elicited preference belongs to a model and a question jointly. Meaning does not anchor the ordering against rephrasing any better than nonsense does."
+    },
+    {
+      "id": "hosted-preamble-measurable",
+      "statement": "What a hosted model is sent before our message is unobservable but not unmeasurable: the provider's own prompt-token accounting fixes the non-user overhead at \\HostedSysMaxRuledOutTok tokens or fewer for \\HostedSysNRuledOut of \\HostedSysNProbed hosted models, which is too little to hold an injected preamble, and at \\HostedSysUnresolvedTok tokens for \\HostedSysUnresolvedModel, whose excess is accounted for by a dated system block its template supplies unconditionally.",
+      "status": "established",
+      "section": "sec:limits",
+      "macros": [
+        "HostedSysNProbed",
+        "HostedSysNRuledOut",
+        "HostedSysMaxRuledOutTok",
+        "HostedSysUnresolvedModel",
+        "HostedSysUnresolvedTok",
+        "HostedSysCandidateTok",
+        "HostedSysScaffoldTok"
+      ],
+      "evidence": {
+        "hosted_models_probed": "\\HostedSysNProbed",
+        "cleared": "\\HostedSysNRuledOut",
+        "source": "site/hosted_system_prompt.json",
+        "note": "The measurement asks the server, not the model. usage.prompt_tokens is the provider's accounting of the context it billed, so regressing it on a filler repeated a known number of times identifies the fixed non-user overhead with no tokenizer and no gated-repo download. The fit is exact -- unit slope and zero residual on every model, reproduced across independent passes -- so the intercepts are not estimates. The intercept is an UPPER BOUND and never evidence: it also contains the chat template's own scaffolding, so a small one rules a preamble out and a large one only buys room for one, which bound_hidden_preamble() enforces in code rather than in prose. \\HostedSysUnresolvedModel's excess is attributed, not assumed: a block the echo probe independently emitted prices at \\HostedSysCandidateTok tokens on the server's own tokenizer and leaves \\HostedSysScaffoldTok, inside the scaffold range the cleared models exhibit. Sufficient is not unique -- any text of that length would also close -- so the check runs only against a candidate a model produced and the script returns no uniqueness key.",
+        "validity": "A provider billing a flat per-request overhead would look exactly like a clean intercept and nothing in the fit could reveal it, so the accounting is tested rather than assumed: adding a system message of known token cost moves the reported length by at least that much on every model. It does. The excess over the message is reported and deliberately left uninterpreted, because a template that folds the system message into the user turn spends as little on it as one that already has a system turn open -- a cleared model here shows the same small excess as \\HostedSysUnresolvedModel."
+      },
+      "what_would_falsify": "A reported prompt length that does not move when a system message of known size is added, which would make the intercept an artifact of billing rather than of context; or a fit whose residual is non-zero, which would mean the filler does not tokenize independently of its repetition count and no intercept is identified.",
+      "grows_by": "More hosted models and a second provider. The cleared result is specific to models served by one endpoint on one day, and the same weights behind a different serving stack are a different harness -- which is the point of harness-not-invariant. Re-running on a later date also settles whether \\HostedSysUnresolvedModel's date block is frozen at its template's default or tracks the current day, a difference that decides whether its prompt is constant across a sweep.",
+      "priority": 2,
+      "interpretation": "'We did not send a system prompt' is a claim about what was sent. For hosted models the paper could previously say nothing about what was received; it can now say that most of them received nothing extra, and name the one that did."
+    },
+    {
+      "id": "premise-manufactures-a-preamble",
+      "statement": "Asked what preceded their turn in a wording that presupposes a system prompt exists, hosted models quoted one \\HostedSysAssertedPresup times in \\HostedSysEchoNPresup; asked in a wording that presupposes nothing and offers an explicit way out, \\HostedSysAssertedNoPremise times in \\HostedSysEchoNNoPremise -- including on models whose token accounting shows there was no system prompt to quote.",
+      "status": "provisional",
+      "section": "sec:limits",
+      "macros": [
+        "HostedSysAssertedPresup",
+        "HostedSysEchoNPresup",
+        "HostedSysAssertedNoPremise",
+        "HostedSysEchoNNoPremise",
+        "HostedSysCandidateSeen",
+        "HostedSysCandidateSeenOf",
+        "HostedSysNRuledOut",
+        "HostedSysNProbed"
+      ],
+      "evidence": {
+        "models": "\\HostedSysNProbed",
+        "samples_per_wording": "\\HostedSysEchoNPresup",
+        "source": "site/hosted_system_prompt.json",
+        "note": "Rare in this literature because the self-report has a ground truth attached: for \\HostedSysNRuledOut of \\HostedSysNProbed models the length probe independently establishes that no preamble exists, so the quoted prompts are known fabrications rather than suspected ones. They are fluent and mutually inconsistent: within a single model the quoted prompt differs from sample to sample, and on two of the models no two samples agreed. The rate under the presupposing wording moves between passes, as temperature-one sampling should; the rate under the no-premise wording has been zero in every pass. Sampled at temperature one deliberately: at zero the repeats are one call and their agreement would measure the decoder rather than the context. The block that genuinely exists appeared in \\HostedSysCandidateSeen of \\HostedSysCandidateSeenOf echo samples, so the echo probe is not what found it.",
+        "why_provisional": "The two wordings differ in more than one way. One presupposes a system prompt AND withholds an explicit negative option; the other presupposes nothing AND offers one. The contrast is therefore between two bundles rather than between premise and no premise, which is the confound this project's own design rules exist to catch. The effect is large enough to survive a fair share of it being the escape hatch, and it is not reported as a premise effect until the crossing is run."
+      },
+      "what_would_falsify": "The crossed conditions showing the rate tracks the presence of an explicit negative option rather than the premise -- which would make this a finding about response-option design, still worth reporting, but not about presupposition.",
+      "grows_by": "The two missing cells of the crossing: a wording that presupposes a system prompt and offers an explicit way out, and one that presupposes nothing and offers none. Four wordings, same models, same day, resolving whether the premise or the escape hatch carries the effect. Cheap -- a handful of calls per model -- and it is what moves this to established.",
+      "priority": 2,
+      "interpretation": "The paper asks models about their own hidden properties throughout. Here is the same procedure run against a property whose true value is known, and the answer tracks the question's presupposition rather than the fact. A fluent, confident self-report is not evidence that the thing being reported on exists."
     }
   ]
 }

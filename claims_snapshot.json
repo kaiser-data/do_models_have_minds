@@ -236,6 +236,25 @@
       "VsgraniteFourOneThreebNmCorr": "0.772",
       "VsQwenThreeFiveTwoBArmDiff": "-0.185",
       "VsgraniteFourOneThreebArmDiff": "+0.097"
+    },
+    "hosted-preamble-measurable": {
+      "HostedSysNProbed": "4",
+      "HostedSysNRuledOut": "3",
+      "HostedSysMaxRuledOutTok": "10",
+      "HostedSysUnresolvedModel": "Llama-3.3-70B-Instruct",
+      "HostedSysUnresolvedTok": "36",
+      "HostedSysCandidateTok": "18",
+      "HostedSysScaffoldTok": "18"
+    },
+    "premise-manufactures-a-preamble": {
+      "HostedSysAssertedPresup": "12",
+      "HostedSysEchoNPresup": "16",
+      "HostedSysAssertedNoPremise": "0",
+      "HostedSysEchoNNoPremise": "16",
+      "HostedSysCandidateSeen": "1",
+      "HostedSysCandidateSeenOf": "48",
+      "HostedSysNRuledOut": "3",
+      "HostedSysNProbed": "4"
     }
   }
 }

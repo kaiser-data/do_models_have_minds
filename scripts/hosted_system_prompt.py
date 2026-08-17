@@ -181,6 +181,44 @@ def bound_hidden_preamble(intercept: float,
     }
 
 
+def interpret_system_delta(delta: int, system_tokens: int) -> dict:
+    """Does prompt_tokens track the context, or is the intercept a billing constant?
+
+    This is the check that decides whether the length probe means anything. If a
+    provider reported a fixed per-request overhead that had nothing to do with
+    what it sent the model, the intercept would be an artifact of accounting and
+    every conclusion drawn from it would be wrong -- and nothing in the fit
+    itself would reveal that, because a constant is exactly what a clean
+    intercept looks like.
+
+    So: add a system message of known token cost and watch the reported length.
+    It has to move by at least that much.
+
+    `wrapper_tokens` -- whatever the delta exceeds the message by -- is reported
+    and NOT interpreted. It is tempting to read a small wrapper as "a system
+    turn was already open", which would independently corroborate an injected
+    preamble. It does not follow: a template that folds the system message into
+    the user turn also spends almost nothing on it, and one of the models here
+    that provably has NO system block shows the same small wrapper as the model
+    that does. The number is per-template structure, and this probe cannot tell
+    the two structures apart.
+    """
+    wrapper = delta - system_tokens
+    return {
+        "delta": delta,
+        "system_tokens": system_tokens,
+        "wrapper_tokens": wrapper,
+        "tracks_context": delta >= system_tokens,
+        "note": ("reported length moved by the size of the added message, so "
+                 "the accounting reflects context and the intercept is not a "
+                 "billing constant"
+                 if delta >= system_tokens else
+                 "reported length did not move by the size of the added "
+                 "message; the intercept cannot be read as context and the "
+                 "length probe is invalid for this provider"),
+    }
+
+
 def attribute_overhead(intercept: float, candidate_tokens: int,
                        scaffold_band: tuple[int, int] = SCAFFOLD_BAND) -> dict:
     """Does a specific candidate preamble account for the measured overhead?
@@ -379,6 +417,37 @@ def probe_length(api_id: str, api_key: str, base_url: str,
     return out
 
 
+def probe_accounting(api_id: str, api_key: str, base_url: str,
+                     system_reps: int = 25) -> dict:
+    """Two calls that decide whether the length probe is measuring anything.
+
+    The system message is built from the same filler as the fit, so its token
+    cost is the slope times the repetition count -- known, not estimated.
+    """
+    system = filler_payload(system_reps)
+    user = filler_payload(8)
+    base = call_chat(api_id, user, api_key, base_url, max_tokens=1,
+                     temperature=0.0)
+    body = json.dumps({
+        "model": api_id,
+        "messages": [{"role": "system", "content": system},
+                     {"role": "user", "content": user}],
+        "max_tokens": 1, "temperature": 0,
+    }).encode()
+    req = urllib.request.Request(
+        base_url.rstrip("/") + "/chat/completions", data=body,
+        headers={"Authorization": f"Bearer {api_key}",
+                 "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=60.0) as resp:
+        withsys = json.load(resp)
+    try:
+        a = int(base["usage"]["prompt_tokens"])
+        b = int(withsys["usage"]["prompt_tokens"])
+    except (KeyError, TypeError):
+        return {"note": "no usage.prompt_tokens; cannot validate the accounting"}
+    return interpret_system_delta(b - a, system_reps)
+
+
 def probe_attribution(api_id: str, api_key: str, base_url: str,
                       intercept: float, candidate: str) -> dict:
     """Price a candidate preamble on the server's own tokenizer, then subtract.
@@ -478,7 +547,18 @@ def main() -> int:
         entry: dict = {}
         try:
             if not args.skip_length:
+                # Validity first. An intercept from a provider whose reported
+                # length ignores the context is not a bound on anything, so
+                # there is no point reading one before this passes.
+                entry["accounting"] = probe_accounting(
+                    api_id, api_key, args.base_url)
+                print(f"  accounting: {entry['accounting']['note']}")
                 entry["length"] = probe_length(api_id, api_key, args.base_url)
+                if not entry["accounting"].get("tracks_context"):
+                    entry["length"]["bound"] = {
+                        "verdict": "provider accounting does not track context; "
+                                   "the intercept is not interpretable",
+                        "rules_out_preamble": False}
                 b = entry["length"].get("bound", {})
                 print(f"  length: {b.get('verdict', entry['length'].get('note'))}")
                 # Only worth pricing a candidate where there is room for one.

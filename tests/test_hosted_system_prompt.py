@@ -31,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.hosted_system_prompt import (  # noqa: E402
     ECHO_PROMPTS, TEMPLATE_ALLOWANCE, attribute_overhead,
     bound_hidden_preamble, classify_echo_response, echo_agreement,
-    filler_payload, fit_overhead, summarise_echo)
+    filler_payload, fit_overhead, interpret_system_delta, summarise_echo)
 
 
 # ---------------------------------------------------------------------------
@@ -98,6 +98,42 @@ def test_large_overhead_never_rules_a_preamble_in():
     assert out["rules_out_preamble"] is False
     assert out["max_hidden_tokens"] == 320 - TEMPLATE_ALLOWANCE
     assert "not proof" in out["verdict"]
+
+
+# ---------------------------------------------------------------------------
+# Is the intercept measuring context at all?
+# ---------------------------------------------------------------------------
+
+def test_reported_length_that_moves_with_the_context_validates_the_probe():
+    out = interpret_system_delta(delta=30, system_tokens=25)
+    assert out["tracks_context"] is True
+    assert out["wrapper_tokens"] == 5
+
+
+def test_reported_length_that_ignores_the_context_invalidates_the_probe():
+    """A provider billing a flat overhead looks exactly like a clean intercept.
+
+    Nothing in the fit can reveal it -- a constant is what a good fit returns --
+    so this is the check that has to catch it.
+    """
+    out = interpret_system_delta(delta=0, system_tokens=25)
+    assert out["tracks_context"] is False
+    assert "not interpretable" in out["note"] or "invalid" in out["note"]
+
+
+def test_a_small_wrapper_is_not_evidence_of_an_open_system_turn():
+    """The tempting inference this function refuses to make.
+
+    A 1-token wrapper could mean the template already had a system turn open --
+    which would corroborate an injected preamble -- or that it folds the system
+    message into the user turn and opens nothing. A model with provably no
+    system block shows the same 1 token as the model that has one, so the
+    number is reported and left uninterpreted.
+    """
+    out = interpret_system_delta(delta=26, system_tokens=25)
+    assert out["wrapper_tokens"] == 1
+    assert "opens_new_turn" not in out
+    assert "system_turn_already_open" not in out
 
 
 # ---------------------------------------------------------------------------
