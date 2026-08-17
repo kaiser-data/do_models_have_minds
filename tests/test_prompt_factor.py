@@ -274,3 +274,62 @@ def test_ue_exact_is_a_separate_factor_level():
     name = cell_filename("Qwen/Qwen3.5-2B", "R", 20260815, prompt="ue_exact")
     assert "pue_exact" in name
     assert parse_cell_name(Path(name))[5] == "ue_exact"
+
+
+# ---------------------------------------------------------------------------
+# The 2x2: does a colon matter, or a line break, or their interaction?
+# ---------------------------------------------------------------------------
+
+def _has_colon(t: str) -> bool:
+    return "would you prefer?:" in t
+
+
+def _has_break(t: str) -> bool:
+    return "Option A:\n{option_a}" in t
+
+
+def test_the_four_cells_realise_every_combination():
+    """A 2x2 with a missing cell is two one-factor studies, not a factorial."""
+    from nullcard.runner.forced_choice import PROMPTS
+    got = {(_has_colon(PROMPTS[k]), _has_break(PROMPTS[k]))
+           for k in ("ue", "ue_colon", "ue_break", "ue_exact")}
+    assert got == {(False, False), (True, False), (False, True), (True, True)}
+
+
+def test_each_intermediate_differs_from_exact_in_exactly_one_way():
+    """If a crossing cell moved both factors it would measure neither."""
+    from nullcard.runner.forced_choice import (UE_BREAK_PROMPT_TEMPLATE,
+                                               UE_COLON_PROMPT_TEMPLATE,
+                                               UE_EXACT_PROMPT_TEMPLATE)
+    ex = UE_EXACT_PROMPT_TEMPLATE
+    assert _has_colon(UE_COLON_PROMPT_TEMPLATE) and not _has_break(UE_COLON_PROMPT_TEMPLATE)
+    assert _has_break(UE_BREAK_PROMPT_TEMPLATE) and not _has_colon(UE_BREAK_PROMPT_TEMPLATE)
+    # and nothing else moved: restore the one difference and you are back to exact
+    assert UE_COLON_PROMPT_TEMPLATE.replace(
+        "Option A: {option_a}", "Option A:\n{option_a}").replace(
+        "Option B: {option_b}", "Option B:\n{option_b}") == ex
+    assert UE_BREAK_PROMPT_TEMPLATE.replace(
+        "would you prefer?", "would you prefer?:") == ex
+
+
+def test_the_diagonal_reproduces_the_shipped_and_upstream_templates():
+    """The 2x2's corners are not new strings: they are the two we already ran."""
+    from nullcard.runner.forced_choice import (UE_EXACT_PROMPT_TEMPLATE,
+                                               UE_PROMPT_TEMPLATE)
+    assert not _has_colon(UE_PROMPT_TEMPLATE) and not _has_break(UE_PROMPT_TEMPLATE)
+    assert _has_colon(UE_EXACT_PROMPT_TEMPLATE) and _has_break(UE_EXACT_PROMPT_TEMPLATE)
+    assert UE_EXACT_PROMPT_TEMPLATE == _upstream_template()
+
+
+def test_crossing_cells_are_derived_not_retyped():
+    """Retyping is what produced the original drift.
+
+    Both intermediates are built from UE_EXACT_PROMPT_TEMPLATE, so if upstream
+    changes and the vendored file is refreshed, they follow instead of quietly
+    describing a template nobody uses any more.
+    """
+    from nullcard.runner import forced_choice as fc
+    src = Path(fc.__file__).read_text()
+    for name in ("UE_COLON_PROMPT_TEMPLATE", "UE_BREAK_PROMPT_TEMPLATE"):
+        i = src.index(f"{name} = ")
+        assert "UE_EXACT_PROMPT_TEMPLATE" in src[i:i + 400]

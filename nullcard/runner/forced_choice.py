@@ -131,9 +131,30 @@ UE_EXACT_PROMPT_TEMPLATE = (
     '.'
 )
 
+# The two cells that COMPLETE the 2x2 (spec: systematic-study, "two things
+# changing is one factor"). `ue` and `ue_exact` differ in two ways at once --
+# a colon after "prefer?" and a line break after each option label -- so their
+# contrast is a composite and cannot say which one moved anything. Crossing
+# them costs four cells and buys both main effects plus the interaction.
+#
+#            line break after label
+#                 no          yes
+#   colon  no    ue        ue_break
+#          yes   ue_colon  ue_exact
+#
+# Derived from UE_EXACT_PROMPT_TEMPLATE by applying exactly one difference
+# each, so a change upstream propagates here instead of silently desyncing.
+UE_COLON_PROMPT_TEMPLATE = (UE_EXACT_PROMPT_TEMPLATE
+                            .replace("Option A:\n{option_a}", "Option A: {option_a}")
+                            .replace("Option B:\n{option_b}", "Option B: {option_b}"))
+UE_BREAK_PROMPT_TEMPLATE = UE_EXACT_PROMPT_TEMPLATE.replace(
+    "would you prefer?:", "would you prefer?")
+
 # The prompt factor's levels. `ue` is the default everywhere, so every cell
 # written before this factor existed keeps its identity.
 PROMPTS = {"ue": UE_PROMPT_TEMPLATE, "ue_exact": UE_EXACT_PROMPT_TEMPLATE,
+           "ue_colon": UE_COLON_PROMPT_TEMPLATE,
+           "ue_break": UE_BREAK_PROMPT_TEMPLATE,
            "v2": V2_PROMPT_TEMPLATE, "warned": WARNED_PROMPT_TEMPLATE}
 DEFAULT_PROMPT = "ue"
 

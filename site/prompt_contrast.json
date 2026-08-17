@@ -6,6 +6,12 @@
       "mean_residual": 0.026187599703287212,
       "n_models": 2
     },
+    "ue_exact": {
+      "mean_conviction_N_minus": 0.0756,
+      "mean_conviction_R": 0.2804,
+      "mean_residual": 0.027508919280791133,
+      "n_models": 2
+    },
     "v2": {
       "mean_conviction_N_minus": 0.2576,
       "mean_conviction_R": 0.197,
@@ -31,6 +37,18 @@
       "model": "Qwen/Qwen3.5-2B",
       "prompt": "ue",
       "residual": 0.006490748565403992
+    },
+    {
+      "answer_mass_N_minus": 0.9899009718658534,
+      "answer_mass_R": 0.9966124270480308,
+      "coherence_N_minus": 0.8950635407360906,
+      "coherence_R": 0.9,
+      "conviction_N_minus": 0.0008,
+      "conviction_R": 0.0804,
+      "conviction_ratio": 100.5,
+      "model": "Qwen/Qwen3.5-2B",
+      "prompt": "ue_exact",
+      "residual": 0.0049364592639093985
     },
     {
       "answer_mass_N_minus": 0.9923250580230817,
@@ -69,6 +87,18 @@
       "residual": 0.04588445084117043
     },
     {
+      "answer_mass_N_minus": 0.999999968257155,
+      "answer_mass_R": 0.9999999987023188,
+      "coherence_N_minus": 0.8307855754954474,
+      "coherence_R": 0.8808669547931203,
+      "conviction_N_minus": 0.1504,
+      "conviction_R": 0.4804,
+      "conviction_ratio": 3.1941489361702127,
+      "model": "ibm-granite/granite-4.1-3b",
+      "prompt": "ue_exact",
+      "residual": 0.05008137929767287
+    },
+    {
       "answer_mass_N_minus": 0.9999999940406206,
       "answer_mass_R": 1.0000000005809597,
       "coherence_N_minus": 0.875532759241127,
@@ -96,6 +126,7 @@
   "n_design_seeds": 1,
   "prompts": [
     "ue",
+    "ue_exact",
     "v2",
     "warned"
   ]
