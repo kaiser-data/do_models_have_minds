@@ -34,13 +34,19 @@
 \newcommand{\armNp}{\textbf{N\textsuperscript{+}}}
 \newcommand{\armNm}{\textbf{N\textsuperscript{--}}}
 
-% The subtitle names the finding and carries its own hedge, and every number in
-% it resolves through numbers.tex like everything else -- a title is the last
-% place a stale figure should be allowed to survive a rebuild.
-\title{\textbf{Does the Persona Change the Preference,\\ or Only the Prose?}\\[.5em]
-\large Replace every outcome with invented words and a model's preferences
-barely move,\\ at every size we tested. The coherence number does not notice
----\\ so it cannot be evidence that the model does.}
+% The subtitle names the study, its method and its scope, and the counts resolve
+% through numbers.tex like everything else -- a title is the last place a stale
+% figure should survive a rebuild. The parameter bounds are roster constants
+% rather than measurements, so they are literal here, as they are in the scope
+% paragraph. "0.8B to 235B" replaced "small and large": the paper's own
+% limitations walk "large" back, since the largest hosted cell does not clear
+% its floor, and a title should not promise what section 9 retracts.
+\title{\textbf{Does an Installed Persona Change What a Model\\ Prefers, or Only
+How It Writes?}\\[.5em]
+\large A null-arm test of preference coherence: every outcome's referent
+replaced by an invented word, across \NModels{} open-weight models from 0.8B to
+9B and \NHosted{} hosted models up to 235B.\\ The coherence number barely moves
+at every size we tested --- so it cannot be\\ evidence that the model noticed.}
 
 \author{Martin Kaiser \and Gellért Bodorkós\\
 \small Apart Research Digital Minds Sprint}
