@@ -1,0 +1,10 @@
+model,parsed,passed,detail
+Qwen/Qwen3.5-0.8B,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+Qwen/Qwen3.5-2B,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+google/gemma-4-E2B-it,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+LiquidAI/LFM2.5-1.2B-Instruct,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+HuggingFaceTB/SmolLM2-1.7B-Instruct,True,False,fn(0)=[0]
+Qwen/Qwen3.5-4B,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+HuggingFaceTB/SmolLM3-3B,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+ibm-granite/granite-4.1-3b,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
+Qwen/Qwen3.5-9B,True,True,"fn(0)=[] fn(3)=[0, 1, 4]"
