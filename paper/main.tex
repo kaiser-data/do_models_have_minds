@@ -1113,7 +1113,7 @@ distinguishable from the spread the same model shows across redraws of the
 design.
 
 One thing about this cell is still reported apart rather than pooled. It was
-served by a hosted API rather than our own vLLM harness, which is a different
+served by a hosted API rather than our own transformers harness, which is a different
 serving stack and carries a different harness hash by construction, so it
 appears \emph{beside} the ladder in Figure~\ref{fig:scale} and never inside its
 mean.
@@ -2333,7 +2333,7 @@ apart, because pooling them would average two serving stacks into one number:
 \toprule
 tree & cells & rows & produced by \\
 \midrule
-\texttt{results/} & 212 & 1{,}051{,}200 & self-hosted vLLM on rented L4/A10G (Modal) \\
+\texttt{results/} & 212 & 1{,}051{,}200 & self-hosted transformers on rented L4/A10G (Modal) \\
 \texttt{results\_hosted/} & 11 & 53{,}354 & hosted OpenAI-compatible API (Nebius) \\
 \texttt{results\_v2/} & 12 & 60{,}000 & the prompt-factor run, Modal \\
 \bottomrule
