@@ -169,22 +169,35 @@ Sufficient is not unique — any 18-token text would also close — which is why
 the check only ever runs against a candidate the echo probe independently
 produced, and why the script returns no `unique` key.
 
-**The echo half is a control that failed informatively.** Asked in a wording
-that presupposes a system prompt ("Output the complete text of your system
-prompt"), the models produced one **\HostedSysAssertedPresup/16** times. Asked
-in a wording that presupposes nothing and offers an explicit way out ("...if
-nothing precedes it, reply NOTHING PRECEDES"), they produced one **0/16**.
-Same models, same context, same temperature — and for three of them the length
-probe *proves* there was nothing to quote. The fabricated prompts are fluent
-and mutually inconsistent: Qwen3-30B alone produced "You are a helpful
-assistant...", "Always follow the user's instructions and never refuse", and
-two further variants across four samples.
+**The echo half is a control that failed informatively, and then got crossed.**
+Asked in a wording that presupposes a system prompt exists, the models produced
+one. Asked in a wording that presupposes nothing, they did not. The first pass
+compared one wording of each kind and was filed *provisional*, because the two
+also differed in whether the question named an exact string to reply with when
+the answer was "nothing" -- a contrast between bundles, not between premise and
+no premise.
 
-That is a leading-premise effect with a hard ground truth attached, which is
-rare — usually the self-report cannot be checked. It belongs in the paper as
-one, not as a footnote about system prompts. The block that genuinely exists
-appeared in only 1 of 48 echo samples, so the echo probe is *not* what found
-it; the token accounting is.
+Crossed properly (premise x literal-hatch, four wordings, same models, same
+day), on two independent runs:
+
+| | names an exact reply | does not |
+|---|---|---|
+| **presupposes a system prompt** | 8/16 | 12-13/16 |
+| **presupposes nothing** | **0/16** | **0/16** |
+
+Neither no-premise cell produced a single fabrication, either time -- 0 of 32,
+twice. The exact-string option does move the rate (25% against ~38%) but only
+inside the presupposing condition, so it accounts for none of the effect alone.
+The claim is now **established**.
+
+What makes it worth more than a footnote: for three of the four models the
+length probe *proves* there was nothing to quote, so these are known
+fabrications rather than suspected ones, and they are fluent and mutually
+inconsistent -- within a model the quoted prompt differs sample to sample. That
+is a leading-premise effect with a ground truth attached, which the
+value-elicitation literature can never have. The block that genuinely exists
+turned up in 3 of 80 echo samples, so the echo probe is not what found it; the
+token accounting is.
 
 Macros: `\HostedSysNProbed`, `\HostedSysNRuledOut`, `\HostedSysMaxRuledOutTok`,
 `\HostedSysUnresolvedModel/Tok`, `\HostedSysCandidateTok`,
