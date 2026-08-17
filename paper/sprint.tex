@@ -10,6 +10,7 @@
 
 \usepackage[a4paper,margin=0.85in]{geometry}
 \usepackage{amsmath}
+\usepackage{amssymb}  % \checkmark in table_models
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
@@ -169,7 +170,8 @@ residuals --- \HostedMostNegative{} to \HostedLeastNegative{}, on
 than on real ones. The one positive, \LadderHosted{} at \HostedResidual{},
 \HostedClears{} its floor of \HostedFloor{}. These are a different serving
 stack and are never pooled with the ladder (\S\ref{sec:method}), but the
-direction is the answer to the scale objection.
+direction is the answer to the scale objection. Per model, by family and size:
+App.~Table~\ref{tab:models} and Fig.~\ref{fig:familyscale}.
 
 \textbf{Within the one family that has a ladder, the residual falls as models
 grow} --- \LadderResidFall{} across \LadderNSizes{} sizes, because the floor
@@ -469,6 +471,41 @@ not result.}
 \end{figure}
 
 \section{Additional tables}\label{app:tables}
+
+\begin{table}[htbp]
+\centering
+\caption{\textbf{Per-model scoring, grouped by family and ascending in size ---
+and the two columns disagree.} \armR{} and \armNm{} are held-out coherence on
+real and referent-free outcomes; \textbf{resid.} is the difference, with
+$^{\checkmark}$ where it exceeds that cell's own replicate floor; \textbf{conv.}
+is decisive-pair fraction on real over invented, shown only where the
+denominator is large enough for a ratio to mean anything; \textbf{disc.} is
+AUROC of the best channel coherence discards. \emph{This is not a leaderboard.}
+A larger residual is not a better model --- ranking models by an unanchored
+number is the error this paper documents. What the table shows is which models
+distinguish the arms and on which channel, and the answer differs by column:
+within the one family with a full ladder the residual falls to zero and below as
+size grows, while the discarded channel separates the arms better at every size.
+Bigger models notice more; the metric notices less.}
+\label{tab:models}
+\small
+\setlength{\tabcolsep}{4.5pt}
+\input{table_models}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig6_family_scale.pdf}
+\caption{\textbf{The metric's residual falls with size; the channel it throws
+away does not.} Left: floor-corrected residual against parameter count, one line
+per family, log x-axis, dashed line at zero. Right: AUROC of the best discarded
+channel, dashed line at chance. Single-model families appear as single points.
+The two panels are drawn together because either alone misleads --- the left
+would read as "nothing here at scale", and the right as a detector result rather
+than as evidence about what the metric declines to use.}
+\label{fig:familyscale}
+\end{figure}
+
 
 \noindent\textbf{The claims ledger} --- every claim in the archival paper with
 its status, the macros it rests on, and what would falsify it --- is
