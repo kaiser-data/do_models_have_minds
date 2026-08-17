@@ -23,10 +23,12 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.paper_numbers import (  # noqa: E402
+    DECISIVE_AT_ALL,
     FLAT_DECISIVE,
     arm_decomposition,
     build_table,
     clear_kinds,
+    decisive_models,
 )
 
 
@@ -130,6 +132,36 @@ def test_tiles_without_an_n_plus_cell_are_skipped_not_zeroed():
     d = arm_decomposition([CONVICTION, no_np])
     assert d["n"] == 1
     assert d["mean_referent"] == pytest.approx(0.02)
+
+
+# ---------------------------------------------------------------------------
+# decisive_models -- the denominator the decisiveness means are taken over
+# ---------------------------------------------------------------------------
+
+def test_the_decisiveness_mean_excludes_models_that_never_commit():
+    # \MeanDecisiveR is a mean over models decisive on real outcomes AT ALL.
+    # The prose said "these models" of all nine while the number was over six,
+    # so the count has to be available to whatever sentence quotes the mean.
+    assert [t["model"] for t in decisive_models([CONVICTION, FLAT, FAILS])] == [
+        "org/conviction", "org/fails"]
+
+
+def test_the_cutoff_is_the_one_the_mean_uses():
+    # Same threshold, one definition. If these drift apart the paper prints a
+    # denominator that does not match the mean beside it, which is the bug.
+    on_the_line = _tile("org/edge", 0.90, 0.86, 0.85, DECISIVE_AT_ALL, 0.0, True)
+    just_under = _tile("org/under", 0.90, 0.86, 0.85,
+                       DECISIVE_AT_ALL / 2, 0.0, True)
+    assert decisive_models([on_the_line]) == []      # strictly greater than
+    assert decisive_models([just_under]) == []
+
+
+def test_a_flat_clear_is_never_in_the_decisiveness_denominator():
+    # The two readings have to agree: a model marked flat in Table 1 is one of
+    # the models the decisiveness mean leaves out.
+    _, flat = clear_kinds([CONVICTION, FLAT, FAILS])
+    dec = decisive_models([CONVICTION, FLAT, FAILS])
+    assert not ({t["model"] for t in flat} & {t["model"] for t in dec})
 
 
 # ---------------------------------------------------------------------------

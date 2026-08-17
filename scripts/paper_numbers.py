@@ -98,6 +98,18 @@ def _hosted_scoreability() -> dict[str, list]:
 # flat one (LFM2.5-1.2B, 0.15%), so nothing sits near the boundary.
 FLAT_DECISIVE = 0.01
 
+# The cutoff below which a model has no decisiveness ratio worth reporting: it
+# never commits on real outcomes either, so R/N- is noise over noise. The
+# decisiveness means are taken over the models above this line, and the count
+# of them is emitted so no sentence can quote the mean as if it covered all of
+# them -- which is what \MeanDecisiveR did while the prose said "these models".
+DECISIVE_AT_ALL = 0.02
+
+
+def decisive_models(tiles: list[dict]) -> list[dict]:
+    """The models the decisiveness means are actually taken over."""
+    return [t for t in tiles if t["decisive_fraction"]["R"] > DECISIVE_AT_ALL]
+
 
 def clear_kinds(tiles: list[dict], thresh: float = FLAT_DECISIVE
                 ) -> tuple[list[dict], list[dict]]:
@@ -685,8 +697,15 @@ def build(card: dict, personas: list[dict], length: dict | None = None,
     # Strength: the headline contrast. Restricted to models that are decisive
     # at all on real outcomes, because a model that never commits anywhere has
     # no ratio to report and would drag the mean toward a meaningless zero.
+    dm = decisive_models(tiles)
     dec = [(t["decisive_fraction"]["R"], t["decisive_fraction"]["N_minus"])
-           for t in tiles if t["decisive_fraction"]["R"] > 0.02]
+           for t in dm]
+    # The denominator, emitted so the sentence quoting the mean can name it,
+    # and its complement, so the sentence can say who was left out without
+    # borrowing \NClearsFlat -- the two sets coincide on this roster and are
+    # not the same set (a flat model need not clear its floor).
+    out.append(_cmd("NDecisiveModels", str(len(dm))))
+    out.append(_cmd("NNotDecisiveModels", str(len(tiles) - len(dm))))
     out.append(_cmd("MeanDecisiveR", f"{100 * sum(a for a, _ in dec) / len(dec):.0f}"))
     out.append(_cmd("MeanDecisiveN", f"{100 * sum(b for _, b in dec) / len(dec):.1f}"))
     ratios = [a / b for a, b in dec if b > 0]

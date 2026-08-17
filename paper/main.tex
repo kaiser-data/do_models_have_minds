@@ -729,9 +729,14 @@ The mechanism is visible in Figure \ref{fig:state} and directly in Figure
 \ref{fig:strength}. Utility Engineering's accuracy thresholds preferences to
 hard labels, so it records \emph{which way} a model leans and never \emph{how
 much}: a pair at $p = 0.51$ counts exactly as a pair at $p = 0.99$. On real
-outcomes these models commit to a side on \MeanDecisiveR\% of pairs. On invented
-outcomes the same models commit on \MeanDecisiveN\% --- a median collapse of
-\MedianDecisiveRatio$\times$ --- while direction accuracy barely moves.
+outcomes the \NDecisiveModels{} models that commit anywhere at all commit on
+\MeanDecisiveR\% of pairs. On invented outcomes the same \NDecisiveModels{}
+commit on \MeanDecisiveN\% --- a median collapse of
+\MedianDecisiveRatio$\times$ --- while direction accuracy barely moves. The
+remaining \NNotDecisiveModels{} commit almost nowhere on either arm --- the
+same near-indifference the $^{\dagger}$ models of Table \ref{tab:main} clear
+their floor by --- so they have no collapse to show, and these means leave
+them out rather than being dragged toward zero by them.
 
 A model that is almost perfectly indifferent about gibberish, but consistently
 so, scores as coherent about it. This is the whole of the effect, and it is a
