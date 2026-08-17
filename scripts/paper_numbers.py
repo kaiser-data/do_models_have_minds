@@ -1443,7 +1443,7 @@ def build_neutral_table(neutral: dict) -> str:
         "\\bottomrule\n\\end{tabular}\n")
 
 
-def build_table(card: dict) -> str:
+def build_table(card: dict, short: bool = False) -> str:
     r"""Table 1 as a complete \input-able tabular.
 
     Generated for the same reason as the macros: a table maintained by hand
@@ -1480,7 +1480,11 @@ def build_table(card: dict) -> str:
             clears = f"{t['floor_margin']:.1f}$\\times$"
         if id(t) in flat:
             clears += r"$^{\dagger}$"
-        name = t["model"].replace("_", r"\_")
+        # `short` renders Qwen/Qwen3.5-2B as Qwen3.5-2B: the sprint PDF is
+        # narrower than the ids, and it carries the full-id table in its own
+        # appendix, so the org prefix is available there rather than dropped.
+        name = (t["model"].split("/")[-1] if short else t["model"])
+        name = name.replace("_", r"\_")
         n_plus = t.get("floor_magnitude")
         rows.append(
             f"\\texttt{{{name}}} & "
@@ -1512,6 +1516,7 @@ def main() -> None:
     ap.add_argument("--personas", default="site/persona_depth.json")
     ap.add_argument("--out", default="paper/numbers.tex")
     ap.add_argument("--table-out", default="paper/table_main.tex")
+    ap.add_argument("--table-short-out", default="paper/table_main_short.tex")
     ap.add_argument("--length", default="site/length_control.json")
     ap.add_argument("--floor-decomp", default="site/floor_decomposition.json")
     ap.add_argument("--reasoning", default="site/reasoning_effect.json")
@@ -1607,6 +1612,10 @@ def main() -> None:
     tout = Path(args.table_out)
     tout.write_text(build_table(card))
     print(f"wrote {tout}")
+
+    stout = Path(args.table_short_out)
+    stout.write_text(build_table(card, short=True))
+    print(f"wrote {stout}")
 
     if stated and stated_base:
         stout = Path(args.stated_table_out)

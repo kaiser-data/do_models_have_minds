@@ -175,6 +175,20 @@ def test_table_marks_exactly_the_flat_clears():
     assert "org/flat" in marked[0]
 
 
+def test_the_short_table_drops_the_org_prefix_and_nothing_else():
+    """The sprint PDF is narrower than the ids. Short names there, full ids in
+    its appendix -- so the two renderings must differ in the name column and
+    agree everywhere else, or the appendix stops being the same table."""
+    full = build_table({"tiles": [CONVICTION, FLAT, FAILS]})
+    short = build_table({"tiles": [CONVICTION, FLAT, FAILS]}, short=True)
+    assert "org/conviction" in full and "org/conviction" not in short
+    assert r"\texttt{conviction}" in short
+    # Same rows, same marks, same numbers: only the name column may move.
+    strip = lambda t: [ln.split("&", 1)[1] for ln in t.splitlines()
+                       if ln.startswith(r"\texttt{")]
+    assert strip(full) == strip(short)
+
+
 def test_table_carries_the_n_plus_column():
     tex = build_table({"tiles": [CONVICTION, FLAT, FAILS]})
     assert r"N\textsuperscript{+}" in tex

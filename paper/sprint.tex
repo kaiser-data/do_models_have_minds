@@ -1,0 +1,449 @@
+% Sprint-facing short version. The archival paper is main.tex and stays the
+% source of truth; this file reorders and demotes, it never restates a result
+% differently. Both read the same numbers.tex, so a rebuild moves them together.
+%
+% Front budget, fixed before the prose was written (6-8 pages):
+%   abstract 150w | what we established 0.75p | method 0.75p | results 2p
+%   persona 1p | what is new 0.5p | limitations + dual-use 1p
+% Everything else is demoted to the appendix and cited from the body.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=0.85in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{array}
+
+\graphicspath{{figs/}}
+
+\newcommand{\armR}{\textbf{R}}
+\newcommand{\armNp}{\textbf{N\textsuperscript{+}}}
+\newcommand{\armNm}{\textbf{N\textsuperscript{--}}}
+
+% Every measured number resolves through here. Nothing is typed in this file,
+% for the same reason nothing is typed in main.tex.
+\input{numbers}
+
+\title{\textbf{Does the Persona Change the Preference,\\ or Only the Prose?}\\[.4em]
+\large Replace every outcome with invented words and a model's preferences
+barely move,\\ so the coherence number cannot be evidence that the model means
+them.}
+
+\author{Martin Kaiser \and Gellért Bodorkós\\
+\small Apart Research Digital Minds Sprint}
+
+\date{17 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Preference-coherence fits a Thurstonian model to a model's pairwise choices and
+reads high held-out accuracy as evidence of emergent values. We add the missing
+control: the same battery with every referent replaced by an invented word,
+holding the prompt, pair set, fit and metric fixed. On
+\NModels{} open-weight models at \NDesignReps{} design seeds each, coherence is
+\MeanFloor{} on outcomes that refer to nothing against \MeanR{} on real ones ---
+a residual of \MeanResidual{}, and \NFailsFloor{} of \NModels{} models do not
+clear their own replicate floor. The metric keeps only choice direction:
+conviction collapses \MedianDecisiveRatio$\times$ on nonsense while
+direction accuracy barely moves. A discarded channel of the same forward pass
+separates the arms at AUROC \DetBestAuroc{} against
+\DetKeptAuroc{} for the channel coherence keeps. Installed personas still
+displace real outcomes further than invented ones, so the instrument is not
+blunt. The metric is not broken. It is unanchored.
+\end{abstract}
+
+\section{What we established}
+
+\textbf{A coherence score of \MeanR{} survives the removal of all meaning,
+falling only to \MeanFloor{}.} We built the null arm that preference-coherence
+work has not had --- the same outcomes with invented referents --- and ran it as
+a measurement rather than a demonstration: \NModels{} models across
+\NFamilies{} families, \NCells{} cells, \NSplits{} splits and \NDesignReps{}
+independent design replicates per cell, every cell scored against its own
+replicate noise floor. The result is a card, not a headline.
+
+\textbf{Three findings, in the order we would defend them.} The mechanism is
+firm: thresholding a preference to a hard label keeps direction and discards
+strength, so a model that is uniformly near-indifferent about gibberish scores
+as coherent about it (\S\ref{sec:mech}). The dissociation is firm: the
+information the metric throws away separates real from invented outcomes far
+better than the information it keeps (\S\ref{sec:det}). The headline residual is
+marginal and we report it as such --- \MeanResidual{}, bootstrap 95\% CI
+[\ResidCiLo, \ResidCiHi], \NPositiveModels{} of \NModels{} positive at a
+sign-test $p$ of \ResidSignP{} (\S\ref{sec:resid}). That the residual is small
+\emph{is} the claim; it is not a caveat on one.
+
+\textbf{The instrument is not simply blunt, which is what makes the flat result
+mean something.} An installed persona displaces real outcomes substantially
+further than invented ones in \PersonaAbovePointThree{} of \NPersonaCells{}
+conditions (\S\ref{sec:persona}), so the pipeline does register a real change of
+preference when one is induced. A metric that could not detect anything would
+explain the flatness away.
+
+\textbf{The practical recommendation is one line.} Any claim that a coherence
+number reflects values should carry the same number computed on outcomes that
+mean nothing. That arm cost one battery and a few dollars of compute.
+
+\section{Method}\label{sec:method}
+
+\textbf{Three arms, differing in exactly one property each.} \armR{} is the real
+battery; \armNp{} replaces every referent with an invented word but keeps the
+magnitudes; \armNm{} removes the magnitudes too. The prompt, the pair set, the
+fit, the split scheme and the metric are held fixed across arms, so
+$\armR \to \armNp$ isolates the referent and $\armNp \to \armNm$ the arithmetic.
+Choices are read from the first-token logit distribution rather than sampled,
+which removes temperature and seed from the design and restricts the study to
+models that expose logprobs.
+
+\textbf{Every cell is scored against its own noise floor, not against zero.} A
+design replicate redraws the outcome subsample and the pair set under a new
+seed; the spread of a cell across \NDesignReps{} such replicates is that cell's
+design noise floor. A residual smaller than that floor is not a finding about
+the model, and we say so per model rather than in aggregate. \NHosted{} larger
+models reached over a hosted API are reported \emph{beside} the ladder and never
+inside its mean: different serving stack, different harness hash
+(Appendix~\ref{app:figs}).
+
+\textbf{Provenance.} Predictions were registered before the first model ran, the
+battery is hash-pinned (\texttt{\BatterySHA\ldots}), and every measured number
+in this document is emitted from the results card by
+\texttt{scripts/paper\_numbers.py} rather than typed. The pipeline end to end is
+Appendix Figure~\ref{fig:pipeline}; the claims ledger
+(\NClaimsEstablished{} established, \NClaimsProvisional{} provisional) is
+Appendix Table~\ref{tab:claims}.
+
+\textbf{What this document leaves out.} Two tracks run in the archival paper and
+not here: what models \emph{say} about a disposition they were given
+(Appendix Table~\ref{tab:stated}), and whether an instruction to conceal a
+disposition changes what they choose as well as what they say
+(Appendix Table~\ref{tab:revealed}, with directive compliance in
+Table~\ref{tab:comply}). They are secondary to the claim above and are reported
+in full rather than summarised here.
+
+\section{Results}
+
+\subsection{The metric barely separates real outcomes from meaningless ones}
+\label{sec:resid}
+
+\textbf{Coherence averages \MeanR{} on real outcomes and \MeanFloor{} on
+invented ones, a residual of \MeanResidualPrecise{}.} Table~\ref{tab:main} gives
+it per model against each model's own floor. \NClears{} of \NModels{} clear that
+floor, \NFailsFloor{} do not, and \NNegative{} of those \NFailsFloor{} score
+higher on invented outcomes than on real ones. The across-model standard
+deviation (\ResidSD) is larger than the mean.
+
+\textbf{The \NClears{} clears are two different things, and only
+\NClearsConviction{} are the effect this paper is about.} Those three commit on
+real outcomes and go near-indifferent on invented ones. The other
+\NClearsFlat{}, daggered in Table~\ref{tab:main}, are decisive on under
+\FlatDecisiveThreshPct\% of pairs on \emph{both} arms: they clear by being
+uniformly near-indifferent, which is not a value system losing its grip.
+
+\textbf{The residual is the referent step alone.} Splitting it at the middle
+arm, replacing the referents costs \MeanReferent{} while removing the magnitudes
+on top of that costs \MeanArith{} (SD \ArithSD{}, \NArithPositive{} of
+\ArmNPlusModels{} positive). On this battery the arithmetic carries none of the
+effect, and a study varying only the numbers would have measured nothing.
+
+\textbf{Within the one family that has a ladder, the residual falls as models
+grow} --- \LadderResidFall{} across \LadderNSizes{} sizes, because the floor
+rises with scale faster than the signal does (Appendix
+Figure~\ref{fig:scale}). It does not survive pooling across families, so this is
+a within-family statement and not a scaling law.
+
+\begin{table}[tb]
+\centering
+\caption{\textbf{Per-model results against each model's own noise floor.}
+\armR{}, \armNp{}, \armNm{} are held-out accuracy on real outcomes, invented
+outcomes with magnitudes kept, and invented outcomes with magnitudes removed,
+over \NSplits{} splits and \NDesignReps{} design replicates. \textbf{floor} is
+the spread of the same cell across those replicates; \textbf{clears} reports
+whether the residual exceeds it and by what factor. $^{*}$ marks a floor too
+near zero for a ratio to mean anything; $^{\dagger}$ marks a model decisive on
+under \FlatDecisiveThreshPct\% of pairs on both arms. \textbf{dec.} is the share
+of pairs at $p<0.2$ or $p>0.8$. Full model ids in
+Appendix~\ref{app:tables}.}
+\label{tab:main}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\input{table_main_short}
+\end{table}
+
+\subsection{Direction survives, strength does not}\label{sec:mech}
+
+\textbf{This is the whole mechanism: coherence records which way a model leans
+and never how much.} A pair at $p = 0.51$ counts exactly as a pair at
+$p = 0.99$. On real outcomes the \NDecisiveModels{} models that commit anywhere
+at all commit on \MeanDecisiveR\% of pairs; on invented outcomes the same six
+commit on \MeanDecisiveN\% --- a median collapse of
+\MedianDecisiveRatio$\times$ --- while direction accuracy barely moves
+(Figure~\ref{fig:strength}). A model almost perfectly indifferent about
+gibberish, but \emph{consistently} so, scores as coherent about it. This is a
+property of the metric, not a failure of the fit.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.80\textwidth]{fig3_strength.pdf}
+\caption{\textbf{On real outcomes preference mass moves to the edges; on
+invented outcomes it piles up at indifference.} Coherence reads only which side
+of $0.5$ each pair falls on, so both distributions score alike. The same story
+appears as trajectories in Appendix Figure~\ref{fig:state}.}
+\label{fig:strength}
+\end{figure}
+
+\subsection{The model can tell. The metric does not look.}\label{sec:det}
+
+\textbf{A channel of the same forward pass that coherence discards separates
+real from invented outcomes at AUROC \DetBestAuroc{}, against \DetKeptAuroc{}
+for the channel coherence keeps.} Every pair was run in both arms, so for one
+model and one pair index there are two forward passes differing only in whether
+the outcomes refer to anything --- verified-clean negatives and verified
+positives, matched by construction rather than by selection
+(Figure~\ref{fig:detector}). Thresholding to a hard label discards magnitude and
+renormalising over the two options discards the mass placed on neither; those
+are precisely the quantities the hallucination-detection literature reads
+\citep{farquhar2024semantic,kossen2024sep}. The information is in the forward
+pass. The metric declines to look at it.
+
+\textbf{This is an oracle bound, not a deployable detector.} The arm labels are
+in hand, so \DetBestAuroc{} is an upper bound on what such a channel could do
+without them; we report detection at a \DetFPR\% false-positive rate calibrated
+on real-outcome rows alone (\DetBestTPR\%), never a threshold chosen by looking
+at the nonsense.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.80\textwidth]{fig4_detector.pdf}
+\caption{\textbf{The discarded channel separates the arms; the kept channel does
+not.} Per-model separation for each channel of one forward pass. Arm labels are
+in hand, so these are oracle upper bounds and are labelled as such.}
+\label{fig:detector}
+\end{figure}
+
+\section{The instrument is not blunt: personas move wanting, not only prose}
+\label{sec:persona}
+
+\textbf{An installed persona displaces real outcomes far more than invented ones
+in \PersonaAbovePointThree{} of \NPersonaCells{} conditions.} We install a
+dispositional trait (\emph{cautious} or \emph{ambitious}) at two depths --- user
+turn and system prompt, with a length-matched neutral system prompt so the two
+differ only in \emph{where} the trait sits --- and measure displacement on both
+arms. The statistic
+$1 - \lVert \Delta_{\text{invented}} \rVert / \lVert \Delta_{\text{real}} \rVert$
+is $1.0$ for a pure change of preference and $0.0$ for a pure change of style
+(Figure~\ref{fig:persona}). One model under one persona is the informative
+exception at \PersonaMin{}: it moves invented outcomes \emph{further} than real
+ones, which is what pure style looks like, while behaving like the others under
+the opposite trait.
+
+\textbf{Which persona is installed matters about two and a half times more than
+where it is installed} --- \DepthSpread{} average shift between depths against
+\PersonaSpread{} for swapping the trait.
+
+\textbf{The displacement needs its own denominator, and has one.} Against a bare
+baseline the effect reads \PersRefBare{} (\PersRefBarePct\% of
+\PersRefTotal{} conditions below the diagonal); against the length-matched
+neutral prompt it reads \PersRefNeutral{} (\PersRefNeutralPct\%). We report the
+second. The empty-slot control is what separates "the persona changed the
+preferences" from "any system prompt at all changed them".
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.78\textwidth]{fig5_persona.pdf}
+\caption{\textbf{Points below the diagonal are personas that moved preference,
+not prose.} Displacement on invented outcomes against displacement on real ones,
+one point per model $\times$ persona $\times$ depth. On the diagonal a persona
+reorders meaningless outcomes as far as real ones and has changed only the
+writing.}
+\label{fig:persona}
+\end{figure}
+
+\section{Three checks that came out in the metric's favour}\label{sec:favour}
+
+\textbf{Put a real outcome and a meaningless one in the same comparison and
+models prefer the real one, in proportion to how much they like it.}
+Preference for the real outcome runs \MixPreferRealLo{} to \MixPreferRealHi{}
+across \MixNModels{} models --- above indifference everywhere. With a meaningful
+option present, the choice does read outcome content; the flat result is about
+what the \emph{fit} certifies, not about blindness.
+
+\textbf{Given the option to decline, the floor does not survive as an
+artifact of forced choice.} Adding a ``neither'' option across \NeutNCells{}
+cells on \NeutNModels{} models shifts the floor by \NeutFloorShift{} on the one
+model where the comparison is clean, and \NeutNRefuse{} models refuse the
+invented arm outright --- which is the honest reading of the arm, not a failure
+of it (Appendix Table~\ref{tab:neutral}).
+
+\textbf{One of our own effects did not survive its control, and we withdrew
+it.} Individual pairs where an invented outcome beats a real one number
+\AvoidFlipsRaw{} of \AvoidNPairsTotal{} on the counterbalanced mean, but only
+\AvoidFlipsRobust{} (\AvoidFlipsPct\%) flip in \emph{both} presentation orders,
+and \AvoidNoFlipModels{} of \AvoidNModels{} models have none. The first draft of
+that section reported the larger number as a finding.
+
+\section{What is new here}\label{sec:new}
+
+\textbf{The foil arm, the noise floor, and the detector dissociation are this
+weekend's contribution; the control discipline is borrowed and cited.}
+\citet{riossialer2026loyalties}, from the previous sprint, report that group
+spread alone is worthless as evidence without a base-model control. We take that
+principle --- draw the null as an explicit locus rather than an invisible zero
+--- and not its construction: their control is a base model and their null a
+point in a PCA plane, ours is an invented-outcome arm and our null a diagonal.
+Relative to published preference-coherence work \citep{mazeika2025utility}, what
+is new is that the outcomes' meaning is varied at all, that each cell carries a
+replicate floor, and that the arms are contrasted through a channel the metric
+discards. The Thurstonian measurement itself is theirs, reimplemented from the
+published equations.
+
+\section{Limitations and Dual-Use / Ethical Considerations}\label{sec:limits}
+
+\textbf{No moral-status claim is made or implied.} The foil arm refutes an
+\emph{inference} --- that a stable preference ordering evidences values --- and
+not a mind. Over-attribution and under-attribution of mental states are both
+declined here; nothing in this design could settle either.
+
+\textbf{Ground truth is by construction, not by conversation.} Invented
+referents are known-meaningless because we built them that way, which is what
+makes the negatives clean. The detector and concealment numbers are oracles ---
+arm labels in hand --- and are reported as upper bounds, never as an audit tool
+someone could deploy against a model whose arms are unknown.
+
+\textbf{Scope.} \NModels{} self-hosted open-weight models between 0.8B and 9B,
+plus \NHosted{} hosted cells reported beside the ladder and never inside its
+mean. The scaling result is within one family and does not survive pooling
+across families. First-token scoring excludes models that do not place their
+answer in the first token, and that exclusion correlates with how recent a model
+is. One battery, one wording as the primary instrument; a rewording moves the
+ordering measurably, so "outcome" here means what this battery means by it.
+
+\textbf{Distressing content, handled conservatively.} The battery contains
+harm-like real outcomes (bankruptcy, weapons). We tested whether models avoid
+those beyond their stated utility, the held-out test did not support it, and we
+report the result as unsupported rather than as a demonstrated vulnerability.
+The mixed-arm observation that gibberish can beat a bad outcome is provisional,
+model-specific, and is not a jailbreak.
+
+\textbf{Release.} Battery, pre-registration, analysis pipeline, noise-floor
+machinery, figure scripts and the raw \CorpusRows{} scored comparisons are
+public. The battery is a measurement instrument, not a capability: it contains
+no exploit, and its dual-use surface is that a lab could use it to check a
+number it was about to publish.
+
+\section{Conclusion}
+
+\textbf{A metric that scores \MeanR{} on real outcomes scores \MeanFloor{} on
+outcomes that refer to nothing.} It is not broken --- it passes its own nulls
+and its design choices survive scrutiny --- but it is unanchored: it certifies
+that choices follow a stable scalar ordering without certifying that the
+ordering is about anything. Report the foil arm beside the number, or the number
+does not license the claim.
+
+\paragraph{Archival version.} This is the short version. The full paper ---
+every control, the three checks that came out in the metric's favour, the
+retractions, and the complete limitations section --- is \texttt{paper/main.tex}
+in the repository, and is the source of truth wherever the two differ in detail.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+
+\section{Additional figures}\label{app:figs}
+
+Kept in full; moved here because each repeats a finding the body already makes
+or shows process rather than result.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.72\textwidth]{fig1_state_space.pdf}
+\caption{\textbf{Every model is a path, not a point} --- the mechanism of
+\S\ref{sec:mech} as trajectories. Each starts on real outcomes, moves to
+invented outcomes with magnitudes kept, and ends with them removed. If the
+metric tracked meaning the paths would run down-\emph{and-left}; they run almost
+straight down.}
+\label{fig:state}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.72\textwidth]{fig2_scale.pdf}
+\caption{\textbf{Held-out coherence against model size, with the hosted cells
+marked separately.} Within the one family that has a ladder, the floor rises
+with scale faster than the signal (\LadderResidFall{} across
+\LadderNSizes{} sizes). Hosted diamonds sit beside the ladder, never inside its
+mean --- \LadderHosted{} returns \HostedResidual{} against a
+\HostedReps-replicate floor of \HostedFloor{} and \HostedClears{} it.}
+\label{fig:scale}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=.72\textwidth]{fig0_pipeline.pdf}
+\caption{\textbf{The measurement pipeline}, from battery to floor-corrected
+card. Process rather than finding, and here for that reason.}
+\label{fig:pipeline}
+\end{figure}
+
+\section{Additional tables}\label{app:tables}
+
+\begin{table}[tb]
+\centering
+\caption{Table~\ref{tab:main} with full HuggingFace model ids.}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\input{table_main}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\caption{Self-report under instruction: what models say about a disposition they
+were given, against a no-persona baseline.}
+\small
+\label{tab:stated}
+\input{table_stated}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\caption{The revealed channel: whether a concealment instruction that changes
+what a model says also changes what it chooses.}
+\small
+\label{tab:revealed}
+\input{table_revealed}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\caption{The neutral-option control --- what happens to the floor when
+``neither'' becomes available. \NeutNModels{} models, \NeutNCells{} cells.}
+\small
+\label{tab:neutral}
+\input{table_neutral}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\caption{Compliance: which models obey a directive to prefer against their own
+ordering, and which decline.}
+\small
+\label{tab:comply}
+\input{table_comply}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\caption{The claims ledger: every claim in the archival paper with its status,
+its evidence, and what would falsify it. \NClaimsEstablished{} established,
+\NClaimsProvisional{} provisional, \NClaimsTotal{} total.}
+\small
+\label{tab:claims}
+\input{table_claims}
+\end{table}
+
+\end{document}
